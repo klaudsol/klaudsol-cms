@@ -1,2 +1,2 @@
 # klaudsol-cms
-A Headless CMS made in NextJS for deployment to AWS Amplify, Vercel, or Netlify
+A Headless CMS written in NextJS. Specifically made for deployment to AWS Amplify, Vercel, or Netlify.
