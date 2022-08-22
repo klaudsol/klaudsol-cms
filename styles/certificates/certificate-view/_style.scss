@@ -1,0 +1,112 @@
+.dropdown {
+    margin-bottom: 2.25rem;
+}
+
+.dropdown>p {
+    margin: 0;
+}
+
+
+.prop-tbl {
+    width: 30%;
+}
+
+.kV-ctnr {
+
+    display: flex;
+    width: 30%;
+
+
+}
+
+.kV-ctnr>p {
+    margin-right: 10%;
+}
+
+.prop-ctnr {}
+
+.val-ctnr {}
+
+.table_container {
+    background-color: black;
+    padding: 20px;
+    width: 100%;
+    color: red;
+}
+
+.edit-form {
+    width: 100%;
+}
+
+
+.template-dropdown {
+    width: 350px;
+}
+
+.keyValue-form {
+    display: flex;
+    margin-bottom: 1%;
+}
+
+
+.edit-form-ctnr {
+    margin-top: 75px;
+    margin-left: 150px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: rgba(145, 145, 145, 0.784);
+    z-index: 1;
+    position: fixed;
+}
+
+.editform {
+    margin: auto;
+    background-color: rgb(246, 246, 246);
+    padding: 20px;
+    overflow: auto;
+
+}
+
+.edit-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.exit_btn {
+    border-color: transparent;
+    color: #eef6ec;
+    border-radius: 6px;
+    font-size: 13px;
+    background-color: darkred;
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    align-items: center;
+    margin-left: 5px;
+    padding: 0px;
+}
+
+
+button {
+    margin-bottom: 5%;
+}
+
+.btn_save {
+    margin-top: 5%;
+    background-color: #019867;
+    color: white;
+}
+
+.skeleton-text{
+    width: 25vw;
+    border: 10px solid #e4e5e7;
+
+}
+
+.add-recipient-form{
+    color: red;
+    width: 50vw;
+}

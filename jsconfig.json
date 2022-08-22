@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["/*"],
+      "@sme/*": ["/lib/sme/*"],
+      "@backend/*": ["/backend/*"]
+    }    
+  }
+}

@@ -1,0 +1,1 @@
+the /components directory is for components that are project-specific, i.e., that are only relevant for this current project

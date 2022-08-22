@@ -1,0 +1,33 @@
+.sme-smart-table-mobile__action {
+  width: 100%;  
+}
+
+.sme-smart-table-mobile__data {
+  text-indent: 2rem;  
+}
+
+
+//Is there really a different mechanism for fadeIn vs. fadeOut?
+
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.fadeIn {
+  -webkit-animation: fadeIn 250ms ease-in-out 0s;
+  -moz-animation: fadeIn 250ms ease-in-out 0s;
+  -o-animation: fadeIn 250ms ease-in-out 0s;
+   animation: fadeIn 250ms ease-in-out 0s;
+}
+
+.sme-smart-table-desktop__row {
+   transition: opacity 250ms;
+   opacity: 1;
+   
+   /**conflict with .fadeOut in animate.css**/
+    &.fadeOutX {
+        opacity: 0;
+    }
+}
+
+

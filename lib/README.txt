@@ -1,0 +1,1 @@
+the /lib directory is for components intended to be reused cross-project.

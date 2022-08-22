@@ -1,0 +1,278 @@
+// .screen-bg{
+//   background:  rgb(227, 227, 227) 100%;
+
+
+// }
+
+// .certificate-screen{
+//   display: flex;
+//   justify-content: center;
+// }
+// .certificate{ //legal letter size landscape
+//   margin-top: 2%;
+//   padding-top: 2rem;
+//   padding-bottom: 1rem;
+//   border: .40rem solid rgb(174, 163, 7);
+//   background-color: rgb(255, 252, 209);
+//   overflow: hidden;
+//   position: relative;
+//   height:8.5in;
+//   width: 11in;
+
+// }
+
+// .certificate-content{
+//   display: flex;
+//   justify-content: center;
+// }
+// .demo-bg {
+
+//   position: absolute;
+//   margin-left: auto;
+//   margin-right: auto;
+//   left: 0;
+//   right: 0;
+//   text-align: center;
+//   opacity: .2;
+//   width: 45rem;
+//   filter: grayscale(10%);
+
+// }
+
+// .container {
+
+//   align-items: center;
+//   margin-top: 4rem;
+//   text-align: center;
+// }
+
+// .para{
+
+//   width: 500px;
+//   max-width:500px;
+//   padding-left: 20px;;
+//   padding-bottom: 10px;
+
+// }
+
+// .recipient{
+
+//   margin-bottom: 1.5rem;
+// }
+
+// .signatories{
+
+//   display: flex;
+//   flex-direction: row;
+//   justify-content:space-around;
+//   margin: -1;
+
+// }
+
+// .signatories p {
+//   margin: 0;
+// }
+
+// .signatory-container{
+//   display:flex;
+//   flex-direction: column;
+//   text-align: center;
+// }
+// .signatory-name{
+//   font-weight:bold;
+// }
+
+// .signatory-position{
+//   font-style: italic;
+// }
+
+// .logo-container {
+//   display: block;
+//   margin-left: auto;
+//   margin-right: auto;
+//   width: 15%;
+// }
+// .company-logo{
+//   height: 2000px;
+// }
+// .company-header{
+//   text-align: center;
+//   font-size: 1.25rem;
+//   margin: -.45rem;
+// }
+// .company-address{
+//   text-align: center;
+//   font-style: italic;
+//   font-size: .60em;
+//   margin:-5px;
+//   padding-left: 20%;
+//   padding-right: 20%;
+// }
+// .address-holder{
+//   width: 10%;
+// }
+// .uuid p{
+//   font-size: 15px;
+//   text-align:right;
+//   margin-right: 1.25rem;
+// }
+
+// .submit-btn{
+//   margin-top: 2rem;
+//   margin-bottom: 2rem;
+//   border: none;
+//   background-color: rgb(31, 116, 245);
+//   color: white;
+//   padding: .5rem 1rem;
+//   text-align: center;
+//   text-decoration: none;
+//   font-size: 1rem;
+//   width: 25%;
+// }
+
+// .btn-container{
+//   display: flex;
+//   justify-content: center;
+
+// }
+
+// p{
+//   font-size:1.2rem;
+// }
+
+
+.certificate-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 11in;
+  height: 8.5in;
+  margin: auto;
+
+}
+
+.certificate {
+  //legal letter size landscape
+  margin-top: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border: 5px solid rgb(174, 163, 7);
+  background-color: rgb(255, 252, 209);
+  overflow: auto;
+  position: relative;
+  height: 8.5in;
+  width: 11in;
+
+}
+
+.certificate-content {
+  display: flex;
+  justify-content: center;
+}
+
+.demo-bg {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  opacity: .2;
+  width: 10in;
+  filter: grayscale(10%);
+
+}
+
+.container {
+
+  align-items: center;
+  margin-top: 70px;
+  text-align: center;
+}
+
+.para {
+
+  width: 10.5in;
+  max-width: 10.5in;
+  padding-left: 1in;
+  padding-right: 1in;
+
+}
+
+.recipient {
+
+  margin-bottom: 20px;
+}
+
+.signatories {
+  margin-top: 75px;
+  align-items: center;
+  margin-left: 100px;
+  flex-direction: column;
+
+}
+
+.signatories p {
+  margin: 0;
+}
+
+.signatory-name {
+  font-weight: bold;
+}
+
+.signatory-position {
+  font-style: italic;
+}
+
+.company-logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 150px;
+}
+
+.company-header {
+  text-align: center;
+  font-size: 20px;
+  margin: -10px;
+}
+
+.company-address {
+  text-align: center;
+  font-style: italic;
+  font-size: 10px;
+  margin: -5px;
+  padding-left: 200px;
+  padding-right: 200px;
+}
+
+
+
+.uuid p {
+  font-size: 15px;
+  text-align: right;
+  margin-right: 100px;
+}
+
+.submit-btn {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border: none;
+  background-color: rgb(31, 116, 245);
+  color: white;
+  padding: .5rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1rem;
+  width: 25%;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+
+}
+
+p {
+  font-size: 1.2rem;
+}

@@ -1,0 +1,160 @@
+
+.certificate-holder{
+    //legal paper size 
+    //portrait certificate
+    border:2em solid red;
+    width: 11in;
+    height: 8.5in;
+
+    padding: 10px;
+    position:relative;
+    margin: auto;
+
+
+    
+   
+}
+
+.demo-bg {
+   
+
+  position: absolute;
+  margin-left: 2.25in;
+  opacity: .2;
+  width: 7in;
+  height: 7in;
+  filter: grayscale(10%);
+
+}
+
+.logo-container {
+    position: absolute;
+    //border: 1rem red solid;
+    margin-left: 4.5in;
+    height: .65in;
+    width: 1.25in;
+    object-fit:fill;
+    
+  }
+
+  .header-container{
+    text-align: center;
+    padding-bottom: 5mm;
+  }
+
+  .companyName {
+    font-size: 20px;
+  }
+
+  .companyLocation{
+    margin:-10px;
+    padding-left: 300px;
+    padding-right: 300px;
+    padding-bottom: 0px;
+    line-height: 12px;
+  }
+
+
+  .title-holder{
+ 
+    text-align: center;
+
+  }
+
+  .para-holder{
+    padding-top: 50px;
+    padding-left: 100px;
+    padding-right: 100px;
+  }
+
+  .para-holder {
+    font-size: 5.25mm;
+    text-align: center;
+  }
+
+
+
+  .properties-container{
+ 
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-bottom: 50px;
+  }
+  .credentials-table{
+    margin-top:20mm;
+    width: 100mm;
+  }
+
+  .property-item{
+    font-weight: bold;
+  }
+
+  .credentials-table{
+  font-size: 3.75mm;
+  }
+
+  .property-row{
+    margin-right: 150px;
+  }
+
+  .para-holder-endnote{
+ 
+    padding-left: 100px;
+    padding-right: 100px;
+    
+  }
+
+  .para-holder-endnote p{
+    font-size: 4mm;
+  }
+
+  .bottom-container{
+
+    position: absolute;
+    bottom: 0px;
+    width:7.5in;
+  }
+
+  .signame{
+    padding-bottom: 5mm;
+  }
+  .signatory-name{
+    font-weight:bold;
+  }
+
+  .signatory-position{
+    font-style: italic;
+  }
+
+  .signatories-container{
+ 
+    padding-left: 100px;
+    padding-right: 100px;
+ 
+  }
+
+  .certID-container{
+
+    text-align: right;
+  }
+
+  .submit-btn{
+    display: flex;
+    margin-top: 1rem;
+    color: #e4e5e7;
+    justify-content: center;
+    background-color: #019867;
+    width: 50%;
+  }
+
+  .submit-ctnr{
+    display: flex;
+    justify-content: center;
+    width: 11in;
+    margin: auto;
+    margin-bottom: 1rem;
+  }
+
+

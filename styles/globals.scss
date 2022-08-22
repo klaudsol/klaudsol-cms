@@ -1,0 +1,191 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i");
+
+body {
+  font-family: "Poppins", sans-serif;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+}
+
+$light-green-color: #6b6d84;
+
+.form-container {
+  min-height: 650px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: $light-green-color !important;
+}
+
+.btn-outline-primary,
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  border: 1px solid $light-green-color !important;
+  color: $light-green-color;
+  background-color: white;
+  outline: none !important;
+  box-shadow: none;
+}
+
+.ks-dialog {
+  font-size: 18px !important;
+  text-align: left !important;
+}
+
+.container-primary {
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border-color: #efeaea;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.header-label {
+  font-weight: bold;
+}
+
+.btn-delete {
+  padding: 1px 15px !important;
+}
+
+.row-striped:nth-of-type(even) {
+  background-color: #efefef;
+}
+
+.row-striped:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+
+body {
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.container-with-transition {
+  transition: 0.3s;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.navbar-brand {
+  font-size: 65px !important;
+  position: relative;
+  bottom: -20px;
+  left: 70px;
+}
+
+.main-banner {
+  margin-top: 50px;
+  height: 100%;
+  background-repeat: repeat;
+}
+
+.btn.btn-danger.btn-delete {
+  //background-image: image-url("TRASH-ICON.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px;
+}
+
+div.go-top {
+  bottom: 150px;
+}
+
+div.outer {
+  background: transparent url("/business-klaudsol-banner-1.png") right top
+    no-repeat;
+  background-size: 100%;
+  background-position-x: 0;
+  box-shadow: 25px 25px 50px 0 white inset, -25px -25px 50px 0 white inset;
+
+  .main-banner {
+    height: auto !important;
+    top: 0px;
+    margin-top: 0px;
+    background-image: none;
+
+    .hero-content p {
+      color: black;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    background-size: 575.98px;
+    box-shadow: inset 0px 0px 6px 6px rgba(255, 255, 255, 1);
+  }
+}
+
+.pagination a,
+.pagination span.current,
+.pagination span.gap {
+  float: left;
+  padding: 0 14px;
+  line-height: 38px;
+  text-decoration: none;
+  background-color: white;
+  border: 0.5px solid #ddd;
+  border-left-width: 0;
+}
+
+.pagination {
+  border-left: 1px solid #ddd;
+  .first {
+    padding: 0;
+    float: none;
+    border: none;
+  }
+  .prev {
+    padding: 0;
+    float: none;
+    border: none;
+  }
+  .page {
+    padding: 0;
+    float: none;
+    border: none;
+  }
+  .next {
+    padding: 0;
+    float: none;
+    border: none;
+  }
+  .last {
+    padding: 0;
+    float: none;
+    border: none;
+  }
+}
+
+.useFadeEffect {
+  display: none;
+  transition: 0.25s;
+  opacity: 0;
+}
+
+.banner-form {
+  transition: 0.25s;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+}
+
+.image-logo {
+  top: 108px;
+  position: relative;
+}
+
+/* TIME TRACKING CSS */
+
+/* CUSTOM STYLE STARTS HERE  */

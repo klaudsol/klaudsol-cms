@@ -1,0 +1,1 @@
+/apps are components that are visible from an app-level layer

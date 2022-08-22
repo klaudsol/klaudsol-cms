@@ -1,0 +1,1 @@
+The /backend directory is for files that will be used by the API component (/pages/api) of NextJS.

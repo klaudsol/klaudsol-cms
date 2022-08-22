@@ -1,0 +1,95 @@
+.period-selector-container {
+    label {
+        margin-right: 10px;
+    }
+
+    span {
+        margin: 0 10px 0 10px;
+    }
+
+    .datepicker-container {
+        display: inline-block;
+    }
+}
+
+.payee-payor-container {
+
+    .form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        max-width: 800px;
+        align-items: center;
+        gap: 10px;
+
+        input {
+            padding: 1rem;
+        }
+
+        .datepicker-container {
+            padding: 7px;
+        }
+    }
+
+    .tin-inputs {
+        display: flex;
+        align-items: center;
+
+        input {
+            width: 100px;
+            padding: 1rem;
+        }
+
+        span {
+            margin: 0 10px 0 10px;
+        }
+    }
+}
+
+.form-conforme {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 800px;
+    align-items: center;
+    gap: 10px;
+
+    input {
+        padding: 1rem !important;
+    }
+}
+
+.table {
+    table-layout: fixed;
+
+    .form-input {
+        padding: 1rem;
+    }
+
+    td {
+        overflow-wrap: break-word;
+    }
+
+    td, th {
+        text-align: center;
+        vertical-align: middle;
+    }
+}
+
+.button {
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+    border: solid;
+    border-color: #324b4e;
+    border-width: 2px;
+    border-radius: 5px;
+    background-color: #324b4e;
+    color: white;
+    margin-right: 5px;
+}
+
+.button:hover {
+    background-color: white;
+    color: #324b4e;
+}
+
+.spinner {
+    margin-right: 10px;
+}

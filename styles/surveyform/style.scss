@@ -1,0 +1,180 @@
+:root{
+    --color-white: #f3f3f3;
+    --color-default: #0f1d44;
+}
+*,*::before,*::after{
+    box-sizing: border-box;
+}
+#description{
+    font-style: italic;
+    font-weight: 700;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .5);
+    color: #4BB543;
+    text-align: center;
+    margin-top: 230px;
+}
+#sub-description{
+   // font-style: italic;
+    font-weight: 300;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+    color: var(--color-default);
+    text-align: center;
+}
+p{
+    font-size: 18;
+}
+h1, p{
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+//inside  the survey container
+.survey-container{
+    width: 100%;
+    margin: 20px auto 0 auto;
+    padding: 1.8rem 1rem;
+}
+#survey-form{
+    background: #fff;
+    border-radius: 0.5rem;
+    margin-bottom: 20px;
+    box-shadow: 10px 10px 70px 0px rgba(153, 153, 153, 0.2);
+}
+
+#survey-form:hover{
+    box-shadow: none;
+}
+
+.survey-form-group{
+    margin: 0 auto 1.25rem auto;
+    padding: 30px;
+}
+
+
+fieldset{
+    margin-left: 50px;
+    margin-right: auto;
+}
+.presidential-question{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.presidential-option-label {
+    font-size: auto;
+    cursor: pointer;
+    float: left;
+    
+}
+.presidential-option-label > input {
+    display:none;
+}
+.presidential-option-label input:checked + .radio-images{
+   background-color: #4a6f8a9d;
+   font-weight: bold;
+}
+
+.radio-images img{
+    width: 205px;
+    height: 170px;
+    float: left;
+}
+.radio-images{
+    width: auto;
+    height: auto;
+    border-radius: 15px;
+    position: relative;
+    text-align: center;
+    padding: 15px 20px;
+    box-shadow: 10px 10px 70px 0px rgba(153, 153, 153, 0.2);
+    float: left;
+    margin: 20px auto 20px 20px;
+   
+}
+.radio-images:hover{
+    box-shadow: none;
+    filter: drop-shadow( 10px gray);
+}
+.submit-btn{
+    border: 0;
+    display: block;
+    padding: 10px 50px;
+    color: #f7fafd;
+    cursor: pointer;
+    outline: none;
+    text-transform: uppercase;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    background: #4a6f8a;
+    margin-bottom: 50px;
+    margin-top: 10px;
+    border-radius: 2px;
+    float: right;
+}
+.submit-btn:hover{
+    color: #6b6d84;
+    background-color: transparent;
+    border-color: #6b6d84;
+}
+.submit-btn:disabled,
+.submit-btn[disabled],
+.submit-btn:hover[disabled]{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
+
+//survey message
+.snackbar {
+    position: fixed;
+    left: 55%;
+    top: 13%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 70px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .snackbar .symbol {
+    flex: 20%;
+  }
+  
+  .snackbar .message {
+    flex: 80%;
+    text-align: start;
+    font-weight: bold;
+  }
+  
+  #show {
+    visibility: visible;
+    animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+  }
+  #hide {
+    visibility: hidden;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
