@@ -1,3 +1,24 @@
+CREATE TABLE `entities` ( 
+  `id` int(11) NOT NULL AUTO_INCREMENT, 
+  `slug` varchar(255) NOT NULL, 
+  `type` varchar(255) NOT NULL, 
+  PRIMARY KEY (`id`), 
+  KEY `idx_slug` (`slug`), 
+  KEY `idx_type` (`type`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `attributes` ( 
+  `id` int(11) NOT NULL AUTO_INCREMENT, 
+  `name` varchar(255) NOT NULL, 
+  `entity_id` int(11) NOT NULL, 
+  `type` varchar(255) NOT NULL, 
+  `order` int(11) NOT NULL DEFAULT '1', 
+  PRIMARY KEY (`id`), 
+  KEY `idx_entity_id` (`entity_id`), 
+  KEY `idx_order` (`order`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+/*
 CREATE TABLE `companies` (  --TODO: rename as sme_companies
   `id` int(11) NOT NULL AUTO_INCREMENT, 
   `name` varchar(255) NOT NULL, 
@@ -64,6 +85,7 @@ CREATE TABLE `trucking_locations` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+*/
 
 
 
