@@ -1,4 +1,4 @@
-//import Invoice from '@backend/models/apps/timetracking/Invoice';
+import Entity from '@backend/models/Entity';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { assert } from '@/lib/Permissions';
@@ -33,16 +33,18 @@ async function get(req, res) {
           userHasPermission: ["manage"]
         }, req);  
     */
+        const session = null;
         
         const { entity_type_slug, entity_slug_or_id } = req.query;
         //const { session_token: session } = req.session;
-        //const data = await Invoice.find({session, invoiceNumber: id});
+        const data = await Entity.find({session, entity_type_slug, entity_slug: entity_slug_or_id});
+        res.status(OK).json(data);
         //if(data == null){
         //  res.status(NOT_FOUND).json({});
         //} else {
-          res.status(OK).json({
-            entity_type_slug, entity_slug_or_id      
-          });
+        //  res.status(OK).json({
+        //    entity_type_slug, entity_slug_or_id      
+        //  });
         //}
     }
     catch (error) {
