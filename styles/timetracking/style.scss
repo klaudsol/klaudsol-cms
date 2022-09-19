@@ -30,6 +30,7 @@
   background-color: azure;
   padding-bottom: 5px;
 }
+
 .card_performance {
   background-color: #eef6ec;
   padding-bottom: 5px;
@@ -49,6 +50,7 @@
   background-color: transparent;
   margin-top: 10px;
 }
+
 /* BUTTON STYLES */
 
 .d-flex {
@@ -68,6 +70,7 @@
   background-color: transparent !important;
   color: darkred !important;
 }
+
 .btn_start_modal,
 .btn_startTime {
   margin-left: 10px;
@@ -82,7 +85,7 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
-.btn_startTime{
+.btn_startTime {
   border-radius: 5px;
   width: 80px;
   height: 80px;
@@ -116,14 +119,16 @@
   color: darkred !important;
 }
 
-.btn_edit:hover:enabled, .btn_add_time:hover:enabled {
+.btn_edit:hover:enabled,
+.btn_add_time:hover:enabled {
   border: 2px solid !important;
   border-color: #324b4e !important;
   background-color: transparent !important;
   color: #324b4e !important;
 }
 
-.btn_save:hover:enabled, .btn_download:hover:enabled  {
+.btn_save:hover:enabled,
+.btn_download:hover:enabled {
   border: 2px solid !important;
   border-color: #323C4E !important;
   background-color: transparent !important;
@@ -265,6 +270,7 @@ input[type="checkbox"] {
   position: relative;
   padding-bottom: 30px;
 }
+
 .container_datePicker {
   padding-left: 30px;
   padding-top: 8px;
@@ -310,23 +316,24 @@ input[type="checkbox"] {
 }
 
 
-#time_table td:nth-child(5){
+#time_table td:nth-child(5) {
   width: 500px;
 }
 
 #time_table.time_table--reports {
-  
- overflow: hidden;
- 
- td:nth-child(5) {
-   width: auto;  
- } 
- td:nth-child(6) {
-   max-width: 125px;  
- } 
+
+  overflow: hidden;
+
+  td:nth-child(5) {
+    width: auto;
+  }
+
+  td:nth-child(6) {
+    max-width: 125px;
+  }
 }
 
-#time_table td:last-child{
+#time_table td:last-child {
   width: 150px;
 }
 
@@ -452,6 +459,7 @@ input[type="checkbox"] {
   padding-bottom: 30px;
   background-color: #324b4e;
 }
+
 .card_totalhours {
   margin-top: 20px;
   margin-bottom: 0px;
@@ -545,7 +553,7 @@ input[type="checkbox"] {
 
 .btn_delete,
 .btn_edit,
-.btn_save, 
+.btn_save,
 .btn_download,
 .btn_add_time {
   border-color: transparent;
@@ -561,7 +569,8 @@ input[type="checkbox"] {
   padding: 0px;
 }
 
-.btn_edit, .btn_add_time {
+.btn_edit,
+.btn_add_time {
   background-color: #324b4e;
 }
 
@@ -569,7 +578,7 @@ input[type="checkbox"] {
   background-color: #019867;
 }
 
-.btn_download{
+.btn_download {
   background-color: #323C4E;
 }
 
@@ -609,6 +618,7 @@ input[type="checkbox"] {
 .btn_times {
   background-color: darkred;
 }
+
 .client_dropdown {
   padding: 10px;
   width: max-content;
@@ -625,6 +635,7 @@ input[type="checkbox"] {
   padding-left: 13px;
   font-size: 1em;
 }
+
 .txt_hawrs {
   font-size: 1.28em;
   padding-top: 5px;
@@ -668,7 +679,7 @@ input[type="checkbox"] {
   margin-top: 0px;
 }
 
-.skeleton_text_dropdown{
+.skeleton_text_dropdown {
   background-color: #e4e5e7;
   font-size: 12px;
   color: #e4e5e7;
@@ -722,6 +733,7 @@ input[type="checkbox"] {
 .skeleton_text {
   height: 25px;
 }
+
 .skeleton_card {
   background-color: #f6f6f7;
   height: max-content;
@@ -739,7 +751,8 @@ $playColor: #019867;
 
 $idleColor: #fff7e4;
 
-.btn_download_csv, .btn_download_pdf {
+.btn_download_csv,
+.btn_download_pdf {
   padding: 7px;
   border: 2px solid transparent;
   border-radius: 5px;
@@ -753,11 +766,15 @@ $idleColor: #fff7e4;
   margin-left: 10px;
 }
 
-.btn_download_csv:hover, .btn_download_pdf:hover, .btn_select_all:hover {
+.btn_download_csv:hover,
+.btn_download_pdf:hover,
+.btn_select_all:hover {
   border: 2px solid #303c54;
 }
 
-.btn_download_csv:disabled, .btn_download_pdf:disabled, .btn_select_all:disabled {
+.btn_download_csv:disabled,
+.btn_download_pdf:disabled,
+.btn_select_all:disabled {
   background-color: #324b4e !important;
 }
 
@@ -766,23 +783,26 @@ $idleColor: #fff7e4;
   font-weight: 300px;
 }
 
-.btn_download_csv:focus, .btn_download_pdf:focus, .btn_select_all:focus {
+.btn_download_csv:focus,
+.btn_download_pdf:focus,
+.btn_select_all:focus {
   outline: none !important;
   box-shadow: none !important;
 }
 
 /* TIMETRACKING SIDEBAR */
-.sidebar_icon{
+.sidebar_icon {
   margin-right: 10px;
 }
 
-.icon_chevron{
+.icon_chevron {
   text-align: end;
   align-items: flex-end;
-  
+
 }
 
 $onFocus: #323C4E;
+
 .sidebar_btn_timetracking {
   background-color: #3F4B62;
   width: 100%;
@@ -806,18 +826,7 @@ $onFocus: #323C4E;
   box-shadow: none;
 }
 
-.sidebar_collapse {
-  background-color: #49546A;
-  width: 100%;
-  border: 0px;
-  color: #E4E6E9;
-  height: max-content;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  text-align: left;
-  align-items: flex-start;
-  padding-left: 25px;
-}
+
 
 .sidebar_sub_items {
   border: 0px;
@@ -862,6 +871,7 @@ $onFocus: #323C4E;
   padding-bottom: 30px;
   background: transparent;
 }
+
 .container_header {
   padding-bottom: 10px;
   background: transparent;
@@ -911,7 +921,8 @@ $onFocus: #323C4E;
   border: 1px solid black;
   text-align: center;
 }
-#summary_table td:nth-child(1){
+
+#summary_table td:nth-child(1) {
   width: 120px;
 }
 
@@ -966,7 +977,7 @@ $onFocus: #323C4E;
   background-color: transparent;
   border: 1px solid black;
   text-align: center;
-  
+
   padding: 10px;
 }
 
@@ -976,16 +987,16 @@ $onFocus: #323C4E;
   padding: 10px;
 }
 
-#developers_table td:last-child{
+#developers_table td:last-child {
   text-align: left;
   width: 30%;
 }
 
-#developers_table td:nth-child(2){
+#developers_table td:nth-child(2) {
   width: max-content;
 }
 
-.txt_total_due{
+.txt_total_due {
   font-size: 12px;
 }
 
@@ -1006,9 +1017,12 @@ $onFocus: #323C4E;
   margin-left: 5px;
 }
 
-/* INVOICE SKELETON */ 
+/* INVOICE SKELETON */
 
-.invoice_skeleton_title, .invoice_skeleton_p_title, .invoice_skeleton_list,  .professional_fee_skeleton_list {
+.invoice_skeleton_title,
+.invoice_skeleton_p_title,
+.invoice_skeleton_list,
+.professional_fee_skeleton_list {
   background-color: lightgray;
   font-size: 10px;
   color: lightgray;
@@ -1021,14 +1035,17 @@ $onFocus: #323C4E;
 }
 
 
-.invoice_skeleton_text, .invoice_skeleton_p_text{
+.invoice_skeleton_text,
+.invoice_skeleton_p_text {
   background-color: #e4e5e7;
   font-size: 8px;
   margin-bottom: 10px;
   width: max-content;
   color: #e4e5e7;
 }
-.invoice_skeleton_p_text, .invoice_skeleton_p_title{
+
+.invoice_skeleton_p_text,
+.invoice_skeleton_p_title {
   margin-bottom: 0px;
 }
 
@@ -1040,7 +1057,7 @@ $onFocus: #323C4E;
   margin-right: 5px;
 }
 
-.input_developer_rate:focus{
+.input_developer_rate:focus {
   background-color: transparent !important;
 }
 
@@ -1090,7 +1107,7 @@ $onFocus: #323C4E;
   color: #324b4e;
 }
 
-.btn_select_all  {
+.btn_select_all {
   padding: 7px;
   border: 2px solid transparent;
   border-radius: 5px;
@@ -1104,8 +1121,8 @@ $onFocus: #323C4E;
   margin-left: 10px;
 }
 
-.btn_select_all{
-   margin-left: 10px;
+.btn_select_all {
+  margin-left: 10px;
 }
 
 .container_invoice_buttons {
@@ -1114,7 +1131,7 @@ $onFocus: #323C4E;
   border-bottom: 3px solid #303c54;
 }
 
-.datepicker{
+.datepicker {
   background-color: #fff;
   padding: 7px;
   border: 2px solid lightgray;
@@ -1123,7 +1140,7 @@ $onFocus: #323C4E;
   cursor: default;
 }
 
-.datepicker:disabled{
+.datepicker:disabled {
   background-color: #f6f6f7;
   color: lightgray;
 }
@@ -1138,25 +1155,24 @@ $onFocus: #323C4E;
 }
 
 /* LIST STYLES */
-.list_professional_fees, .list_professional_fees_skeleton, 
-.list_invoices, .list_invoices_skeleton {
+.list_professional_fees,
+.list_professional_fees_skeleton,
+.list_invoices,
+.list_invoices_skeleton {
   font-size: 20px;
   padding-left: 20px;
 }
 
 .list_professional_fees:hover,
-.list_invoices:hover{
+.list_invoices:hover {
   color: coral;
   cursor: pointer;
 }
 
-.invoiceNumber{
+.invoiceNumber {
   cursor: pointer;
 }
 
-.professionalFeePaymentNum{
+.professionalFeePaymentNum {
   cursor: pointer;
 }
-
-
-

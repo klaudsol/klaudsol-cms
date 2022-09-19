@@ -1,0 +1,78 @@
+.general_container {
+    background-color: #eceff1;
+}
+
+.sidebar_container {
+    background-color: #eceff1;
+    color: #455a64;
+}
+
+.sidebar_brand {
+    background-color: #eceff1;
+    border-bottom: 1px solid lightgray;
+    color: #455a64;
+}
+
+.sidebar_header {
+    color: #455a64 !important;
+    text-decoration: none;
+}
+
+.sidebar_collapse {
+    background-color: #eceff1;
+    width: 100%;
+    border: 0px;
+    color: #E4E6E9;
+    height: max-content;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    align-items: flex-start;
+    padding-left: 25px;
+}
+
+.sidebar_button_container {
+    background-color: #eceff1;
+    width: 100%;
+    padding: 20px;
+}
+
+.sidebar_category_title {
+    padding-left: 20px;
+    font-size: 11px;
+}
+
+.sidebar_button_category_container {
+    background-color: #eceff1;
+    width: 100%;
+    padding: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.sidebar_buttons,
+.sidebar_buttons_active {
+    background-color: #eceff1;
+    width: 100%;
+    padding: 7px;
+    border-radius: 5px;
+    border: transparent;
+    text-align: left;
+    padding-left: 15px;
+}
+
+
+.sidebar_buttons:hover {
+    background-color: #b0bec5;
+
+}
+
+.sidebar_buttons_active {
+    background-color: #455a64;
+    color: #eceff1;
+}
+
+.sidebar_button_icon {
+    margin-bottom: 3px;
+    margin-right: 10px;
+}

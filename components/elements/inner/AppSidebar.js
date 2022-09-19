@@ -1,32 +1,28 @@
 import React, { useContext } from 'react'
 
-import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler, CImage } from '@coreui/react'
+import { CSidebar, CSidebarBrand, CSidebarNav} from '@coreui/react'
 
-import { AppSidebarNav } from './AppSidebarNav'
-
-import { FaClock, FaChevronDown, FaChevronUp, 
-FaFileInvoice, FaAppStore, FaTruck, 
-FaTable, FaUserClock, FaBlackTie,
-FaFileInvoiceDollar
+import { FaClock, FaTruck, 
+FaFeatherAlt, FaSearch, FaShoppingCart
 } from 'react-icons/fa'
 
-import { IoAppsOutline} from 'react-icons/io5'
+import { IoExtensionPuzzleSharp} from 'react-icons/io5'
 
-import { BiSpreadsheet, BiLocationPlus } from 'react-icons/bi';
+import { BiBuildings, BiNetworkChart } from 'react-icons/bi';
 
-import { BsCashCoin, BsFileEarmarkSpreadsheet } from 'react-icons/bs';
+import { BsFillGearFill } from 'react-icons/bs';
 
-import { GrLocation } from 'react-icons/gr';
+
+import { MdOutlinePermMedia } from 'react-icons/md';
 
 import { useState } from 'react';
 
-import { Button, Card, Collapse } from 'reactstrap';
-
 import Link from 'next/link';
 
-import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
+
+import { useRouter } from 'next/router'
 
 // sidebar nav config
 import navigation from './_nav'
@@ -36,100 +32,66 @@ const AppSidebar = () => {
   //const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   //const sidebarShow = useSelector((state) => state.sidebarShow)
 
-  const cache = useContext(CacheContext);
-  const [collapseOpen, setCollapseOpen] = useState(false);
-  const [apps, setApps] = useState([
-    (cache?.apps?.includes?.('trucking'))  ? {
-      appName: "Trucking", 
-      appIcon: <FaTruck className='sidebar_icon'/>,
-      collapseOpen: false,
-    } : null,
-    
-    (cache?.apps?.includes?.('timetracking'))  ? {
-      appName: "Timetracking",
-      appIcon: <FaClock className='sidebar_icon'/>,
-      collapseOpen: false,
-    } : null
-    
-  ].filter(item => item));
+  const router = useRouter()
 
-  const [subApps, setSubApps] = useState([
-    
-    (cache?.apps?.includes?.('trucking'))  ? {
-      mainApp: "Trucking",
-      appName: "Trip Ticket",
-      appPath: "app/trucking/trip-tickets",
-      appIcon: <BiSpreadsheet className='sidebar_icon'/>
-    } : null,
-    
-    (cache?.apps?.includes?.('trucking'))  ? {
-      mainApp: "Trucking",
-      appName: "Collection",
-      appPath: "app/trucking/collection",
-      appIcon: <BsCashCoin className='sidebar_icon'/>
-    } : null,
-    
-    (cache?.apps?.includes?.('trucking'))  ? {
-      mainApp: "Trucking",
-      appName: "Reports",
-      appPath: "app/trucking/reports",
-      appIcon: <BsFileEarmarkSpreadsheet className='sidebar_icon'/>
-    } : null,
-    
-    (cache?.apps?.includes?.('trucking'))  ? {
-      mainApp: "Trucking",
-      appName: "Locations",
-      appPath: "/app/trucking/locations",
-      appIcon: <BiLocationPlus className='sidebar_icon'/>
-    } : null,
-    
-    (cache?.apps?.includes?.('timetracking'))  ? {
-      mainApp: "Timetracking",
-      appName: "Timesheet",
-      appPath: "/app/timetracking",
-      appIcon: <FaUserClock className='sidebar_icon'/>
-    } : null,
-    
-    (cache?.permissions?.includes?.('manage') && cache?.apps?.includes?.('timetracking'))  ? {
-      mainApp: "Timetracking",
-      appName: "Invoice",
-      appPath: "/app/timetracking/invoice",
-      appIcon: <FaFileInvoiceDollar className='sidebar_icon'/>
-    } : null,
-    
-    (cache?.permissions?.includes?.('manage') && cache?.apps?.includes?.('timetracking')) ? {
-      mainApp: "Timetracking",
-      appName: "Reports",
-      appPath: "/app/timetracking/reports",
-      appIcon: <FaTable className='sidebar_icon'/>
-    } : null,
-    
-    (cache?.permissions?.includes?.('manage') && cache?.apps?.includes?.('timetracking')) ? {
-      mainApp: "Timetracking",
-      appName: "Professional Fees",
-      appPath: "/app/timetracking/professional_fee",
-      appIcon: <FaBlackTie className='sidebar_icon'/>
-    } : null,
-    
+  const cache = useContext(CacheContext);
+ 
+ 
+
+  const [categories, setCategories] = useState([
+    { title: "PLUGINS" },
+    { title: "GENERAL" },
   ].filter(item => item))
   
-  function onCollapse(name){
-    var app = apps;
-    app.map((app) => {
-      if(app.appName == name){
-        app.collapseOpen = !app.collapseOpen
-      } else {
-        app.collapseOpen = false;
-      }
-    })
-    setApps(app);
-    setCollapseOpen(!collapseOpen);
-  }
+  const [sidebarButtons, setSidebarButtons] = useState([
+    {
+      mainCategory: "PLUGINS",
+      title: "Content-Type Builder",
+      path: "/admin/plugins/content-type-builder",
+      icon: <BiBuildings className='sidebar_button_icon'/>
+    },
+    {
+      mainCategory: "PLUGINS",
+      title: "Media Library",
+      path: "/admin/plugins/media-library",
+      icon: <MdOutlinePermMedia className='sidebar_button_icon'/>
+    },
+    {
+      mainCategory: "PLUGINS",
+      title: "SEO",
+      path: "/admin/plugins/seo",
+      icon: <FaSearch className='sidebar_button_icon'/>
+    },
+    {
+      mainCategory: "PLUGINS",
+      title: "ER Chart",
+      path: "/admin/plugins/entity-relationship-chart",
+      icon: <BiNetworkChart className='sidebar_button_icon'/>
+    },
+    {
+      mainCategory: "GENERAL",
+      title: "Plugins",
+      path: "/admin/list-plugins",
+      icon: <IoExtensionPuzzleSharp className='sidebar_button_icon'/>
+    },
+    {
+      mainCategory: "GENERAL",
+      title: "ER Chart",
+      path: "/admin/marketplace",
+      icon: <FaShoppingCart className='sidebar_button_icon'/>
+    },
+    {
+      mainCategory: "GENERAL",
+      title: "Settings",
+      path: "/admin/settings",
+      icon: <BsFillGearFill className='sidebar_button_icon'/>
+    },
 
-
-  const [path, setPath] = useState('/app');
+  ].filter(item => item))
+  
   return (
     <CSidebar
+     className='sidebar_container'
       position='fixed'
       unfoldable={false}
       visible={true}
@@ -137,41 +99,42 @@ const AppSidebar = () => {
         //dispatch({ type: 'set', sidebarShow: visible })
       }}
     >
-      <CSidebarBrand to="/">
+      <CSidebarBrand to="/admin" className='sidebar_brand'>
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-        <CImage src='/sme-logo-no-border.png' width={35} align='start'/>
-          <h1> SME</h1>
+         <Link href='/admin'>
+         <a className='sidebar_header'> <b> KlaudSol CMS Dashboard </b> </a>
+          </Link>
+          
         
       </CSidebarBrand>
+
       <CSidebarNav>
-        <div className=''>
-              <Card className='sidebar_collapse'>
-                <Link href='/dashboard'><button className='sidebar_sub_items' passHref><IoAppsOutline className='sidebar_icon'/>Apps</button></Link>
-              </Card>
-              {apps.map((app) => (
-                <>
-                  <Button
-                  className='sidebar_btn_timetracking'
-                  onClick={() => onCollapse(app.appName)}
-                  >
-                  {app.appIcon} {app.appName} {!app.collapseOpen ? <FaChevronDown/> : <FaChevronUp/> } </Button>
-                   <Collapse isOpen={app.collapseOpen}>
-                    {subApps.map((sub_app) => (
-                      <>
-                      {
-                        sub_app.mainApp == app.appName && (
-                        <Card className='sidebar_collapse'>
-                          <Link href={sub_app.appPath}><button className='sidebar_sub_items' passHref>{sub_app.appIcon} {sub_app.appName}</button></Link>
-                       </Card>
-                       )
-                      }
-                        </>
-                    ))}
-                   </Collapse>
-                </>
+        <div className='sidebar_container'>
+
+          <Link href='/admin/content-manager'>
+            <div className='sidebar_button_container'>
+            <button className={router.asPath?.includes?.('content-manager') ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref><FaFeatherAlt className='sidebar_button_icon'/> Content Manager </button>
+            </div>
+          </Link>
+
+          {categories.map((category, i) => (
+            <div>
+                <p className='sidebar_category_title'>{category.title}</p>
+                {sidebarButtons.map((button, i) => (
+                 category.title === button.mainCategory && (
+                 <Link href={button.path}>
+                  <div className='sidebar_button_category_container'>
+                    <button className={router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref>{button.icon} {button.title}</button>
+                  </div>
+                </Link>)
               ))}
+
+            </div>
+              
+              ))}
+
           </div>
       
           {/*<AppSidebarNav items={navigation} />*/}
