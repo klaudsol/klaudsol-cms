@@ -103,7 +103,7 @@ const AppSidebar = () => {
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-         <Link href='/admin'>
+         <Link href='/admin' passHref>
          <a className='sidebar_header'> <b> KlaudSol CMS Dashboard </b> </a>
           </Link>
           
@@ -113,18 +113,18 @@ const AppSidebar = () => {
       <CSidebarNav>
         <div className='sidebar_container'>
 
-          <Link href='/admin/content-manager'>
+          <Link href='/admin/content-manager' passHref>
             <div className='sidebar_button_container'>
-            <button className={router.asPath?.includes?.('content-manager') ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref><FaFeatherAlt className='sidebar_button_icon'/> Content Manager </button>
+            <button className={router.asPath?.includes?.('content-manager') ? 'sidebar_buttons_active' : 'sidebar_buttons'}><FaFeatherAlt className='sidebar_button_icon'/> Content Manager </button>
             </div>
           </Link>
 
           {categories.map((category, i) => (
-            <div>
+            <div key={i}>
                 <p className='sidebar_category_title'>{category.title}</p>
                 {sidebarButtons.map((button, i) => (
                  category.title === button.mainCategory && (
-                 <Link href={button.path}>
+                 <Link href={button.path} passHref>
                   <div className='sidebar_button_category_container'>
                     <button className={router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref>{button.icon} {button.title}</button>
                   </div>

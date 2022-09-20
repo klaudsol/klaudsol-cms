@@ -116,7 +116,7 @@ const LoginForm = ({className, ...props}) => {
               <label>Password</label>
               <input type='password' className={cx('form-control', styles['form-control'])} autoComplete="current-password" onChange={evt => setPassword(evt.target.value)} />
             </div>
-            <Link href='/admin/'>
+            <Link href='/admin/' passHref>
             <button className={cx(styles['btn'], styles['btn-primary'])} onClick={() => router.push('/admin')}>
               {state.isLoading &&
                 <span>
