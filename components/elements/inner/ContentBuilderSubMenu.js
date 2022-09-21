@@ -60,7 +60,7 @@ const ContentBuilderSubMenu = ({title}) => {
 
     return ( 
     <>
-         <div class="submenu_container">
+         <div className="submenu_container">
             <div className="px-3 py-3">
                <div className='d-flex justify-content-between align-items-center mx-0 px-0 my-0 py-0'>
                    <a className='submenu_title'> <b> {title}</b> </a>

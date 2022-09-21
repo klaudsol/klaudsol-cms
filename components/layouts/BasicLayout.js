@@ -4,7 +4,7 @@ const BasicLayout = ({children}) => {
   return (
     <div>
       <AppSidebar />
-      <div class="wrapper d-flex flex-column min-vh-100">
+      <div className="wrapper d-flex flex-column min-vh-100">
       <div className="body flex-grow-1 px-3">
               <AppContent>
                     {children}
