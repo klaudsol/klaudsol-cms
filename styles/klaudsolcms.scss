@@ -2,6 +2,10 @@
     background-color: #eceff1;
 }
 
+.community_container {
+    background-color: #eceff1;
+}
+
 .sidebar_container {
     background-color: #eceff1;
     color: #455a64;
@@ -75,4 +79,347 @@
 .sidebar_button_icon {
     margin-bottom: 3px;
     margin-right: 10px;
+}
+
+/** 
+==================================================
+            SUB MENU STYLES
+===================================================
+**/
+
+.submenu_container {
+    background-color: #fff;
+    height: 100vh;
+    width: 280px;
+    margin-left: 258px;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid #b0bec5;
+}
+
+
+
+.submenu_title {
+    color: #455a64 !important;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.submenu_bar {
+    border-bottom: 1px solid #455a64;
+    padding-top: 10px;
+    margin-bottom: 10px;
+}
+
+.type_title {
+    font-size: 12px;
+    background-color: transparent;
+    color: #455a64;
+    border-radius: 0px;
+    width: 100%;
+    text-align: left;
+    padding: 0px !important;
+    border: 0px;
+}
+
+.content_manager_type_title {
+    font-size: 12px;
+    background-color: transparent;
+    color: #455a64;
+    border-radius: 0px;
+    width: 100%;
+    text-align: left;
+    padding: 0px !important;
+    border: 0px;
+}
+
+$onFocus: #323C4E;
+
+.type_title:hover,
+.type_title:focus {
+    background-color: #f2f2f2 !important;
+    color: #455a64 !important;
+    border: transparent !important;
+    outline: none;
+    box-shadow: none;
+
+}
+
+.type_title_icon {
+    font-size: 9px;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+
+.type_number {
+    background-color: #E4E6E9;
+    padding-right: 7px;
+    padding-top: 2px;
+    padding-left: 7px;
+    padding-bottom: 2px;
+    border-radius: 4px;
+    color: #455a64;
+    font-weight: 500;
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+.content_menu_item,
+.content_menu_item_active {
+    background-color: #fff;
+    border: transparent;
+    padding-bottom: 10px;
+    text-align: left;
+    padding: 10px;
+    padding-left: 20px;
+    width: 100%;
+}
+
+.content_menu_item:hover {
+    background-color: #f2f2f2;
+}
+
+.content_menu_item_active {
+    background-color: #eceff1;
+    border: transparent;
+    border-right: 2px solid #455a64;
+    color: #455a64;
+    padding-left: 20px;
+}
+
+.content_create_button {
+    background-color: transparent;
+    border: transparent;
+    font-size: 10px;
+    text-align: left;
+    padding: 12px;
+    padding-left: 18px;
+    width: 100%;
+}
+
+.content_create_button:hover {
+    background-color: #f2f2f2
+}
+
+.content_create_icon {
+    color: #455a64;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+
+
+/** 
+========================================================
+                DASHBOARD STYLES
+========================================================
+**/
+
+.dashboard_icon_container {
+    background-color: #455a64;
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 20px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 8px solid #b0bec5;
+}
+
+.dashboard_icon {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.welcome_icon {
+
+    margin-bottom: 5px;
+    font-size: 50px;
+}
+
+.community_button {
+    width: 100%;
+    background-color: transparent;
+    margin: 0;
+    border: transparent;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: left;
+    padding-left: 20px;
+    margin-left: 0px;
+    font-size: 20px;
+    text-decoration: none;
+    color: #455a64;
+}
+
+.community_button:hover {
+    background-color: #b0bec5;
+    color: #455a64;
+}
+
+.community_icon {
+    margin-right: 5px;
+    color: #455a64;
+    margin-bottom: 4px;
+}
+
+
+
+/** 
+============================================================
+                BUTTON STYLES
+============================================================
+**/
+
+/** BACK BUTTON **/
+
+.btn_back {
+    border: transparent;
+    background-color: transparent;
+    color: #455a64;
+    padding: 10px;
+    padding-left: 0px;
+}
+
+.btn_back:hover {
+    color: #b0bec5;
+}
+
+.icon_general {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+
+/** CREATE ENTRY BUTTON **/
+
+.btn_create_entry {
+    border: transparent;
+    background-color: #455a64;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.btn_create_entry:hover {
+    background-color: #b0bec5;
+}
+
+/** SEARCH BUTTON **/
+
+.btn_icon,
+.btn_filter {
+    background-color: transparent;
+    border: 1px solid lightgray;
+    color: #455a64;
+    border-radius: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.search_icon {
+    font-size: 12px;
+}
+
+/** FILTER BUTTON **/
+
+.btn_filter {
+    margin-left: 10px;
+}
+
+.icon_filter {
+    font-size: 16px;
+    margin-bottom: 2px;
+    margin-right: 2px;
+}
+
+/** ARROW BUTTONS **/
+
+.btn_arrows {
+    background-color: transparent;
+    border: transparent;
+    color: #455a64
+}
+
+.page_number {
+    background-color: #fff;
+    border: 1px solid lightgray;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+}
+
+#dropdown_general,
+#dropdown_entries {
+    background-color: transparent;
+    border: 1px solid lightgray;
+    margin-right: 10px;
+    color: #455a64;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 12px;
+}
+
+#dropdown_general:hover,
+#dropdown_entries:hover {
+    background-color: transparent !important;
+    border: 1px solid lightgray;
+    margin-right: 10px;
+    color: #455a64;
+}
+
+#dropdown_general_menu {
+    font-size: 12px;
+}
+
+#dropdown_entries {
+    text-align: left;
+    padding-left: 15px;
+    padding-right: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-size: 14px;
+}
+
+/** 
+=================================================================
+                    TABLE STYLES
+=================================================================
+**/
+
+#table_general {
+    font-size: 12px;
+    width: 100%;
+    padding: 10px;
+}
+
+#table_general td,
+#table_general th {
+    border-bottom: 1px solid lightgray;
+    padding-left: 10px;
+    padding: 10px;
+    border-spacing: 50px;
+}
+
+#table_general tr:hover {
+    background-color: #eceff1;
+    cursor: pointer;
+}
+
+#table_general th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #fff;
+    color: #455a64;
 }

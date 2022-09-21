@@ -17,7 +17,7 @@ import { FiSettings } from "react-icons/fi";
 
 export default function ContentManager() {
   return (
-      <InnerLayout>
+      <InnerLayout title='Content-Type Builder'>
         <>
         <div>
             <div className="row">
