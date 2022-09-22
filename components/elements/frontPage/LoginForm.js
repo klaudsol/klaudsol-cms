@@ -4,6 +4,7 @@ import { useLoginMode, LOGIN_MODE_SIGNUP } from '@/components/contexts/LoginMode
 import { useFadeEffect, slsFetch } from '@/components/Util'; 
 import { useRouter } from 'next/router';
 import styles from '@/styles/FrontPageLayout.module.scss';
+import Link from 'next/link';
 
 const LoginForm = ({className, ...props}) => {
   const router = useRouter();
@@ -87,6 +88,8 @@ const LoginForm = ({className, ...props}) => {
   
   
   return (
+    <>
+    
       <div className={cx("col-lg-5 col-sm-12 col-xs-12 mb-4 container-with-transition", className)} {...props}>
         <div className={styles["banner-form"]} id="login-form">
           <form> 
@@ -113,9 +116,8 @@ const LoginForm = ({className, ...props}) => {
               <label>Password</label>
               <input type='password' className={cx('form-control', styles['form-control'])} autoComplete="current-password" onChange={evt => setPassword(evt.target.value)} />
             </div>
-      
-      
-            <button className={cx(styles['btn'], styles['btn-primary'])} onClick={onSubmit}>
+            <Link href='/admin/' passHref>
+            <button className={cx(styles['btn'], styles['btn-primary'])} onClick={() => router.push('/admin')}>
               {state.isLoading &&
                 <span>
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -124,10 +126,13 @@ const LoginForm = ({className, ...props}) => {
               }
               Log in
             </button> 
+            </Link>
             <button className={cx('btn', 'btn-outline-primary', styles['btn'], styles['btn-outline-primary'])} onClick={(evt) => {evt.preventDefault(); setLoginMode(LOGIN_MODE_SIGNUP)}}>Sign up</button> 
           </form>
         </div>
       </div>
+    </>
+    
   );
   
 };

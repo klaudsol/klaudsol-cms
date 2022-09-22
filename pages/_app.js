@@ -7,6 +7,7 @@ import "@/styles/coreui/style.scss";
 import "bootstrap/dist/css/bootstrap-reboot.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@/styles/globals.scss";
+import "@/styles/klaudsolcms.scss";
 import "@/styles/timetracking/style.scss";
 
 import "@/styles/surveyform/style.scss";
@@ -33,10 +34,7 @@ export default function MyApp({ Component, pageProps }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>
-          SME - Accounting, inventory, procurement, and payroll system
-          specifically tailored for Philippine small and medium-scale
-          businesses. Helping Pinoy small and medium-sized businesses achieve
-          more.
+          KlaudSol CMS
         </title>
       </Head>
       <RootContext.Provider value={{ state, dispatch }}>
