@@ -1,5 +1,5 @@
-import Link from 'next/link';
-const AppTable = ({columns, entries}) => {
+
+const AppContentBuilderTable = ({columns, entries}) => {
     return ( 
         <>
         <table id="table_general">
@@ -16,7 +16,7 @@ const AppTable = ({columns, entries}) => {
             {entries.map((entry, i) => (
                 <tr key={i}>
                     {columns.map((col, index) => (
-                        <Link key={index} href={`/admin/content-manager/type/${entry['id']}`} passHref><td>{entry[col.accessor]}</td></Link>
+                        <td key={index}>{entry[col.accessor]}</td>
                     ))}
                 </tr>
             ))}
@@ -26,4 +26,4 @@ const AppTable = ({columns, entries}) => {
     );
 }
  
-export default AppTable;
+export default AppContentBuilderTable;

@@ -1,16 +1,16 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
+import Link from 'next/link';
 
 /** kladusol CMS components */
 import AppDropdown from '@/components/klaudsolcms/AppDropdown'
 import AppTable from '@/components/klaudsolcms/AppTable'
 import AppCreatebutton from '@/components/klaudsolcms/buttons/AppCreateButton'
-import AppFilterButton from '@/components/klaudsolcms/buttons/AppFilterButton'
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
-
+import AppButtonSm from '@/components/klaudsolcms/buttons/AppButtonSm'
 /** react-icons */
 import { FaChevronLeft, FaSearch, FaChevronRight } from "react-icons/fa";
-
+import { IoFilter } from 'react-icons/io5'
 import { BsGearFill } from 'react-icons/bs'
 
 export default function ContentManager() {
@@ -45,19 +45,19 @@ export default function ContentManager() {
 
   return (
       <InnerLayout title="Content">
-        <AppBackButton />
+        <AppBackButton link='/admin' />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
           <div>
-          <h3> TYPE </h3>
-          <p> {entries.length} entries found </p>
+            <h3> TYPE </h3>
+            <p> {entries.length} entries found </p>
           </div>
-          <AppCreatebutton title='Create new entry' />
+          <AppCreatebutton link='/admin/content-manager/type/create' title='Create new entry'/>
         </div>
 
         <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3"> 
             <div className="d-flex flex-row px-0">
               <AppIconButton icon={<FaSearch/>} /> 
-              <AppFilterButton />
+              <AppButtonSm title='Filters' icon={<IoFilter />} isDisabled={false}/>
             </div>
 
             <div className="d-flex flex-row px-0"> 

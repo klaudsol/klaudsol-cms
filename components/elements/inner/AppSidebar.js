@@ -57,30 +57,6 @@ const AppSidebar = () => {
       icon: <MdOutlinePermMedia className='sidebar_button_icon'/>
     },
     {
-      mainCategory: "PLUGINS",
-      title: "SEO",
-      path: "/admin/plugins/seo",
-      icon: <FaSearch className='sidebar_button_icon'/>
-    },
-    {
-      mainCategory: "PLUGINS",
-      title: "ER Chart",
-      path: "/admin/plugins/entity-relationship-chart",
-      icon: <BiNetworkChart className='sidebar_button_icon'/>
-    },
-    {
-      mainCategory: "GENERAL",
-      title: "Plugins",
-      path: "/admin/list-plugins",
-      icon: <IoExtensionPuzzleSharp className='sidebar_button_icon'/>
-    },
-    {
-      mainCategory: "GENERAL",
-      title: "ER Chart",
-      path: "/admin/marketplace",
-      icon: <FaShoppingCart className='sidebar_button_icon'/>
-    },
-    {
       mainCategory: "GENERAL",
       title: "Settings",
       path: "/admin/settings",
