@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
 import AppModal from '@/components/klaudsolcms/AppModal';
+import CollectionTypeBody from '@/components/klaudsolcms/modals/modal_body/CollectionTypeBody';
 const ContentBuilderSubMenu = ({title}) => {
 
    const [collapseOpen, setCollapseOpen] = useState(true);
@@ -102,7 +103,9 @@ const ContentBuilderSubMenu = ({title}) => {
            
             
         </div>
-        <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Modal Title' buttonTitle='Close'> Modal Body </AppModal>
+        <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Create a collection type' buttonTitle='Continue'> 
+          <CollectionTypeBody />
+        </AppModal>
     </> 
     );
 }

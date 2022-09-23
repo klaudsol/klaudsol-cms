@@ -8,10 +8,7 @@ import "bootstrap/dist/css/bootstrap-reboot.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@/styles/globals.scss";
 import "@/styles/klaudsolcms.scss";
-import "@/styles/timetracking/style.scss";
 
-import "@/styles/surveyform/style.scss";
-import "@/styles/certificateGenerator/style.scss";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import * as gtag from "@/lib/gtag";

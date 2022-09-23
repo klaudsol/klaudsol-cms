@@ -1,11 +1,10 @@
 import { useState, useCallback, useRef, useReducer} from 'react'; 
-import cx from 'classnames';
 import { useLoginMode, LOGIN_MODE_SIGNUP } from '@/components/contexts/LoginModeContext';
 import { useFadeEffect, slsFetch } from '@/components/Util'; 
 import { useRouter } from 'next/router';
 import styles from '@/styles/FrontPageLayout.module.scss';
 import Link from 'next/link';
-
+import Image from 'next/image';
 const LoginForm = ({className, ...props}) => {
   const router = useRouter();
   const [, setLoginMode] = useLoginMode();
@@ -79,45 +78,34 @@ const LoginForm = ({className, ...props}) => {
     })();
   }, [email, password, router]);
   
+  //const errorBox = useRef();
+  //const successBox = useRef();
   
-  const errorBox = useRef();
-  const successBox = useRef();
-  
-  useFadeEffect(errorBox, [state.submitted, state.isError]);
-  useFadeEffect(successBox, [state.submitted, state.isLoginSuccessful]);
-  
+ //useFadeEffect(errorBox, [state.submitted, state.isError]);
+ // useFadeEffect(successBox, [state.submitted, state.isLoginSuccessful]);
   
   return (
-    <>
-    
-      <div className={cx("col-lg-5 col-sm-12 col-xs-12 mb-4 container-with-transition", className)} {...props}>
-        <div className={styles["banner-form"]} id="login-form">
-          <form> 
-          
-              <div ref={errorBox} className="alert alert-danger useFadeEffect">
-                <p>Incorrect username and/or password.</p>
-              </div>
-            
-              <div ref={successBox} className="alert alert-success useFadeEffect">
-                <p>Welcome back! Logging you in...</p>
-              </div>
-              
-              {/*state.submitted && state.isLoginSuccessful &&
-                <Redirect to="/dashboard" />
-              */}
-            
-            <div className={cx('form-group', styles["form-group"])}>
-              <label>Email</label>
-              <input type='email' className={cx('form-control', styles['form-control'])} autoComplete="email" onChange={evt => setEmail(evt.target.value)} />
-            </div>
-      
-          
-            <div className={styles["form-group"]}>
-              <label>Password</label>
-              <input type='password' className={cx('form-control', styles['form-control'])} autoComplete="current-password" onChange={evt => setPassword(evt.target.value)} />
-            </div>
-            <Link href='/admin/' passHref>
-            <button className={cx(styles['btn'], styles['btn-primary'])} onClick={() => router.push('/admin')}>
+    <div className='container_login_form'>
+				<div className='img_login_logo img-responsive'>	
+				<Image  placeholder='blur'
+							blurDataURL="/logo-180x180.png"
+							src='/logo-180x180.png'
+              alt='cms-logo'
+						width={200} height={90}
+					/>
+  				</div>
+				<h4> Welcome to KlaudSol CMS!  </h4>
+				
+
+				<div className='form_login'>
+              		<label className='mb-2 mt-4'>Email</label>
+              		<input type='email' className='input_login' autoComplete="email"  />
+
+					  <label className='mb-2 mt-4'>Password</label>
+              		<input type='password' className='input_login' autoComplete="email" />
+            	</div>
+              <Link href='/admin/' passHref>
+            <button className='btn_login'>
               {state.isLoading &&
                 <span>
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -127,12 +115,7 @@ const LoginForm = ({className, ...props}) => {
               Log in
             </button> 
             </Link>
-            <button className={cx('btn', 'btn-outline-primary', styles['btn'], styles['btn-outline-primary'])} onClick={(evt) => {evt.preventDefault(); setLoginMode(LOGIN_MODE_SIGNUP)}}>Sign up</button> 
-          </form>
-        </div>
-      </div>
-    </>
-    
+			</div>
   );
   
 };

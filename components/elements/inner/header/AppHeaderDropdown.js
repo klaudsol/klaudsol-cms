@@ -16,7 +16,6 @@ import RootContext from '@/components/contexts/RootContext';
 
 import avatar8 from '@/public/assets/images/avatars/patrick-square.png'
 import { slsFetch } from '@/components/Util';
-import styles from '@/styles/Settings.module.scss';
 
 import Link from 'next/link';
 
@@ -98,11 +97,7 @@ const AppHeaderDropdown = () => {
         </CDropdownItem>
         */}
 
-          <CDropdownItem label="Settings">
-              <Link href='/app/settings' >
-                <a className={styles.btnSettings}>Settings</a>
-              </Link>
-          </CDropdownItem>
+       
 
 
           <CDropdownItem onClick={onLogout} href="#">

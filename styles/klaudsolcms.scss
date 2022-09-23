@@ -206,8 +206,6 @@ $onFocus: #323C4E;
     font-weight: bold;
 }
 
-
-
 /** 
 ========================================================
                 DASHBOARD STYLES
@@ -267,7 +265,51 @@ $onFocus: #323C4E;
     margin-bottom: 4px;
 }
 
+/** 
+============================================================
+                FIELD ICONS STYLES
+============================================================
+**/
+.icon_text,
+.icon_number,
+.icon_media {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: lightblue;
+    border: 1px solid lightgray;
+    margin-right: 8px;
+    width: 40px;
+    margin-bottom: 5px;
+}
 
+.icon_text_p {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.icon_number {
+    background-color: lightgoldenrodyellow;
+}
+
+.icon_media {
+    background-color: lavender;
+}
+
+.icon_edit,
+.icon_delete {
+    background-color: transparent;
+    color: #455a64;
+    border: transparent;
+    margin-left: 10px;
+}
+
+.icon_edit:hover,
+.icon_delete:hover {
+    color: black;
+    border-bottom: 1px solid black;
+}
 
 /** 
 ============================================================
@@ -296,12 +338,21 @@ $onFocus: #323C4E;
 
 /** CREATE ENTRY BUTTON **/
 
-.btn_create_entry {
+.btn_create_entry,
+.btn_general_lg {
     border: transparent;
     background-color: #455a64;
     color: #fff;
     border-radius: 5px;
     padding: 10px;
+    font-size: 11px;
+}
+
+.btn_general_lg {
+    background-color: transparent;
+    border: 1px solid lightgray;
+    color: #455a64;
+    margin-left: 10px;
 }
 
 .btn_create_entry:hover {
@@ -311,7 +362,7 @@ $onFocus: #323C4E;
 /** SEARCH BUTTON **/
 
 .btn_icon,
-.btn_filter {
+.btn_general_sm {
     background-color: transparent;
     border: 1px solid lightgray;
     color: #455a64;
@@ -322,22 +373,41 @@ $onFocus: #323C4E;
     padding-bottom: 5px;
     font-weight: 600;
     font-size: 12px;
+    margin-left: 5px;
+}
+
+.btn_icon {
+    margin: 0px;
+}
+
+.btn_general_sm:disabled,
+.btn_general_lg:disabled {
+    background-color: lightgray;
 }
 
 .search_icon {
     font-size: 12px;
 }
 
-/** FILTER BUTTON **/
+/** Add field type **/
 
-.btn_filter {
-    margin-left: 10px;
+.btn_add_field {
+    background-color: #E4E6E9;
+    border: transparent;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 100%;
+    text-align: left;
+    padding-left: 12px;
+    font-size: 12px;
 }
 
-.icon_filter {
-    font-size: 16px;
+.btn_add_field_icon {
+    font-size: 20px;
+    color: #455a64;
+    background-color: transparent;
+    margin-right: 8px;
     margin-bottom: 2px;
-    margin-right: 2px;
 }
 
 /** ARROW BUTTONS **/
@@ -422,4 +492,200 @@ $onFocus: #323C4E;
     text-align: left;
     background-color: #fff;
     color: #455a64;
+}
+
+/**
+===============================================
+            MEDIA LIBRARY STYLES
+===============================================
+
+**/
+
+.container_assets_bg {
+    width: 100%;
+    background-image: linear-gradient(180deg, #fff, #eceff1);
+    height: 23vh;
+}
+
+.container_assets {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: fit-content;
+    margin-top: 50px;
+    padding-left: 250px;
+}
+
+.icon_assets {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+/**
+=========================================================
+            CREATE NEW ENTRY STYLES
+=========================================================
+**/
+
+.container_new_entry {
+    background-color: #fff;
+    border: 1px solid lightgray;
+    justify-content: start;
+    align-items: flex-start;
+    text-align: start;
+}
+
+.input_text {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid lightgray;
+}
+
+.new_entry_block_button,
+.new_entry_block_button_delete {
+    background-color: #455a64;
+    border: transparent;
+    color: #fff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    text-align: left;
+    padding-left: 12px;
+    font-size: 12px;
+}
+
+.new_entry_block_button_delete {
+    background-color: maroon;
+}
+
+.block_bar {
+    width: 100%;
+    border-bottom: 1px solid lightgray;
+}
+
+.icon_block_button {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+
+.btn_add_image {
+    width: 100%;
+    border: 1px solid lightgray;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #eceff1;
+}
+
+.icon_add_image {
+    font-size: 50px;
+    color: #455a64;
+    margin-bottom: 5px;
+}
+
+/**
+=================================================
+            FRONT PAGE
+=================================================
+**/
+.container_main_bg {
+    background-color: #f2f2f2;
+    height: 100vh;
+    width: 100%;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid #b0bec5;
+}
+
+.container_login_form {
+    width: 60vh;
+    height: 100%;
+    background-color: #fff;
+    margin: auto;
+    left: 0;
+    right: 0;
+    margin-top: 10vh;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding-top: 8vh;
+    padding-left: 5vh;
+    padding-right: 5vh;
+    padding-bottom: 8vh;
+}
+
+.img_login_logo {
+    width: 100%;
+    text-align: center;
+}
+
+.form_login {
+    text-align: left;
+}
+
+.btn_login {
+    width: 100%;
+    background-color: #455a64;
+    color: #fff;
+    padding: 15px;
+    border: transparent;
+    border-radius: 5px;
+    margin-top: 25px;
+}
+
+.input_login {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+
+/** 
+======================================================
+            MODAL DESIGN
+======================================================
+**/
+
+.icon_modal_close {
+    background-color: #eceff1;
+    border: 1px solid lightgray;
+    color: #455a64;
+}
+
+.modal_header {
+    background-color: #fff;
+}
+
+.btn_modal {
+    background-color: #455a64;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    margin-right: 15px;
+
+}
+
+.btn_modal:hover {
+    background-color: #323C4E !important;
+}
+
+.btn_modal_settings {
+    background-color: transparent;
+    border: transparent;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-bottom: 2px solid #455a64;
+}
+
+.container_field_type {
+    background-color: #fff;
+    border: 1px solid lightgray;
+    width: 100%;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    margin-top: 10px;
 }
