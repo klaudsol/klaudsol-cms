@@ -4,14 +4,10 @@ import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from '@/lib/Session';
 
 export default function Index() {
-
-
   return (
-  <FrontPageLayout></FrontPageLayout>
+    <FrontPageLayout></FrontPageLayout>
   );
-  
-}
-
+  }
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req, res }) {

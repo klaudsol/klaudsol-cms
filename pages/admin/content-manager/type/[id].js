@@ -1,6 +1,10 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
+import CacheContext from "@/components/contexts/CacheContext";
+import { getSessionCache } from "@/lib/Session";
+
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
+
 /** kladusol CMS components */
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
 import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg'
@@ -9,9 +13,9 @@ import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg'
 import { FaCheck, FaImage, FaTrash } from "react-icons/fa";
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
-import { FcAddImage } from 'react-icons/fc';
 
-export default function Type() {
+
+export default function Type({cache}) {
   const router = useRouter();
 
   const { id } = router.query;
@@ -31,6 +35,7 @@ export default function Type() {
   }, [id]);
 
   return (
+    <CacheContext.Provider value={cache}>
       <InnerLayout title="Content">
         <AppBackButton link='/admin/content-manager' />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
@@ -103,6 +108,7 @@ export default function Type() {
      
          
       </InnerLayout>
+      </CacheContext.Provider>
   );
 }
-
+export const getServerSideProps = getSessionCache();

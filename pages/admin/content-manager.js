@@ -1,19 +1,21 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
-import Link from 'next/link';
+import CacheContext from "@/components/contexts/CacheContext";
+import { getSessionCache } from "@/lib/Session";
 
 /** kladusol CMS components */
-import AppDropdown from '@/components/klaudsolcms/AppDropdown'
-import AppTable from '@/components/klaudsolcms/AppTable'
-import AppCreatebutton from '@/components/klaudsolcms/buttons/AppCreateButton'
-import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
-import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
-import AppButtonSm from '@/components/klaudsolcms/buttons/AppButtonSm'
+import AppDropdown from '@/components/klaudsolcms/AppDropdown';
+import AppTable from '@/components/klaudsolcms/AppTable';
+import AppCreatebutton from '@/components/klaudsolcms/buttons/AppCreateButton';
+import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton';
+import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton';
+import AppButtonSm from '@/components/klaudsolcms/buttons/AppButtonSm';
+
 /** react-icons */
 import { FaChevronLeft, FaSearch, FaChevronRight } from "react-icons/fa";
-import { IoFilter } from 'react-icons/io5'
-import { BsGearFill } from 'react-icons/bs'
+import { IoFilter } from 'react-icons/io5';
+import { BsGearFill } from 'react-icons/bs';
 
-export default function ContentManager() {
+export default function ContentManager({cache}) {
   /** Data Arrays : to be fetched from database soon */
   const items = [
     {name: 'Id'}, 
@@ -44,6 +46,7 @@ export default function ContentManager() {
   ]
 
   return (
+    <CacheContext.Provider value={cache}>
       <InnerLayout title="Content">
         <AppBackButton link='/admin' />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
@@ -82,6 +85,9 @@ export default function ContentManager() {
         </div>
          
       </InnerLayout>
+      </CacheContext.Provider>
   );
 }
 
+
+export const getServerSideProps = getSessionCache();

@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
 import BasicLayout from "@/components/layouts/BasicLayout";
+import CacheContext from "@/components/contexts/CacheContext";
+import { getSessionCache } from "@/lib/Session";
+
+import { useState, useEffect } from "react";
 
 /** kladusol cms components */
 import AppDropdown from '@/components/klaudsolcms/AppDropdown'
@@ -16,7 +19,7 @@ import { FaPlus, FaSearch } from 'react-icons/fa'
 import { IoFilter } from 'react-icons/io5'
 import { ImFilesEmpty } from 'react-icons/im'
 
-export default function ContentManager() {
+export default function ContentManager({cache}) {
   const sortItems = [
     {name: 'Most recent uploads'}, 
     {name: 'Oldest uploads'},
@@ -26,6 +29,7 @@ export default function ContentManager() {
     {name: 'Oldest updates'},
   ]
   return (
+    <CacheContext.Provider value={cache}>
       <BasicLayout>
         <div className="row">
           <div className="d-flex align-items-center justify-content-between pt-4 px-4 mb-4">
@@ -109,6 +113,8 @@ export default function ContentManager() {
 
         </div>
       </BasicLayout>
+      </CacheContext.Provider>
   );
 }
 
+export const getServerSideProps = getSessionCache();

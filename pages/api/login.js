@@ -13,7 +13,6 @@ async function loginHandler(req, res) {
     return
   }
   
-  
   const {email=null, password=null} = req.body; 
   
   if (!email || !password) {
@@ -22,18 +21,15 @@ async function loginHandler(req, res) {
   }
   
   try {
-    
-    const { session_token, user: {firstName, lastName, homepage, permissions, apps} } = await People.login(email, password);
+    const { session_token, user: {firstName, lastName, role} } = await People.login(email, password);
     req.session.session_token = session_token;
     req.session.cache = {
       firstName,
       lastName,
-      homepage,
-      permissions,
-      apps
+      role,
     }; 
     await req.session.save();    
-    res.status(200).json({message: "OK", homepage});
+    res.status(200).json({message: "OK"});
     return;
   
   } catch (error) {

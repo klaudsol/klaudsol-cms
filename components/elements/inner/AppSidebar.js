@@ -1,26 +1,22 @@
-import React, { useContext } from 'react'
 
-import { CSidebar, CSidebarBrand, CSidebarNav} from '@coreui/react'
+import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarNav} from '@coreui/react'
 
-import { FaClock, FaTruck, 
-FaFeatherAlt, FaSearch, FaShoppingCart
-} from 'react-icons/fa'
+import { FaFeatherAlt, FaChevronLeft } from 'react-icons/fa'
 
-import { IoExtensionPuzzleSharp} from 'react-icons/io5'
-
-import { BiBuildings, BiNetworkChart } from 'react-icons/bi';
+import { BiBuildings } from 'react-icons/bi';
 
 import { BsFillGearFill } from 'react-icons/bs';
 
-
 import { MdOutlinePermMedia } from 'react-icons/md';
 
-import { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import Link from 'next/link';
 
 import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
+
+import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
 
 import { useRouter } from 'next/router'
 
@@ -35,7 +31,7 @@ const AppSidebar = () => {
   const router = useRouter()
 
   const cache = useContext(CacheContext);
- 
+  const { firstName = null, lastName = null } = cache ?? {};
  
 
   const [categories, setCategories] = useState([
@@ -114,15 +110,19 @@ const AppSidebar = () => {
           </div>
       
           {/*<AppSidebarNav items={navigation} />*/}
-
+            
       </CSidebarNav>
-      {/*
-      <CSidebarToggler
-        className="d-none d-lg-flex"
-        //onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
-        //onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-      />
-      */}
+
+      <CSidebarFooter className='sidebar_footer'>
+        <div className='d-flex align-items-center justify-content-between'> 
+       <div className='d-flex flex-row align-items-center'>
+      <SidebarFooterIcon title={`${firstName.charAt(0)}${lastName.charAt(0)}`} />
+        <h6 className='sidebar_footer_name'> {firstName} {lastName} </h6>
+       </div>
+        <button className='sidebar_footer_collapse'> <FaChevronLeft /> </button>
+        </div>
+       
+      </CSidebarFooter>
     </CSidebar>
   )
 }

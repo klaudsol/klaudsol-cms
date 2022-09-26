@@ -1,19 +1,19 @@
-import InnerLayout from "@/components/layouts/InnerLayout";
+import BasicLayout from "@/components/layouts/BasicLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@/lib/Session";
 
-export default function Settings({cache}) {
+export default function Profile({cache}) {
   return (
     <CacheContext.Provider value={cache}>
-      <InnerLayout>
+      <BasicLayout>
         <div>
           <div className="row">
             <div className="col-xl-8 col-lg-8 col-md-8">
-              <h3 className="mt-5"> Settings </h3>
+              <h3 className="mt-5"> Profile </h3>
             </div>
            </div>
         </div>
-      </InnerLayout>
+      </BasicLayout>
     </CacheContext.Provider>
   );
 }

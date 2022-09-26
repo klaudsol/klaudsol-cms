@@ -66,7 +66,7 @@ const LoginForm = ({className, ...props}) => {
           });
           const { message, homepage } = await response.json();
           dispatch({type: 'SUCCESS'});
-          router.push(`/${homepage}`);
+          router.push(`/admin`);
           
         } catch(ex) {
           console.error(ex);  
@@ -78,35 +78,36 @@ const LoginForm = ({className, ...props}) => {
     })();
   }, [email, password, router]);
   
-  //const errorBox = useRef();
-  //const successBox = useRef();
+  const errorBox = useRef();
+  const successBox = useRef();
   
- //useFadeEffect(errorBox, [state.submitted, state.isError]);
- // useFadeEffect(successBox, [state.submitted, state.isLoginSuccessful]);
+ useFadeEffect(errorBox, [state.submitted, state.isError]);
+ useFadeEffect(successBox, [state.submitted, state.isLoginSuccessful]);
   
   return (
     <div className='container_login_form'>
 				<div className='img_login_logo img-responsive'>	
-				<Image  placeholder='blur'
-							blurDataURL="/logo-180x180.png"
-							src='/logo-180x180.png'
-              alt='cms-logo'
-						width={200} height={90}
-					/>
-  				</div>
-				<h4> Welcome to KlaudSol CMS!  </h4>
+          <Image placeholder='blur'
+                blurDataURL="/logo-180x180.png"
+                src='/logo-180x180.png'
+                alt='cms-logo'
+                width={200} height={90}
+          />
+  			</div>
+			  <h4> Welcome to KlaudSol CMS!  </h4>
 				
-
 				<div className='form_login'>
-              		<label className='mb-2 mt-4'>Email</label>
-              		<input type='email' className='input_login' autoComplete="email"  />
+        <div ref={errorBox} className="alert alert-danger useFadeEffect px-3 pt-3 pb-2 mb-0 mt-3"> <p>Incorrect username and/or password.</p> </div>
+        <div ref={successBox} className="alert alert-success useFadeEffect px-3 pt-3 pb-2 mb-0 mt-3"> <p>Welcome back! Logging you in...</p> </div>
+              		<label className='mb-2 mt-3'>Email</label>
+              		<input type='email' className='input_login' autoComplete="email" onChange={e => setEmail(e.target.value)}  />
 
 					  <label className='mb-2 mt-4'>Password</label>
-              		<input type='password' className='input_login' autoComplete="email" />
+              		<input type='password' className='input_login' autoComplete="email" onChange={e => setPassword(e.target.value)} />
             	</div>
               <Link href='/admin/' passHref>
-            <button className='btn_login'>
-              {state.isLoading &&
+            <button className='btn_login' onClick={onSubmit}>
+               {state.isLoading &&
                 <span>
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   &nbsp;
