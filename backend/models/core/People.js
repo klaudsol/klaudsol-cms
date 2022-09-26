@@ -11,17 +11,16 @@ class People {
      id: {auroraType: AURORA_TYPE.LONG, allowOnCreate: false}, 
      first_name: {auroraType: AURORA_TYPE.STRING, allowOnCreate: true }, 
      last_name: {auroraType: AURORA_TYPE.STRING, allowOnCreate: true }, 
-     company_position: {auroraType: AURORA_TYPE.STRING, allowOnCreate: true }, 
+     role: {auroraType: AURORA_TYPE.STRING, allowOnCreate: true }, 
      login_enabled: {auroraType: AURORA_TYPE.BOOLEAN, allowOnCreate: true }, 
      email: {auroraType: AURORA_TYPE.STRING, allowOnCreate: true }, 
      created_at: {auroraType: AURORA_TYPE.STRING, allowOnCreate: false  }, 
-     sme_timezone_id: {auroraType: AURORA_TYPE.LONG, allowOnCreate: true },
     };
   };
 
  // fields for sme_people_professional 
 
-
+/*
 static async displayPeopleProfessional() { // returns array of Timesheet Table
   const db = new DB();
   const sql = `select * from sme_people_professional`;
@@ -35,18 +34,13 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
   const peopleRaw  = data.records;
   const people = peopleRaw.map(person => new People(fromAurora(person, People.peopleProfessionalFields())));
   return people;   
-}
+}*/
   
-
-  
-  
-  static async login(email, password, tenantId) {
-    
-    
+  static async login(email, password) {
     try {
       
       const db = new DB();
-      const sql = `SELECT id, salt, first_name, last_name FROM sme_people 
+      const sql = `SELECT id, salt, first_name, last_name, role FROM people 
         WHERE email=:email AND encrypted_password = sha2(CONCAT(:password, salt), 256) AND login_enabled = 1 LIMIT 1;`;
       const data = await db.exectuteStatement(sql, [
         {name: 'email', value:{stringValue: email}},
@@ -62,84 +56,24 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
         {longValue: userId},
         {stringValue: userSalt},
         {stringValue: firstName},
-        {stringValue: lastName}
+        {stringValue: lastName},
+        {stringValue: role}
       ] = user;
       
       const session_token = sha256(`${userId}${userSalt}${Date.now()}`);
       
-      let tenantSql, tenantData, homepage;
-      if (!tenantId) {
-        //get default tenant id if not explicity defined
-        tenantSql = `SELECT sme_people_tenants.sme_tenant_id, sme_tenants.homepage FROM sme_people_tenants 
-          LEFT JOIN sme_tenants ON sme_people_tenants.sme_tenant_id = sme_tenants.id
-          WHERE sme_people_id = :sme_people_id ORDER BY sme_tenant_id ASC LIMIT 1`;
-        tenantData = await db.exectuteStatement(tenantSql, [
-          {name: 'sme_people_id', value:{longValue: userId}}
-        ]);
-        
-        //Invalid user - no tenant entry
-        if (tenantData.records.length === 0) throw new UnauthorizedError("No tenant entry");
-        
-        [{longValue: tenantId}, {stringValue: homepage}] = tenantData.records[0];
-        
-      } else {
-        //check if user is allowed in the given tenant
-        tenantSql = `SELECT sme_people_tenants.sme_tenant_id, sme_tenants.homepage FROM sme_people_tenants 
-          LEFT JOIN sme_tenants ON sme_people_tenants.sme_tenant_id = sme_tenants.id
-          WHERE sme_people_id = :sme_people_id AND sme_tenant_id = :sme_tenant_id ORDER BY sme_tenant_id ASC LIMIT 1`;
-        tenantData = await db.exectuteStatement(tenantSql, [
-          {name: 'sme_people_id', value:{longValue: userId}},
-          {name: 'sme_tenant_id', value:{longValue: tenantId}}
-        ]);
-        
-        //Invalid user - no tenant entry
-        if (tenantData.records.length === 0) throw new UnauthorizedError("No tenant entry");
-        
-        [{longValue: tenantId}, {stringValue: homepage}] = tenantData.records[0];
-        
-      }
-      
-      const sessionSql = `INSERT INTO sme_sessions (\`people_id\`, \`session\`, \`session_expiry\`, \`sme_tenant_id\`)  
-        VALUES(:id, :session, DATE_ADD(NOW(), INTERVAL 744 HOUR), :sme_tenant_id)`;
+      const sessionSql = `INSERT INTO sessions (\`people_id\`, \`session\`, \`session_expiry\`)  
+        VALUES(:id, :session, DATE_ADD(NOW(), INTERVAL 744 HOUR))`;
         
       await db.exectuteStatement(sessionSql, [
         {name: 'session', value:{stringValue: session_token}},
         {name: 'id', value:{longValue: userId}},
-        {name: 'sme_tenant_id', value:{longValue: tenantId}}
       ]);
       
       //Query available permissions
       
-      const permissionSql = `
-        select sme_permissions.name from sme_people_groups 
-        left join sme_group_permissions on  sme_people_groups.sme_group_id = sme_group_permissions.sme_group_id
-        left join sme_permissions on sme_group_permissions.sme_permission_id = sme_permissions.id
-        where 
-        sme_people_groups.sme_tenant_id = :sme_tenant_id AND
-        sme_people_groups.sme_people_id = :id      
-      `;
-      
-      const permissionsData = await db.exectuteStatement(permissionSql, [
-        {name: 'id', value:{longValue: userId}},
-        {name: 'sme_tenant_id', value:{longValue: tenantId}}
-      ]);
-      
-      const permissions = permissionsData.records.map(([{stringValue: permission}]) => permission);
-      
-      
-      //Query available apps
-      
-      const appsSql = `
-      select slug from sme_tenant_apps left join sme_apps on sme_tenant_apps.sme_app_id = sme_apps.id where sme_tenant_id = :sme_tenant_id;
-      `;
-      
-      const appsData = await db.exectuteStatement(appsSql, [
-        {name: 'sme_tenant_id', value:{longValue: tenantId}}
-      ]);
-      
-      const apps = appsData.records.map(([{stringValue: slug}]) => slug);
-      
-      return { session_token, user: {firstName, lastName, homepage, permissions, apps} };
+ 
+      return { session_token, user: {firstName, lastName, role} };
       
     } catch (error) {
       log(error.stack);

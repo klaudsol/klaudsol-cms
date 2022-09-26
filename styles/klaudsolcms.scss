@@ -1,0 +1,780 @@
+.general_container {
+    background-color: #eceff1;
+}
+
+.community_container {
+    background-color: #eceff1;
+}
+
+.sidebar_container {
+    background-color: #eceff1;
+    color: #455a64;
+}
+
+.sidebar_brand {
+    background-color: #eceff1;
+    border-bottom: 1px solid lightgray;
+    color: #455a64;
+}
+
+.sidebar_header {
+    color: #455a64 !important;
+    text-decoration: none;
+}
+
+.sidebar_collapse {
+    background-color: #eceff1;
+    width: 100%;
+    border: 0px;
+    color: #E4E6E9;
+    height: max-content;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    align-items: flex-start;
+    padding-left: 25px;
+}
+
+.sidebar_button_container {
+    background-color: #eceff1;
+    width: 100%;
+    padding: 20px;
+}
+
+.sidebar_category_title {
+    padding-left: 20px;
+    font-size: 11px;
+}
+
+.sidebar_button_category_container {
+    background-color: #eceff1;
+    width: 100%;
+    padding: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.sidebar_buttons,
+.sidebar_buttons_active {
+    background-color: #eceff1;
+    width: 100%;
+    padding: 7px;
+    border-radius: 5px;
+    border: transparent;
+    text-align: left;
+    padding-left: 15px;
+}
+
+
+.sidebar_buttons:hover {
+    background-color: #b0bec5;
+
+}
+
+.sidebar_buttons_active {
+    background-color: #455a64;
+    color: #eceff1;
+}
+
+.sidebar_button_icon {
+    margin-bottom: 3px;
+    margin-right: 10px;
+}
+
+.sidebar_footer {
+    background-color: #eceff1;
+    border-top: 1px solid lightgray;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+
+#sidebar_footer_icon {
+    background-color: #455a64;
+    border-radius: 50%;
+    margin-right: 15px;
+    height: 40px;
+    width: 40px;
+    border: transparent;
+    color: #eceff1;
+    padding: 0px;
+    font-size: 11px;
+}
+
+#sidebar_footer_icon:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.sidebar_footer_profile {
+    text-decoration: none;
+    color: #455a64;
+    padding: 0px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.sidebar_footer_profile:hover {
+    color: #455a64;
+}
+
+.sidebar_footer_items:active {
+    background-color: #b0bec5 !important;
+}
+
+.sidebar_footer_logout {
+    background-color: transparent;
+    border: transparent;
+    margin: 0px;
+    padding: 0px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #455a64;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.sidebar_footer_name {
+    font-size: 14px;
+    margin-right: 20px;
+}
+
+.sidebar_footer_collapse {
+    background-color: #eceff1;
+    border: 1px solid lightgray;
+    margin-bottom: 10px;
+}
+
+/** 
+==================================================
+            SUB MENU STYLES
+============================;=======================
+**/
+
+.submenu_container {
+    background-color: #fff;
+    height: 100vh;
+    width: 280px;
+    margin-left: 258px;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid #b0bec5;
+}
+
+
+
+.submenu_title {
+    color: #455a64 !important;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.submenu_bar {
+    border-bottom: 1px solid #455a64;
+    padding-top: 10px;
+    margin-bottom: 10px;
+}
+
+.type_title {
+    font-size: 12px;
+    background-color: transparent;
+    color: #455a64;
+    border-radius: 0px;
+    width: 100%;
+    text-align: left;
+    padding: 0px !important;
+    border: 0px;
+}
+
+.content_manager_type_title {
+    font-size: 12px;
+    background-color: transparent;
+    color: #455a64;
+    border-radius: 0px;
+    width: 100%;
+    text-align: left;
+    padding: 0px !important;
+    border: 0px;
+}
+
+$onFocus: #323C4E;
+
+.type_title:hover,
+.type_title:focus {
+    background-color: #f2f2f2 !important;
+    color: #455a64 !important;
+    border: transparent !important;
+    outline: none;
+    box-shadow: none;
+
+}
+
+.type_title_icon {
+    font-size: 9px;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+
+.type_number {
+    background-color: #E4E6E9;
+    padding-right: 7px;
+    padding-top: 2px;
+    padding-left: 7px;
+    padding-bottom: 2px;
+    border-radius: 4px;
+    color: #455a64;
+    font-weight: 500;
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+.content_menu_item,
+.content_menu_item_active {
+    background-color: #fff;
+    border: transparent;
+    padding-bottom: 10px;
+    text-align: left;
+    padding: 10px;
+    padding-left: 20px;
+    width: 100%;
+}
+
+.content_menu_item:hover {
+    background-color: #f2f2f2;
+}
+
+.content_menu_item_active {
+    background-color: #eceff1;
+    border: transparent;
+    border-right: 2px solid #455a64;
+    color: #455a64;
+    padding-left: 20px;
+}
+
+.content_create_button {
+    background-color: transparent;
+    border: transparent;
+    font-size: 10px;
+    text-align: left;
+    padding: 12px;
+    padding-left: 18px;
+    width: 100%;
+}
+
+.content_create_button:hover {
+    background-color: #f2f2f2
+}
+
+.content_create_icon {
+    color: #455a64;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+/** 
+========================================================
+                DASHBOARD STYLES
+========================================================
+**/
+
+.dashboard_icon_container {
+    background-color: #455a64;
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 20px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 8px solid #b0bec5;
+}
+
+.dashboard_icon {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.welcome_icon {
+
+    margin-bottom: 5px;
+    font-size: 50px;
+}
+
+.community_button {
+    width: 100%;
+    background-color: transparent;
+    margin: 0;
+    border: transparent;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: left;
+    padding-left: 20px;
+    margin-left: 0px;
+    font-size: 20px;
+    text-decoration: none;
+    color: #455a64;
+}
+
+.community_button:hover {
+    background-color: #b0bec5;
+    color: #455a64;
+}
+
+.community_icon {
+    margin-right: 5px;
+    color: #455a64;
+    margin-bottom: 4px;
+}
+
+/** 
+============================================================
+                FIELD ICONS STYLES
+============================================================
+**/
+.icon_text,
+.icon_number,
+.icon_media {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: lightblue;
+    border: 1px solid lightgray;
+    margin-right: 8px;
+    width: 40px;
+    margin-bottom: 5px;
+}
+
+.icon_text_p {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.icon_number {
+    background-color: lightgoldenrodyellow;
+}
+
+.icon_media {
+    background-color: lavender;
+}
+
+.icon_edit,
+.icon_delete {
+    background-color: transparent;
+    color: #455a64;
+    border: transparent;
+    margin-left: 10px;
+}
+
+.icon_edit:hover,
+.icon_delete:hover {
+    color: black;
+    border-bottom: 1px solid black;
+}
+
+/** 
+============================================================
+                BUTTON STYLES
+============================================================
+**/
+
+/** BACK BUTTON **/
+
+.btn_back {
+    border: transparent;
+    background-color: transparent;
+    color: #455a64;
+    padding: 10px;
+    padding-left: 0px;
+}
+
+.btn_back:hover {
+    color: #b0bec5;
+}
+
+.icon_general {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+
+/** CREATE ENTRY BUTTON **/
+
+.btn_create_entry,
+.btn_general_lg {
+    border: transparent;
+    background-color: #455a64;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 11px;
+}
+
+.btn_general_lg {
+    background-color: transparent;
+    border: 1px solid lightgray;
+    color: #455a64;
+    margin-left: 10px;
+}
+
+.btn_create_entry:hover {
+    background-color: #b0bec5;
+}
+
+/** SEARCH BUTTON **/
+
+.btn_icon,
+.btn_general_sm {
+    background-color: transparent;
+    border: 1px solid lightgray;
+    color: #455a64;
+    border-radius: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: 600;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.btn_icon {
+    margin: 0px;
+}
+
+.btn_general_sm:disabled,
+.btn_general_lg:disabled {
+    background-color: lightgray;
+}
+
+.search_icon {
+    font-size: 12px;
+}
+
+/** Add field type **/
+
+.btn_add_field {
+    background-color: #E4E6E9;
+    border: transparent;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 100%;
+    text-align: left;
+    padding-left: 12px;
+    font-size: 12px;
+}
+
+.btn_add_field_icon {
+    font-size: 20px;
+    color: #455a64;
+    background-color: transparent;
+    margin-right: 8px;
+    margin-bottom: 2px;
+}
+
+/** ARROW BUTTONS **/
+
+.btn_arrows {
+    background-color: transparent;
+    border: transparent;
+    color: #455a64
+}
+
+.page_number {
+    background-color: #fff;
+    border: 1px solid lightgray;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+}
+
+#dropdown_general,
+#dropdown_entries {
+    background-color: transparent;
+    border: 1px solid lightgray;
+    margin-right: 10px;
+    color: #455a64;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 12px;
+}
+
+#dropdown_general:hover,
+#dropdown_entries:hover {
+    background-color: transparent !important;
+    border: 1px solid lightgray;
+    margin-right: 10px;
+    color: #455a64;
+}
+
+#dropdown_general_menu {
+    font-size: 12px;
+}
+
+#dropdown_entries {
+    text-align: left;
+    padding-left: 15px;
+    padding-right: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-size: 14px;
+}
+
+/** 
+=================================================================
+                    TABLE STYLES
+=================================================================
+**/
+
+#table_general {
+    font-size: 12px;
+    width: 100%;
+    padding: 10px;
+}
+
+#table_general td,
+#table_general th {
+    border-bottom: 1px solid lightgray;
+    padding-left: 10px;
+    padding: 10px;
+    border-spacing: 50px;
+}
+
+#table_general tr:hover {
+    background-color: #eceff1;
+    cursor: pointer;
+}
+
+#table_general th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #fff;
+    color: #455a64;
+}
+
+/**
+===============================================
+            MEDIA LIBRARY STYLES
+===============================================
+
+**/
+
+.container_assets_bg {
+    width: 100%;
+    background-image: linear-gradient(180deg, #fff, #eceff1);
+    height: 23vh;
+}
+
+.container_assets {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: fit-content;
+    margin-top: 50px;
+    padding-left: 250px;
+}
+
+.icon_assets {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+/**
+=========================================================
+            CREATE NEW ENTRY STYLES
+=========================================================
+**/
+
+.container_new_entry {
+    background-color: #fff;
+    border: 1px solid lightgray;
+    justify-content: start;
+    align-items: flex-start;
+    text-align: start;
+}
+
+.input_text {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid lightgray;
+}
+
+.new_entry_block_button,
+.new_entry_block_button_delete {
+    background-color: #455a64;
+    border: transparent;
+    color: #fff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    text-align: left;
+    padding-left: 12px;
+    font-size: 12px;
+}
+
+.new_entry_block_button_delete {
+    background-color: maroon;
+}
+
+.block_bar {
+    width: 100%;
+    border-bottom: 1px solid lightgray;
+}
+
+.icon_block_button {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+
+.btn_add_image {
+    width: 100%;
+    border: 1px solid lightgray;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #eceff1;
+}
+
+.icon_add_image {
+    font-size: 50px;
+    color: #455a64;
+    margin-bottom: 5px;
+}
+
+/**
+=================================================
+            FRONT PAGE
+=================================================
+**/
+.container_main_bg {
+    background-color: #f2f2f2;
+    height: 100vh;
+    width: 100%;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid #b0bec5;
+}
+
+.container_login_form {
+    width: 60vh;
+    height: 100%;
+    background-color: #fff;
+    margin: auto;
+    left: 0;
+    right: 0;
+    margin-top: 10vh;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding-top: 8vh;
+    padding-left: 5vh;
+    padding-right: 5vh;
+    padding-bottom: 8vh;
+}
+
+.img_login_logo {
+    width: 100%;
+    text-align: center;
+}
+
+.form_login {
+    text-align: left;
+}
+
+.btn_login {
+    width: 100%;
+    background-color: #455a64;
+    color: #fff;
+    padding: 15px;
+    border: transparent;
+    border-radius: 5px;
+    margin-top: 25px;
+}
+
+.input_login {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+
+/** 
+======================================================
+            MODAL DESIGN
+======================================================
+**/
+
+.icon_modal_close {
+    background-color: #eceff1;
+    border: 1px solid lightgray;
+    color: #455a64;
+}
+
+.modal_header {
+    background-color: #fff;
+}
+
+.btn_modal {
+    background-color: #455a64;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    margin-right: 15px;
+
+}
+
+.btn_modal:hover {
+    background-color: #323C4E !important;
+}
+
+.btn_modal_settings {
+    background-color: transparent;
+    border: transparent;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-bottom: 2px solid #455a64;
+}
+
+.container_field_type {
+    background-color: #fff;
+    border: 1px solid lightgray;
+    width: 100%;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+}
+
+.bg_svg {
+    background: url("/klaudsolcms-bg-scaled2.svg") no-repeat center top;
+    background-size: contain;
+    width: 100%;
+    height: 100vh;
+    text-align: right;
+    margin-left: 40px;
+    padding-top: 100px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    border: 3px solid green;
+}
+
+.text_welcome {
+    margin-left: 50px;
+    margin-bottom: 200px;
+}

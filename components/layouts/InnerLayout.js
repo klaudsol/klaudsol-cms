@@ -1,27 +1,26 @@
-import styles from '@/styles/FrontPageLayout.module.scss';
-import { AppContent, AppSidebar, AppFooter, AppHeader } from '@/components/elements/inner/index';
-import { useContext, useEffect } from 'react';
+
+import { AppContent, AppSidebar } from '@/components/elements/inner/index';
+import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSubMenu';
+import ContentBuilderSubMenu from '@/components/elements/inner/ContentBuilderSubMenu';
 import ClientSessionHandler from '@/components/ClientSessionHandler';
-const DefaultLayout = ({children}) => {
-  
-  
-  
+const DefaultLayout = ({children, title}) => {
   return (
-      <ClientSessionHandler>
-        <div>
-          <AppSidebar />
-          <div className="wrapper d-flex flex-column min-vh-100 bg-light">
-            <AppHeader />
-            <div className="body flex-grow-1 px-3">
+    <ClientSessionHandler>
+    <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
+      <AppSidebar />
+      {title === 'Content' && <ContentManagerSubMenu title={title} />}
+      {title === 'Content-Type Builder' && <ContentBuilderSubMenu title={title} />}
+      <div className="wrapper d-flex flex-column min-vh-100 w-100 mx-0 px-0">
+      <div className="body flex-grow-1 px-5">
               <AppContent>
                     {children}
               </AppContent>
             </div>
-            <AppFooter />
-          </div>
-        </div>
-      </ClientSessionHandler>
+     
+      </div>
+  </div>
+  </ClientSessionHandler>
   )
-}
+} 
 
 export default DefaultLayout
