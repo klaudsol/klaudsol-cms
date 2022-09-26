@@ -1,4 +1,7 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
+import CacheContext from "@/components/contexts/CacheContext";
+import { getSessionCache } from "@/lib/Session";
+
 import { useReducer} from 'react';
 
 /** kladusol CMS components */
@@ -20,7 +23,7 @@ import { FaCheck, FaPlusCircle } from 'react-icons/fa';
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 
-export default function ContentManager() {
+export default function ContentManager({cache}) {
 
   const initialState = {
     show: false,
@@ -54,6 +57,7 @@ export default function ContentManager() {
 
   
   return (
+    <CacheContext.Provider value={cache}>
       <InnerLayout title='Content-Type Builder'>
         <AppBackButton link='/admin' />
 
@@ -83,6 +87,8 @@ export default function ContentManager() {
         </AppModal>
 
       </InnerLayout>
+      </CacheContext.Provider>
   );
 }
 
+export const getServerSideProps = getSessionCache();

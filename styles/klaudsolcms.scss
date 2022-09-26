@@ -81,10 +81,76 @@
     margin-right: 10px;
 }
 
+.sidebar_footer {
+    background-color: #eceff1;
+    border-top: 1px solid lightgray;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+
+#sidebar_footer_icon {
+    background-color: #455a64;
+    border-radius: 50%;
+    margin-right: 15px;
+    height: 40px;
+    width: 40px;
+    border: transparent;
+    color: #eceff1;
+    padding: 0px;
+    font-size: 11px;
+}
+
+#sidebar_footer_icon:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.sidebar_footer_profile {
+    text-decoration: none;
+    color: #455a64;
+    padding: 0px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.sidebar_footer_profile:hover {
+    color: #455a64;
+}
+
+.sidebar_footer_items:active {
+    background-color: #b0bec5 !important;
+}
+
+.sidebar_footer_logout {
+    background-color: transparent;
+    border: transparent;
+    margin: 0px;
+    padding: 0px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #455a64;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.sidebar_footer_name {
+    font-size: 14px;
+    margin-right: 20px;
+}
+
+.sidebar_footer_collapse {
+    background-color: #eceff1;
+    border: 1px solid lightgray;
+    margin-bottom: 10px;
+}
+
 /** 
 ==================================================
             SUB MENU STYLES
-===================================================
+============================;=======================
 **/
 
 .submenu_container {
@@ -688,4 +754,27 @@ $onFocus: #323C4E;
     padding-right: 10px;
     padding-bottom: 5px;
     margin-top: 10px;
+}
+
+.bg_svg {
+    background: url("/klaudsolcms-bg-scaled2.svg") no-repeat center top;
+    background-size: contain;
+    width: 100%;
+    height: 100vh;
+    text-align: right;
+    margin-left: 40px;
+    padding-top: 100px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    border: 3px solid green;
+}
+
+.text_welcome {
+    margin-left: 50px;
+    margin-bottom: 200px;
 }

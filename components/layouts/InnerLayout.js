@@ -2,8 +2,10 @@
 import { AppContent, AppSidebar } from '@/components/elements/inner/index';
 import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSubMenu';
 import ContentBuilderSubMenu from '@/components/elements/inner/ContentBuilderSubMenu';
+import ClientSessionHandler from '@/components/ClientSessionHandler';
 const DefaultLayout = ({children, title}) => {
   return (
+    <ClientSessionHandler>
     <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
       <AppSidebar />
       {title === 'Content' && <ContentManagerSubMenu title={title} />}
@@ -17,6 +19,7 @@ const DefaultLayout = ({children, title}) => {
      
       </div>
   </div>
+  </ClientSessionHandler>
   )
 } 
 

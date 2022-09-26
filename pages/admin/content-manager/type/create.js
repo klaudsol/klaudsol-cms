@@ -1,20 +1,17 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
+import CacheContext from "@/components/contexts/CacheContext";
+import { getSessionCache } from "@/lib/Session";
 
 /** kladusol CMS components */
-import AppDropdown from '@/components/klaudsolcms/AppDropdown'
-import AppTable from '@/components/klaudsolcms/AppTable'
-import AppCreatebutton from '@/components/klaudsolcms/buttons/AppCreateButton'
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
-import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
-import AppButtonSm from '@/components/klaudsolcms/buttons/AppButtonSm'
 import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg'
+
 /** react-icons */
 import { FaCheck, FaImage} from "react-icons/fa";
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
-import { FcAddImage } from 'react-icons/fc';
 
-export default function CreateNewEntry() {
+export default function CreateNewEntry({cache}) {
   /** Data Arrays : to be fetched from database soon */
   const items = [
     {name: 'Id'}, 
@@ -45,6 +42,7 @@ export default function CreateNewEntry() {
   ]
 
   return (
+    <CacheContext.Provider value={cache}>
       <InnerLayout title="Content">
         <AppBackButton link='/admin/content-manager' />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
@@ -116,6 +114,8 @@ export default function CreateNewEntry() {
      
          
       </InnerLayout>
+    </CacheContext.Provider>
   );
 }
 
+export const getServerSideProps = getSessionCache();
