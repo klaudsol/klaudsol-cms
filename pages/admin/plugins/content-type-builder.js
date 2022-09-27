@@ -1,6 +1,7 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@/lib/Session";
+import ContentBuilderSubMenu from '@/components/elements/inner/ContentBuilderSubMenu';
 
 import { useReducer} from 'react';
 
@@ -58,6 +59,9 @@ export default function ContentManager({cache}) {
   
   return (
     <CacheContext.Provider value={cache}>
+       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
+      
+      <ContentBuilderSubMenu title='Content' defaultType='articles'/>
       <InnerLayout title='Content-Type Builder'>
         <AppBackButton link='/admin' />
 
@@ -87,6 +91,7 @@ export default function ContentManager({cache}) {
         </AppModal>
 
       </InnerLayout>
+      </div>
       </CacheContext.Provider>
   );
 }

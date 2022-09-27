@@ -1,14 +1,16 @@
-import { useReducer} from 'react';
-
+import { useReducer, useEffect } from 'react';
+import { slsFetch } from '@/components/Util'; 
+import Link from 'next/link';
 /** kladusol CMS components */
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
 
 /** react icons */
 import { FaSearch } from 'react-icons/fa'
 
-const ContentManagerSubMenu = ({title}) => {
+const ContentManagerSubMenu = ({title, defaultType}) => {
 
    const initialState = {
+      entityTypes: [],
       collectionTypes: [
          {title: 'Menu', id: 1},
          {title: 'Users', id: 2},
@@ -22,6 +24,7 @@ const ContentManagerSubMenu = ({title}) => {
     };
 
     const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
+    const SET_ENTITY_TYPES = 'SET_ENTITY_TYPES';
 
     const reducer = (state, action) => {
       
@@ -31,10 +34,26 @@ const ContentManagerSubMenu = ({title}) => {
             ...state,
             selectedType: action.payload
           }
+
+          case SET_ENTITY_TYPES:
+            return {
+              ...state,
+              entityTypes: action.payload
+            }
       }
     };
     
     const [state, dispatch] = useReducer(reducer, initialState);
+
+    /*** Entity Types List ***/
+    useEffect(() => { 
+      (async () => {
+        const entityTypesRaw = await slsFetch('/api/klaudsolcms/entity_types');  
+        const entityTypes = await entityTypesRaw.json();
+        dispatch({type: SET_ENTITY_TYPES, payload: entityTypes});
+      })();
+    }, []);
+
 
     return ( 
     <>
@@ -49,20 +68,20 @@ const ContentManagerSubMenu = ({title}) => {
            
             <div className="d-flex justify-content-between align-items-center px-3 pt-2">
                <p className="content_manager_type_title"> COLLECTION TYPES </p>
-               <p className="type_number"> {state.collectionTypes.length} </p>
+               <p className="type_number"> {state.entityTypes.length} </p>
             </div>
 
             <div className="d-flex flex-column mx-0 px-0">
                {
-                  state.collectionTypes.map((type, i) => (
-                     <button key={i} className={state.selectedType === type.id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.id})}>
-                        <li> {type.title} </li>
-                     </button>
+                  state.entityTypes.map((type, i) => (
+                     <Link href={`/admin/content-manager/${type.entity_type_slug}`}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
                   ))
                }
             </div>
             
-            <div className="d-flex justify-content-between align-items-center px-3 pt-2">
+            {
+               /*
+ <div className="d-flex justify-content-between align-items-center px-3 pt-2">
                <p className="content_manager_type_title"> SINGLE TYPES </p>
                <p className="type_number"> {state.singleTypes.length} </p>
             </div>
@@ -76,6 +95,9 @@ const ContentManagerSubMenu = ({title}) => {
                   ))
                }
             </div>
+               */
+            }
+           
         </div>
     </> 
     );

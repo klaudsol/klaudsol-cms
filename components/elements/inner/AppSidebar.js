@@ -31,7 +31,7 @@ const AppSidebar = () => {
   const router = useRouter()
 
   const cache = useContext(CacheContext);
-  const { firstName = null, lastName = null } = cache ?? {};
+  const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
  
 
   const [categories, setCategories] = useState([
@@ -85,7 +85,7 @@ const AppSidebar = () => {
       <CSidebarNav>
         <div className='sidebar_container'>
 
-          <Link href='/admin/content-manager' passHref>
+          <Link href={`/admin/content-manager/${defaultEntityType}`} passHref>
             <div className='sidebar_button_container'>
             <button className={router.asPath?.includes?.('content-manager') ? 'sidebar_buttons_active' : 'sidebar_buttons'}><FaFeatherAlt className='sidebar_button_icon'/> Content Manager </button>
             </div>

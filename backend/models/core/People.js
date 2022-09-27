@@ -71,9 +71,12 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       ]);
       
       //Query available permissions
-      
+      let defaultEntityType, defaultEntityTypeData;
+      const defaultEntityTypeSQL = `SELECT entity_types.slug from entity_types LIMIT 1`;
+      defaultEntityTypeData = await db.exectuteStatement(defaultEntityTypeSQL, []);
+      [{stringValue: defaultEntityType}] = defaultEntityTypeData.records[0];
  
-      return { session_token, user: {firstName, lastName, role} };
+      return { session_token, user: {firstName, lastName, role, defaultEntityType} };
       
     } catch (error) {
       log(error.stack);

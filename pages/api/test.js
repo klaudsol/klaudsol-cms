@@ -21,8 +21,8 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const { entity_type_slug, entity_slug_or_id } = req.query;
-      const data = await Entity.value({entity_type_slug, entity_slug_or_id});
+
+      const data = await Entity.values();
       data ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
     }
     catch (error) {

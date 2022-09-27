@@ -7,7 +7,7 @@ const AppDropdown = ({title, items, id, isCheckbox}) => {
               {title}
               </Dropdown.Toggle>
               <Dropdown.Menu id="dropdown_general_menu">
-                {items.map((item, i) => (<Dropdown.Item key={i}>{isCheckbox ? <input type="checkbox" className='mr-2' checked={true} /> : null} &nbsp; {item.name}</Dropdown.Item>))}
+                {items.map((item, i) => (<Dropdown.Item key={i}>{isCheckbox ? <input type="checkbox" className='mr-2' checked={true} /> : null} &nbsp; {item.displayName}</Dropdown.Item>))}
               </Dropdown.Menu>
             </Dropdown>
         </>

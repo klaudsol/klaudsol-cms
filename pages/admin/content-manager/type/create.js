@@ -44,7 +44,7 @@ export default function CreateNewEntry({cache}) {
   return (
     <CacheContext.Provider value={cache}>
       <InnerLayout title="Content">
-        <AppBackButton link='/admin/content-manager' />
+        <AppBackButton link='/admin/content-manager/articles' />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
           <div>
           <h3> Create an Entry </h3>

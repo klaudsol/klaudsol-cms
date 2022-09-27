@@ -156,7 +156,7 @@
 .submenu_container {
     background-color: #fff;
     height: 100vh;
-    width: 280px;
+    min-width: 230px;
     margin-left: 258px;
     border-right: 1px solid lightgray;
     border-left: 1px solid #b0bec5;
@@ -545,6 +545,12 @@ $onFocus: #323C4E;
     padding-left: 10px;
     padding: 10px;
     border-spacing: 50px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#table_general td {
+    vertical-align: top;
 }
 
 #table_general tr:hover {
