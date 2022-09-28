@@ -138,7 +138,9 @@ export default function CreateNewEntry({cache}) {
                 {attribute.type === 'textarea' && <textarea name={attribute.type}  className='input_textarea'  onChange={e => {
                   attribute.value = e.target.value;
                 }}/>}
-                {attribute.type === 'float' && <input type="number" name={attribute.type}  className="input_text mb-2" onChange={onFormInputChange} />}
+                {attribute.type === 'float' && <input type="number" name={attribute.type}  className="input_text mb-2" onChange={e => {
+                  attribute.value = e.target.value;
+                }}/>}
               </>
             ))
             }
