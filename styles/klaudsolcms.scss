@@ -610,6 +610,8 @@ $onFocus: #323C4E;
     text-align: start;
 }
 
+
+
 .input_text {
     width: 100%;
     padding: 10px;
@@ -783,4 +785,14 @@ $onFocus: #323C4E;
 .text_welcome {
     margin-left: 50px;
     margin-bottom: 200px;
+}
+
+.input_textarea {
+    width: 100%;
+    height: 15vh;
+    max-height: 500px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 1.5;
 }

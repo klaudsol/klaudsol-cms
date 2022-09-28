@@ -23,40 +23,37 @@ class Entity {
           })); 
     }
 
-    static async value({entity_type_slug, entity_slug_or_id}) {
-        const db = new DB();
-  
-        const sql = `SELECT entity_types.name, entity_types.slug, entities.slug, attributes.name, 
-                            \`values\`.value_string,  \`values\`.value_long_string,  \`values\`.value_integer,  \`values\`.value_datetime,  \`values\`.value_double 
-                            from entity_types
-        LEFT JOIN entities ON entities.entity_type_id = entity_types.id
-        LEFT JOIN attributes ON attributes.entity_id = entity_types.id 
-        LEFT JOIN  \`values\` ON  \`values\`.entity_id = entity_types.id 
-        WHERE 
-            attributes.id =  \`values\`.attribute_id AND
-            entity_types.slug = :entity_type_slug AND
-            entities.id = :entity_slug_or_id`;
-                  
-        
-        const data = await db.exectuteStatement(sql, [
-            {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
-            {name: 'entity_slug_or_id', value:{longValue: entity_slug_or_id}}
-        ]);
-        
-        
-        return data.records.map(([
-            {stringValue: entity_type_name},
-            {stringValue: entity_type_slug},
-            {stringValue: entities_slug},
-            {stringValue: attributes_name},
-            {stringValue: value_string},
-            {stringValue: value_long_string},
-            {stringValue: value_integer},
-            {stringValue: value_datetime},
-            {stringValue: value_double},
-          ]) => ({
-            entity_type_name, entity_type_slug, entities_slug, attributes_name, value_string, value_long_string, value_integer, value_datetime, value_double
-          })); 
+    static async value({entity_type_slug, row_id}) {
+      const db = new DB();
+
+      const sql = `SELECT entity_types.name, entity_types.slug, entities.slug, attributes.name, 
+                          attributes.type, \`values\`.row_id,
+      coalesce(\`values\`.value_string, \`values\`.value_long_string, \`values\`.value_integer, \`values\`.value_datetime, \`values\`.value_double) as value from \`values\`
+                          LEFT JOIN entity_types ON entity_types.id = \`values\`.entity_id
+                          LEFT JOIN entities ON entities.entity_type_id = \`values\`.entity_id
+                          LEFT JOIN attributes ON attributes.entity_id = \`values\`.entity_id
+      WHERE 
+          attributes.id =  \`values\`.attribute_id AND
+          entity_types.slug = :entity_type_slug AND 
+          \`values\`.row_id = :row_id
+          `;
+                
+      const data = await db.exectuteStatement(sql, [
+          {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
+          {name: 'row_id', value:{longValue: row_id}},
+      ]);
+      
+      return data.records.map(([
+          {stringValue: entity_type_name},
+          {stringValue: entity_type_slug},
+          {stringValue: entities_slug},
+          {stringValue: attributes_name},
+          {stringValue: attributes_type},
+          {longValue: row_id},
+          {stringValue: value},
+        ]) => ({
+          entity_type_name, entity_type_slug, entities_slug, attributes_name, attributes_type, row_id, value
+        })); 
     }
 
     static async values({entity_type_slug}) {
@@ -87,32 +84,28 @@ class Entity {
         })); 
   }
 
-    static async attributes({entity_type_slug}) {
-        const db = new DB();
-  
-        const sql = `SELECT entity_types.name, entity_types.slug, entities.slug, attributes.name, 
-                    LEFT JOIN entities ON entities.entity_type_id = entity_types.id
-                    LEFT JOIN attributes ON attributes.entity_id = entity_types.id 
-        WHERE 
-            entity_types.slug = :entity_type_slug`;
-         
-        const data = await db.exectuteStatement(sql, [
-            {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
-        ]);
-        
-        
-        return data.records.map(([
-            {stringValue: entity_type_name},
-            {stringValue: entity_type_slug},
-            {stringValue: entities_slug},
-            {stringValue: attributes_name},
-          ]) => ({
-            entity_type_name, entity_type_slug, entities_slug, attributes_name, value_string, value_long_string, value_integer, value_datetime, value_double
-          })); 
-    }
+  static async attributes({entity_type_slug}) {
+    const db = new DB();
 
-
-  
+    const sql = `select entity_types.name, entity_types.id, attributes.name, attributes.type, attributes.order from attributes
+    LEFT JOIN entity_types ON entity_types.id = attributes.entity_id
+    WHERE 
+      entity_types.slug = :entity_type_slug`;
+              
+    const data = await db.exectuteStatement(sql, [
+        {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
+    ]);
+    
+    return data.records.map(([
+        {stringValue: entity_type_name},
+        {longValue: entity_type_id},
+        {stringValue: attributes_name},
+        {stringValue: attributes_type},
+        {longValue: attributes_order},
+      ]) => ({
+        entity_type_name, entity_type_id, attributes_name, attributes_type, attributes_order
+      })); 
+  }
 }
 
 export default Entity;

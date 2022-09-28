@@ -1,7 +1,7 @@
-import { useReducer} from 'react';
+import { useReducer, useEffect, useState} from 'react';
 import { FaPlus, FaSearch, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { Button, Card, Collapse } from 'reactstrap';
-import { useState } from 'react';
+import { slsFetch } from '@/components/Util'; 
 import Link from 'next/link';
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
 import AppModal from '@/components/klaudsolcms/AppModal';
@@ -16,17 +16,17 @@ const ContentBuilderSubMenu = ({title}) => {
    ])
 
    const initialState = {
+      entityTypes: [],
       subTypes: [
          {mainType: 'COLLECTION TYPES', typeName: 'Menu'},
          {mainType: 'COLLECTION TYPES', typeName: 'User'},
-         {mainType: 'SINGLE TYPES', typeName: 'Food'},
-         {mainType: 'COMPONENTS', typeName: 'Article'},
       ],
-      selectedType: 0,
+      selectedType: 1,
       show: false,
     };
 
     const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
+    const SET_ENTITY_TYPES = 'SET_ENTITY_TYPES';
     const SET_SHOW = 'SET_SHOW';
 
     function onCollapse(name){
@@ -54,10 +54,25 @@ const ContentBuilderSubMenu = ({title}) => {
                 ...state,
                 show: action.payload
                 }
+
+          case SET_ENTITY_TYPES:
+                  return {
+                    ...state,
+                    entityTypes: action.payload
+                  }
       }
     };
     
     const [state, dispatch] = useReducer(reducer, initialState);
+
+      /*** Entity Types List ***/
+      useEffect(() => { 
+        (async () => {
+          const entityTypesRaw = await slsFetch('/api/klaudsolcms/entity_types');  
+          const entityTypes = await entityTypesRaw.json();
+          dispatch({type: SET_ENTITY_TYPES, payload: entityTypes});
+        })();
+      }, []);
 
     return ( 
     <>
@@ -70,36 +85,20 @@ const ContentBuilderSubMenu = ({title}) => {
                <div className="submenu_bar"></div>
             </div>
 
-            <div className=''>
-              {types.map((type) => (
-                <>
-                  <Button
-                     className='type_title'
-                     onClick={() => onCollapse(type.typeName)}>
-                     <div className="d-flex justify-content-between align-items-center px-3 pt-2">
-                        <p> {type.typeName}  {!type.collapseOpen ? <FaChevronDown className="type_title_icon"/> : <FaChevronUp className="type_title_icon"/> } </p>
-                        <p className="type_number"> {state.subTypes.filter(subType => subType.mainType === type.typeName).length} </p>
-                     </div>
-                   </Button>
-                   <Collapse isOpen={type.collapseOpen}>
-                    {state.subTypes.map((sub_type, i) => (
-                      <>
-                      {
-                        sub_type.mainType == type.typeName && (
-               
-                          <button className={state.selectedType === i ? 'content_menu_item_active' : 'content_menu_item'} key={i}  onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: i})}>
-                        <li> {sub_type.typeName} </li>
-                     </button>
-       
-                       )
-                      }
-                        </>
-                     ))}
-                   </Collapse>
-                   <button onClick={() => dispatch({type: SET_SHOW, payload: true})} className='content_create_button'> <FaPlus className='content_create_icon' /> Create new {type.typeName.toLowerCase()} </button>
-                </>
-              ))}
-          </div>
+            <div className="d-flex justify-content-between align-items-center px-3 pt-2">
+               <p className="content_manager_type_title"> COLLECTION TYPES </p>
+               <p className="type_number"> {state.entityTypes.length} </p>
+            </div>
+
+            <div className="d-flex flex-column mx-0 px-0">
+               {
+                  state.entityTypes.map((type, i) => (
+                     <Link href={`/admin/plugins/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
+                  ))
+               }
+                 <button onClick={() => dispatch({type: SET_SHOW, payload: true})} className='content_create_button'> <FaPlus className='content_create_icon' /> Create new collection type </button>
+            </div>
+
            
             
         </div>

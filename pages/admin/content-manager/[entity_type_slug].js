@@ -1,10 +1,12 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
+import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSubMenu';
 import { getSessionCache } from "@/lib/Session";
+
 import React, { useEffect, useReducer } from 'react';
 import { slsFetch } from '@/components/Util'; 
 import { useRouter } from 'next/router';
-import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSubMenu';
+
 /** kladusol CMS components */
 import AppDropdown from '@/components/klaudsolcms/AppDropdown';
 import AppTable from '@/components/klaudsolcms/AppTable';
@@ -23,33 +25,14 @@ import { BsGearFill } from 'react-icons/bs';
 export default function ContentManager({cache}) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
+
   /** Data Arrays : to be fetched from database soon */
-  const items = [
-    {name: 'Id'}, 
-    {name: 'Name'},
-    {name: 'Price'},
-    {name: 'Image1'}
-  ];
 
   const entryNumber = [
     {name: '10'}, 
     {name: '20'},
     {name: '50'},
     {name: '100'},
-  ]
-
-  /*const columns = [
-    { accessor: "checkbox", displayName: <input type="checkbox" />, },
-    { accessor: "id", displayName: "ID",  },
-    { accessor: "name", displayName: "NAME", },
-    { accessor: "price", displayName: "PRICE", },
-    { accessor: "image_1", displayName: "IMAGE1",  },
-    { accessor: "", displayName: "", },
-  ];*/
-
-  const entries = [
-      {checkbox: <input type="checkbox" />, id: 1, name: 'Porschetta', price: 4000, image_1: null },
-      {checkbox: <input type="checkbox" />, id: 2, name: 'Brownies', price: 500, image_1: null }
   ]
 
   const initialState = {
@@ -158,8 +141,8 @@ export default function ContentManager({cache}) {
   return (
     <CacheContext.Provider value={cache}>
     <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-      <ContentManagerSubMenu title='Content' defaultType='articles'/>
-      <InnerLayout title="Content">
+      <ContentManagerSubMenu title='Content'/>
+      <InnerLayout>
      
         <div className="py-4">
         <AppBackButton link='/admin' />
@@ -168,7 +151,7 @@ export default function ContentManager({cache}) {
             <h3> {state.entity_type_name} </h3>
             <p>  {state.rows.length} entries found </p>
           </div>
-          <AppCreatebutton link='/admin/content-manager/type/create' title='Create new entry'/>
+          <AppCreatebutton link={`/admin/content-manager/${entity_type_slug}/create`} title='Create new entry'/>
         </div>
 
         <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3"> 
@@ -183,7 +166,7 @@ export default function ContentManager({cache}) {
             </div>
         </div>
 
-        <AppTable columns={state.columns} entries={state.values} rows={state.rows} />
+        <AppTable columns={state.columns} entries={state.values} rows={state.rows} entity_type_slug={entity_type_slug}/>
         </div>
        
      

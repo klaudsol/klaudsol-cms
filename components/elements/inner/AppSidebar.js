@@ -43,7 +43,8 @@ const AppSidebar = () => {
     {
       mainCategory: "PLUGINS",
       title: "Content-Type Builder",
-      path: "/admin/plugins/content-type-builder",
+      path: `/admin/plugins/content-type-builder/`,
+
       icon: <BiBuildings className='sidebar_button_icon'/>
     },
     {
@@ -96,7 +97,7 @@ const AppSidebar = () => {
                 <p className='sidebar_category_title'>{category.title}</p>
                 {sidebarButtons.map((button, i) => (
                  category.title === button.mainCategory && (
-                 <Link href={button.path} passHref>
+                 <Link href={button.path + `${defaultEntityType}`} passHref>
                   <div className='sidebar_button_category_container'>
                     <button className={router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref>{button.icon} {button.title}</button>
                   </div>

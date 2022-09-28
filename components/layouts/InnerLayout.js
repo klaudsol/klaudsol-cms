@@ -1,9 +1,6 @@
-
 import { AppContent, AppSidebar } from '@/components/elements/inner/index';
-import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSubMenu';
-import ContentBuilderSubMenu from '@/components/elements/inner/ContentBuilderSubMenu';
 import ClientSessionHandler from '@/components/ClientSessionHandler';
-const DefaultLayout = ({children, title}) => {
+const DefaultLayout = ({children}) => {
   return (
     <ClientSessionHandler>
 
