@@ -1,16 +1,18 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
+import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSubMenu';
 import { getSessionCache } from "@/lib/Session";
 
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
+import { slsFetch } from '@/components/Util'; 
 
 /** kladusol CMS components */
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
 import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg'
 
 /** react-icons */
-import { FaCheck, FaImage, FaTrash } from "react-icons/fa";
+import { FaCheck, FaTrash } from "react-icons/fa";
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 
@@ -18,30 +20,92 @@ import { VscListSelection } from 'react-icons/vsc';
 export default function Type({cache}) {
   const router = useRouter();
 
-  const { id } = router.query;
+  const { entity_type_slug, row_id } = router.query;
   
-  const [name, setName] = useState();
-  const [price, setPrice] = useState();
-  /** Data Arrays : to be fetched from database soon */
+  const initialState = {
+    values: [],
+    entity_type_name: null,
+    isLoading: false,
+    isRefresh: true,
+  };
 
-  useEffect(() => {
-    const entries = [
-        {checkbox: <input type="checkbox" />, id: 1, name: 'Porschetta', price: 4000, image_1: null },
-        {checkbox: <input type="checkbox" />, id: 2, name: 'Brownies', price: 500, image_1: null }
-    ]
-    const selectedEntry = entries.filter(entry => entry.id === parseInt(id));
-    setName(selectedEntry[0].name);
-    setPrice(selectedEntry[0].price);
-  }, [id]);
+  const LOADING = 'LOADING';
+  const REFRESH = 'REFRESH';
+  const CLEANUP = 'CLEANUP';
 
+  const SET_VALUES = 'SET_VALUES';
+  const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
+
+
+  const reducer = (state, action) => {
+    switch(action.type) {
+      case LOADING:
+          return {
+            ...state,
+            isLoading: true,
+          }
+
+       case REFRESH:
+            return {
+              ...state,
+              isRefresh: false,
+            }
+
+       case CLEANUP:
+            return {
+              ...state,
+              isLoading: false,
+            }
+            
+      case SET_VALUES:
+        return {
+          ...state,
+          values: action.payload
+        }
+
+      case SET_ENTITY_TYPE_NAME:
+        return {
+          ...state,
+          entity_type_name: action.payload
+        }
+
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  /*** Entity Types List ***/
+  useEffect(() => { 
+    (async () => {
+      const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${row_id}`);  
+      const values = await valuesRaw.json();
+
+      dispatch({type: SET_ENTITY_TYPE_NAME, payload: values[0].entity_type_name});
+      let entries;
+      
+      dispatch({type: SET_VALUES, payload: values.map(value => {
+        return {
+          attribute_name: value.attributes_name,
+          attribute_type: value.attributes_type,
+          attribute_value: value.value,
+        }
+      })});
+   
+
+    })();
+  }, [entity_type_slug, row_id]);
+ 
   return (
     <CacheContext.Provider value={cache}>
+      <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
+      <ContentManagerSubMenu title='Content'/>
       <InnerLayout title="Content">
-        <AppBackButton link='/admin/content-manager' />
+      <div className="py-4">
+        <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
           <div>
-          <h3> {name} </h3>
-          <p> API ID : type </p>
+          <h3> {state.entity_type_name} </h3>
+          <p> API ID : {row_id} </p>
           </div>
           <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
         </div>
@@ -49,25 +113,15 @@ export default function Type({cache}) {
         <div className="row mt-4">
           <div className="col-9">
             <div className="container_new_entry py-4 px-4"> 
-            <div className="row">
-              <div className="col">
-               <p className="mt-2"> Name </p>
-               <input type="text" className="input_text" value={name} /> 
-               <p className="mt-2"> Image </p>
-               <button className="btn_add_image">  <FaImage className="icon_add_image" />
-               <p style={{fontSize: '11px'}}> Click to add an asset </p> </button>
-              </div>
-              <div className="col">
-               <p className="mt-2"> Price </p>
-               <input type="number" className="input_text" value={price} /> 
-               <p className="mt-2"> Image </p>
-               <button className="btn_add_image"> 
-               <FaImage className="icon_add_image" />
-               <p style={{fontSize: '11px'}}> Click to add an asset </p>
-               </button>
-              </div>
-            </div>
-               
+            {state.values.map(value => (
+              <>
+                <p className="mt-1"> <b>{value.attribute_name.toUpperCase()}</b> </p>
+                {value.attribute_type === 'text' && <input type="text" className="input_text mb-2" defaultValue={value.attribute_value} />}
+                {value.attribute_type === 'textarea' && <textarea className='input_textarea' defaultValue={value.attribute_value} />}
+                {value.attribute_type === 'float' && <input type="number" className="input_text mb-2" defaultValue={value.attribute_value} />}
+              </>
+            ))
+            }
             </div>
           </div>
           <div className="col-3 mx-0">
@@ -106,8 +160,9 @@ export default function Type({cache}) {
 
        
      
-         
+         </div>
       </InnerLayout>
+      </div>
       </CacheContext.Provider>
   );
 }

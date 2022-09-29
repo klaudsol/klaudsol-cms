@@ -1,5 +1,5 @@
 import Link from 'next/link';
-const AppTable = ({columns, entries}) => {
+const AppTable = ({columns, entries, rows, entity_type_slug}) => {
     return ( 
         <>
         <table id="table_general">
@@ -13,13 +13,18 @@ const AppTable = ({columns, entries}) => {
             </thead>
             {/*table body*/}
             <tbody>
-            {entries.map((entry, i) => (
-                <tr key={i}>
-                    {columns.map((col, index) => (
-                        <Link key={index} href={`/admin/content-manager/type/${entry['id']}`} passHref><td>{entry[col.accessor]}</td></Link>
-                    ))}
-                </tr>
-            ))}
+           {rows.map((row, i) => (
+            <tr key={i}>
+                {columns.map((col, index) => (
+                   <Link href={`/admin/content-manager/${entity_type_slug}/${row}`} passHref key={index}><td key={index}> {entries.map((entry, ind) => (
+                   <div key={ind}>
+                      {entry.row_id === row && entry[col.accessor]}
+                   </div>
+                   ))} </td></Link>
+                    ))
+                }
+            </tr>
+           ))}
             </tbody>
         </table>
         </> 

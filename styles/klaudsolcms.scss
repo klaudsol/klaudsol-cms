@@ -156,7 +156,7 @@
 .submenu_container {
     background-color: #fff;
     height: 100vh;
-    width: 280px;
+    min-width: 230px;
     margin-left: 258px;
     border-right: 1px solid lightgray;
     border-left: 1px solid #b0bec5;
@@ -545,6 +545,12 @@ $onFocus: #323C4E;
     padding-left: 10px;
     padding: 10px;
     border-spacing: 50px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#table_general td {
+    vertical-align: top;
 }
 
 #table_general tr:hover {
@@ -603,6 +609,8 @@ $onFocus: #323C4E;
     align-items: flex-start;
     text-align: start;
 }
+
+
 
 .input_text {
     width: 100%;
@@ -777,4 +785,14 @@ $onFocus: #323C4E;
 .text_welcome {
     margin-left: 50px;
     margin-bottom: 200px;
+}
+
+.input_textarea {
+    width: 100%;
+    height: 15vh;
+    max-height: 500px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 1.5;
 }
