@@ -23,10 +23,10 @@ class Entity {
           })); 
     }
 
-    static async value({entity_type_slug, row_id}) {
+    static async find({entity_type_slug, id}) {
       const db = new DB();
 
-      const sql = `SELECT entity_types.name, entity_types.slug, entities.slug, attributes.name, 
+      const sql = `SELECT entities.id, entity_types.name, entity_types.slug, entities.slug, attributes.name, 
                           attributes.type, \`values\`.row_id,
       coalesce(\`values\`.value_string, \`values\`.value_long_string, \`values\`.value_integer, \`values\`.value_datetime, \`values\`.value_double) as value from \`values\`
                           LEFT JOIN entity_types ON entity_types.id = \`values\`.entity_id
@@ -35,15 +35,18 @@ class Entity {
       WHERE 
           attributes.id =  \`values\`.attribute_id AND
           entity_types.slug = :entity_type_slug AND 
-          \`values\`.row_id = :row_id
+          entities.id = :id
+          
+      ORDER BY \`values\`.row_id ASC
           `;
                 
       const data = await db.exectuteStatement(sql, [
           {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
-          {name: 'row_id', value:{longValue: row_id}},
+          {name: 'id', value:{longValue: id}},
       ]);
       
       return data.records.map(([
+          {longValue: id},
           {stringValue: entity_type_name},
           {stringValue: entity_type_slug},
           {stringValue: entities_slug},
@@ -52,7 +55,7 @@ class Entity {
           {longValue: row_id},
           {stringValue: value},
         ]) => ({
-          entity_type_name, entity_type_slug, entities_slug, attributes_name, attributes_type, row_id, value
+          id, entity_type_name, entity_type_slug, entities_slug, attributes_name, attributes_type, row_id, value
         })); 
     }
 
