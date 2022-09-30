@@ -32,6 +32,18 @@ async function handler(req, res) {
         }
       };
       
+      const resolveValue = (item) => {
+        switch(item.attributes_type) {
+          case 'text':
+            return item.value_string;
+          case 'textarea':
+            return item.value_long_string;
+          case 'float':
+            //TODO: Find a more accurate representation of float
+            return Number(item.value_double);
+        }
+      }
+      
       //Priority is the first entry in the collection, to make the 
       //system more stable. Suceeding entries that are inconsistent are discarded.
       const data = rawData.reduce((collection, item) => {
@@ -40,7 +52,7 @@ async function handler(req, res) {
             ...collection.data,  
             ...!collection.data.id && {id: item.id},
             ...!collection.data.slug && {slug: item.entities_slug},
-            ...!collection.data[item.attributes_name] && {[item.attributes_name]: item.value},
+            ...!collection.data[item.attributes_name] && {[item.attributes_name]: resolveValue(item)},
           },
           metadata: {
             ...collection.metadata,
