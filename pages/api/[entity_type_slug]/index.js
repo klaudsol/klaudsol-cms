@@ -22,28 +22,28 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const { entity_type_slug, id } = req.query;
-      
-      const rawData = await Entity.find({entity_type_slug, id});
+      const { entity_type_slug } = req.query;
+      const rawData = await Entity.where({entity_type_slug});
       
       const initialFormat = {
-        data: {}, 
+
+        indexedData: {},
         metadata: {
           attributes: {}  
-        }
-      };
+        },
+      };      
       
-
-      
-      //Priority is the first entry in the collection, to make the 
-      //system more stable. Suceeding entries that are inconsistent are discarded.
-      const data = rawData.reduce((collection, item) => {
+      const dataTemp = rawData.reduce((collection, item) => {
+        
         return {
-          data: {
-            ...collection.data,  
-            ...!collection.data.id && {id: item.id},
-            ...!collection.data.slug && {slug: item.entities_slug},
-            ...!collection.data[item.attributes_name] && {[item.attributes_name]: resolveValue(item)},
+          indexedData: {
+            ...collection.indexedData,
+            [item.id] : {
+              ...collection.indexedData[item.id],  
+              ...!collection.indexedData[item.id]?.id && {id: item.id}, 
+              ...!collection.indexedData[item.id]?.slug && {slug: item.entities_slug},
+              ...!collection.indexedData[item.id]?.[item.attributes_name] && {[item.attributes_name]: resolveValue(item)},
+            }
           },
           metadata: {
             ...collection.metadata,
@@ -55,11 +55,14 @@ async function handler(req, res) {
                 order: item.attributes_order
               }}
             }
-          },
-        }  
+          }
+        }
+        
       }, initialFormat);
       
-      data ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
+      const data = {data: Object.values(dataTemp.indexedData), metadata: dataTemp.metadata}; 
+      
+      rawData ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
     }
     catch (error) {
       await defaultErrorHandler(error, req, res);
