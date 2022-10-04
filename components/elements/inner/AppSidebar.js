@@ -41,20 +41,21 @@ const AppSidebar = () => {
   
   const [sidebarButtons, setSidebarButtons] = useState([
     {
-      mainCategory: "PLUGINS",
+      title: "Content Manager",
+      path: `/admin/content-manager/`,
+      icon: <FaFeatherAlt className='sidebar_button_icon'/>
+    },
+    {
       title: "Content-Type Builder",
       path: `/admin/plugins/content-type-builder/`,
-
       icon: <BiBuildings className='sidebar_button_icon'/>
     },
     {
-      mainCategory: "PLUGINS",
       title: "Media Library",
       path: "/admin/plugins/media-library",
       icon: <MdOutlinePermMedia className='sidebar_button_icon'/>
     },
     {
-      mainCategory: "GENERAL",
       title: "Settings",
       path: "/admin/settings",
       icon: <BsFillGearFill className='sidebar_button_icon'/>
@@ -85,33 +86,16 @@ const AppSidebar = () => {
 
       <CSidebarNav>
         <div className='sidebar_container'>
-
-          <Link href={`/admin/content-manager/${defaultEntityType}`} passHref>
-            <div className='sidebar_button_container'>
-            <button className={router.asPath?.includes?.('content-manager') ? 'sidebar_buttons_active' : 'sidebar_buttons'}><FaFeatherAlt className='sidebar_button_icon'/> Content Manager </button>
-            </div>
-          </Link>
-
-          {categories.map((category, i) => (
-            <div key={i}>
-                <p className='sidebar_category_title'>{category.title}</p>
+            <div>
                 {sidebarButtons.map((button, i) => (
-                 category.title === button.mainCategory && (
-                 <Link href={button.path + `${defaultEntityType}`} passHref>
-                  <div className='sidebar_button_category_container'>
+                 <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} passHref>
+                  <div className='sidebar_button_category_container' key={i}>
                     <button className={router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref>{button.icon} {button.title}</button>
                   </div>
-                </Link>)
+                </Link>
               ))}
-
             </div>
-              
-              ))}
-
           </div>
-      
-          {/*<AppSidebarNav items={navigation} />*/}
-            
       </CSidebarNav>
 
       <CSidebarFooter className='sidebar_footer'>

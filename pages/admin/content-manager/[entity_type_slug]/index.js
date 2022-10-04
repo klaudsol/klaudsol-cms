@@ -9,18 +9,16 @@ import { useRouter } from 'next/router';
 
 /** kladusol CMS components */
 import AppDropdown from '@/components/klaudsolcms/AppDropdown';
-import AppTable from '@/components/klaudsolcms/AppTable';
 import AppCreatebutton from '@/components/klaudsolcms/buttons/AppCreateButton';
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton';
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton';
 import AppButtonSm from '@/components/klaudsolcms/buttons/AppButtonSm';
-import AppContentBuilderButtons from '@/components/klaudsolcms/buttons/AppContentBuilderButtons'
-
 
 /** react-icons */
 import { FaChevronLeft, FaSearch, FaChevronRight } from "react-icons/fa";
 import { IoFilter } from 'react-icons/io5';
 import { BsGearFill } from 'react-icons/bs';
+import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
 
 export default function ContentManager({cache}) {
   const router = useRouter();
@@ -106,34 +104,22 @@ export default function ContentManager({cache}) {
       (async () => {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
         const values = await valuesRaw.json();
-        let entries, columns, rows;
-        
-    
-        dispatch({type: SET_ENTITY_TYPE_NAME, payload: values[0].entity_type_name});
-        rows = [ ...new Set(values.map(value => value.row_id))]
-        columns = [ ...new Set(values.map(value => value.attributes_name))]
-        columns = columns.map((col, i) => {
+        dispatch({type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type});
+        let columns = [];
+        let entries = [];
+
+        entries = Object.values(values.data);
+        columns = Object.keys(values.metadata.attributes).map(col => {
           return {
-            accessor: col,
+            accessor: col, 
             displayName: col.toUpperCase(),
           }
-        })
-        columns.unshift({ accessor: "checkbox", displayName: <input type="checkbox" /> })
-        columns.push({accessor: "button", displayName: ""})
-        entries = values.map(value => {
-          return {
-            row_id: value.row_id,
-            [value.attributes_name]: value.value,
-        }})
-       
-        rows.map(row => {
-          entries.unshift({row_id: row, checkbox:  <input type="checkbox" /> })
-          entries.push({row_id: row, button: <AppContentBuilderButtons />})
-        })
-       
-        dispatch({type: SET_ROWS, payload: rows});
-        dispatch({type: SET_VALUES, payload: entries});
+        });
+
+        columns.unshift({accessor: 'slug', displayName: 'SLUG'});
+        columns.unshift({accessor: 'id', displayName: 'ID'});
         dispatch({type: SET_COLUMNS, payload: columns});
+        dispatch({type: SET_VALUES, payload: entries});
 
       })();
     }, [entity_type_slug]);
@@ -148,8 +134,9 @@ export default function ContentManager({cache}) {
         <AppBackButton link='/admin' />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
           <div>
-            <h3> {state.entity_type_name} </h3>
-            <p>  {state.rows.length} entries found </p>
+            <h3> {entity_type_slug} </h3>
+            <a href={`/api/${entity_type_slug}`} passHref target='_blank' rel="noreferrer">api/{entity_type_slug}</a>
+            <p>  {state.values.length} entries found </p>
           </div>
           <AppCreatebutton link={`/admin/content-manager/${entity_type_slug}/create`} title='Create new entry'/>
         </div>
@@ -166,10 +153,10 @@ export default function ContentManager({cache}) {
             </div>
         </div>
 
-        <AppTable columns={state.columns} entries={state.values} rows={state.rows} entity_type_slug={entity_type_slug}/>
+        <AppContentManagerTable columns={state.columns} entries={state.values} entity_type_slug={entity_type_slug}/>
+        
         </div>
-       
-     
+      
         {/*<div className="d-flex justify-content-between align-items-center">
           <div className="d-flex flex-row">
             <AppDropdown title='10' items={entryNumber} id='dropdown_entries' isCheckbox={false}/>

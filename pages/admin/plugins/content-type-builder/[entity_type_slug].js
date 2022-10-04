@@ -33,6 +33,7 @@ export default function ContentTypeBuilder({cache}) {
   const initialState = {
     show: false,
     attributes: [],
+    columns: [],
     entity_type_name: null,
   };
 
@@ -68,27 +69,31 @@ export default function ContentTypeBuilder({cache}) {
     /*** Entity Types List ***/
     useEffect(() => { 
       (async () => {
-        const attributesRaw = await slsFetch(`/api/klaudsolcms/attributes/${entity_type_slug}`);  
-        const attributes = await attributesRaw.json();
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
+        const values = await valuesRaw.json();
 
-            
-        dispatch({type: SET_ENTITY_TYPE_NAME, payload: attributes[0].entity_type_name});
-       
-       
-        dispatch({type: SET_ATTRIBUTES, payload: attributes.map(attribute => {
-          return {
-            name: attribute.attributes_name, 
-            type: attribute.attributes_type,
-          }
-        })});
+        let attributes = [], columns = [], entries = [];
+
+        columns = Object.keys(values.metadata.attributes);
+        attributes = Object.values(values.metadata);
+
+        attributes.map(attr => {
+          columns.map(col => {
+            attr[col] ? entries.push({name: col, type: attr[col].type, button: <AppContentBuilderButtons />}) : null
+          })
+        })
+
+        dispatch({type: SET_ATTRIBUTES, payload: entries});
 
       })();
     }, [entity_type_slug]);
+
   const columns = [
     { accessor: "name", displayName: "NAME", },
     { accessor: "type", displayName: "TYPE", },
     { accessor: "button", displayName: "", },
   ];
+
 
   const entries = [
       {name: <IconText name='Name' /> , type: 'Text', button: <AppContentBuilderButtons />},
@@ -96,7 +101,6 @@ export default function ContentTypeBuilder({cache}) {
       {name: <IconMedia name='Image1' /> , type: 'Media',  button: <AppContentBuilderButtons /> }
   ]
 
-  
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
@@ -107,7 +111,7 @@ export default function ContentTypeBuilder({cache}) {
 
         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
           <div className="d-flex flex-row mb-2">
-          <h3 className="my-1"> {state.entity_type_name} </h3>
+          <h3 className="my-1"> {entity_type_slug}</h3>
           <div className="mx-2" />
           <AppButtonSm title='Edit' icon={<MdModeEditOutline />} isDisabled={false}/>
           </div>
