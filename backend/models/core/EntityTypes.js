@@ -10,7 +10,6 @@ class EntityTypes {
          
         const data = await db.exectuteStatement(sql, []);
         
-        
         return data.records.map(([
             {longValue: entity_type_id},
             {stringValue: entity_type_name},
