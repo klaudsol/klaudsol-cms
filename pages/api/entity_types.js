@@ -1,4 +1,4 @@
-import Entity from '@backend/models/core/Entity';
+import EntityTypes from '@backend/models/core/EntityTypes';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
@@ -21,7 +21,7 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const data = await Entity.entityTypes();
+      const data = await EntityTypes.all();
       data ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
     }
     catch (error) {

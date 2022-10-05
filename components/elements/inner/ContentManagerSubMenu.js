@@ -48,7 +48,7 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
     /*** Entity Types List ***/
     useEffect(() => { 
       (async () => {
-        const entityTypesRaw = await slsFetch('/api/klaudsolcms/entity_types');  
+        const entityTypesRaw = await slsFetch('/api/entity_types');  
         const entityTypes = await entityTypesRaw.json();
         dispatch({type: SET_ENTITY_TYPES, payload: entityTypes});
       })();

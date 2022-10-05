@@ -144,31 +144,6 @@ export default function CreateNewEntry({cache}) {
     })();
   }, [entity_type_slug]);
 
-  /*
-  const onCreateEntry = useCallback((entries) => {
-    (async () => {
-      try {
-        dispatch({type: LOADING});
-         const response = await slsFetch(`/api/${entity_type_slug}`, {
-          method: 'POST',
-          headers: {
-            'Content-type': 'application/json'
-          },
-          body: JSON.stringify({ entries })
-        })
-        const { message } = await response.json();
-        dispatch({type: SET_SHOW, payload: true})
-      }
-      catch (ex) {  
-        console.error(ex.stack);  
-        alert(ex.stack);
-
-      }finally {
-        dispatch({type: CLEANUP});
-      }
-    })();
-  }, []);*/
-
   const addSlash = (entry) => {
     return entry.replaceAll('\'', '\\\'')
   }
@@ -183,17 +158,6 @@ export default function CreateNewEntry({cache}) {
       entries[`${col}_type`] === 'float' ? temp.push({value_double: entries[col]}) : null;
     })
 
-    alert(JSON.stringify(temp));
-    /*alert(JSON.stringify(Object.entries(entries).map(entry => {
-      return
-    })));*/
-    /*alert(JSON.stringify(entries.map(entry => {
-      return {
-        ...entry,
-        slug: createSlug(entries[state.slug]),
-      }
-    })));*/
-    //alert(JSON.stringify(createSlug(entries[state.slug])));
   }
 
   const createSlug = (slug) => {
@@ -212,7 +176,7 @@ export default function CreateNewEntry({cache}) {
           <h3> Create an Entry </h3>
           <p> API ID : {entity_type_slug} </p>
           </div>
-          <AppButtonLg title={state.isLoading ? 'Saving' : 'Save'} icon={state.isLoading ? <AppButtonSpinner /> : <FaCheck />} onClick={() => createEntry(state.entries, state.attributes, state.columns)} isDisabled={false}/>
+          <AppButtonLg title={state.isLoading ? 'Saving' : 'Save'} icon={state.isLoading ? <AppButtonSpinner /> : <FaCheck />} onClick={() => createEntry(state.entries, state.attributes, state.columns)} isDisabled={true}/>
         </div>
 
         <div className="row mt-4">
@@ -240,21 +204,7 @@ export default function CreateNewEntry({cache}) {
                 </div>
               ))}
             </div>))}
-            {/*state.attributes.map(attribute => (
-              <>
-                <p className="mt-1"> <b>{attribute.name.toUpperCase()}</b> </p>
-                {attribute.type === 'text' && <input type="text" name={attribute.type} className="input_text mb-2" onChange={e => {
-                  attribute.value_string = `'${addSlash(e.target.value)}'`;
-                }} />}
-                {attribute.type === 'textarea' && <textarea name={attribute.type}  className='input_textarea'  onChange={e => {
-                  attribute.value_long_string = `'${addSlash(e.target.value)}'`;
-                }}/>}
-                {attribute.type === 'float' && <input type="number" name={attribute.type}  className="input_text mb-2" onChange={e => {
-                  attribute.value_double = `${e.target.value}`;
-                }}/>}
-              </>
-            ))
-              */}
+       
             </div>
           </div>
           <div className="col-3 mx-0">
