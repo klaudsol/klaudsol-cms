@@ -5,6 +5,9 @@ import { useRouter } from 'next/router';
 import styles from '@/styles/FrontPageLayout.module.scss';
 import Link from 'next/link';
 import Image from 'next/image';
+
+import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
+
 const LoginForm = ({className, ...props}) => {
   const router = useRouter();
   const [, setLoginMode] = useLoginMode();
@@ -107,13 +110,7 @@ const LoginForm = ({className, ...props}) => {
             	</div>
               <Link href='/admin/' passHref>
             <button className='btn_login' onClick={onSubmit}>
-               {state.isLoading &&
-                <span>
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  &nbsp;
-                </span>
-              }
-              Log in
+               {state.isLoading && <AppButtonSpinner />} Log in
             </button> 
             </Link>
 			</div>

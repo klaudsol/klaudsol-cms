@@ -130,28 +130,23 @@ class Entity {
         })); 
   }
 
-  static async attributes({entity_type_slug}) {
+  /*
+  static async createEntry({entries}) {
     const db = new DB();
 
-    const sql = `select entity_types.name, entity_types.id, attributes.name, attributes.type, attributes.order from attributes
-    LEFT JOIN entity_types ON entity_types.id = attributes.entity_id
-    WHERE 
-      entity_types.slug = :entity_type_slug`;
-              
-    const data = await db.exectuteStatement(sql, [
-        {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
-    ]);
+    let entryValues = ``;
+    entries.map((entry, i) => {
+      entryValues += ` ${i > 0 ? ',' : ''}(${entry.entity_id}, ${entry.attribute_id}, ${entry.value_string}, ${entry.value_long_string}, ${entry.value_double}, ${entry.last_row_id})`
+    })
+
+    const insertEntrySQL = `insert into \`values\` (entity_id, attribute_id, value_string, value_long_string, value_double, row_id) VALUES ${entryValues}`;
+    const data = await db.exectuteStatement(insertEntrySQL, []);
     
-    return data.records.map(([
-        {stringValue: entity_type_name},
-        {longValue: entity_type_id},
-        {stringValue: attributes_name},
-        {stringValue: attributes_type},
-        {longValue: attributes_order},
-      ]) => ({
-        entity_type_name, entity_type_id, attributes_name, attributes_type, attributes_order
-      })); 
-  }
+    return true;
+}*/
+
+
+  
 }
 
 export default Entity;

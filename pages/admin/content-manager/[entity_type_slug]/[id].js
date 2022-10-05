@@ -15,15 +15,18 @@ import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg'
 import { FaCheck, FaTrash } from "react-icons/fa";
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
+import { Col } from "react-bootstrap";
 
 
 export default function Type({cache}) {
   const router = useRouter();
 
-  const { entity_type_slug, row_id } = router.query;
+  const { entity_type_slug, id } = router.query;
   
   const initialState = {
     values: [],
+    attributes: [],
+    columns: [],
     entity_type_name: null,
     isLoading: false,
     isRefresh: true,
@@ -34,6 +37,8 @@ export default function Type({cache}) {
   const CLEANUP = 'CLEANUP';
 
   const SET_VALUES = 'SET_VALUES';
+  const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
+  const SET_COLUMNS = 'SET_COLUMNS';
   const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
 
 
@@ -63,6 +68,18 @@ export default function Type({cache}) {
           values: action.payload
         }
 
+        case SET_ATTRIBUTES:
+          return {
+            ...state,
+            attributes: action.payload
+          }
+
+          case SET_COLUMNS:
+            return {
+              ...state,
+              columns: action.payload
+            }
+
       case SET_ENTITY_TYPE_NAME:
         return {
           ...state,
@@ -77,23 +94,42 @@ export default function Type({cache}) {
   /*** Entity Types List ***/
   useEffect(() => { 
     (async () => {
-      const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${row_id}`);  
+      const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
       const values = await valuesRaw.json();
+      let entries, attributes, columns;
+      entries = values.data;
+      columns = Object.keys(values.metadata.attributes);
+      attributes = Object.values(values.metadata);
 
-      dispatch({type: SET_ENTITY_TYPE_NAME, payload: values[0].entity_type_name});
-      let entries;
+      dispatch({type: SET_ATTRIBUTES, payload: attributes});
+      dispatch({type: SET_COLUMNS, payload: columns});
+      dispatch({type: SET_VALUES, payload: entries});
+
+      //alert(JSON.stringify(attributes));
+
+      /*attributes.map(attr => {
+        columns.map(col => attr[col] ? alert(attr[col].type) : null)
+      })*.
+
+      /*attributes.map(attr => {
+        columns.map(col => alert(attr[col]));
+      })*/
       
-      dispatch({type: SET_VALUES, payload: values.map(value => {
+      //dispatch({type: SET_VALUES, payload: entries});
+      //dispatch({type: SET_ENTITY_TYPE_NAME, payload: values[0].entity_type_name});
+      //let entries;
+      
+      /*dispatch({type: SET_VALUES, payload: values.map(value => {
         return {
           attribute_name: value.attributes_name,
           attribute_type: value.attributes_type,
           attribute_value: value.value,
         }
-      })});
+      })});*/
    
 
     })();
-  }, [entity_type_slug, row_id]);
+  }, [entity_type_slug, id]);
  
   return (
     <CacheContext.Provider value={cache}>
@@ -104,16 +140,29 @@ export default function Type({cache}) {
         <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
           <div>
-          <h3> {state.entity_type_name} </h3>
-          <p> API ID : {row_id} </p>
+          <h3> {entity_type_slug} </h3>
+          <a href={`/api/${entity_type_slug}/${id}`} passHref target='_blank' rel="noreferrer">api/{entity_type_slug}/{id}</a>
+          <p> API ID : {id} </p>
           </div>
           <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
         </div>
-
         <div className="row mt-4">
           <div className="col-9">
             <div className="container_new_entry py-4 px-4"> 
-            {state.values.map(value => (
+            {
+          state.attributes.map((attr, i) => (<div key={i}> {
+            state.columns.map((col, i) => attr[col] && (
+            <div key={i}>
+              <p className="mt-1"> <b>{col}</b> </p>
+              {attr[col].type === 'text' && (<input type="text"  className="input_text mb-2" defaultValue={state.values[col]}/>)}
+              {attr[col].type === 'textarea' && (<textarea className='input_textarea' defaultValue={state.values[col]} />)}
+              {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" defaultValue={state.values[col]} />)}
+            </div>
+            ))
+          } </div>))
+        }
+        
+            {/*state.values.map(value => (
               <>
                 <p className="mt-1"> <b>{value.attribute_name.toUpperCase()}</b> </p>
                 {value.attribute_type === 'text' && <input type="text" className="input_text mb-2" defaultValue={value.attribute_value} />}
@@ -121,7 +170,7 @@ export default function Type({cache}) {
                 {value.attribute_type === 'float' && <input type="number" className="input_text mb-2" defaultValue={value.attribute_value} />}
               </>
             ))
-            }
+            */}
             </div>
           </div>
           <div className="col-3 mx-0">

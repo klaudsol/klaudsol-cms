@@ -1,4 +1,5 @@
-const AppContentBuilderTable = ({columns, entries}) => {
+import Link from 'next/link';
+const AppContentManagerTable = ({columns, entries, entity_type_slug}) => {
     return ( 
         <>
         <table id="table_general">
@@ -15,7 +16,7 @@ const AppContentBuilderTable = ({columns, entries}) => {
             {entries.map((entry, i) => (
                 <tr key={i}>
                     {columns.map((col, index) => (
-                        <td key={index}>{entry[col.accessor]}</td>
+                        <Link href={`/admin/content-manager/${entity_type_slug}/${entry.id}`} passHref key={index}><td key={index}>{entry[col.accessor]}</td></Link>
                     ))}
                 </tr>
             ))}
@@ -25,4 +26,4 @@ const AppContentBuilderTable = ({columns, entries}) => {
     );
 }
  
-export default AppContentBuilderTable;
+export default AppContentManagerTable;
