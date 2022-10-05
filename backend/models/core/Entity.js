@@ -1,27 +1,7 @@
-import DB, { sha256, fieldsForSelect, fromAurora, sanitizeData, AURORA_TYPE } from '@backend/data_access/DB';
-import { log } from '@/lib/Logger';
-import UnauthorizedError from '@/components/errors/UnauthorizedError';
-import Session from '@backend/models/core/Session';
-import RecordNotFound from 'components/errors/RecordNotFound';
+import DB from '@backend/data_access/DB';
+
 
 class Entity {
-
-    static async entityTypes() {
-        const db = new DB();
-  
-        const sql = `SELECT entity_types.id, entity_types.name, entity_types.slug from entity_types`;
-         
-        const data = await db.exectuteStatement(sql, []);
-        
-        
-        return data.records.map(([
-            {longValue: entity_type_id},
-            {stringValue: entity_type_name},
-            {stringValue: entity_type_slug},
-          ]) => ({
-            entity_type_id, entity_type_name, entity_type_slug
-          })); 
-    }
 
     static async find({entity_type_slug, id}) {
       const db = new DB();
@@ -129,24 +109,6 @@ class Entity {
           value_double
         })); 
   }
-
-  /*
-  static async createEntry({entries}) {
-    const db = new DB();
-
-    let entryValues = ``;
-    entries.map((entry, i) => {
-      entryValues += ` ${i > 0 ? ',' : ''}(${entry.entity_id}, ${entry.attribute_id}, ${entry.value_string}, ${entry.value_long_string}, ${entry.value_double}, ${entry.last_row_id})`
-    })
-
-    const insertEntrySQL = `insert into \`values\` (entity_id, attribute_id, value_string, value_long_string, value_double, row_id) VALUES ${entryValues}`;
-    const data = await db.exectuteStatement(insertEntrySQL, []);
-    
-    return true;
-}*/
-
-
-  
 }
 
 export default Entity;

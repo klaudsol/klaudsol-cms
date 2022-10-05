@@ -105,29 +105,6 @@ export default function Type({cache}) {
       dispatch({type: SET_COLUMNS, payload: columns});
       dispatch({type: SET_VALUES, payload: entries});
 
-      //alert(JSON.stringify(attributes));
-
-      /*attributes.map(attr => {
-        columns.map(col => attr[col] ? alert(attr[col].type) : null)
-      })*.
-
-      /*attributes.map(attr => {
-        columns.map(col => alert(attr[col]));
-      })*/
-      
-      //dispatch({type: SET_VALUES, payload: entries});
-      //dispatch({type: SET_ENTITY_TYPE_NAME, payload: values[0].entity_type_name});
-      //let entries;
-      
-      /*dispatch({type: SET_VALUES, payload: values.map(value => {
-        return {
-          attribute_name: value.attributes_name,
-          attribute_type: value.attributes_type,
-          attribute_value: value.value,
-        }
-      })});*/
-   
-
     })();
   }, [entity_type_slug, id]);
  
@@ -161,16 +138,6 @@ export default function Type({cache}) {
             ))
           } </div>))
         }
-        
-            {/*state.values.map(value => (
-              <>
-                <p className="mt-1"> <b>{value.attribute_name.toUpperCase()}</b> </p>
-                {value.attribute_type === 'text' && <input type="text" className="input_text mb-2" defaultValue={value.attribute_value} />}
-                {value.attribute_type === 'textarea' && <textarea className='input_textarea' defaultValue={value.attribute_value} />}
-                {value.attribute_type === 'float' && <input type="number" className="input_text mb-2" defaultValue={value.attribute_value} />}
-              </>
-            ))
-            */}
             </div>
           </div>
           <div className="col-3 mx-0">
