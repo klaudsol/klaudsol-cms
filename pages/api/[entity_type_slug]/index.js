@@ -13,7 +13,7 @@ async function handler(req, res) {
       case "GET":
         return get(req, res); 
       case "POST":
-        return post(req, res); 
+        return create(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -72,7 +72,7 @@ async function handler(req, res) {
     }
   }
 
-  async function post(req, res) { 
+  async function create(req, res) { 
     try{
       const { entries = null, columns = null, slug = null, entity_type_id = null } = req.body;
       await Entity.create({entries, columns, slug, entity_type_id});
