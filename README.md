@@ -12,6 +12,7 @@ KlaudSol CMS is a Headless and Serverless CMS (Content Management System). Welco
   * Works great with a [Next.js](https://nextjs.org/) frontend!
 * Deploys seamlessly to [AWS Amplify Hosting](https://aws.amazon.com/amplify/) + [AWS Aurora Serverless](https://aws.amazon.com/rds/aurora/serverless/).
   * Have full access and control to **your** data.
+* Licensed under a permissive licence ([MIT License](https://opensource.org/licenses/MIT)).
 
 
 ## Live Demo
