@@ -1,7 +1,7 @@
 # klaudsol-cms
 A Headless and Serverless CMS (Content Management System). Welcome to the future. 👽👾🛸
 
-* Great headless and serverless alternative to WordPress and Strapi.
+* A great headless and serverless alternative to WordPress and Strapi.
 * Serverless - stop worrying about servers, uptime, devops, and deployment. 
   * Just keep coding - *it will just work*. 
   * No more support calls on weekends and midnights.
