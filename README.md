@@ -3,7 +3,7 @@ KlaudSol CMS is a Headless and Serverless CMS (Content Management System). Welco
 
 * A great headless and serverless alternative to WordPress and Strapi.
 * Serverless - stop worrying about servers, uptime, devops, and deployment. 
-  * Just keep coding - *it will just work*. 
+  * Just keep coding - *it will just run*. 🏃🏽‍♂️ 
   * No more support calls on weekends and midnights.
   * Written in [Next.js](https://nextjs.org/).
 * Headless - Have **absolute control** on how your site looks and feels. 
