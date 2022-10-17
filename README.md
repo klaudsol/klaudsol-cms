@@ -1,5 +1,17 @@
 # klaudsol-cms
-A Headless CMS written in NextJS. Specifically made for deployment to AWS Amplify, Vercel, or Netlify.
+A Headless and Serverless CMS (Content Management System). Welcome to the future. 👽👾🛸
+
+* Great headless and serverless alternative to WordPress and Strapi.
+* Serverless - stop worrying about servers, uptime, devops, and deployment. 
+  * Just keep coding - *it will just work*. 
+  * No more support calls on weekends and midnights.
+* Headless - Have **absolute control** on how your site looks and feels. 
+  * No more studying of new tempating languages. 
+  * No more kludgy "UI Builders" that don't do what you want them to do. 
+  * Works great with Next.js frontend!
+* Deploys seamlessly to AWS Amplify + AWS Aurora Serverless.
+  * Have full access and control to **your** data.
+
 
 ## Live Demo
 For a live demo, go to https://cms.klaudsol.app
