@@ -1,28 +1,8 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-/*
-import {
-  cilBell,
-  cilCalculator,
-  cilChartPie,
-  cilCursor,
-  cilDrop,
-  cilNotes,
-  cilPencil,
-  cilPuzzle,
-  cilSpeedometer,
-  cilStar,
-  cilApplications,
-  cilCode,
-  //cilTruck,
-  cilMoney,
-  cilList,
-  cilGlobeAlt,
-  cilBlur,
-} from '@coreui/icons';
-*/
+
 import { CNavGroup, CNavItem } from '@coreui/react'
-import AppRegistry, { appPath } from '@/apps/AppRegistry';
+//import AppRegistry, { appPath } from '@/apps/AppRegistry';
 
 const routePrefix = '/dashboard';
 const appPrefix = `${routePrefix}/apps`;
@@ -48,6 +28,7 @@ const sampleAppsNav = [
   },
 ]
 
+/*
 const appsNav = AppRegistry.map((app) => {
   
   let appNavEntry =  {
@@ -82,6 +63,7 @@ const appsNav = AppRegistry.map((app) => {
   return appNavEntry;
   
 });
+*/
 
 const smeNav = [
   {
