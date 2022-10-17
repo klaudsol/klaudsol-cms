@@ -6,7 +6,7 @@ A Headless and Serverless CMS (Content Management System). Welcome to the future
   * Just keep coding - *it will just work*. 
   * No more support calls on weekends and midnights.
 * Headless - Have **absolute control** on how your site looks and feels. 
-  * No more studying of new tempating languages. 
+  * No more studying of new templating languages. 
   * No more kludgy "UI Builders" that don't do what you want them to do. 
   * Works great with Next.js frontend!
 * Deploys seamlessly to AWS Amplify + AWS Aurora Serverless.
