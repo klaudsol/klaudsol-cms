@@ -174,7 +174,7 @@ export default function CreateNewEntry({cache}) {
           dispatch({type: CLEANUP})
         }
     })();
-  }, [state.entries, state.columns, state.slug, state.entity_type_id]);
+  }, [state.entries, state.columns, state.slug, state.entity_type_id, entity_type_slug]);
 
   const addSlash = (entry) => {
     return entry.replaceAll('\'', '\\\'')
