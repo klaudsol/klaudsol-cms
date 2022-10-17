@@ -12,6 +12,8 @@ async function handler(req, res) {
     switch(req.method) {
       case "GET":
         return get(req, res); 
+      case "DELETE":
+          return del(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -60,6 +62,17 @@ async function handler(req, res) {
       }, initialFormat);
       
       data ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
+    }
+    catch (error) {
+      await defaultErrorHandler(error, req, res);
+    }
+  }
+
+  async function del(req, res) { 
+    try{
+      const { id } = req.query;
+      await Entity.delete({id});
+      res.status(OK).json({message: 'Successfully delete the entry'}) 
     }
     catch (error) {
       await defaultErrorHandler(error, req, res);

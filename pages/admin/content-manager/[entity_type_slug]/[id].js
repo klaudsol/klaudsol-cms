@@ -4,12 +4,14 @@ import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSub
 import { getSessionCache } from "@/lib/Session";
 
 import { useRouter } from 'next/router'
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useCallback } from 'react';
 import { slsFetch } from '@/components/Util'; 
 
 /** kladusol CMS components */
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
 import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg'
+import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
+import AppInfoModal from '@/components/klaudsolcms/modals/AppInfoModal';
 
 /** react-icons */
 import { FaCheck, FaTrash } from "react-icons/fa";
@@ -35,6 +37,7 @@ export default function Type({cache}) {
   const LOADING = 'LOADING';
   const REFRESH = 'REFRESH';
   const CLEANUP = 'CLEANUP';
+  const SET_SHOW = 'SET_SHOW';
 
   const SET_VALUES = 'SET_VALUES';
   const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
@@ -61,6 +64,12 @@ export default function Type({cache}) {
               ...state,
               isLoading: false,
             }
+
+        case SET_SHOW:
+              return {
+                ...state,
+                show: action.payload,
+              }
             
       case SET_VALUES:
         return {
@@ -105,6 +114,28 @@ export default function Type({cache}) {
       dispatch({type: SET_COLUMNS, payload: columns});
       dispatch({type: SET_VALUES, payload: entries});
 
+    })();
+  }, [entity_type_slug, id]);
+
+  const onDelete = useCallback((evt) => {
+    evt.preventDefault();
+    (async () => {
+        try {
+          dispatch({type: LOADING})
+          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-type': 'application/json'
+            },
+          });
+          const { message, homepage } = await response.json();   
+          dispatch({type: SET_SHOW, payload: true}) 
+          
+        } catch(ex) {
+          console.error(ex);  
+        } finally {
+          dispatch({type: CLEANUP})
+        }
     })();
   }, [entity_type_slug, id]);
  
@@ -169,7 +200,9 @@ export default function Type({cache}) {
             </div>
             <button className="new_entry_block_button mt-2">  <MdModeEditOutline  className='icon_block_button' /> Edit the model </button>
             <button className="new_entry_block_button mt-2">  <VscListSelection  className='icon_block_button' /> Configure the view </button>
-            <button className="new_entry_block_button_delete mt-2">  <FaTrash  className='icon_block_button' /> Delete the entry </button>
+            <button className="new_entry_block_button_delete mt-2" onClick={onDelete}>  {state.isLoading ? <><AppButtonSpinner />  Deleting... </> : <>
+            <FaTrash  className='icon_block_button' /> Delete the entry
+            </> }</button>
           </div>
           
         </div>
@@ -177,6 +210,7 @@ export default function Type({cache}) {
        
      
          </div>
+         <AppInfoModal show={state.show} onClose={() => (dispatch({type: SET_SHOW, payload: false}),router.push(`/admin/content-manager/${entity_type_slug}`) )} modalTitle='Success' buttonTitle='Close'> You have successfully deleted the entry. </AppInfoModal>
       </InnerLayout>
       </div>
       </CacheContext.Provider>

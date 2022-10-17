@@ -159,7 +159,7 @@ export default function CreateNewEntry({cache}) {
     (async () => {
         try {
           dispatch({type: LOADING})
-          const response = await slsFetch(`/api/${entity_type_slug}}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: 'POST',
             headers: {
               'Content-type': 'application/json'

@@ -1,4 +1,5 @@
 import DB from '@backend/data_access/DB';
+import Id from 'pages/api/[entity_type_slug]/[id]';
 
 
 class Entity {
@@ -123,7 +124,6 @@ class Entity {
     let dec = columns.length - 1;
 
     const insertEntitiesSQL = `INSERT into entities (slug, entity_type_id) VALUES (:slug, :entity_type_id)`;
-    //const isEntities = true;    
     
     const isEntities = await db.exectuteStatement(insertEntitiesSQL, [
       {name: 'slug', value:{stringValue: slug}},
@@ -157,6 +157,24 @@ class Entity {
 
     return true;
   }
+
+  static async delete({id}) {
+    const db = new DB();
+    const deleteEntitiesSQL = 'DELETE from entities where id = :id'
+    const deleteAttributesSQL = 'DELETE from attributes where entity_id = :id'
+    const deleteValuesSQL = 'DELETE from \`values\` where entity_id = :id'
+
+    let executeStatementParam = [
+      {name: 'id', value:{stringValue: id}}
+    ]
+    await db.exectuteStatement(deleteEntitiesSQL, executeStatementParam);
+    await db.exectuteStatement(deleteAttributesSQL, executeStatementParam);
+    await db.exectuteStatement(deleteValuesSQL, executeStatementParam);
+
+    return true;
+  }
 }
+
+
 
 export default Entity;
