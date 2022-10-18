@@ -163,8 +163,6 @@ class Entity {
     }, []); 
     
     
-    console.error(JSON.stringify(valueBatchParams));
-    
     //Insert Values by batch
     const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
       value_string, value_long_string, value_double  
