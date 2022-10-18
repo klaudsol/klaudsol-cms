@@ -37,10 +37,17 @@ class DB {
     } ;   
   }
   
+ 
+  
+  //OMG the typo has been here the whole time!
   async exectuteStatement(sql, parameters=[]) {
+    console.error("Migrate to executeStatement ASAP!");
     return await this.exec({...this.statementConfig, sql, parameters});  
   }
   
+  async executeStatement(sql, parameters=[]) {
+    return this.exectuteStatement(sql, parameters);  
+  }
   async batchExecuteStatement(sql, parameterSets=[]) {
     return await this.batchExec({...this.statementConfig, sql, parameterSets});  
   }

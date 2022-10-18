@@ -16,7 +16,7 @@ class Entity {
         \`values\`.value_double                       
       FROM entities
       LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
-      LEFT JOIN attributes ON attributes.entity_id = entities.id
+      LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
       LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
       WHERE 
           entity_types.slug = :entity_type_slug AND 
@@ -25,7 +25,7 @@ class Entity {
       ORDER BY attributes.\`order\` ASC
           `;
                 
-      const data = await db.exectuteStatement(sql, [
+      const data = await db.executeStatement(sql, [
           {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
           {name: 'id', value:{longValue: id}},
       ]);
@@ -73,14 +73,14 @@ class Entity {
         \`values\`.value_double                       
       FROM entities
       LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
-      LEFT JOIN attributes ON attributes.entity_id = entities.id
+      LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
       LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
       WHERE 
           entity_types.slug = :entity_type_slug  
       ORDER BY entities.id, attributes.\`order\` ASC
           `;
                 
-      const data = await db.exectuteStatement(sql, [
+      const data = await db.executeStatement(sql, [
           {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
       ]);
       
@@ -115,22 +115,64 @@ class Entity {
         })); 
   }
 
+  //Work in progress
   static async create({entries, columns, slug, entity_type_id}) {
+    
+    //console.error(entries);
+    
+    //console.error(columns);
+    
+    //console.error(slug);
+    
     const db = new DB();
 
     let attributesValues = ``, insertAttributesSQL = ``;
 
     let values =``, insertValuesSql = ``;
     let dec = columns.length - 1;
-
-    const insertEntitiesSQL = `INSERT into entities (slug, entity_type_id) VALUES (:slug, :entity_type_id)`;
     
-    const isEntities = await db.exectuteStatement(insertEntitiesSQL, [
-      {name: 'slug', value:{stringValue: slug}},
+    //TODO: start transaction
+    
+    //Column Introspection
+    const entityIntrospection = `SELECT name, type FROM entity_type_attributes 
+      WHERE entity_type_id = :entity_type_id ORDER by \`order\``;
+    
+    const _columns = await db.executeStatement(entityIntrospection, [
       {name: 'entity_type_id', value:{longValue: entity_type_id}},
     ]);
     
-    if(isEntities) {
+    const attributes = _columns.records.reduce((collection, record) => {
+      const [
+        attributeName,
+        attributeType,
+      ] = record;
+      
+      return {
+        ...collection,
+        [attributeName.stringValue]: {
+          type: attributeType.stringValue   
+        } 
+      }    
+      
+    }, {}); 
+    
+    console.error(attributes);
+    
+    //Insert Entity
+    const insertEntitiesSQL = 'INSERT into entities (slug, entity_type_id) VALUES (:slug, :entity_type_id)';
+    
+    //await db.executeStatement(insertEntitiesSQL, [
+    //  {name: 'slug', value:{stringValue: slug}},
+    //  {name: 'entity_type_id', value:{longValue: entity_type_id}},
+    //]);
+    
+    
+    const {records: [[{longValue: lastInsertedEntityID}]] } = await db.executeStatement('SELECT LAST_INSERT_ID()');
+    console.error(lastInsertedEntityID);
+    
+    //Copy Attributes from Entity Type Attributes
+    const insertAttributes = 'INSERT INTO attributes(name, entity_id, '
+    
       
     let temp = [];
 
@@ -144,16 +186,17 @@ class Entity {
       dec--;
     })
 
+/*
     insertAttributesSQL = `INSERT into attributes (name, entity_id, type, \`order\`) VALUES ${attributesValues}`;
     
-    const isAttributes = await db.exectuteStatement(insertAttributesSQL, []);
+    const isAttributes = await db.executeStatement(insertAttributesSQL, []);
 
-    if(isAttributes) {
-      insertValuesSql = `INSERT into \`values\` (entity_id, attribute_id, value_string, value_long_string, value_double) VALUES ${values}`;
-      const isValues = await db.exectuteStatement(insertValuesSql, []);
-    }
 
-    }
+    insertValuesSql = `INSERT into \`values\` (entity_id, attribute_id, value_string, value_long_string, value_double) VALUES ${values}`;
+    const isValues = await db.executeStatement(insertValuesSql, []);
+    
+    //TODO: end transaction
+*/
 
     return true;
   }
@@ -167,12 +210,13 @@ class Entity {
     let executeStatementParam = [
       {name: 'id', value:{stringValue: id}}
     ]
-    await db.exectuteStatement(deleteEntitiesSQL, executeStatementParam);
-    await db.exectuteStatement(deleteAttributesSQL, executeStatementParam);
-    await db.exectuteStatement(deleteValuesSQL, executeStatementParam);
+    await db.executeStatement(deleteEntitiesSQL, executeStatementParam);
+    await db.executeStatement(deleteAttributesSQL, executeStatementParam);
+    await db.executeStatement(deleteValuesSQL, executeStatementParam);
 
     return true;
   }
+
 }
 
 
