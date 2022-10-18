@@ -34,6 +34,7 @@ export default function CreateNewEntry({cache}) {
     isLoading: false,
     isRefresh: true,
     show: false,
+    entity_type_id: null,
   };
 
   const LOADING = 'LOADING';
@@ -48,6 +49,8 @@ export default function CreateNewEntry({cache}) {
   const SET_SHOW = 'SET_SHOW';
   const SET_SLUG = 'SET_SLUG';
   const SET_TEMP = 'SET_TEMP';
+
+  const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
 
   const reducer = (state, action) => {
     switch(action.type) {
@@ -120,6 +123,12 @@ export default function CreateNewEntry({cache}) {
               temp: action.payload
             }
 
+            case SET_ENTITY_TYPE_ID:
+              return {
+                ...state,
+                entity_type_id: action.payload
+              }
+
     }
   };
 
@@ -130,34 +139,45 @@ export default function CreateNewEntry({cache}) {
       const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
       const values = await valuesRaw.json();
 
-      let attributes = [], columns = [], entries = [];
+      let attributes = [], columns = [], entries = [], entity_type_id = null;
 
       entries = values.data[0];
       columns = Object.keys(values.metadata.attributes);
       attributes = Object.values(values.metadata);
+      entity_type_id = values.metadata.id;
 
       dispatch({type: SET_ATTRIBUTES, payload: attributes});
       dispatch({type: SET_COLUMNS, payload: columns});
       dispatch({type: SET_ENTRIES, payload: entries});
-      dispatch({type: SET_SLUG, payload: columns[0]});
+      dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
 
     })();
   }, [entity_type_slug]);
 
+  const onSubmit = useCallback((evt) => {
+    evt.preventDefault();
+    (async () => {
+        try {
+          dispatch({type: LOADING})
+          const response = await slsFetch(`/api/${entity_type_slug}`, {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({entries: state.entries, columns: state.columns, slug: createSlug(state.slug), entity_type_id: state.entity_type_id})
+          });
+          const { message, homepage } = await response.json();      
+          dispatch({type: SET_SHOW, payload: true})    
+        } catch(ex) {
+          console.error(ex);  
+        } finally {
+          dispatch({type: CLEANUP})
+        }
+    })();
+  }, [state.entries, state.columns, state.slug, state.entity_type_id, entity_type_slug]);
+
   const addSlash = (entry) => {
     return entry.replaceAll('\'', '\\\'')
-  }
-
- const createEntry = (entries, attributes, columns) => {
-
-    let temp = [];
-
-    columns.map(col => {
-      entries[`${col}_type`] === 'text' ? temp.push({value_string: entries[col]}) : null;
-      entries[`${col}_type`] === 'textarea' ? temp.push({value_long_string: entries[col]}) : null;
-      entries[`${col}_type`] === 'float' ? temp.push({value_double: entries[col]}) : null;
-    })
-
   }
 
   const createSlug = (slug) => {
@@ -176,24 +196,26 @@ export default function CreateNewEntry({cache}) {
           <h3> Create an Entry </h3>
           <p> API ID : {entity_type_slug} </p>
           </div>
-          <AppButtonLg title={state.isLoading ? 'Saving' : 'Save'} icon={state.isLoading ? <AppButtonSpinner /> : <FaCheck />} onClick={() => createEntry(state.entries, state.attributes, state.columns)} isDisabled={true}/>
+          <AppButtonLg title={state.isLoading ? 'Saving' : 'Save'} icon={state.isLoading ? <AppButtonSpinner /> : <FaCheck />} onClick={onSubmit}/>
         </div>
 
         <div className="row mt-4">
           <div className="col-9">
           <div className="container_new_entry py-4 px-4"> 
+           <p className="mt-1"> <b> slug </b></p>
+            <input type='text'className="input_text mb-2" onChange={e => dispatch({type: SET_SLUG, payload: e.target.value})} />
             {state.attributes.map((attr, i) => (<div key={i}> 
               {state.columns.map((col, i) => attr[col] && (
                 <div key={i}>
                   <p className="mt-1"> <b> {col} </b></p>
                   {attr[col].type === 'text' && (<input type="text"  className="input_text mb-2" onChange={e => {
-                    state.entries[col] = e.target.value;
+                    state.entries[col] = `'${addSlash(e.target.value)}'`;
                     state.entries[`${col}_type`] = attr[col].type;
                   }}
 />)}
                   {attr[col].type === 'textarea' && (<textarea className='input_textarea' onChange={
                     e=>{
-                      state.entries[col]  = e.target.value;
+                      state.entries[col]  = `'${addSlash(e.target.value)}'`;
                       state.entries[`${col}_type`] = attr[col].type;
                     }
                   } />)}
@@ -249,3 +271,4 @@ export default function CreateNewEntry({cache}) {
 }
 
 export const getServerSideProps = getSessionCache();
+

@@ -12,6 +12,8 @@ async function handler(req, res) {
     switch(req.method) {
       case "GET":
         return get(req, res); 
+      case "POST":
+        return create(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -48,6 +50,7 @@ async function handler(req, res) {
           metadata: {
             ...collection.metadata,
             ...!collection.metadata.type && {type: item.entity_type_slug},
+            ...!collection.metadata.id && {id: item.entity_type_id},
             attributes: {
               ...collection.metadata.attributes,
               ...!collection.metadata.attributes[item.attributes_name] && {[item.attributes_name] : {
@@ -63,6 +66,17 @@ async function handler(req, res) {
       const data = {data: Object.values(dataTemp.indexedData), metadata: dataTemp.metadata}; 
       
       rawData ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
+    }
+    catch (error) {
+      await defaultErrorHandler(error, req, res);
+    }
+  }
+
+  async function create(req, res) { 
+    try{
+      const { entries = null, columns = null, slug = null, entity_type_id = null } = req.body;
+      await Entity.create({entries, columns, slug, entity_type_id});
+      res.status(OK).json({message: 'Successfully created a new entry'}) 
     }
     catch (error) {
       await defaultErrorHandler(error, req, res);

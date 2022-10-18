@@ -51,11 +51,6 @@ const AppSidebar = () => {
       icon: <BiBuildings className='sidebar_button_icon'/>
     },
     {
-      title: "Media Library",
-      path: "/admin/plugins/media-library",
-      icon: <MdOutlinePermMedia className='sidebar_button_icon'/>
-    },
-    {
       title: "Settings",
       path: "/admin/settings",
       icon: <BsFillGearFill className='sidebar_button_icon'/>

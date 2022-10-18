@@ -28,28 +28,29 @@ class DB {
     };
 
     const RDS = new AWS.RDSDataService(rdsConfig);
-    this.exec = promisify(RDS.executeStatement.bind(RDS));
-    this.batchExec = promisify(RDS.batchExecuteStatement.bind(RDS));
-    this.statementConfig = {
+    
+    const statementConfig = {
       resourceArn: AURORA_RESOURCE_ARN,
       secretArn: AURORA_SECRET_ARN,
       database: AURORA_DATABASE
     } ;   
+    
+    this.executeStatement = async (sql, parameters=[]) => {  
+      const exec = promisify(RDS.executeStatement.bind(RDS));
+      return await exec({...statementConfig, sql, parameters});  
+    }
+    
+    this.batchExecuteStatement = async(sql, parameterSets=[]) => {
+      const exec = promisify(RDS.batchExecuteStatement.bind(RDS));
+      return await exec({...statementConfig, sql, parameterSets});  
+    }
   }
   
- 
   
   //OMG the typo has been here the whole time!
   async exectuteStatement(sql, parameters=[]) {
     console.error("Migrate to executeStatement ASAP!");
-    return await this.exec({...this.statementConfig, sql, parameters});  
-  }
-  
-  async executeStatement(sql, parameters=[]) {
-    return this.exectuteStatement(sql, parameters);  
-  }
-  async batchExecuteStatement(sql, parameterSets=[]) {
-    return await this.batchExec({...this.statementConfig, sql, parameterSets});  
+    return this.executeStatement(sql, parameters);  
   }
   
 }
