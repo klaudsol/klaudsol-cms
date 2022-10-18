@@ -18,13 +18,11 @@ CREATE TABLE `entity_types` (
 CREATE TABLE `attributes` ( 
   `id` int(11) NOT NULL AUTO_INCREMENT, 
   `name` varchar(255) NOT NULL, 
-  `entity_id` int(11) NOT NULL, 
   `type` varchar(255) NOT NULL, 
   `order` int(11) NOT NULL DEFAULT '1', 
-  PRIMARY KEY (`id`), 
-  KEY `idx_entity_id` (`entity_id`), 
-  KEY `idx_order` (`order`) 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `entity_type_id` int(11) DEFAULT NULL, 
+  PRIMARY KEY (`id`), KEY `idx_order` (`order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 
 CREATE TABLE `values` ( 
   `id` int(11) NOT NULL AUTO_INCREMENT, 
