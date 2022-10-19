@@ -1,5 +1,5 @@
 import AppContentBuilderButtons from "../buttons/AppContentBuilderButtons";
-
+import { SKELETON_FILLER, DEFAULT_SKELETON_ROW_TABLE_COUNT } from "lib/Constants"
 const SkeletonContentBuilder = () => {
 
 
@@ -9,10 +9,10 @@ const SkeletonContentBuilder = () => {
         {accessor: 'button', displayName: ''},
     ]
 
-    const entries = Array.from({length: 10}, (_, i) => {
+    const entries = Array.from({length: DEFAULT_SKELETON_ROW_TABLE_COUNT}, (_, i) => {
         return {
-            name: 'The data is still loading', 
-            type: 'The data is still loading', 
+            name: SKELETON_FILLER, 
+            type: SKELETON_FILLER, 
             button:  <AppContentBuilderButtons isDisabled={true} /> 
         }
       })
