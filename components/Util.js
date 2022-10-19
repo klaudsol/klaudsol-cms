@@ -1,3 +1,5 @@
+//Consider moving this as @/lib/Util
+
 import { useEffect, useMemo } from 'react'; 
 import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from '@/lib/HttpStatuses';
 
@@ -56,3 +58,6 @@ export const slsFetch = async (url, params, extra) => {
 export const useIndex = (array) => useMemo(() => (
     Object.fromEntries(array.map((item) => [item.id, item]))
   ),[array]);
+  
+
+

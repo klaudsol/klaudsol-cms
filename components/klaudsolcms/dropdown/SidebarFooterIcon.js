@@ -5,6 +5,8 @@ import { useContext } from 'react';
 import { useRouter } from 'next/router'; 
 import RootContext from '@/components/contexts/RootContext';
 import { slsFetch } from '@/components/Util';
+import { RESET_CLIENT_SESSION } from '@/components/reducers/actions';
+
 const SidebarFooterIcon = ({title}) => {
     const router = useRouter();
   
@@ -13,7 +15,7 @@ const SidebarFooterIcon = ({title}) => {
         evt.preventDefault();   
         const callback = async () => {
           await slsFetch('/api/logout');
-          dispatch({type: 'RESET_CLIENT_SESSION'});
+          dispatch({type: RESET_CLIENT_SESSION});
           router.push('/');
         };
         callback();

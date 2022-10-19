@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import * as gtag from "@/lib/gtag";
 
 export default function MyApp({ Component, pageProps }) {
-  const [state, dispatch] = useReducer(rootReducer, {});
+  const [state, dispatch] = useReducer(rootReducer, {entityTypes: []});
   const router = useRouter();
   useEffect(() => {
     const handleRouteChange = (url) => {

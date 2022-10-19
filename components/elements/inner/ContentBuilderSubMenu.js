@@ -70,7 +70,7 @@ const ContentBuilderSubMenu = ({title}) => {
         (async () => {
           const entityTypesRaw = await slsFetch('/api/entity_types');  
           const entityTypes = await entityTypesRaw.json();
-          dispatch({type: SET_ENTITY_TYPES, payload: entityTypes});
+          dispatch({type: SET_ENTITY_TYPES, payload: entityTypes.data});
         })();
       }, []);
 

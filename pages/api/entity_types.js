@@ -2,6 +2,7 @@ import EntityTypes from '@backend/models/core/EntityTypes';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
+import { createHash } from '@/lib/Hash';
 
 export default withSession(handler);
 
@@ -21,8 +22,15 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const data = await EntityTypes.all();
-      data ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
+      const entityTypes = await EntityTypes.all();
+      const output = {
+        data: entityTypes,
+        metadata: {}
+      }
+      
+      output.metadata.hash = createHash(output);
+      
+      entityTypes ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
     }
     catch (error) {
       await defaultErrorHandler(error, req, res);
