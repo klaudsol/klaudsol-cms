@@ -23,7 +23,10 @@ const ContentBuilderSubMenu = ({title}) => {
       ],
       selectedType: 1,
       show: false,
+      isLoading: true,
     };
+
+    const LOADING = 'LOADING';
 
     const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
     const SET_ENTITY_TYPES = 'SET_ENTITY_TYPES';
@@ -60,6 +63,11 @@ const ContentBuilderSubMenu = ({title}) => {
                     ...state,
                     entityTypes: action.payload
                   }
+          case LOADING:
+            return {
+              ...state,
+              isLoading: action.payload,
+            }
       }
     };
     
@@ -91,9 +99,27 @@ const ContentBuilderSubMenu = ({title}) => {
             </div>
 
             <div className="d-flex flex-column mx-0 px-0">
+              {
+                state.isLoading && (
+                  <>
+                  <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
+                    <div className='skeleton-bullet'/>
+                    <div className='skeleton-submenu-text' />
+                  </div>
+                  <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
+                    <div className='skeleton-bullet'/>
+                    <div className='skeleton-submenu-text' />
+                  </div>
+                  <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
+                    <div className='skeleton-bullet'/>
+                    <div className='skeleton-submenu-text' />
+                  </div>
+                  </>
+                )
+              }
                {
                   state.entityTypes.map((type, i) => (
-                     <Link href={`/admin/plugins/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
+                      !state.isLoading && <Link href={`/admin/plugins/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
                   ))
                }
                  <button onClick={() => dispatch({type: SET_SHOW, payload: true})} className='content_create_button'> <FaPlus className='content_create_icon' /> Create new collection type </button>

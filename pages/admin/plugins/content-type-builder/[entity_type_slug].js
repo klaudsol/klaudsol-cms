@@ -25,6 +25,8 @@ import IconMedia from '@/components/klaudsolcms/field_icons/IconMedia';
 import { FaCheck, FaPlusCircle } from 'react-icons/fa';
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
+import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
+import SkeletonContentBuilder from "components/klaudsolcms/skeleton/SkeletonContentBuilder";
 
 export default function ContentTypeBuilder({cache}) {
   const router = useRouter();
@@ -35,11 +37,14 @@ export default function ContentTypeBuilder({cache}) {
     attributes: [],
     columns: [],
     entity_type_name: null,
+    isLoading: true,
   };
 
   const SET_SHOW = 'SET_SHOW';
   const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
   const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
+
+  const LOADING = 'LOADING';
 
   const reducer = (state, action) => {
     
@@ -61,6 +66,12 @@ export default function ContentTypeBuilder({cache}) {
               ...state,
               entity_type_name: action.payload
             }
+
+        case LOADING: 
+            return {
+              ...state,
+              isLoading: action.payload
+            }
     }
   };
   
@@ -69,6 +80,8 @@ export default function ContentTypeBuilder({cache}) {
     /*** Entity Types List ***/
     useEffect(() => { 
       (async () => {
+       try {
+        dispatch({type: LOADING, payload: true})
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
         const values = await valuesRaw.json();
 
@@ -85,6 +98,11 @@ export default function ContentTypeBuilder({cache}) {
 
         dispatch({type: SET_ATTRIBUTES, payload: entries});
 
+       } catch (ex) {
+        console.error(ex.stack);
+       } finally {
+        dispatch({type: LOADING, payload: false})
+       }
       })();
     }, [entity_type_slug]);
 
@@ -96,9 +114,9 @@ export default function ContentTypeBuilder({cache}) {
 
 
   const entries = [
-      {name: <IconText name='Name' /> , type: 'Text', button: <AppContentBuilderButtons />},
-      {name: <IconNumber name='Price' /> , type: 'Number',  button: <AppContentBuilderButtons /> },
-      {name: <IconMedia name='Image1' /> , type: 'Media',  button: <AppContentBuilderButtons /> }
+      {name: <IconText name='Name' /> , type: 'Text', button: <AppContentBuilderButtons isDisabled={false} />},
+      {name: <IconNumber name='Price' /> , type: 'Number',  button: <AppContentBuilderButtons isDisabled={false} /> },
+      {name: <IconMedia name='Image1' /> , type: 'Media',  button: <AppContentBuilderButtons isDisabled={false} /> }
   ]
 
   return (
@@ -128,7 +146,9 @@ export default function ContentTypeBuilder({cache}) {
           <AppButtonSm title='Configure the view' icon={<VscListSelection />} isDisabled={false}/>
         </div>
 
-        <AppContentBuilderTable columns={columns} entries={state.attributes} />
+        {state.isLoading && <SkeletonContentBuilder />}
+        {!state.isLoading && <AppContentBuilderTable columns={columns} entries={state.attributes} />}
+  
         <button className="btn_add_field" onClick={() => dispatch({type: SET_SHOW, payload: true})}> <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another field collection type </button>
 
         <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Type' buttonTitle='Continue'> 
