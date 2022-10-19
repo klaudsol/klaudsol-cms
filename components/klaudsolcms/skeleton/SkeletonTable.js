@@ -1,6 +1,6 @@
+import { SKELETON_FILLER, DEFAULT_SKELETON_ROW_TABLE_COUNT } from "lib/Constants"
+
 const SkeletonTable = () => {
-
-
     const columns = [
         {accessor: 'column_one_loading', displayName: 'column_one_loading'},
         {accessor: 'column_two_loading', displayName: 'column_two_loading'},
@@ -8,12 +8,12 @@ const SkeletonTable = () => {
         {accessor: 'column_four_loading', displayName: 'column_four_loading'},
     ]
 
-    const entries = Array.from({length: 10}, (_, i) => {
+    const entries = Array.from({length: DEFAULT_SKELETON_ROW_TABLE_COUNT}, () => {
         return {
-          column_one_loading: 'The data is still loading', 
-          column_two_loading: 'The data is still loading', 
-          column_three_loading: 'The data is still loading', 
-          column_four_loading: 'The data is still loading', 
+          column_one_loading: SKELETON_FILLER, 
+          column_two_loading: SKELETON_FILLER, 
+          column_three_loading: SKELETON_FILLER, 
+          column_four_loading: SKELETON_FILLER, 
         }
       })
 

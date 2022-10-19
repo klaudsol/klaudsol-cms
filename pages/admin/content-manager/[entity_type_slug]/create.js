@@ -18,6 +18,8 @@ import { FaCheck, FaImage} from "react-icons/fa";
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 
+import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+
 export default function CreateNewEntry({cache}) {
 
   const router = useRouter();
@@ -25,6 +27,7 @@ export default function CreateNewEntry({cache}) {
   const { entity_type_slug } = router.query;
 
   const initialState = {
+    form: {},
     attributes: [],
     columns: [],
     entries: [],
@@ -139,6 +142,16 @@ export default function CreateNewEntry({cache}) {
                 entity_type_id: action.payload
               }
 
+              case SET_FORM_VALUES:  
+              return {
+                ...state,
+                form: {
+                  ...state?.form,
+                  [action.payload.name]: action.payload.value
+                }
+              }
+            
+
     }
   };
 
@@ -162,12 +175,12 @@ export default function CreateNewEntry({cache}) {
         dispatch({type: SET_COLUMNS, payload: columns});
         dispatch({type: SET_ENTRIES, payload: entries});
         dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
+
       } catch (ex) {
         console.error(ex.stack)
       } finally {
         dispatch({type: CLEANUP})
       }
-
 
     })();
   }, [entity_type_slug]);
@@ -194,12 +207,14 @@ export default function CreateNewEntry({cache}) {
     })();
   }, [state.entries, state.columns, state.slug, state.entity_type_id, entity_type_slug]);
 
-  const addSlash = (entry) => {
-    return entry.replaceAll('\'', '\\\'')
-  }
-
   const createSlug = (slug) => {
     return slug.replaceAll(' ', '-').toLowerCase();
+  }
+
+  const onTextInputChange = (entries, col, value, attribute, attribute_type) => {
+    entries[col] = value;
+    entries[attribute] = attribute_type;
+    dispatch({type: SET_ENTRIES, payload: entries});
   }
 
   return (
@@ -220,39 +235,13 @@ export default function CreateNewEntry({cache}) {
         <div className="row mt-4">
           <div className="col-9">
           <div className="container_new_entry py-4 px-4"> 
-          {
-            state.isLoading && (
-              <>
+          {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
                 <div>
                   <div className="skeleton-label" />
                   <div className="skeleton-text" />
                   <div />
                 </div>
-                <div>
-                  <div className="skeleton-label" />
-                  <div className="skeleton-text" />
-                  <div />
-                </div>
-                <div>
-                  <div className="skeleton-label" />
-                  <div className="skeleton-text" />
-                  <div />
-                </div>
-
-                <div>
-                  <div className="skeleton-label" />
-                  <div className="skeleton-text" />
-                  <div />
-                </div>
-
-                <div>
-                  <div className="skeleton-label" />
-                  <div className="skeleton-text" />
-                  <div />
-                </div>
-              </>
-            )
-          }
+             ))}
           {
             !state.isLoading && (
               <>
@@ -262,21 +251,9 @@ export default function CreateNewEntry({cache}) {
               {state.columns.map((col, i) => attr[col] && (
                 <div key={i}>
                   <p className="mt-1"> <b> {col} </b></p>
-                  {attr[col].type === 'text' && (<input type="text"  className="input_text mb-2" onChange={e => {
-                    state.entries[col] = e.target.value;
-                    state.entries[`${col}_type`] = attr[col].type;
-                  }}
-/>)}
-                  {attr[col].type === 'textarea' && (<textarea className='input_textarea' onChange={
-                    e=>{
-                      state.entries[col]  = e.target.value;
-                      state.entries[`${col}_type`] = attr[col].type;
-                    }
-                  } />)}
-                  {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" onChange={e => {
-                    state.entries[col]  = e.target.value;
-                    state.entries[`${col}_type`] = attr[col].type;
-                  }}  />)}
+                  {attr[col].type === 'text' && (<input type="text" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+                  {attr[col].type === 'textarea' && (<textarea className='input_textarea' onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)} />)}
+                  {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}  />)}
                 </div>
               ))}
             </div>))}
