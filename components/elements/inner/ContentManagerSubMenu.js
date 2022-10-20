@@ -26,7 +26,7 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
          {title: 'Test', id:5}
       ],
       selectedType: 1,
-      isLoading: true,
+      isLoading: false,
     };
 
     const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
@@ -54,17 +54,23 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
       (async () => {
 
         try {  
-          //reload entity types list only if there is a change.
-          if(rootState.entityTypesHash && (rootState.entityTypesHash === entityTypes.metadata.hash)) return; 
-          
-          dispatch({type: LOADING, payload: true});
+
+          //only display on first load
+          if(!rootState.entityTypesHash) {
+            dispatch({type: LOADING, payload: true});
+          }
+
           const entityTypesRaw = await slsFetch('/api/entity_types');  
           const entityTypes = await entityTypesRaw.json();
+
+          //reload entity types list only if there is a change.
+          if(rootState.entityTypesHash !== entityTypes.metadata.hash) { 
+            rootDispatch({type: SET_ENTITY_TYPES, payload: {
+                entityTypes: entityTypes.data,
+                entityTypesHash: entityTypes.metadata.hash
+            }});
+          }
         
-          rootDispatch({type: SET_ENTITY_TYPES, payload: {
-              entityTypes: entityTypes.data,
-              entityTypesHash: entityTypes.metadata.hash
-          }});
       } catch (ex) {
           console.error(ex.stack)
         } finally {
