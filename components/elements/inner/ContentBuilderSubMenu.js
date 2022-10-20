@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useState} from 'react';
+import { useReducer, useEffect, useState, useContext} from 'react';
 import { FaPlus, FaSearch, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { Button, Card, Collapse } from 'reactstrap';
 import { slsFetch } from '@/components/Util'; 
@@ -7,7 +7,12 @@ import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
 import AppModal from '@/components/klaudsolcms/AppModal';
 import CollectionTypeBody from '@/components/klaudsolcms/modals/modal_body/CollectionTypeBody';
 import { DEFAULT_SKELETON_ROW_COUNT } from 'lib/Constants';
+import RootContext from '@/components/contexts/RootContext';
+import { SET_ENTITY_TYPES } from '@/components/reducers/actions';
+
 const ContentBuilderSubMenu = ({title}) => {
+
+   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
    const [collapseOpen, setCollapseOpen] = useState(true);
    const [types, setTypes] = useState([
@@ -17,7 +22,6 @@ const ContentBuilderSubMenu = ({title}) => {
    ])
 
    const initialState = {
-      entityTypes: [],
       subTypes: [
          {mainType: 'COLLECTION TYPES', typeName: 'Menu'},
          {mainType: 'COLLECTION TYPES', typeName: 'User'},
@@ -28,9 +32,9 @@ const ContentBuilderSubMenu = ({title}) => {
     };
 
     const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
-    const SET_ENTITY_TYPES = 'SET_ENTITY_TYPES';
     const SET_SHOW = 'SET_SHOW';
     const SET_LOADING = 'SET_LOADING';
+    const LOADING = 'LOADING';
 
     function onCollapse(name){
       var type = types;
@@ -58,38 +62,51 @@ const ContentBuilderSubMenu = ({title}) => {
                 show: action.payload
                 }
 
-                case SET_LOADING:
-                  return {
-                    ...state,
-                    isLoading: action.payload
-                    }
-
-          case SET_ENTITY_TYPES:
-                  return {
-                    ...state,
-                    entityTypes: action.payload
-                  }
+          case SET_LOADING:
+            return {
+              ...state,
+              isLoading: action.payload
+              }
+          case LOADING:
+            return {
+              ...state,
+              isLoading: action.payload
+            }
       }
     };
     
     const [state, dispatch] = useReducer(reducer, initialState);
 
-      /*** Entity Types List ***/
-      useEffect(() => { 
-        (async () => {
-          try {
-            dispatch({type: SET_LOADING, payload: true})
-            const entityTypesRaw = await slsFetch('/api/entity_types');  
-            const entityTypes = await entityTypesRaw.json();
-            dispatch({type: SET_ENTITY_TYPES, payload: entityTypes.data});
-          } catch(ex) {
-            console.error()
-          } finally {
-            dispatch({type: SET_LOADING, payload: false})
+    /*** Entity Types List ***/
+    useEffect(() => { 
+      (async () => {
+
+        try {  
+
+          //only display on first load
+          if(!rootState.entityTypesHash) {
+            dispatch({type: LOADING, payload: true});
           }
-         
-        })();
-      }, []);
+
+          const entityTypesRaw = await slsFetch('/api/entity_types');  
+          const entityTypes = await entityTypesRaw.json();
+
+          //reload entity types list only if there is a change.
+          if(rootState.entityTypesHash !== entityTypes.metadata.hash) { 
+            rootDispatch({type: SET_ENTITY_TYPES, payload: {
+                entityTypes: entityTypes.data,
+                entityTypesHash: entityTypes.metadata.hash
+            }});
+          }
+        
+      } catch (ex) {
+          console.error(ex.stack)
+        } finally {
+          dispatch({type: LOADING, payload: false})
+        }
+
+      })();
+    }, [rootState]);
 
     return ( 
     <>
@@ -104,7 +121,7 @@ const ContentBuilderSubMenu = ({title}) => {
 
             <div className="d-flex justify-content-between align-items-center px-3 pt-2">
                <p className="content_manager_type_title"> COLLECTION TYPES </p>
-               <p className="type_number"> {state.entityTypes.length} </p>
+               <p className="type_number"> {rootState.entityTypes.length} </p>
             </div>
 
             <div className="d-flex flex-column mx-0 px-0">
@@ -117,7 +134,7 @@ const ContentBuilderSubMenu = ({title}) => {
 
 ))}
                { !state.isLoading &&
-                  state.entityTypes.map((type, i) => (
+                  rootState.entityTypes.map((type, i) => (
                      <Link href={`/admin/plugins/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
                   ))
                }
