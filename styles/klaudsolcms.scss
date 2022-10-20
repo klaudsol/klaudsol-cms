@@ -371,6 +371,13 @@ $onFocus: #323C4E;
     margin-left: 10px;
 }
 
+.icon_edit:disabled, .icon_delete:disabled, .icon_edit:hover:disabled, .icon_delete:hover:disabled {
+    background-color: transparent;
+    color: #455a64;
+    border: transparent;
+    margin-left: 10px;
+}
+
 .icon_edit:hover,
 .icon_delete:hover {
     color: black;
@@ -533,14 +540,16 @@ $onFocus: #323C4E;
 =================================================================
 **/
 
-#table_general {
+#table_general, #table_skeleton {
     font-size: 12px;
     width: 100%;
     padding: 10px;
+    width: 100%;
 }
 
 #table_general td,
-#table_general th {
+#table_general th,
+#table_skeleton th, #table_skeleton td {
     border-bottom: 1px solid lightgray;
     padding-left: 10px;
     padding: 10px;
@@ -549,8 +558,9 @@ $onFocus: #323C4E;
     padding-bottom: 15px;
 }
 
-#table_general td {
+#table_general td, #table_skeleton td {
     vertical-align: top;
+    min-width: 150px;
 }
 
 #table_general tr:hover {
@@ -558,13 +568,19 @@ $onFocus: #323C4E;
     cursor: pointer;
 }
 
-#table_general th {
+#table_general th, #table_skeleton th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
     background-color: #fff;
     color: #455a64;
 }
+
+#table_general td:first-child {
+    min-width: 50px;
+    max-width: 50px;
+}
+
 
 /**
 ===============================================
@@ -795,4 +811,51 @@ $onFocus: #323C4E;
     border-radius: 5px;
     font-size: 12px;
     line-height: 1.5;
+}
+
+.skeleton-bullet {
+    background-color: #323C4E;
+    height: 5px;
+    width: 5px;
+    border-radius: 20px;
+}
+
+.skeleton-submenu-text {
+    background-color: #e7e7e7;
+    height: 20px;
+    width: 100%;
+    margin-left: 10px;
+}
+
+.skeleton-submenu {
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 10px;
+}
+
+.skeleton-table-header {
+    background-color: #e4e5e7;
+    color: #e4e5e7;
+    width: 100%;
+}
+
+.skeleton-table-row {
+    background-color: #e4e5e7;
+    color: #e4e5e7;
+}
+
+.skeleton-label {
+    background-color: #e4e5e7;
+    color: #e4e5e7;
+    height: 30px;
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.skeleton-text {
+    background-color: #e4e5e7;
+    color: #e4e5e7;
+    height: 20px;
+    width: 100%;
+    margin-bottom: 20px;
 }

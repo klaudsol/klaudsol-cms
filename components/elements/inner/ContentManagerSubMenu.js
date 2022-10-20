@@ -1,6 +1,7 @@
 import { useReducer, useEffect, useContext } from 'react';
 import { slsFetch } from '@/components/Util'; 
 import RootContext from '@/components/contexts/RootContext';
+import { DEFAULT_SKELETON_ROW_COUNT } from 'lib/Constants';
 import Link from 'next/link';
 
 /** kladusol CMS components */
@@ -24,11 +25,12 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
          {title: 'Test', id:4},
          {title: 'Test', id:5}
       ],
-      selectedType: 1
+      selectedType: 1,
+      isLoading: true,
     };
 
     const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
-
+    const LOADING = 'LOADING';
     const reducer = (state, action) => {
       
       switch(action.type) {
@@ -36,6 +38,11 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
           return {
             ...state,
             selectedType: action.payload
+          }
+          case LOADING:
+          return {
+            ...state,
+            isLoading: action.payload
           }
       }
     };
@@ -45,8 +52,10 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
     /*** Entity Types List ***/
     useEffect(() => { 
       (async () => {
-        const entityTypesRaw = await slsFetch('/api/entity_types');  
-        const entityTypes = await entityTypesRaw.json();
+        try {  
+          dispatch({type: LOADING, payload: true})
+          const entityTypesRaw = await slsFetch('/api/entity_types');  
+         const entityTypes = await entityTypesRaw.json();
         
         //reload entity types list only if there is a change.
         if(rootState.entityTypesHash !== entityTypes.metadata.hash) {
@@ -54,6 +63,10 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
                 entityTypes: entityTypes.data,
                 entityTypesHash: entityTypes.metadata.hash
             }});
+        }} catch (ex) {
+          console.error(ex.stack)
+        } finally {
+          dispatch({type: LOADING, payload: false})
         }
       })();
     }, [rootState]);
@@ -76,32 +89,20 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
             </div>
 
             <div className="d-flex flex-column mx-0 px-0">
-               {
+            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
+  
+                    <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
+                     <div className='skeleton-bullet'/>
+                     <div className='skeleton-submenu-text' />
+                   </div>
+       
+              ))}
+               { !state.isLoading &&
                   rootState.entityTypes.map((type, i) => (
                      <Link href={`/admin/content-manager/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
                   ))
                }
             </div>
-            
-            {
-               /*
- <div className="d-flex justify-content-between align-items-center px-3 pt-2">
-               <p className="content_manager_type_title"> SINGLE TYPES </p>
-               <p className="type_number"> {state.singleTypes.length} </p>
-            </div>
-
-            <div className="d-flex flex-column mx-0 px-0">
-               {
-                  state.singleTypes.map((type, i) => (
-                     <button key={i} className={state.selectedType === type.id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.id})}>
-                        <li> {type.title} </li>
-                     </button>
-                  ))
-               }
-            </div>
-               */
-            }
-           
         </div>
     </> 
     );

@@ -18,6 +18,8 @@ import { FaCheck, FaImage} from "react-icons/fa";
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 
+import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+
 export default function CreateNewEntry({cache}) {
 
   const router = useRouter();
@@ -25,6 +27,7 @@ export default function CreateNewEntry({cache}) {
   const { entity_type_slug } = router.query;
 
   const initialState = {
+    form: {},
     attributes: [],
     columns: [],
     entries: [],
@@ -33,6 +36,7 @@ export default function CreateNewEntry({cache}) {
     slug: null,
     isLoading: false,
     isRefresh: true,
+    isSaving: false,
     show: false,
     entity_type_id: null,
   };
@@ -40,6 +44,7 @@ export default function CreateNewEntry({cache}) {
   const LOADING = 'LOADING';
   const REFRESH = 'REFRESH';
   const CLEANUP = 'CLEANUP';
+  const SAVING = 'SAVING';
 
   const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
   const SET_COLUMNS = 'SET_COLUMNS';
@@ -60,6 +65,13 @@ export default function CreateNewEntry({cache}) {
             isLoading: true,
           }
 
+        case SAVING:
+          return {
+            ...state,
+            isSaving: true,
+            isLoading: true,
+          }
+
        case REFRESH:
             return {
               ...state,
@@ -70,6 +82,7 @@ export default function CreateNewEntry({cache}) {
             return {
               ...state,
               isLoading: false,
+              isSaving: false,
             }
             
       case SET_ATTRIBUTES:
@@ -129,6 +142,16 @@ export default function CreateNewEntry({cache}) {
                 entity_type_id: action.payload
               }
 
+              case SET_FORM_VALUES:  
+              return {
+                ...state,
+                form: {
+                  ...state?.form,
+                  [action.payload.name]: action.payload.value
+                }
+              }
+            
+
     }
   };
 
@@ -136,20 +159,28 @@ export default function CreateNewEntry({cache}) {
 
   useEffect(() => { 
     (async () => {
-      const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
-      const values = await valuesRaw.json();
+      try {
+        dispatch({type: LOADING})
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
+        const values = await valuesRaw.json();
+  
+        let attributes = [], columns = [], entries = [], entity_type_id = null;
+  
+        entries = values.data[0];
+        columns = Object.keys(values.metadata.attributes);
+        attributes = Object.values(values.metadata);
+        entity_type_id = values.metadata.id;
+  
+        dispatch({type: SET_ATTRIBUTES, payload: attributes});
+        dispatch({type: SET_COLUMNS, payload: columns});
+        dispatch({type: SET_ENTRIES, payload: entries});
+        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
 
-      let attributes = [], columns = [], entries = [], entity_type_id = null;
-
-      entries = values.data[0];
-      columns = Object.keys(values.metadata.attributes);
-      attributes = Object.values(values.metadata);
-      entity_type_id = values.metadata.id;
-
-      dispatch({type: SET_ATTRIBUTES, payload: attributes});
-      dispatch({type: SET_COLUMNS, payload: columns});
-      dispatch({type: SET_ENTRIES, payload: entries});
-      dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
+      } catch (ex) {
+        console.error(ex.stack)
+      } finally {
+        dispatch({type: CLEANUP})
+      }
 
     })();
   }, [entity_type_slug]);
@@ -158,7 +189,7 @@ export default function CreateNewEntry({cache}) {
     evt.preventDefault();
     (async () => {
         try {
-          dispatch({type: LOADING})
+          dispatch({type: SAVING})
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: 'POST',
             headers: {
@@ -176,12 +207,14 @@ export default function CreateNewEntry({cache}) {
     })();
   }, [state.entries, state.columns, state.slug, state.entity_type_id, entity_type_slug]);
 
-  const addSlash = (entry) => {
-    return entry.replaceAll('\'', '\\\'')
-  }
-
   const createSlug = (slug) => {
     return slug.replaceAll(' ', '-').toLowerCase();
+  }
+
+  const onTextInputChange = (entries, col, value, attribute, attribute_type) => {
+    entries[col] = value;
+    entries[attribute] = attribute_type;
+    dispatch({type: SET_ENTRIES, payload: entries});
   }
 
   return (
@@ -196,36 +229,38 @@ export default function CreateNewEntry({cache}) {
           <h3> Create an Entry </h3>
           <p> API ID : {entity_type_slug} </p>
           </div>
-          <AppButtonLg title={state.isLoading ? 'Saving' : 'Save'} icon={state.isLoading ? <AppButtonSpinner /> : <FaCheck />} onClick={onSubmit}/>
+          <AppButtonLg title={state.isSaving ? 'Saving' : 'Save'} icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />} onClick={onSubmit}/>
         </div>
 
         <div className="row mt-4">
           <div className="col-9">
           <div className="container_new_entry py-4 px-4"> 
-           <p className="mt-1"> <b> slug </b></p>
+          {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
+                <div>
+                  <div className="skeleton-label" />
+                  <div className="skeleton-text" />
+                  <div />
+                </div>
+             ))}
+          {
+            !state.isLoading && (
+              <>
+              <p className="mt-1"> <b> slug </b></p>
             <input type='text'className="input_text mb-2" onChange={e => dispatch({type: SET_SLUG, payload: e.target.value})} />
             {state.attributes.map((attr, i) => (<div key={i}> 
               {state.columns.map((col, i) => attr[col] && (
                 <div key={i}>
                   <p className="mt-1"> <b> {col} </b></p>
-                  {attr[col].type === 'text' && (<input type="text"  className="input_text mb-2" onChange={e => {
-                    state.entries[col] = `'${addSlash(e.target.value)}'`;
-                    state.entries[`${col}_type`] = attr[col].type;
-                  }}
-/>)}
-                  {attr[col].type === 'textarea' && (<textarea className='input_textarea' onChange={
-                    e=>{
-                      state.entries[col]  = `'${addSlash(e.target.value)}'`;
-                      state.entries[`${col}_type`] = attr[col].type;
-                    }
-                  } />)}
-                  {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" onChange={e => {
-                    state.entries[col]  = e.target.value;
-                    state.entries[`${col}_type`] = attr[col].type;
-                  }}  />)}
+                  {attr[col].type === 'text' && (<input type="text" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+                  {attr[col].type === 'textarea' && (<textarea className='input_textarea' onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)} />)}
+                  {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}  />)}
                 </div>
               ))}
             </div>))}
+              </>
+            )
+          }
+           
        
             </div>
           </div>

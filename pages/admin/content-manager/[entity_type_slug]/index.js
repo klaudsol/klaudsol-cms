@@ -19,6 +19,7 @@ import { FaChevronLeft, FaSearch, FaChevronRight } from "react-icons/fa";
 import { IoFilter } from 'react-icons/io5';
 import { BsGearFill } from 'react-icons/bs';
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
+import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
 
 export default function ContentManager({cache}) {
   const router = useRouter();
@@ -102,24 +103,32 @@ export default function ContentManager({cache}) {
     /*** Entity Types List ***/
     useEffect(() => { 
       (async () => {
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
-        const values = await valuesRaw.json();
-        dispatch({type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type});
-        let columns = [];
-        let entries = [];
-
-        entries = Object.values(values.data);
-        columns = Object.keys(values.metadata.attributes).map(col => {
-          return {
-            accessor: col, 
-            displayName: col.toUpperCase(),
-          }
-        });
-
-        columns.unshift({accessor: 'slug', displayName: 'SLUG'});
-        columns.unshift({accessor: 'id', displayName: 'ID'});
-        dispatch({type: SET_COLUMNS, payload: columns});
-        dispatch({type: SET_VALUES, payload: entries});
+        try {
+          dispatch({type: LOADING});
+          const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
+          const values = await valuesRaw.json();
+          dispatch({type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type});
+          let columns = [];
+          let entries = [];
+  
+          entries = Object.values(values.data);
+          columns = Object.keys(values.metadata.attributes).map(col => {
+            return {
+              accessor: col, 
+              displayName: col.toUpperCase(),
+            }
+          });
+  
+          columns.unshift({accessor: 'slug', displayName: 'SLUG'});
+          columns.unshift({accessor: 'id', displayName: 'ID'});
+          dispatch({type: SET_COLUMNS, payload: columns});
+          dispatch({type: SET_VALUES, payload: entries});
+        } catch (ex) {
+          console.error(ex.stack)
+        } finally {
+          dispatch({type: CLEANUP});
+        }
+      
 
       })();
     }, [entity_type_slug]);
@@ -153,7 +162,9 @@ export default function ContentManager({cache}) {
             </div>
         </div>
 
-        <AppContentManagerTable columns={state.columns} entries={state.values} entity_type_slug={entity_type_slug}/>
+        {state.isLoading && <SkeletonTable />}
+        {!state.isLoading && <AppContentManagerTable columns={state.columns} entries={state.values} entity_type_slug={entity_type_slug}/>}
+      
         
         </div>
       
