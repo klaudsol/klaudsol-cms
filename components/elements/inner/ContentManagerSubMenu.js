@@ -52,22 +52,25 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
     /*** Entity Types List ***/
     useEffect(() => { 
       (async () => {
+
         try {  
-          dispatch({type: LOADING, payload: true})
+          //reload entity types list only if there is a change.
+          if(rootState.entityTypesHash && (rootState.entityTypesHash === entityTypes.metadata.hash)) return; 
+          
+          dispatch({type: LOADING, payload: true});
           const entityTypesRaw = await slsFetch('/api/entity_types');  
-         const entityTypes = await entityTypesRaw.json();
+          const entityTypes = await entityTypesRaw.json();
         
-        //reload entity types list only if there is a change.
-        if(rootState.entityTypesHash !== entityTypes.metadata.hash) {
-            rootDispatch({type: SET_ENTITY_TYPES, payload: {
-                entityTypes: entityTypes.data,
-                entityTypesHash: entityTypes.metadata.hash
-            }});
-        }} catch (ex) {
+          rootDispatch({type: SET_ENTITY_TYPES, payload: {
+              entityTypes: entityTypes.data,
+              entityTypesHash: entityTypes.metadata.hash
+          }});
+      } catch (ex) {
           console.error(ex.stack)
         } finally {
           dispatch({type: LOADING, payload: false})
         }
+
       })();
     }, [rootState]);
 
