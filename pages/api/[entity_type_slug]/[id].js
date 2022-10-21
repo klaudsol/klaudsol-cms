@@ -3,6 +3,8 @@ import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { resolveValue } from '@/components/EntityAttributeValue';
+import { setCORSHeaders } from '@/lib/API';
+import { createHash } from '@/lib/Hash';
 
 export default withSession(handler);
 
@@ -39,7 +41,7 @@ async function handler(req, res) {
       
       //Priority is the first entry in the collection, to make the 
       //system more stable. Suceeding entries that are inconsistent are discarded.
-      const data = rawData.reduce((collection, item) => {
+      const output = rawData.reduce((collection, item) => {
         return {
           data: {
             ...collection.data,  
@@ -61,7 +63,9 @@ async function handler(req, res) {
         }  
       }, initialFormat);
       
-      data ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
+      output.metadata.hash = createHash(output);
+      setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
+      rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
     }
     catch (error) {
       await defaultErrorHandler(error, req, res);

@@ -3,6 +3,8 @@ import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { resolveValue } from '@/components/EntityAttributeValue';
+import { setCORSHeaders } from '@/lib/API';
+import { createHash } from '@/lib/Hash';
 
 export default withSession(handler);
 
@@ -50,7 +52,8 @@ async function handler(req, res) {
           metadata: {
             ...collection.metadata,
             ...!collection.metadata.type && {type: item.entity_type_slug},
-            ...!collection.metadata.id && {id: item.entity_type_id},
+            ...!collection.metadata.id && {id: item.entity_type_id},  //shouldn't this be entity_type_id? Deprecated.
+            ...!collection.metadata.id && {entity_type_id: item.entity_type_id},  
             attributes: {
               ...collection.metadata.attributes,
               ...!collection.metadata.attributes[item.attributes_name] && {[item.attributes_name] : {
@@ -63,9 +66,16 @@ async function handler(req, res) {
         
       }, initialFormat);
       
-      const data = {data: Object.values(dataTemp.indexedData), metadata: dataTemp.metadata}; 
+      const output = {
+        data: Object.values(dataTemp.indexedData), 
+        metadata: dataTemp.metadata
+      }; 
+
+      output.metadata.hash = createHash(output);
+
+      setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
       
-      rawData ? res.status(OK).json(data ?? []) : res.status(NOT_FOUND).json({})
+      rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
     }
     catch (error) {
       await defaultErrorHandler(error, req, res);
