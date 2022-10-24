@@ -1,7 +1,8 @@
 import { 
   SET_CLIENT_SESSION, 
   RESET_CLIENT_SESSION,
-  SET_ENTITY_TYPES
+  SET_ENTITY_TYPES,
+  SET_COLLAPSE,
 } from '@/components/reducers/actions';
 
 export const rootReducer = (state, action) => {
@@ -26,6 +27,12 @@ export const rootReducer = (state, action) => {
           ...state,
           entityTypes: action.payload.entityTypes,
           entityTypesHash: action.payload.entityTypesHash 
+        }
+      
+      case SET_COLLAPSE:
+        return {
+          ...state,
+          collapse: action.payload,
         }
         
       default:

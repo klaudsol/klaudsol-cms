@@ -1,43 +1,30 @@
-
-import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarNav} from '@coreui/react'
-
-import { FaFeatherAlt, FaChevronLeft } from 'react-icons/fa'
+import { FaFeatherAlt } from 'react-icons/fa'
 
 import { BiBuildings } from 'react-icons/bi';
 
 import { BsFillGearFill } from 'react-icons/bs';
 
-import { MdOutlinePermMedia } from 'react-icons/md';
-
-import React, { useState, useContext } from 'react';
-
-import Link from 'next/link';
+import React, { useState, useContext, useEffect } from 'react';
 
 import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
 
-import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
-
 import { useRouter } from 'next/router'
 
 // sidebar nav config
-import navigation from './_nav'
+import FullSidebar from './sidebar/FullSidebar';
+import CollapsedSidebar from './sidebar/CollapsedSidebar';
+import { SET_COLLAPSE } from 'components/reducers/actions';
+import RootContext from '@/components/contexts/RootContext';
 
 const AppSidebar = () => {
-  //const dispatch = useDispatch()
-  //const unfoldable = useSelector((state) => state.sidebarUnfoldable)
-  //const sidebarShow = useSelector((state) => state.sidebarShow)
 
   const router = useRouter()
 
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
- 
-
-  const [categories, setCategories] = useState([
-    { title: "PLUGINS" },
-    { title: "GENERAL" },
-  ].filter(item => item))
   
   const [sidebarButtons, setSidebarButtons] = useState([
     {
@@ -57,53 +44,16 @@ const AppSidebar = () => {
     },
 
   ].filter(item => item))
+
+    /*** Entity Types List ***/
+    useEffect(() => { 
+     rootState.collapse === null ? rootDispatch({type: SET_COLLAPSE, payload: true}) : null
+    }, [rootState.collapse]);
   
   return (
-    <CSidebar
-     className='sidebar_container'
-      position='fixed'
-      unfoldable={false}
-      visible={true}
-      onVisibleChange={() => {
-        //dispatch({ type: 'set', sidebarShow: visible })
-      }}
-    >
-      <CSidebarBrand to="/admin" className='sidebar_brand'>
-        {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
-        <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
-        */}
-         <Link href='/admin' passHref>
-         <a className='sidebar_header'> <b> KlaudSol CMS Dashboard </b> </a>
-          </Link>
-          
-        
-      </CSidebarBrand>
-
-      <CSidebarNav>
-        <div className='sidebar_container'>
-            <div>
-                {sidebarButtons.map((button, i) => (
-                 <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} passHref>
-                  <div className='sidebar_button_category_container' key={i}>
-                    <button className={router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref>{button.icon} {button.title}</button>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-      </CSidebarNav>
-
-      <CSidebarFooter className='sidebar_footer'>
-        <div className='d-flex align-items-center justify-content-between'> 
-       <div className='d-flex flex-row align-items-center'>
-      <SidebarFooterIcon title={`${firstName.charAt(0)}${lastName.charAt(0)}`} />
-        <h6 className='sidebar_footer_name'> {firstName} {lastName} </h6>
-       </div>
-        <button className='sidebar_footer_collapse'> <FaChevronLeft /> </button>
-        </div>
-       
-      </CSidebarFooter>
-    </CSidebar>
+    <>
+     {rootState.collapse ? <CollapsedSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> : <FullSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />}
+    </>
   )
 }
 

@@ -19,6 +19,7 @@ import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 
 export default function CreateNewEntry({cache}) {
 
@@ -220,8 +221,7 @@ export default function CreateNewEntry({cache}) {
   return (
     <CacheContext.Provider value={cache}>
        <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-      <ContentManagerSubMenu title='Content'/>
-      <InnerLayout title="Content">
+      <ContentManagerLayout>
       <div className="py-4">
         <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
@@ -298,8 +298,8 @@ export default function CreateNewEntry({cache}) {
         </div>
 
          </div>
-         <AppInfoModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Success' buttonTitle='Close'> You have successfully created a new entry. </AppInfoModal>
-      </InnerLayout>
+         <AppInfoModal show={state.show} onClose={() => router.push(`/admin/content-manager/${entity_type_slug}`)} modalTitle='Success' buttonTitle='Close'> You have successfully created a new entry. </AppInfoModal>
+      </ContentManagerLayout>
       </div>
     </CacheContext.Provider>
   );

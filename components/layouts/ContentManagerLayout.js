@@ -1,7 +1,7 @@
 import { AppContent, AppSidebar } from '@/components/elements/inner/index';
 import ClientSessionHandler from '@/components/ClientSessionHandler';
 import ContentManagerSubMenu from 'components/elements/inner/ContentManagerSubMenu';
-const DefaultLayout = ({children}) => {
+const ContentManagerLayout = ({children}) => {
   return (
     <ClientSessionHandler>
         <AppSidebar />
@@ -18,4 +18,4 @@ const DefaultLayout = ({children}) => {
   )
 } 
 
-export default DefaultLayout
+export default ContentManagerLayout

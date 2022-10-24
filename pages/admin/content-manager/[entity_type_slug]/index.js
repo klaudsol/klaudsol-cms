@@ -20,6 +20,7 @@ import { IoFilter } from 'react-icons/io5';
 import { BsGearFill } from 'react-icons/bs';
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
+import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 
 export default function ContentManager({cache}) {
   const router = useRouter();
@@ -136,8 +137,8 @@ export default function ContentManager({cache}) {
   return (
     <CacheContext.Provider value={cache}>
     <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-      <ContentManagerSubMenu title='Content'/>
-      <InnerLayout>
+   
+      <ContentManagerLayout>
      
         <div className="py-4">
         <AppBackButton link='/admin' />
@@ -181,7 +182,7 @@ export default function ContentManager({cache}) {
           </div>
         </div>*/}
          
-      </InnerLayout>
+      </ContentManagerLayout>
       </div>
       </CacheContext.Provider>
   );

@@ -181,7 +181,7 @@ class Entity {
   static async delete({id}) {
     const db = new DB();
     const deleteEntitiesSQL = 'DELETE from entities where id = :id'
-    const deleteAttributesSQL = 'DELETE from attributes where entity_id = :id'
+    const deleteAttributesSQL = 'DELETE from attributes where entity_type_id = :id'
     const deleteValuesSQL = 'DELETE from \`values\` where entity_id = :id'
 
     let executeStatementParam = [
