@@ -18,6 +18,7 @@ import { FaCheck, FaTrash } from "react-icons/fa";
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 import { Col } from "react-bootstrap";
+import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 
 
 export default function Type({cache}) {
@@ -141,9 +142,8 @@ export default function Type({cache}) {
  
   return (
     <CacheContext.Provider value={cache}>
-      <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-      <ContentManagerSubMenu title='Content'/>
-      <InnerLayout title="Content">
+      <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
+      <ContentManagerLayout>
       <div className="py-4">
         <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
@@ -206,12 +206,9 @@ export default function Type({cache}) {
           </div>
           
         </div>
-
-       
-     
          </div>
          <AppInfoModal show={state.show} onClose={() => (dispatch({type: SET_SHOW, payload: false}),router.push(`/admin/content-manager/${entity_type_slug}`) )} modalTitle='Success' buttonTitle='Close'> You have successfully deleted the entry. </AppInfoModal>
-      </InnerLayout>
+      </ContentManagerLayout>
       </div>
       </CacheContext.Provider>
   );

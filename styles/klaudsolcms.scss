@@ -9,6 +9,31 @@
 .sidebar_container {
     background-color: #eceff1;
     color: #455a64;
+    
+}
+
+.collapsed-sidebar{
+  background-color: #eceff1;
+  color: #455a64;
+  padding: 1px;
+  padding-bottom: 10px;
+}
+
+.collapsed-buttons {
+    background-color: #eceff1;
+    width: 100%;
+    padding: 5;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.collapsed-sidebar-items {
+    padding: 10px;
+    padding-top: 5px;
+}
+
+.app-sidebar-container {
+    position: relative;
 }
 
 .sidebar_brand {
@@ -79,6 +104,7 @@
 .sidebar_button_icon {
     margin-bottom: 3px;
     margin-right: 10px;
+    margin-top: 2px;
 }
 
 .sidebar_footer {
@@ -92,7 +118,7 @@
 #sidebar_footer_icon {
     background-color: #455a64;
     border-radius: 50%;
-    margin-right: 15px;
+    margin-right: 5px;
     height: 40px;
     width: 40px;
     border: transparent;
@@ -139,12 +165,18 @@
 .sidebar_footer_name {
     font-size: 14px;
     margin-right: 20px;
+    margin-left: 10px;
 }
 
 .sidebar_footer_collapse {
     background-color: #eceff1;
-    border: 1px solid lightgray;
+    border: 1.5px solid lightgray;
     margin-bottom: 10px;
+    margin-top: 5px;
+    font-size: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
 }
 
 /** 
@@ -157,9 +189,15 @@
     background-color: #fff;
     height: 100vh;
     min-width: 230px;
-    margin-left: 258px;
     border-right: 1px solid lightgray;
     border-left: 1px solid #b0bec5;
+    position: fixed;
+}
+
+.main-container{
+    margin-left: 230px;
+    background-color: #fff;
+    height: 100vh;
 }
 
 

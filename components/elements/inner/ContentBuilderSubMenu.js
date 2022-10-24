@@ -1,6 +1,5 @@
 import { useReducer, useEffect, useState, useContext} from 'react';
-import { FaPlus, FaSearch, FaChevronDown, FaChevronUp } from 'react-icons/fa'
-import { Button, Card, Collapse } from 'reactstrap';
+import { FaPlus, FaSearch } from 'react-icons/fa'
 import { slsFetch } from '@/components/Util'; 
 import Link from 'next/link';
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'

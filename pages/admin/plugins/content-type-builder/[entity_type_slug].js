@@ -27,6 +27,7 @@ import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
 import SkeletonContentBuilder from "components/klaudsolcms/skeleton/SkeletonContentBuilder";
+import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
 
 export default function ContentTypeBuilder({cache}) {
   const router = useRouter();
@@ -123,7 +124,7 @@ export default function ContentTypeBuilder({cache}) {
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
       <ContentBuilderSubMenu title='Content-Type Builder'/>
-      <InnerLayout>
+      <ContentTypeBuilderLayout>
       <div className="py-4">
         <AppBackButton link='/admin' />
 
@@ -155,7 +156,7 @@ export default function ContentTypeBuilder({cache}) {
           <AddFieldBody />
         </AppModal>
     </div>
-      </InnerLayout>
+      </ContentTypeBuilderLayout>
       </div>
       </CacheContext.Provider>
   );
