@@ -187,7 +187,7 @@ export default function Type({cache}) {
             body: JSON.stringify({entries: state.values, entity_type_id: state.entity_type_id, entity_id: id })
           });
           const { message, homepage } = await response.json();    
-          dispatch({type: SET_MODAL_CONTENT, payload: 'You Have successfully edited the entry.'})      
+          dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
           dispatch({type: SET_SHOW, payload: true})    
 
         } catch(ex) {
@@ -210,7 +210,7 @@ export default function Type({cache}) {
             },
           });
           const { message, homepage } = await response.json();   
-          dispatch({type: SET_MODAL_CONTENT, payload: 'You Have successfully deleted the entry.'})   
+          dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully deleted the entry.'})   
           dispatch({type: SET_SHOW, payload: true}) 
           
         } catch(ex) {
