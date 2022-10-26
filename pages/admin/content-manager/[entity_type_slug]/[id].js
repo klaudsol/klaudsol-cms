@@ -19,6 +19,7 @@ import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 import { Col } from "react-bootstrap";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
+import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
 
 
 export default function Type({cache}) {
@@ -33,18 +34,26 @@ export default function Type({cache}) {
     entity_type_name: null,
     isLoading: false,
     isRefresh: true,
+    isSaving: false,
+    isDeleting: false,
+    show: false,
+    entity_type_id: null,
+    modalContent: null,
   };
 
   const LOADING = 'LOADING';
   const REFRESH = 'REFRESH';
+  const SAVING = 'SAVING';
+  const DELETING = 'DELETING';
   const CLEANUP = 'CLEANUP';
   const SET_SHOW = 'SET_SHOW';
+  const SET_MODAL_CONTENT = 'SET_MODAL_CONTENT';
 
   const SET_VALUES = 'SET_VALUES';
   const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
   const SET_COLUMNS = 'SET_COLUMNS';
   const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
-
+  const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
 
   const reducer = (state, action) => {
     switch(action.type) {
@@ -53,6 +62,20 @@ export default function Type({cache}) {
             ...state,
             isLoading: true,
           }
+
+        case SAVING:
+            return {
+              ...state,
+              isSaving: true,
+              isLoading: true,
+            }
+
+        case DELETING:
+              return {
+                ...state,
+                isDeleting: true,
+                isLoading: true,
+              }
 
        case REFRESH:
             return {
@@ -64,6 +87,8 @@ export default function Type({cache}) {
             return {
               ...state,
               isLoading: false,
+              isSaving: false,
+              isDeleting: false,
             }
 
         case SET_SHOW:
@@ -96,33 +121,88 @@ export default function Type({cache}) {
           entity_type_name: action.payload
         }
 
+        case SET_ENTITY_TYPE_ID:
+          return {
+            ...state,
+            entity_type_id: action.payload
+          }
+
+          case SET_MODAL_CONTENT:
+            return {
+              ...state,
+              modalContent: action.payload
+            }
+
+
     }
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const onTextInputChange = (entries, col, value, attribute, attribute_type) => {
+    entries[col] = value;
+    entries[attribute] = attribute_type;
+    dispatch({type: SET_VALUES, payload: entries});
+  }
+
   /*** Entity Types List ***/
   useEffect(() => { 
     (async () => {
-      const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
-      const values = await valuesRaw.json();
-      let entries, attributes, columns;
-      entries = values.data;
-      columns = Object.keys(values.metadata.attributes);
-      attributes = Object.values(values.metadata);
+      try {
+        dispatch({type: LOADING})
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
+        const values = await valuesRaw.json();
+        let entries, attributes, columns, entity_type_id;
+  
+        entries = values.data;
+        columns = Object.keys(values.metadata.attributes);
+        attributes = Object.values(values.metadata);
+        entity_type_id = values.metadata.entity_type_id;
+  
+        dispatch({type: SET_ATTRIBUTES, payload: attributes});
+        dispatch({type: SET_COLUMNS, payload: columns});
+        dispatch({type: SET_VALUES, payload: entries});
+        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
+      } catch (ex) {
+        console.error(ex.stack)
+      } finally {
+        dispatch({type: CLEANUP})
+      }
+    
 
-      dispatch({type: SET_ATTRIBUTES, payload: attributes});
-      dispatch({type: SET_COLUMNS, payload: columns});
-      dispatch({type: SET_VALUES, payload: entries});
 
     })();
   }, [entity_type_slug, id]);
+
+  const onSubmit = useCallback((evt) => {
+    evt.preventDefault();
+    (async () => {
+        try {
+          dispatch({type: SAVING})
+          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({entries: state.values, entity_type_id: state.entity_type_id, entity_id: id })
+          });
+          const { message, homepage } = await response.json();    
+          dispatch({type: SET_MODAL_CONTENT, payload: 'You Have successfully edited the entry.'})      
+          dispatch({type: SET_SHOW, payload: true})    
+
+        } catch(ex) {
+          console.error(ex);  
+        } finally {
+          dispatch({type: CLEANUP})
+        }
+    })();
+  }, [state.values, state.columns, id, entity_type_slug, state.entity_type_id]);
 
   const onDelete = useCallback((evt) => {
     evt.preventDefault();
     (async () => {
         try {
-          dispatch({type: LOADING})
+          dispatch({type: DELETING})
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: 'DELETE',
             headers: {
@@ -130,6 +210,7 @@ export default function Type({cache}) {
             },
           });
           const { message, homepage } = await response.json();   
+          dispatch({type: SET_MODAL_CONTENT, payload: 'You Have successfully deleted the entry.'})   
           dispatch({type: SET_SHOW, payload: true}) 
           
         } catch(ex) {
@@ -152,19 +233,26 @@ export default function Type({cache}) {
           <a href={`/api/${entity_type_slug}/${id}`} passHref target='_blank' rel="noreferrer">api/{entity_type_slug}/{id}</a>
           <p> API ID : {id} </p>
           </div>
-          <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
+          <AppButtonLg title={state.isSaving ? 'Saving' : 'Save'} icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />} onClick={onSubmit}/>
         </div>
         <div className="row mt-4">
           <div className="col-9">
             <div className="container_new_entry py-4 px-4"> 
-            {
+            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
+                <div>
+                  <div className="skeleton-label" />
+                  <div className="skeleton-text" />
+                  <div />
+                </div>
+             ))}
+            { !state.isLoading &&
           state.attributes.map((attr, i) => (<div key={i}> {
             state.columns.map((col, i) => attr[col] && (
             <div key={i}>
               <p className="mt-1"> <b>{col}</b> </p>
-              {attr[col].type === 'text' && (<input type="text"  className="input_text mb-2" defaultValue={state.values[col]}/>)}
-              {attr[col].type === 'textarea' && (<textarea className='input_textarea' defaultValue={state.values[col]} />)}
-              {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" defaultValue={state.values[col]} />)}
+              {attr[col].type === 'text' && (<input type="text"  className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+              {attr[col].type === 'textarea' && (<textarea className='input_textarea' defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+              {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
             </div>
             ))
           } </div>))
@@ -200,14 +288,15 @@ export default function Type({cache}) {
             </div>
             <button className="new_entry_block_button mt-2">  <MdModeEditOutline  className='icon_block_button' /> Edit the model </button>
             <button className="new_entry_block_button mt-2">  <VscListSelection  className='icon_block_button' /> Configure the view </button>
-            <button className="new_entry_block_button_delete mt-2" onClick={onDelete}>  {state.isLoading ? <><AppButtonSpinner />  Deleting... </> : <>
+            <button className="new_entry_block_button_delete mt-2" onClick={onDelete}>  {state.isDeleting ? <><AppButtonSpinner />  Deleting... </> : <>
             <FaTrash  className='icon_block_button' /> Delete the entry
             </> }</button>
           </div>
           
         </div>
          </div>
-         <AppInfoModal show={state.show} onClose={() => (dispatch({type: SET_SHOW, payload: false}),router.push(`/admin/content-manager/${entity_type_slug}`) )} modalTitle='Success' buttonTitle='Close'> You have successfully deleted the entry. </AppInfoModal>
+         <AppInfoModal show={state.show} onClose={() => (dispatch({type: SET_SHOW, payload: false}) ,router.push(`/admin/content-manager/${entity_type_slug}`) )} modalTitle='Success' buttonTitle='Close'> {state.modalContent} </AppInfoModal>
+         
       </ContentManagerLayout>
       </div>
       </CacheContext.Provider>
