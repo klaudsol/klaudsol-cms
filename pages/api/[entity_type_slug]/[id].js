@@ -14,6 +14,8 @@ async function handler(req, res) {
     switch(req.method) {
       case "GET":
         return get(req, res); 
+      case "PUT":
+          return update(req, res); 
       case "DELETE":
           return del(req, res); 
       default:
@@ -52,6 +54,7 @@ async function handler(req, res) {
           metadata: {
             ...collection.metadata,
             ...!collection.metadata.type && {type: item.entity_type_slug},
+            ...!collection.metadata.id && {entity_type_id: item.entity_type_id},  
             attributes: {
               ...collection.metadata.attributes,
               ...!collection.metadata.attributes[item.attributes_name] && {[item.attributes_name] : {
@@ -82,3 +85,15 @@ async function handler(req, res) {
       await defaultErrorHandler(error, req, res);
     }
   }
+
+  async function update(req, res) { 
+    try{
+      const { entries = null, entity_id = null, entity_type_id = null } = req.body;
+      await Entity.update({entries, entity_type_id, entity_id});
+      res.status(OK).json({message: 'Successfully created a new entry'}) 
+    }
+    catch (error) {
+      await defaultErrorHandler(error, req, res);
+    }
+  }
+

@@ -165,13 +165,14 @@ export default function CreateNewEntry({cache}) {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
         const values = await valuesRaw.json();
   
-        let attributes = [], columns = [], entries = [], entity_type_id = null;
+        let attributes = [], columns = [], entries = {}, entity_type_id = null;
   
-        entries = values.data[0];
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
-        entity_type_id = values.metadata.id;
-  
+        entity_type_id = values.metadata.entity_type_id;
+
+        columns.map(col => entries[col] = '')
+
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
         dispatch({type: SET_ENTRIES, payload: entries});

@@ -114,27 +114,94 @@ class Entity {
         })); 
   }
 
-  //Work in progress
-  static async create({entries, columns, slug, entity_type_id}) {
+    //Work in progress
+    static async create({entries, columns, slug, entity_type_id}) {
+    
+      const db = new DB();
+  
+      //TODO: start transaction
+      
+      
+      //Insert Entity
+      const insertEntitiesSQL = 'INSERT into entities (slug, entity_type_id) VALUES (:slug, :entity_type_id)';
+      
+      await db.executeStatement(insertEntitiesSQL, [
+        {name: 'slug', value:{stringValue: slug}},
+        {name: 'entity_type_id', value:{longValue: entity_type_id}},
+      ]);
+      
+      
+      const {records: [[{longValue: lastInsertedEntityID}]] } = await db.executeStatement('SELECT LAST_INSERT_ID()');
+      console.error(lastInsertedEntityID);
+      
+       //Attribute Introspection
+      const entityIntrospectionSQL = `SELECT id, name, type FROM attributes 
+        WHERE entity_type_id = :entity_type_id ORDER by \`order\``;
+      
+      const attributes = await db.executeStatement(entityIntrospectionSQL, [
+        {name: 'entity_type_id', value:{longValue: entity_type_id}},
+      ]);
+      
+      const valueBatchParams = attributes.records.reduce((collection, record) => {
+        const [
+          {longValue: attributeId},
+          {stringValue: attributeName},
+          {stringValue: attributeType},
+        ] = record;
+        
+        return [ 
+          ...collection,
+          [
+            {name: 'entity_id', value: {longValue: lastInsertedEntityID}},
+            {name: 'attribute_id', value: {longValue: attributeId}},
+            {name: 'value_string', value: attributeType == 'text' ? {stringValue: entries[attributeName]} : {isNull: true}},
+            {name: 'value_long_string', value:  attributeType == 'textarea' ? {stringValue: entries[attributeName]} : {isNull: true}},
+            {name: 'value_double', value:  attributeType == 'float' ? {doubleValue: entries[attributeName]} : {isNull: true}},
+          ]
+        ]    
+        
+      }, []); 
+      
+      
+      //Insert Values by batch
+      const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
+        value_string, value_long_string, value_double  
+      ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double) 
+      `; 
+      
+      await db.batchExecuteStatement(insertValuesBatchSQL,valueBatchParams);
+      
+  
+      
+      //TODO: end transaction
+  
+      return true;
+    }
+  
+
+  static async delete({id}) {
+    const db = new DB();
+    const deleteEntitiesSQL = 'DELETE from entities where id = :id'
+    const deleteAttributesSQL = 'DELETE from attributes where entity_type_id = :id'
+    const deleteValuesSQL = 'DELETE from \`values\` where entity_id = :id'
+
+    let executeStatementParam = [
+      {name: 'id', value:{stringValue: id}}
+    ]
+    await db.executeStatement(deleteEntitiesSQL, executeStatementParam);
+    await db.executeStatement(deleteAttributesSQL, executeStatementParam);
+    await db.executeStatement(deleteValuesSQL, executeStatementParam);
+
+    return true;
+  }
+    //Work in progress
+  static async update({entries, entity_type_id, entity_id}) {
     
     const db = new DB();
 
     //TODO: start transaction
     
-    
-    //Insert Entity
-    const insertEntitiesSQL = 'INSERT into entities (slug, entity_type_id) VALUES (:slug, :entity_type_id)';
-    
-    await db.executeStatement(insertEntitiesSQL, [
-      {name: 'slug', value:{stringValue: slug}},
-      {name: 'entity_type_id', value:{longValue: entity_type_id}},
-    ]);
-    
-    
-    const {records: [[{longValue: lastInsertedEntityID}]] } = await db.executeStatement('SELECT LAST_INSERT_ID()');
-    console.error(lastInsertedEntityID);
-    
-     //Attribute Introspection
+    //Attribute Introspection
     const entityIntrospectionSQL = `SELECT id, name, type FROM attributes 
       WHERE entity_type_id = :entity_type_id ORDER by \`order\``;
     
@@ -152,7 +219,7 @@ class Entity {
       return [ 
         ...collection,
         [
-          {name: 'entity_id', value: {longValue: lastInsertedEntityID}},
+          {name: 'entity_id', value: {longValue: entity_id}},
           {name: 'attribute_id', value: {longValue: attributeId}},
           {name: 'value_string', value: attributeType == 'text' ? {stringValue: entries[attributeName]} : {isNull: true}},
           {name: 'value_long_string', value:  attributeType == 'textarea' ? {stringValue: entries[attributeName]} : {isNull: true}},
@@ -164,11 +231,13 @@ class Entity {
     
     
     //Insert Values by batch
-    const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
-      value_string, value_long_string, value_double  
-    ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double) 
+    const insertValuesBatchSQL = `UPDATE \`values\` SET 
+    value_string = :value_string, 
+    value_long_string = :value_long_string, 
+    value_double = :value_double 
+    WHERE entity_id = :entity_id AND attribute_id = :attribute_id
     `; 
-    
+
     await db.batchExecuteStatement(insertValuesBatchSQL,valueBatchParams);
     
 
@@ -178,23 +247,9 @@ class Entity {
     return true;
   }
 
-  static async delete({id}) {
-    const db = new DB();
-    const deleteEntitiesSQL = 'DELETE from entities where id = :id'
-    const deleteAttributesSQL = 'DELETE from attributes where entity_type_id = :id'
-    const deleteValuesSQL = 'DELETE from \`values\` where entity_id = :id'
-
-    let executeStatementParam = [
-      {name: 'id', value:{stringValue: id}}
-    ]
-    await db.executeStatement(deleteEntitiesSQL, executeStatementParam);
-    await db.executeStatement(deleteAttributesSQL, executeStatementParam);
-    await db.executeStatement(deleteValuesSQL, executeStatementParam);
-
-    return true;
-  }
-
 }
+
+
 
 
 

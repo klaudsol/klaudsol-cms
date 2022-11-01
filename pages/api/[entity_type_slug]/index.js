@@ -52,7 +52,6 @@ async function handler(req, res) {
           metadata: {
             ...collection.metadata,
             ...!collection.metadata.type && {type: item.entity_type_slug},
-            ...!collection.metadata.id && {id: item.entity_type_id},  //shouldn't this be entity_type_id? Deprecated.
             ...!collection.metadata.id && {entity_type_id: item.entity_type_id},  
             attributes: {
               ...collection.metadata.attributes,
