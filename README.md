@@ -16,7 +16,7 @@ KlaudSol CMS is a Headless and Serverless CMS (Content Management System). Welco
 
 
 ## Live Demo
-For a live demo, go to https://cms.klaudsol.app
+For a live demo, go to https://cms-demo.klaudsol.app
 
 ```
 Username: admin@klaudsdol.com
