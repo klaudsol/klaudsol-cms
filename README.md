@@ -14,6 +14,32 @@ KlaudSol CMS is a Headless and Serverless CMS (Content Management System). Welco
   * Have full access and control to **your** data.
 * Licensed under a permissive licence ([MIT License](https://opensource.org/licenses/MIT)).
 
+## How to Run on Development Machine
+
+### Prerequisites:
+
+#### Install the following:
+* nvm
+* yarn
+
+#### Copy .env to .env.local, and modify the following values:  
+# AURORA_AWS_ACCESS_KEY_ID=
+# AURORA_AWS_SECRET_ACCESS_KEY=
+# AURORA_DATABASE=
+# AURORA_RESOURCE_ARN=
+# AURORA_SECRET_ARN=
+# SECRET_COOKIE_PASSWORD=a random secret value that should be unique for each KlaudSol CMS installation.
+# FRONTEND_URL= 
+# IMAGE_DOMAINS=
+
+#### Run the following commands:
+```
+nvm use --lts
+./dev-start.sh
+```
+
+#### Open browser to http://localhost:3001
+
 
 ## Live Demo
 For a live demo, go to https://cms-demo.klaudsol.app
