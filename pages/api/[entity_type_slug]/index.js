@@ -1,4 +1,5 @@
 import Entity from '@backend/models/core/Entity';
+import EntityType from '@backend/models/core/EntityType';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
@@ -28,13 +29,10 @@ async function handler(req, res) {
     try{
       const { entity_type_slug } = req.query;
       const rawData = await Entity.where({entity_type_slug});
-      
-      const initialFormat = {
+      const rawEntityType = await EntityType.find({slug: entity_type_slug});
 
-        indexedData: {},
-        metadata: {
-          attributes: {}  
-        },
+      const initialFormat = {
+        indexedData: {}
       };      
       
       const dataTemp = rawData.reduce((collection, item) => {
@@ -49,25 +47,34 @@ async function handler(req, res) {
               ...!collection.indexedData[item.id]?.[item.attributes_name] && {[item.attributes_name]: resolveValue(item)},
             }
           },
-          metadata: {
-            ...collection.metadata,
-            ...!collection.metadata.type && {type: item.entity_type_slug},
-            ...!collection.metadata.id && {entity_type_id: item.entity_type_id},  
-            attributes: {
-              ...collection.metadata.attributes,
-              ...!collection.metadata.attributes[item.attributes_name] && {[item.attributes_name] : {
-                type: item.attributes_type,
-                order: item.attributes_order
-              }}
-            }
-          }
         }
         
       }, initialFormat);
-      
+
+      const initialMetadata = {
+        attributes: {}
+      };
+
+      const metadata = rawEntityType.reduce((collection, item) => {
+
+        return {
+
+          attributes: {
+            ...collection.attributes,
+            ...!collection.attributes[item.attribute_name] && {[item.attribute_name] : {
+              type: item.attribute_type,
+              order: item.attribute_order
+            }}
+
+          }
+
+        };
+
+      }, initialMetadata);
+
       const output = {
         data: Object.values(dataTemp.indexedData), 
-        metadata: dataTemp.metadata
+        metadata: metadata
       }; 
 
       output.metadata.hash = createHash(output);

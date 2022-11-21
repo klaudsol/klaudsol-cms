@@ -1,4 +1,4 @@
-import EntityTypes from '@backend/models/core/EntityTypes';
+import EntityType from '@backend/models/core/EntityType';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
@@ -23,7 +23,7 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const entityTypes = await EntityTypes.all();
+      const entityTypes = await EntityType.all();
       const output = {
         data: entityTypes,
         metadata: {}
