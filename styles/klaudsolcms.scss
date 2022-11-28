@@ -819,13 +819,24 @@ $onFocus: #323C4E;
 }
 
 .bg_svg {
-    background: url("/klaudsolcms-bg-scaled2.svg") no-repeat center top;
+   // background: url("/klaudsol-cms-vector-laptop.png") no-repeat center top;
     background-size: contain;
     width: 100%;
     height: 100vh;
     text-align: right;
-    margin-left: 40px;
+    margin-top: 20px;
     padding-top: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0%;
+}
+
+.admin-vector-image {
+    width: 70%;
+    height: auto;
+    margin-bottom: 40px;
 }
 
 .center {
@@ -837,8 +848,8 @@ $onFocus: #323C4E;
 }
 
 .text_welcome {
-    margin-left: 50px;
     margin-bottom: 200px;
+    margin-top: 150px;
 }
 
 .input_textarea {
