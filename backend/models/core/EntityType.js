@@ -52,6 +52,22 @@ class EntityTypes {
       })); 
 
     } 
+
+    static async create({name, slug}) {
+
+      const db = new DB();
+
+      const insertEntitiesSQL = 'INSERT into entity_types (slug, name) VALUES (:slug, :name)';
+      
+      await db.executeStatement(insertEntitiesSQL, [
+        {name: 'slug', value:{stringValue: slug}},
+        {name: 'name', value:{stringValue: name}},
+      ]);
+
+      //TODO: return something valuable here
+      return true;
+
+    }
 }
 
 export default EntityTypes;

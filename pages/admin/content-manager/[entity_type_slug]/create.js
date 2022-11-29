@@ -4,8 +4,9 @@ import ContentManagerSubMenu from '@/components/elements/inner/ContentManagerSub
 import { getSessionCache } from "@/lib/Session";
 
 import { useRouter } from 'next/router'
-import { useEffect, useReducer, useCallback } from 'react';
-import { slsFetch } from '@/components/Util'; 
+import { useEffect, useReducer, useRef } from 'react';
+import { slsFetch, sortByOrderAsc } from '@/components/Util'; 
+import { Formik, Form, Field } from 'formik';
 
 /** kladusol CMS components */
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton';
@@ -21,6 +22,8 @@ import { VscListSelection } from 'react-icons/vsc';
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 
+import AdminRenderer from '@/components/renderers/admin/AdminRenderer';
+
 export default function CreateNewEntry({cache}) {
 
   const router = useRouter();
@@ -28,13 +31,7 @@ export default function CreateNewEntry({cache}) {
   const { entity_type_slug } = router.query;
 
   const initialState = {
-    form: {},
-    attributes: [],
-    columns: [],
-    entries: [],
-    temp: [],
-    form: [], 
-    slug: null,
+    attributes: {},
     isLoading: false,
     isRefresh: true,
     isSaving: false,
@@ -48,16 +45,11 @@ export default function CreateNewEntry({cache}) {
   const SAVING = 'SAVING';
 
   const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
-  const SET_COLUMNS = 'SET_COLUMNS';
   const SET_ENTRIES = 'SET_ENTRIES';
-  const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
-  const SET_FORM_VALUES = 'SET_FORM_VALUES';
   const SET_SHOW = 'SET_SHOW';
-  const SET_SLUG = 'SET_SLUG';
-  const SET_TEMP = 'SET_TEMP';
-
   const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
 
+  //refactor to global reducer
   const reducer = (state, action) => {
     switch(action.type) {
       case LOADING:
@@ -92,32 +84,11 @@ export default function CreateNewEntry({cache}) {
           attributes: action.payload
         }
 
-      case SET_COLUMNS:
-        return {
-          ...state,
-          columns: action.payload
-        }
-
       case SET_ENTRIES:
         return {
           ...state,
           entries: action.payload
         }
-
-      case SET_ENTITY_TYPE_NAME:
-        return {
-          ...state,
-          entity_type_name: action.payload
-        }
-
-        case SET_FORM_VALUES:
-          return {
-            ...state,
-            form: {
-              ...state.form,
-              ...action.payload
-            }
-          }
 
         case SET_SHOW:
             return {
@@ -125,38 +96,21 @@ export default function CreateNewEntry({cache}) {
               show: action.payload
               }
 
-        case SET_SLUG:
+
+
+        case SET_ENTITY_TYPE_ID:
           return {
             ...state,
-            slug: action.payload
+            entity_type_id: action.payload
           }
 
-          case SET_TEMP:
-            return {
-              ...state,
-              temp: action.payload
-            }
-
-            case SET_ENTITY_TYPE_ID:
-              return {
-                ...state,
-                entity_type_id: action.payload
-              }
-
-              case SET_FORM_VALUES:  
-              return {
-                ...state,
-                form: {
-                  ...state?.form,
-                  [action.payload.name]: action.payload.value
-                }
-              }
             
 
     }
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
+  const formRef = useRef();
 
   useEffect(() => { 
     (async () => {
@@ -165,18 +119,8 @@ export default function CreateNewEntry({cache}) {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
         const values = await valuesRaw.json();
   
-        let attributes = [], columns = [], entries = {}, entity_type_id = null;
-  
-        columns = Object.keys(values.metadata.attributes);
-        attributes = Object.values(values.metadata);
-        entity_type_id = values.metadata.entity_type_id;
-
-        columns.map(col => entries[col] = '')
-
-        dispatch({type: SET_ATTRIBUTES, payload: attributes});
-        dispatch({type: SET_COLUMNS, payload: columns});
-        dispatch({type: SET_ENTRIES, payload: entries});
-        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
+        dispatch({type: SET_ATTRIBUTES, payload: values.metadata.attributes});
+        dispatch({type: SET_ENTITY_TYPE_ID, payload: values.metadata.entity_type_id});
 
       } catch (ex) {
         console.error(ex.stack)
@@ -187,9 +131,28 @@ export default function CreateNewEntry({cache}) {
     })();
   }, [entity_type_slug]);
 
-  const onSubmit = useCallback((evt) => {
+  const onSubmit = (evt) => {
     evt.preventDefault();
-    (async () => {
+    if (formRef.current) {
+      formRef.current.handleSubmit();
+    }
+
+  };
+
+  const createSlug = (slug) => {
+    return slug.replaceAll(' ', '-').toLowerCase();
+  }
+
+  const formikParams = {
+    innerRef: formRef,
+    initialValues:{},
+    onSubmit: (values) => {
+      (async () => {
+        const entry = {
+          ...values,
+          entity_type_id: state.entity_type_id
+        };
+        console.log(entry);
         try {
           dispatch({type: SAVING})
           const response = await slsFetch(`/api/${entity_type_slug}`, {
@@ -197,7 +160,7 @@ export default function CreateNewEntry({cache}) {
             headers: {
               'Content-type': 'application/json'
             },
-            body: JSON.stringify({entries: state.entries, columns: state.columns, slug: createSlug(state.slug), entity_type_id: state.entity_type_id})
+            body: JSON.stringify({entry})
           });
           const { message, homepage } = await response.json();      
           dispatch({type: SET_SHOW, payload: true})    
@@ -206,18 +169,9 @@ export default function CreateNewEntry({cache}) {
         } finally {
           dispatch({type: CLEANUP})
         }
-    })();
-  }, [state.entries, state.columns, state.slug, state.entity_type_id, entity_type_slug]);
-
-  const createSlug = (slug) => {
-    return slug.replaceAll(' ', '-').toLowerCase();
-  }
-
-  const onTextInputChange = (entries, col, value, attribute, attribute_type) => {
-    entries[col] = value;
-    entries[attribute] = attribute_type;
-    dispatch({type: SET_ENTRIES, payload: entries});
-  }
+      })();
+    }
+  };
 
   return (
     <CacheContext.Provider value={cache}>
@@ -235,35 +189,35 @@ export default function CreateNewEntry({cache}) {
 
         <div className="row mt-4">
           <div className="col-9">
-          <div className="container_new_entry py-4 px-4"> 
-          {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
+         <div className="container_new_entry py-4 px-4"> 
+          {
+            state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
                 <div>
                   <div className="skeleton-label" />
                   <div className="skeleton-text" />
                   <div />
                 </div>
-             ))}
+          ))}
+
           {
             !state.isLoading && (
-              <>
-              <p className="mt-1"> <b> slug </b></p>
-            <input type='text'className="input_text mb-2" onChange={e => dispatch({type: SET_SLUG, payload: e.target.value})} />
-            {state.attributes.map((attr, i) => (<div key={i}> 
-              {state.columns.map((col, i) => attr[col] && (
-                <div key={i}>
-                  <p className="mt-1"> <b> {col} </b></p>
-                  {attr[col].type === 'text' && (<input type="text" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
-                  {attr[col].type === 'textarea' && (<textarea className='input_textarea' onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)} />)}
-                  {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}  />)}
-                </div>
-              ))}
-            </div>))}
-              </>
-            )
-          }
+              <Formik {...formikParams}               
+                >
+                <Form>
+                  <p className="mt-1"> <b> slug </b></p>
+                  <Field type='text'className="input_text mb-2" name='slug' />
+                  {Object.entries(state.attributes).sort(sortByOrderAsc).map(([attributeName, attribute]) => (
+                    <div key={attributeName}> 
+                          <p className="mt-1"> <b> {attributeName} </b></p>
+                            <AdminRenderer type={attribute.type} name={attributeName} />
+                    </div>
+                  ))}
+                </Form>
+              </Formik>
+            )}
            
+           </div>
        
-            </div>
           </div>
           <div className="col-3 mx-0">
             <div className="container_new_entry px-3 py-4"> 

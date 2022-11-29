@@ -58,6 +58,8 @@ export const slsFetch = async (url, params, extra) => {
 export const useIndex = (array) => useMemo(() => (
     Object.fromEntries(array.map((item) => [item.id, item]))
   ),[array]);
+
+export const sortByOrderAsc = (first, second) => first[1].order - second[1].order; 
   
 
 
