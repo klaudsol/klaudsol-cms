@@ -11,7 +11,7 @@ const AppModal = ({show, onClose, onClick, modalTitle, children, buttonTitle}) =
             </Modal.Header>
             <Modal.Body>{children}</Modal.Body>
             <Modal.Footer className='modal_header'>
-              <Button className='btn_modal' onClick={onClose}>
+              <Button className='btn_modal' onClick={onClick}>
                 {buttonTitle}
               </Button>
             </Modal.Footer>
