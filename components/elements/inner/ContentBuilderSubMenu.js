@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useState, useContext} from 'react';
+import { useReducer, useEffect, useState, useContext, useRef} from 'react';
 import { FaPlus, FaSearch } from 'react-icons/fa'
 import { slsFetch } from '@/components/Util'; 
 import Link from 'next/link';
@@ -12,6 +12,12 @@ import { SET_ENTITY_TYPES } from '@/components/reducers/actions';
 const ContentBuilderSubMenu = ({title}) => {
 
    const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+   const formRef = useRef();
+   const onModalSubmit = () => {
+      if(formRef.current) {
+        formRef.current.handleSubmit();
+      }
+   };
 
    const [collapseOpen, setCollapseOpen] = useState(true);
    const [types, setTypes] = useState([
@@ -143,8 +149,11 @@ const ContentBuilderSubMenu = ({title}) => {
            
             
         </div>
-        <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Create a collection type' buttonTitle='Continue'> 
-          <CollectionTypeBody />
+        <AppModal show={state.show} 
+          onClose={() => dispatch({type: SET_SHOW, payload: false})} 
+          onClick={onModalSubmit} 
+          modalTitle='Create a collection type' buttonTitle='Continue'> 
+          <CollectionTypeBody formRef={formRef} />
         </AppModal>
     </> 
     );
