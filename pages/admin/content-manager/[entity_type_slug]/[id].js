@@ -250,7 +250,8 @@ export default function Type({cache}) {
             state.columns.map((col, i) => attr[col] && (
             <div key={i}>
               <p className="mt-1"> <b>{col}</b> </p>
-              {attr[col].type === 'text' && (<input type="text"  className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+              {/*Note: this is just a quick and dirty fix. Long term fix is to use the AdminRenderer component*/}
+              {(attr[col].type === 'text' || attr[col].type === 'image' ||attr[col].type === 'link') && (<input type="text"  className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
               {attr[col].type === 'textarea' && (<textarea className='input_textarea' defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
               {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
             </div>

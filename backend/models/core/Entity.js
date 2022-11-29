@@ -115,7 +115,8 @@ class Entity {
   }
 
     //Work in progress
-    static async create({entries, columns, slug, entity_type_id}) {
+    static async create({slug, entity_type_id, ...entry}) {
+
     
       const db = new DB();
   
@@ -154,9 +155,10 @@ class Entity {
           [
             {name: 'entity_id', value: {longValue: lastInsertedEntityID}},
             {name: 'attribute_id', value: {longValue: attributeId}},
-            {name: 'value_string', value: attributeType == 'text' ? {stringValue: entries[attributeName]} : {isNull: true}},
-            {name: 'value_long_string', value:  attributeType == 'textarea' ? {stringValue: entries[attributeName]} : {isNull: true}},
-            {name: 'value_double', value:  attributeType == 'float' ? {doubleValue: entries[attributeName]} : {isNull: true}},
+            //Refactor to encapsulate type switch
+            {name: 'value_string', value: (attributeType == 'text' || attributeType == 'image' || attributeType == 'link') ? {stringValue: entry[attributeName]} : {isNull: true}},
+            {name: 'value_long_string', value:  attributeType == 'textarea' ? {stringValue: entry[attributeName]} : {isNull: true}},
+            {name: 'value_double', value:  attributeType == 'float' ? {doubleValue: entry[attributeName]} : {isNull: true}},
           ]
         ]    
         
@@ -221,7 +223,8 @@ class Entity {
         [
           {name: 'entity_id', value: {longValue: entity_id}},
           {name: 'attribute_id', value: {longValue: attributeId}},
-          {name: 'value_string', value: attributeType == 'text' ? {stringValue: entries[attributeName]} : {isNull: true}},
+            //Refactor to encapsulate type switch
+          {name: 'value_string', value: (attributeType == 'text' || attributeType == 'image' || attributeType == 'link') ? {stringValue: entries[attributeName]} : {isNull: true}},
           {name: 'value_long_string', value:  attributeType == 'textarea' ? {stringValue: entries[attributeName]} : {isNull: true}},
           {name: 'value_double', value:  attributeType == 'float' ? {doubleValue: entries[attributeName]} : {isNull: true}},
         ]

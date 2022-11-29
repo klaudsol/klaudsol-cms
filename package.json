@@ -36,6 +36,7 @@
     "dompurify": "^2.3.9",
     "es6-promisify": "^7.0.0",
     "filereader": "^0.10.3",
+    "formik": "^2.2.9",
     "html2canvas": "^1.4.1",
     "iron-session": "^6.1.2",
     "jspdf": "^2.5.1",

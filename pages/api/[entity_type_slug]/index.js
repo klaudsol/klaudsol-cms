@@ -66,7 +66,8 @@ async function handler(req, res) {
               order: item.attribute_order
             }}
 
-          }
+          },
+          entity_type_id: item.entity_type_id
 
         };
 
@@ -90,8 +91,8 @@ async function handler(req, res) {
 
   async function create(req, res) { 
     try{
-      const { entries = null, columns = null, slug = null, entity_type_id = null } = req.body;
-      await Entity.create({entries, columns, slug, entity_type_id});
+      const { entry } = req.body;
+      await Entity.create(entry);
       res.status(OK).json({message: 'Successfully created a new entry'}) 
     }
     catch (error) {
