@@ -5,7 +5,7 @@ import { getSessionCache } from "@/lib/Session";
 
 import { useRouter } from 'next/router'
 import { useEffect, useReducer, useCallback } from 'react';
-import { slsFetch } from '@/components/Util'; 
+import { slsFetch, sortByOrderAsc } from '@/components/Util'; 
 
 /** kladusol CMS components */
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton';
@@ -20,6 +20,8 @@ import { VscListSelection } from 'react-icons/vsc';
 
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
+
+import AdminRenderer from '@/components/renderers/admin/AdminRenderer';
 
 export default function CreateNewEntry({cache}) {
 
@@ -58,6 +60,7 @@ export default function CreateNewEntry({cache}) {
 
   const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
 
+  //refactor to global reducer
   const reducer = (state, action) => {
     switch(action.type) {
       case LOADING:
@@ -165,18 +168,8 @@ export default function CreateNewEntry({cache}) {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);  
         const values = await valuesRaw.json();
   
-        let attributes = [], columns = [], entries = {}, entity_type_id = null;
-  
-        columns = Object.keys(values.metadata.attributes);
-        attributes = Object.values(values.metadata);
-        entity_type_id = values.metadata.entity_type_id;
-
-        columns.map(col => entries[col] = '')
-
-        dispatch({type: SET_ATTRIBUTES, payload: attributes});
-        dispatch({type: SET_COLUMNS, payload: columns});
-        dispatch({type: SET_ENTRIES, payload: entries});
-        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
+        dispatch({type: SET_ATTRIBUTES, payload: values.metadata.attributes});
+        dispatch({type: SET_ENTITY_TYPE_ID, payload: values.metadata.entity_type_id});
 
       } catch (ex) {
         console.error(ex.stack)
@@ -236,34 +229,31 @@ export default function CreateNewEntry({cache}) {
         <div className="row mt-4">
           <div className="col-9">
           <div className="container_new_entry py-4 px-4"> 
-          {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
+          {
+            state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
                 <div>
                   <div className="skeleton-label" />
                   <div className="skeleton-text" />
                   <div />
                 </div>
-             ))}
+          ))}
+
           {
             !state.isLoading && (
               <>
-              <p className="mt-1"> <b> slug </b></p>
-            <input type='text'className="input_text mb-2" onChange={e => dispatch({type: SET_SLUG, payload: e.target.value})} />
-            {state.attributes.map((attr, i) => (<div key={i}> 
-              {state.columns.map((col, i) => attr[col] && (
-                <div key={i}>
-                  <p className="mt-1"> <b> {col} </b></p>
-                  {attr[col].type === 'text' && (<input type="text" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
-                  {attr[col].type === 'textarea' && (<textarea className='input_textarea' onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)} />)}
-                  {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" onChange={e => onTextInputChange(state.entries, col, e.target.value, `${col}_type`, attr[col].type)}  />)}
-                </div>
-              ))}
-            </div>))}
+                <p className="mt-1"> <b> slug </b></p>
+                <input type='text'className="input_text mb-2" onChange={e => dispatch({type: SET_SLUG, payload: e.target.value})} />
+                {Object.entries(state.attributes).sort(sortByOrderAsc).map(([attributeName, attribute]) => (
+                  <div key={attributeName}> 
+                        <p className="mt-1"> <b> {attributeName} </b></p>
+                          {<AdminRenderer type={attribute.type} />}
+                  </div>
+                ))}
               </>
-            )
-          }
+            )}
            
+           </div>
        
-            </div>
           </div>
           <div className="col-3 mx-0">
             <div className="container_new_entry px-3 py-4"> 
