@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { Formik, Form, Field } from 'formik';
+import { Field } from 'formik';
 
 export default function TextRenderer({className, ...params}) {
   return (
