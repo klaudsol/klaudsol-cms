@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useState, useContext} from 'react';
+import { useReducer, useEffect, useState, useContext, useRef} from 'react';
 import { FaPlus, FaSearch } from 'react-icons/fa'
 import { slsFetch } from '@/components/Util'; 
 import Link from 'next/link';
@@ -11,7 +11,16 @@ import { SET_ENTITY_TYPES } from '@/components/reducers/actions';
 
 const ContentBuilderSubMenu = ({title}) => {
 
+   const SET_SKELETON_VISIBLE = 'SET_SKELETON_VISIBLE';
+   const SET_SHOW = 'SET_SHOW';
+
    const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+   const formRef = useRef();
+   const onModalSubmit = () => {
+      if(formRef.current) {
+        formRef.current.handleSubmit();
+      }
+   };
 
    const [collapseOpen, setCollapseOpen] = useState(true);
    const [types, setTypes] = useState([
@@ -30,11 +39,6 @@ const ContentBuilderSubMenu = ({title}) => {
       isLoading: false,
     };
 
-    const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
-    const SET_SHOW = 'SET_SHOW';
-    const SET_LOADING = 'SET_LOADING';
-    const LOADING = 'LOADING';
-
     function onCollapse(name){
       var type = types;
       type.map((type) => {
@@ -49,27 +53,16 @@ const ContentBuilderSubMenu = ({title}) => {
     const reducer = (state, action) => {
       
       switch(action.type) {
-         case SET_SELECTED_TYPE:
-          return {
-            ...state,
-            selectedType: action.payload
-          }
-
           case SET_SHOW:
               return {
                 ...state,
                 show: action.payload
                 }
 
-          case SET_LOADING:
+          case SET_SKELETON_VISIBLE:
             return {
               ...state,
-              isLoading: action.payload
-              }
-          case LOADING:
-            return {
-              ...state,
-              isLoading: action.payload
+              isSkeletonVisible: action.payload
             }
       }
     };
@@ -82,10 +75,8 @@ const ContentBuilderSubMenu = ({title}) => {
 
         try {  
 
-          //only display on first load
-          if(!rootState.entityTypesHash) {
-            dispatch({type: LOADING, payload: true});
-          }
+          //load only if there is no data in the root context cache
+          if (!rootState.entityTypes || rootState.entityTypes.length === 0) dispatch({type: SET_SKELETON_VISIBLE, payload: true});
 
           const entityTypesRaw = await slsFetch('/api/entity_types');  
           const entityTypes = await entityTypesRaw.json();
@@ -101,7 +92,7 @@ const ContentBuilderSubMenu = ({title}) => {
       } catch (ex) {
           console.error(ex.stack)
         } finally {
-          dispatch({type: LOADING, payload: false})
+          dispatch({type: SET_SKELETON_VISIBLE, payload: false})
         }
 
       })();
@@ -124,27 +115,31 @@ const ContentBuilderSubMenu = ({title}) => {
             </div>
 
             <div className="d-flex flex-column mx-0 px-0">
-            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
+              {state.isSkeletonVisible && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
   
-  <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
-   <div className='skeleton-bullet'/>
-   <div className='skeleton-submenu-text' />
- </div>
+                <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
+                <div className='skeleton-bullet'/>
+                <div className='skeleton-submenu-text' />
+              </div>
 
-))}
-               { !state.isLoading &&
-                  rootState.entityTypes.map((type, i) => (
-                     <Link href={`/admin/plugins/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
-                  ))
-               }
+              ))}
+
+              { !state.isSkeletonVisible &&
+                rootState.entityTypes.map((type, i) => (
+                   <Link href={`/admin/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'}><li> {type.entity_type_name} </li></button></Link>
+                ))
+              }
                  <button onClick={() => dispatch({type: SET_SHOW, payload: true})} className='content_create_button'> <FaPlus className='content_create_icon' /> Create new collection type </button>
             </div>
 
            
             
         </div>
-        <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Create a collection type' buttonTitle='Continue'> 
-          <CollectionTypeBody />
+        <AppModal show={state.show} 
+          onClose={() => dispatch({type: SET_SHOW, payload: false})} 
+          onClick={onModalSubmit} 
+          modalTitle='Create a collection type' buttonTitle='Continue'> 
+          <CollectionTypeBody formRef={formRef} />
         </AppModal>
     </> 
     );

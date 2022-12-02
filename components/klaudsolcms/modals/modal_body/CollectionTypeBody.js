@@ -1,33 +1,44 @@
 import { useState } from 'react';
-const CollectionTypeBody = () => {
-    const [displayName, setDisplayName] = useState('');
-    const [slug, setSlug] = useState('');
+import {Formik, Form, Field} from 'formik';
+
+export default function CollectionTypeBody({formRef}) {
+    const formikParams = {
+      initialValues: {},
+      innerRef: formRef,
+      onSubmit: (values) => {
+        console.error(JSON.stringify(values));
+      }
+    };
     return ( 
     <>
-        <div>
-            <div className="d-flex justify-content-between align-items-center">
-            <h6 className="mx-3"> Configurations </h6>
-            <div>
-            <button className="btn_modal_settings"> Basic settings </button>
- 
-            </div>
+        <Formik {...formikParams}>
+          <Form>
+          <div>
+              <div className="d-flex justify-content-between align-items-center">
+              <h6 className="mx-3"> Configurations </h6>
+              <div>
+              <button className="btn_modal_settings"> Basic settings </button>
+  
+              </div>
+            
+              </div>
+              <div className="block_bar"></div>
+              <div className="row">
+                <div className="col">
+                <p className="mt-2"> Display Name </p>
+                <Field type="text" className="input_text" name="displayName" /> 
           
-            </div>
-            <div className="block_bar"></div>
-            <div className="row">
-              <div className="col">
-               <p className="mt-2"> Display Name </p>
-               <input type="text" className="input_text" onChange={e => {setDisplayName(e.target.value), setSlug(e.target.value.toLowerCase())}} value={displayName} /> 
-        
+                </div>
+                <div className="col">
+                <p className="mt-2"> API ID &#40;Slug&#41; </p>
+                <Field type="text" className="input_text" name='slug' /> 
+                <p className="mt-1" style={{fontSize: '10px'}}> The UID is used to generate the API routes and databases tables/collections </p>
+                </div>
               </div>
-              <div className="col">
-               <p className="mt-2"> API ID &#40;Slug&#41; </p>
-               <input type="text" className="input_text" value={slug}/> 
-               <p className="mt-1" style={{fontSize: '10px'}}> The UID is used to generate the API routes and databases tables/collections </p>
-              </div>
-            </div>
-        </div>
+          </div>
+          </Form>
+        </Formik>
+
     </> );
 }
  
-export default CollectionTypeBody;

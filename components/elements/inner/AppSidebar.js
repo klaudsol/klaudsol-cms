@@ -34,7 +34,7 @@ const AppSidebar = () => {
     },
     {
       title: "Content-Type Builder",
-      path: `/admin/plugins/content-type-builder/`,
+      path: `/admin/content-type-builder/`,
       icon: <BiBuildings className='sidebar_button_icon'/>
     },
     {
