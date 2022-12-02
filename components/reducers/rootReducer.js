@@ -5,6 +5,11 @@ import {
   SET_COLLAPSE,
 } from '@/components/reducers/actions';
 
+export const rootInitialState = {
+  entityTypes: [],
+  entityType: {}
+};
+
 export const rootReducer = (state, action) => {
     
     const { displayName = null, isLoggedIn = null} = action.payload ?? {};
@@ -27,6 +32,15 @@ export const rootReducer = (state, action) => {
           ...state,
           entityTypes: action.payload.entityTypes,
           entityTypesHash: action.payload.entityTypesHash 
+        }
+
+      case 'SET_ENTITY_TYPE':
+        return {
+          ...state,
+          entityType: {
+            ...state.entityType,
+            [action.payload.slug]: action.payload.entityType
+          }
         }
       
       case SET_COLLAPSE:
