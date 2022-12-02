@@ -25,8 +25,6 @@ import IconMedia from '@/components/klaudsolcms/field_icons/IconMedia';
 import { FaCheck, FaPlusCircle } from 'react-icons/fa';
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
-import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
-import SkeletonContentBuilder from "components/klaudsolcms/skeleton/SkeletonContentBuilder";
 import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
 
 export default function ContentTypeBuilder({cache}) {
@@ -147,8 +145,7 @@ export default function ContentTypeBuilder({cache}) {
           <AppButtonSm title='Configure the view' icon={<VscListSelection />} isDisabled={false}/>
         </div>
 
-        {state.isLoading && <SkeletonContentBuilder />}
-        {!state.isLoading && <AppContentBuilderTable columns={columns} entries={state.attributes} />}
+        <AppContentBuilderTable typeSlug={entity_type_slug} />
   
         <button className="btn_add_field" onClick={() => dispatch({type: SET_SHOW, payload: true})}> <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another field collection type </button>
 

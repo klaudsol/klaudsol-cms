@@ -1,7 +1,7 @@
 import React, { useReducer } from "react";
 import Head from "next/head";
 import RootContext from "@/components/contexts/RootContext";
-import { rootReducer } from "@/components/reducers/rootReducer";
+import { rootReducer, rootInitialState } from "@/components/reducers/rootReducer";
 
 import "@/styles/coreui/style.scss";
 import "bootstrap/dist/css/bootstrap-reboot.min.css";
@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import * as gtag from "@/lib/gtag";
 
 export default function MyApp({ Component, pageProps }) {
-  const [state, dispatch] = useReducer(rootReducer, {entityTypes: []});
+  const [state, dispatch] = useReducer(rootReducer, rootInitialState);
   const router = useRouter();
   useEffect(() => {
     const handleRouteChange = (url) => {
