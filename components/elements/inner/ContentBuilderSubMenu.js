@@ -126,7 +126,7 @@ const ContentBuilderSubMenu = ({title}) => {
 
               { !state.isSkeletonVisible &&
                 rootState.entityTypes.map((type, i) => (
-                   <Link href={`/admin/plugins/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'}><li> {type.entity_type_name} </li></button></Link>
+                   <Link href={`/admin/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'}><li> {type.entity_type_name} </li></button></Link>
                 ))
               }
                  <button onClick={() => dispatch({type: SET_SHOW, payload: true})} className='content_create_button'> <FaPlus className='content_create_icon' /> Create new collection type </button>
