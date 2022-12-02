@@ -9,7 +9,7 @@ import { DEFAULT_SKELETON_ROW_COUNT } from 'lib/Constants';
 import RootContext from '@/components/contexts/RootContext';
 import { SET_ENTITY_TYPES } from '@/components/reducers/actions';
 
-const ContentBuilderSubMenu = ({title}) => {
+const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
 
    const SET_SKELETON_VISIBLE = 'SET_SKELETON_VISIBLE';
    const SET_SHOW = 'SET_SHOW';
@@ -21,7 +21,7 @@ const ContentBuilderSubMenu = ({title}) => {
         formRef.current.handleSubmit();
       }
    };
-
+  
    const [collapseOpen, setCollapseOpen] = useState(true);
    const [types, setTypes] = useState([
       {typeName: 'COLLECTION TYPES', collapseOpen: true},
@@ -126,7 +126,11 @@ const ContentBuilderSubMenu = ({title}) => {
 
               { !state.isSkeletonVisible &&
                 rootState.entityTypes.map((type, i) => (
-                   <Link href={`/admin/content-type-builder/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'}><li> {type.entity_type_name} </li></button></Link>
+                   <Link href={`/admin/content-type-builder/${type.entity_type_slug}`} passHref key={type.id}>
+                     <button data-current-type-slug={currentTypeSlug} key={i} className={currentTypeSlug === type.entity_type_slug ? 'content_menu_item_active' : 'content_menu_item'}>
+                       <li> {type.entity_type_name}</li>
+                      </button>
+                    </Link>
                 ))
               }
                  <button onClick={() => dispatch({type: SET_SHOW, payload: true})} className='content_create_button'> <FaPlus className='content_create_icon' /> Create new collection type </button>

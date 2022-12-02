@@ -13,6 +13,8 @@ async function handler(req, res) {
     switch(req.method) {
       case "GET":
         return get(req, res); 
+      case "POST":
+        return create(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -33,6 +35,28 @@ async function handler(req, res) {
       
       setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
       entityTypes ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
+    }
+    catch (error) {
+      await defaultErrorHandler(error, req, res);
+    }
+  }
+
+  async function create(req, res) { 
+
+
+    try{
+      const { name, slug } = req.body;
+      await EntityType.create({name, slug});
+      const output = {
+        data: {name, slug},
+        metadata: {}
+      }
+      
+      output.metadata.hash = createHash(output);
+      
+      setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
+      res.status(OK).json(output ?? []);
+      //entityTypes ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
     }
     catch (error) {
       await defaultErrorHandler(error, req, res);

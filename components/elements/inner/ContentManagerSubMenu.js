@@ -3,6 +3,7 @@ import { slsFetch } from '@/components/Util';
 import RootContext from '@/components/contexts/RootContext';
 import { DEFAULT_SKELETON_ROW_COUNT } from 'lib/Constants';
 import Link from 'next/link';
+import { loadEntityTypes } from '@/components/reducers/actions';
 
 /** kladusol CMS components */
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
@@ -48,35 +49,23 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
     };
     
     const [state, dispatch] = useReducer(reducer, initialState);
+    
+    const onStartLoad = () => {
+      //only display on first load
+      if(!rootState.entityTypesHash) {
+        dispatch({type: LOADING, payload: true});
+      }
+    };
+
+    const onEndLoad = () => dispatch({type: LOADING, payload: false});
+
 
     /*** Entity Types List ***/
     useEffect(() => { 
       (async () => {
 
-        try {  
-
-          //only display on first load
-          if(!rootState.entityTypesHash) {
-            dispatch({type: LOADING, payload: true});
-          }
-
-          const entityTypesRaw = await slsFetch('/api/entity_types');  
-          const entityTypes = await entityTypesRaw.json();
-
-          //reload entity types list only if there is a change.
-          if(rootState.entityTypesHash !== entityTypes.metadata.hash) { 
-            rootDispatch({type: SET_ENTITY_TYPES, payload: {
-                entityTypes: entityTypes.data,
-                entityTypesHash: entityTypes.metadata.hash
-            }});
-          }
+        await loadEntityTypes({rootState, rootDispatch, onStartLoad, onEndLoad});
         
-      } catch (ex) {
-          console.error(ex.stack)
-        } finally {
-          dispatch({type: LOADING, payload: false})
-        }
-
       })();
     }, [rootState]);
 

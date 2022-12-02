@@ -121,38 +121,37 @@ export default function ContentTypeBuilder({cache}) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-      <ContentBuilderSubMenu title='Content-Type Builder'/>
-      <ContentTypeBuilderLayout>
-      <div className="py-4">
-        <AppBackButton link='/admin' />
+      <ContentTypeBuilderLayout currentTypeSlug={entity_type_slug}>
+        <div className="py-4">
+          <AppBackButton link='/admin' />
 
-        <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
-          <div className="d-flex flex-row mb-2">
-          <h3 className="my-1"> {entity_type_slug}</h3>
-          <div className="mx-2" />
-          <AppButtonSm title='Edit' icon={<MdModeEditOutline />} isDisabled={false}/>
+          <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
+            <div className="d-flex flex-row mb-2">
+            <h3 className="my-1"> {entity_type_slug}</h3>
+            <div className="mx-2" />
+            <AppButtonSm title='Edit' icon={<MdModeEditOutline />} isDisabled={false}/>
+            </div>
+    
+            <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
+              <AppCreatebutton title='Add another field' />
+              <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
+            </div>
           </div>
-  
-          <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
-            <AppCreatebutton title='Add another field' />
-            <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
+
+          <p>  Build the data architecture of your content  </p>
+
+          <div className="d-flex justify-content-end align-items-center px-0 mx-0 pb-3"> 
+            <AppButtonSm title='Configure the view' icon={<VscListSelection />} isDisabled={false}/>
           </div>
+
+          <AppContentBuilderTable typeSlug={entity_type_slug} />
+    
+          <button className="btn_add_field" onClick={() => dispatch({type: SET_SHOW, payload: true})}> <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another field collection type </button>
+
+          <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Type' buttonTitle='Continue'> 
+            <AddFieldBody />
+          </AppModal>
         </div>
-
-        <p>  Build the data architecture of your content  </p>
-
-        <div className="d-flex justify-content-end align-items-center px-0 mx-0 pb-3"> 
-          <AppButtonSm title='Configure the view' icon={<VscListSelection />} isDisabled={false}/>
-        </div>
-
-        <AppContentBuilderTable typeSlug={entity_type_slug} />
-  
-        <button className="btn_add_field" onClick={() => dispatch({type: SET_SHOW, payload: true})}> <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another field collection type </button>
-
-        <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Type' buttonTitle='Continue'> 
-          <AddFieldBody />
-        </AppModal>
-    </div>
       </ContentTypeBuilderLayout>
       </div>
       </CacheContext.Provider>
