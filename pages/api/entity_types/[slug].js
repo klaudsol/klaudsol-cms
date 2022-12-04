@@ -33,7 +33,7 @@ async function handler(req, res) {
         return {
 
             ...collection,
-            ...!collection[item.attribute_name] && {[item.attribute_name] : {
+            ...!collection[item.attribute_name] && item.attribute_name &&  {[item.attribute_name] : {
               type: item.attribute_type,
               order: item.attribute_order
             }}
