@@ -177,7 +177,7 @@ export default function ContentTypeBuilder({cache}) {
         alert(JSON.stringify(values));
         try {
           //dispatch({type: SAVING})
-          const response = await slsFetch(`/api/entity_type_slug/${entity_type_slug}/attributes`, {
+          const response = await slsFetch(`/api/entity_types/${entity_type_slug}/attributes`, {
             method: 'POST',
             headers: {
               'Content-type': 'application/json'

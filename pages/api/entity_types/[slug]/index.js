@@ -92,7 +92,7 @@ async function handler(req, res) {
 
       assert({
        loggedIn: true,
-      });
+      }, req);
       
       const { slug } = req.query;
       await EntityType.delete({slug});

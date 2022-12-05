@@ -119,7 +119,7 @@ async function handler(req, res) {
 
       assert({
         loggedIn: true,
-       });
+       }, req);
 
       const { entry } = req.body;
       await Entity.create(entry);

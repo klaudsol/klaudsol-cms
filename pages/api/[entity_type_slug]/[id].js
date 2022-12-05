@@ -106,7 +106,7 @@ async function handler(req, res) {
 
       assert({
         loggedIn: true,
-       });
+       }, req);
 
       const { id } = req.query;
       await Entity.delete({id});
@@ -122,7 +122,7 @@ async function handler(req, res) {
 
       assert({
         loggedIn: true,
-       });
+       }, req);
 
       const { entries = null, entity_id = null, entity_type_id = null } = req.body;
       await Entity.update({entries, entity_type_id, entity_id});
