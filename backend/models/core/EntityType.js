@@ -19,6 +19,7 @@ class EntityTypes {
           })); 
     }
 
+    //TODO: Refactor as where_slug
     static async find({slug}) {
       const db = new DB();
 

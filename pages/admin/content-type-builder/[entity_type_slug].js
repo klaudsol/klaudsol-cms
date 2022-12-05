@@ -183,9 +183,11 @@ export default function ContentTypeBuilder({cache}) {
               'Content-type': 'application/json'
             },
             body: JSON.stringify({
+              attribute: {
               ...{typeSlug: entity_type_slug},
               ...values
-            })
+              }
+           })
           });
           dispatch({type: SET_SHOW, payload: true})    
         } catch(ex) {

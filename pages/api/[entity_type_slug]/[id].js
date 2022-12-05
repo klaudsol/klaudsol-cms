@@ -104,7 +104,7 @@ async function handler(req, res) {
   async function del(req, res) { 
     try{
 
-      assert({
+      await assert({
         loggedIn: true,
        }, req);
 
@@ -120,7 +120,7 @@ async function handler(req, res) {
   async function update(req, res) { 
     try{
 
-      assert({
+      await assert({
         loggedIn: true,
        }, req);
 

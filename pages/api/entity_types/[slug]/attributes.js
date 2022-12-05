@@ -50,12 +50,14 @@ async function handler(req, res) {
 async function create(req, res) { 
   try{
 
-    assert({
+    const { slug } = req.query;
+
+    await assert({
       loggedIn: true,
      }, req);
 
-    const { entry } = req.body;
-    console.error(entry);
+    const { attribute } = req.body;
+    console.error(attribute);
     //await Entity.create(entry);
     res.status(OK).json({message: 'Successfully created a new entry'}) 
   }
