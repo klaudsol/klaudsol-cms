@@ -2,8 +2,9 @@ import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import ContentBuilderSubMenu from '@/components/elements/inner/ContentBuilderSubMenu';
 import { getSessionCache } from "@/lib/Session";
+import { FaTrash } from "react-icons/fa";
 
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useContext } from 'react';
 import { slsFetch } from '@/components/Util'; 
 import { useRouter } from 'next/router';
 
@@ -27,9 +28,13 @@ import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
 
+import RootContext from '@/components/contexts/RootContext';
+import { loadEntityTypes } from '@/components/reducers/actions';
+
 export default function ContentTypeBuilder({cache}) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const initialState = {
     show: false,
@@ -42,6 +47,8 @@ export default function ContentTypeBuilder({cache}) {
   const SET_SHOW = 'SET_SHOW';
   const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
   const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
+  const SHOW_DELETE_CONFIRMATION_MODAL = 'SHOW_DELETE_CONFIRMATION_MODAL';
+  const HIDE_DELETE_CONFIRMATION_MODAL = 'HIDE_DELETE_CONFIRMATION_MODAL';
 
   const LOADING = 'LOADING';
 
@@ -49,28 +56,40 @@ export default function ContentTypeBuilder({cache}) {
     
     switch(action.type) {
         case SET_SHOW:
-            return {
-              ...state,
-              show: action.payload
-              }
+          return {
+            ...state,
+            show: action.payload
+            }
               
         case SET_ATTRIBUTES:
-            return {
-            ...state,
-            attributes: action.payload
-            }
+          return {
+          ...state,
+          attributes: action.payload
+          }
 
         case SET_ENTITY_TYPE_NAME:
-            return {
-              ...state,
-              entity_type_name: action.payload
-            }
+          return {
+            ...state,
+            entity_type_name: action.payload
+          }
 
         case LOADING: 
-            return {
-              ...state,
-              isLoading: action.payload
-            }
+          return {
+            ...state,
+            isLoading: action.payload
+          }
+
+        case SHOW_DELETE_CONFIRMATION_MODAL:
+          return {
+            ...state,
+            showDeleteConfirmationModal: true
+          }
+
+        case HIDE_DELETE_CONFIRMATION_MODAL:
+          return {
+            ...state,
+            showDeleteConfirmationModal: false
+          }
     }
   };
   
@@ -118,6 +137,21 @@ export default function ContentTypeBuilder({cache}) {
       {name: <IconMedia name='Image1' /> , type: 'Media',  button: <AppContentBuilderButtons isDisabled={false} /> }
   ]
 
+  const showDeleteModal = () => {
+    dispatch({type: SHOW_DELETE_CONFIRMATION_MODAL});
+  };
+
+  const performDelete = ({typeSlug}) => {
+    (async () => {
+      console.error(`deleting... ${typeSlug}`);
+      dispatch({type: HIDE_DELETE_CONFIRMATION_MODAL});
+      await slsFetch(`/api/entity_types/${typeSlug}`,{
+        method: 'DELETE'
+      });
+      loadEntityTypes({rootState, rootDispatch});
+    })();
+  };
+
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
@@ -135,6 +169,7 @@ export default function ContentTypeBuilder({cache}) {
             <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
               <AppCreatebutton title='Add another field' />
               <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
+              <AppButtonLg title='Delete' icon={<FaTrash />} className='button_delete' onClick={showDeleteModal} />
             </div>
           </div>
 
@@ -151,6 +186,16 @@ export default function ContentTypeBuilder({cache}) {
           <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Type' buttonTitle='Continue'> 
             <AddFieldBody />
           </AppModal>
+
+          <AppModal show={state.showDeleteConfirmationModal} 
+            onClick={() => performDelete({typeSlug: entity_type_slug})} 
+            onClose={() => dispatch({type: HIDE_DELETE_CONFIRMATION_MODAL })} 
+            modalTitle='Confirm Delete' buttonTitle='Delete'> 
+            <div>
+              Are you sure you want to delete this entity type?
+            </div>
+          </AppModal>
+
         </div>
       </ContentTypeBuilderLayout>
       </div>
