@@ -4,7 +4,7 @@ import ContentBuilderSubMenu from '@/components/elements/inner/ContentBuilderSub
 import { getSessionCache } from "@/lib/Session";
 import { FaTrash } from "react-icons/fa";
 
-import React, { useEffect, useReducer, useContext } from 'react';
+import React, { useEffect, useReducer, useContext, useRef } from 'react';
 import { slsFetch } from '@/components/Util'; 
 import { useRouter } from 'next/router';
 
@@ -23,18 +23,21 @@ import IconNumber from '@/components/klaudsolcms/field_icons/IconNumber';
 import IconMedia from '@/components/klaudsolcms/field_icons/IconMedia';
 
 /** react-icons */
-import { FaCheck, FaPlusCircle } from 'react-icons/fa';
+import { FaCheck, FaPlusCircle, FaPlus } from 'react-icons/fa';
 import { MdModeEditOutline } from 'react-icons/md';
 import { VscListSelection } from 'react-icons/vsc';
 import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
 
 import RootContext from '@/components/contexts/RootContext';
 import { loadEntityTypes } from '@/components/reducers/actions';
+import {Formik, Form, Field} from 'formik';
 
 export default function ContentTypeBuilder({cache}) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+
+  const formikRef = useRef();
 
   const initialState = {
     show: false,
@@ -141,6 +144,10 @@ export default function ContentTypeBuilder({cache}) {
     dispatch({type: SHOW_DELETE_CONFIRMATION_MODAL});
   };
 
+  const showAddAttributeModal = () => {
+    dispatch({type: SET_SHOW, payload: true});
+  };
+
   const performDelete = ({typeSlug}) => {
     (async () => {
       console.error(`deleting... ${typeSlug}`);
@@ -150,6 +157,44 @@ export default function ContentTypeBuilder({cache}) {
       });
       loadEntityTypes({rootState, rootDispatch});
     })();
+  };
+
+  const onAddAnotherField = (evt) => {
+    evt.preventDefault();
+    if (formikRef.current) {
+      formikRef.current.handleSubmit();
+    }
+
+  };
+
+  const formikParams = {
+    innerRef: formikRef,
+    initialValues: {
+      type: 'text'
+    },
+    onSubmit: (values) => {
+      (async () => {
+        alert(JSON.stringify(values));
+        try {
+          //dispatch({type: SAVING})
+          const response = await slsFetch(`/api/entity_type_slug/${entity_type_slug}/attributes`, {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+              ...{typeSlug: entity_type_slug},
+              ...values
+            })
+          });
+          dispatch({type: SET_SHOW, payload: true})    
+        } catch(ex) {
+          console.error(ex);  
+        } finally {
+          //dispatch({type: CLEANUP})
+        }
+      })();
+    }
   };
 
   return (
@@ -167,8 +212,10 @@ export default function ContentTypeBuilder({cache}) {
             </div>
     
             <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
-              <AppCreatebutton title='Add another field' />
-              <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
+              <AppButtonLg title='Add another field' icon={<FaPlus />} className='btn_create_entry' onClick={showAddAttributeModal} />
+              {/* What is this for?
+               <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
+              */}
               <AppButtonLg title='Delete' icon={<FaTrash />} className='button_delete' onClick={showDeleteModal} />
             </div>
           </div>
@@ -183,8 +230,44 @@ export default function ContentTypeBuilder({cache}) {
     
           <button className="btn_add_field" onClick={() => dispatch({type: SET_SHOW, payload: true})}> <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another field collection type </button>
 
-          <AppModal show={state.show} onClose={() => dispatch({type: SET_SHOW, payload: false})} modalTitle='Type' buttonTitle='Continue'> 
-            <AddFieldBody />
+          <AppModal show={state.show} 
+            onClose={() => dispatch({type: SET_SHOW, payload: false})} 
+            onClick={onAddAnotherField}
+            modalTitle='Add another field' 
+            buttonTitle='Add'> 
+            {/* TODO: */}
+            {/* <AddFieldBody /> */}
+            <Formik {...formikParams}>
+              <Form>
+                
+                <table id="table_general">
+                {/*table head*/}
+                <thead> 
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Order</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td><Field name='name' className='input_text' /></td>
+                      <td>
+                          <Field name='type' component='select' className='input_text'>
+                            {/*TODO: Make dynamic please */}
+                            <option value='text'>Text</option>
+                            <option value='textarea'>Text Area</option>
+                            <option value='link'>Link</option>
+                            <option value='image'>Image</option>
+                            <option value='float'>Number</option>
+                          </Field>
+                      </td>
+                      <td><Field name='order' className='input_text'  type='number' /></td>
+                    </tr>
+                </tbody>
+            </table>
+              </Form>
+            </Formik>
           </AppModal>
 
           <AppModal show={state.showDeleteConfirmationModal} 
