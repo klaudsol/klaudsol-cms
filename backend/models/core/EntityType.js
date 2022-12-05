@@ -19,7 +19,26 @@ class EntityTypes {
           })); 
     }
 
-    //TODO: Refactor as where_slug
+    //findBy* - returns only one entry
+    static async findBySlug(slug) {
+      const db = new DB();
+  
+      const sql = `SELECT entity_types.id, entity_types.name, entity_types.slug from entity_types WHERE entity_types.slug = :slug LIMIT 1`;
+       
+      const data = await db.executeStatement(sql, [
+        {name: 'slug', value:{stringValue: slug}},
+    ]);;
+      
+      return data.records.map(([
+          {longValue: entity_type_id},
+          {stringValue: entity_type_name},
+          {stringValue: entity_type_slug},
+        ]) => ({
+          entity_type_id, entity_type_name, entity_type_slug
+        }))[0];
+    }
+
+    //TODO: Refactor as whereSlug
     static async find({slug}) {
       const db = new DB();
 

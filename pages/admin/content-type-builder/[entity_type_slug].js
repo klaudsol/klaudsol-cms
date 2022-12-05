@@ -174,7 +174,7 @@ export default function ContentTypeBuilder({cache}) {
     },
     onSubmit: (values) => {
       (async () => {
-        alert(JSON.stringify(values));
+        //alert(JSON.stringify(values));
         try {
           //dispatch({type: SAVING})
           const response = await slsFetch(`/api/entity_types/${entity_type_slug}/attributes`, {

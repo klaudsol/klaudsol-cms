@@ -58,7 +58,8 @@ async function create(req, res) {
 
     const { attribute } = req.body;
     console.error(attribute);
-    //await Entity.create(entry);
+    const entityType = await EntityType.findBySlug(slug);
+    console.error(entityType);
     res.status(OK).json({message: 'Successfully created a new entry'}) 
   }
   catch (error) {
