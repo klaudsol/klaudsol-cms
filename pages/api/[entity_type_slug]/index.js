@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 **/
-
 import Entity from '@backend/models/core/Entity';
 import EntityType from '@backend/models/core/EntityType';
 import { withSession } from '@/lib/Session';

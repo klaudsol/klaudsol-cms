@@ -68,6 +68,35 @@ class EntityTypes {
       return true;
 
     }
+
+    static async create({name, slug}) {
+
+      const db = new DB();
+
+      const insertEntitiesSQL = 'INSERT into entity_types (slug, name) VALUES (:slug, :name)';
+      
+      await db.executeStatement(insertEntitiesSQL, [
+        {name: 'slug', value:{stringValue: slug}},
+        {name: 'name', value:{stringValue: name}},
+      ]);
+
+      //TODO: return something valuable here
+      return true;
+
+    }
+
+    static async delete({slug}) {
+      const db = new DB();
+      const deleteEntityTypesSQL = 'DELETE from entity_types where slug = :slug'
+  
+      let executeStatementParam = [
+        {name: 'slug', value:{stringValue: slug}}
+      ]
+      await db.executeStatement(deleteEntityTypesSQL, executeStatementParam);
+  
+      //TODO: return something valuable here
+      return true;
+    }
 }
 
 export default EntityTypes;

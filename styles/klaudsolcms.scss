@@ -685,8 +685,9 @@ $onFocus: #323C4E;
     font-size: 12px;
 }
 
-.new_entry_block_button_delete {
+.new_entry_block_button_delete, .button_delete {
     background-color: maroon;
+    color: white;
 }
 
 .block_bar {

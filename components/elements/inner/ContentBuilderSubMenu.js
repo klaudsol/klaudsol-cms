@@ -19,6 +19,7 @@ const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
    const onModalSubmit = () => {
       if(formRef.current) {
         formRef.current.handleSubmit();
+        dispatch({type: SET_SHOW, payload: false});
       }
    };
   

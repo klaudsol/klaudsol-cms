@@ -29,6 +29,7 @@ import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
 import { setCORSHeaders } from '@/lib/API';
+import { assert } from '@/lib/Permissions';
 
 export default withSession(handler);
 
@@ -87,4 +88,17 @@ async function handler(req, res) {
 
 
   async function del(req, res) { 
+    try{
+
+      assert({
+       loggedIn: true,
+      });
+      
+      const { slug } = req.query;
+      await EntityType.delete({slug});
+      res.status(OK).json({message: 'Successfully delete the entity type'}); 
+    }
+    catch (error) {
+      await defaultErrorHandler(error, req, res);
+    }
   }

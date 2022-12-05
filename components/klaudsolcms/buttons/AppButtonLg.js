@@ -1,5 +1,6 @@
-const AppButtonLg = ({icon, title, isDisabled, onClick}) => {
-    return <button className="btn_general_lg" disabled={isDisabled} onClick={onClick}> {icon} {title}  </button>    ;
+import cx from 'classNames';
+const AppButtonLg = ({icon, title, isDisabled, className, ...props}) => {
+    return <button className={cx('btn_general_lg', className)} disabled={isDisabled} {...props}> {icon} {title}  </button>    ;
 }
  
 export default AppButtonLg;
