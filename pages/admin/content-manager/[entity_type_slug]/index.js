@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 
 /** kladusol CMS components */
 import AppDropdown from '@/components/klaudsolcms/AppDropdown';
-import AppCreatebutton from '@/components/klaudsolcms/buttons/AppCreateButton';
+import AppCreateButton from '@/components/klaudsolcms/buttons/AppCreateButton';
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton';
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton';
 import AppButtonSm from '@/components/klaudsolcms/buttons/AppButtonSm';
@@ -148,7 +148,7 @@ export default function ContentManager({cache}) {
             <a href={`/api/${entity_type_slug}`} passHref target='_blank' rel="noreferrer">api/{entity_type_slug}</a>
             <p>  {state.values.length} entries found </p>
           </div>
-          <AppCreatebutton link={`/admin/content-manager/${entity_type_slug}/create`} title='Create new entry'/>
+          <AppCreateButton link={`/admin/content-manager/${entity_type_slug}/create`} title='Create new entry'/>
         </div>
 
         <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3"> 

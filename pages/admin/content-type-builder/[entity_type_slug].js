@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 
 /** kladusol CMS components */
 import AppContentBuilderTable from '@/components/klaudsolcms/AppContentBuilderTable'
-import AppCreatebutton from '@/components/klaudsolcms/buttons/AppCreateButton'
+import AppCreateButton from '@/components/klaudsolcms/buttons/AppCreateButton'
 import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg'
 import AppButtonSm from '@/components/klaudsolcms/buttons/AppButtonSm'
 import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
@@ -168,7 +168,7 @@ export default function ContentTypeBuilder({cache}) {
     
             <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
 
-              <AppCreatebutton
+              <AppCreateButton
                 title="Add another field"
                 onClick={() => dispatch({type: SET_SHOW, payload: true})}
                 link=''
