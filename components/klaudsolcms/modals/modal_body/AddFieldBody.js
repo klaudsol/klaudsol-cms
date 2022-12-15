@@ -1,33 +1,35 @@
-import IconText from '@/components/klaudsolcms/field_icons/IconText';
-import IconNumber from '@/components/klaudsolcms/field_icons/IconNumber';
-import IconMedia from '@/components/klaudsolcms/field_icons/IconMedia';
+import Button from "react-bootstrap/Button";
 
 const AddFieldBody = () => {
-    return ( 
+  return (
     <>
-        <div>
-            <h6 className="mx-3 my-4"> Select a field for your collection type</h6>
-            <div className="block_bar"></div>
-
-            <div className="row">
-              <div className="col">
-                <div className="container_field_type">
-                    <IconText name='Text' description='Small or long text like title or description' /> 
-                </div>
-                <div className="container_field_type">
-                    <IconMedia name='Media' description='Files like images, videos, etc' /> 
-                </div>
-              </div>
-              <div className="col">
-                <div className="container_field_type">
-                    <IconNumber name='Number' description='Numbers (Integer, float, decimal)' /> 
-                </div>
-               
-              </div>
-              
+      <div>
+        <h6 className="mx-3 my-4"> Select a field for your collection type</h6>
+        <div className="block_bar"></div>
+        <div className="row">
+          <div className="col">
+            <div className="mt-4">
+              <Button variant="outline-primary" style={{ width: 120 + "px" }}>
+                Click Me
+              </Button>
             </div>
+            <div className="mt-4">
+              <Button variant="outline-info" style={{ width: 120 + "px" }}>
+                Click Me
+              </Button>
+            </div>
+          </div>
+          <div className="col">
+            <div className="mt-4">
+              <Button variant="outline-success" style={{ width: 120 + "px" }}>
+                Click Me
+              </Button>
+            </div>
+          </div>
         </div>
-    </> );
-}
- 
+      </div>
+    </>
+  );
+};
+
 export default AddFieldBody;
