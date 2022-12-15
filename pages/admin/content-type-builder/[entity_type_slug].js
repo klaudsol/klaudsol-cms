@@ -4,9 +4,15 @@ import ContentBuilderSubMenu from "@/components/elements/inner/ContentBuilderSub
 import { getSessionCache } from "@/lib/Session";
 import { FaTrash } from "react-icons/fa";
 
+
 import React, { useEffect, useReducer, useContext } from "react";
 import { slsFetch } from "@/components/Util";
 import { useRouter } from "next/router";
+
+import React, { useEffect, useReducer, useContext, useRef } from 'react';
+import { slsFetch } from '@/components/Util'; 
+import { useRouter } from 'next/router';
+
 
 /** kladusol CMS components */
 import AppContentBuilderTable from "@/components/klaudsolcms/AppContentBuilderTable";
@@ -23,6 +29,7 @@ import IconNumber from "@/components/klaudsolcms/field_icons/IconNumber";
 import IconMedia from "@/components/klaudsolcms/field_icons/IconMedia";
 
 /** react-icons */
+
 import { FaCheck, FaPlusCircle } from "react-icons/fa";
 import { MdModeEditOutline } from "react-icons/md";
 import { VscListSelection } from "react-icons/vsc";
@@ -31,10 +38,22 @@ import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayou
 import RootContext from "@/components/contexts/RootContext";
 import { loadEntityTypes } from "@/components/reducers/actions";
 
+import { FaCheck, FaPlusCircle, FaPlus } from 'react-icons/fa';
+import { MdModeEditOutline } from 'react-icons/md';
+import { VscListSelection } from 'react-icons/vsc';
+import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
+
+import RootContext from '@/components/contexts/RootContext';
+import { loadEntityTypes } from '@/components/reducers/actions';
+import {Formik, Form, Field} from 'formik';
+
+
 export default function ContentTypeBuilder({ cache }) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+
+  const formikRef = useRef();
 
   const initialState = {
     show: false,
@@ -158,7 +177,15 @@ export default function ContentTypeBuilder({ cache }) {
     dispatch({ type: SHOW_DELETE_CONFIRMATION_MODAL });
   };
 
+
   const performDelete = ({ typeSlug }) => {
+
+  const showAddAttributeModal = () => {
+    dispatch({type: SET_SHOW, payload: true});
+  };
+
+  const performDelete = ({typeSlug}) => {
+
     (async () => {
       console.error(`deleting... ${typeSlug}`);
       dispatch({ type: HIDE_DELETE_CONFIRMATION_MODAL });
@@ -169,9 +196,50 @@ export default function ContentTypeBuilder({ cache }) {
     })();
   };
 
+  const onAddAnotherField = (evt) => {
+    evt.preventDefault();
+    if (formikRef.current) {
+      formikRef.current.handleSubmit();
+    }
+
+  };
+
+  const formikParams = {
+    innerRef: formikRef,
+    initialValues: {
+      type: 'text'
+    },
+    onSubmit: (values) => {
+      (async () => {
+        //alert(JSON.stringify(values));
+        try {
+          //dispatch({type: SAVING})
+          const response = await slsFetch(`/api/entity_types/${entity_type_slug}/attributes`, {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+              attribute: {
+              ...{typeSlug: entity_type_slug},
+              ...values
+              }
+           })
+          });
+          dispatch({type: SET_SHOW, payload: true})    
+        } catch(ex) {
+          console.error(ex);  
+        } finally {
+          //dispatch({type: CLEANUP})
+        }
+      })();
+    }
+  };
+
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
+
         <ContentTypeBuilderLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
             <AppBackButton link="/admin" />
@@ -197,9 +265,70 @@ export default function ContentTypeBuilder({ cache }) {
                   onClick={showDeleteModal}
                 />
               </div>
+
+      <ContentTypeBuilderLayout currentTypeSlug={entity_type_slug}>
+        <div className="py-4">
+          <AppBackButton link='/admin' />
+
+          <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
+            <div className="d-flex flex-row mb-2">
+            <h3 className="my-1"> {entity_type_slug}</h3>
+            <div className="mx-2" />
+            <AppButtonSm title='Edit' icon={<MdModeEditOutline />} isDisabled={false}/>
+            </div>
+    
+            <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
+              <AppButtonLg title='Add another field' icon={<FaPlus />} className='btn_create_entry' onClick={showAddAttributeModal} />
+              {/* What is this for?
+               <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
+              */}
+              <AppButtonLg title='Delete' icon={<FaTrash />} className='button_delete' onClick={showDeleteModal} />
+
             </div>
 
+
             <p> Build the data architecture of your content </p>
+
+          <AppModal show={state.show} 
+            onClose={() => dispatch({type: SET_SHOW, payload: false})} 
+            onClick={onAddAnotherField}
+            modalTitle='Add another field' 
+            buttonTitle='Add'> 
+            {/* TODO: */}
+            {/* <AddFieldBody /> */}
+            <Formik {...formikParams}>
+              <Form>
+                
+                <table id="table_general">
+                {/*table head*/}
+                <thead> 
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Order</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td><Field name='name' className='input_text' /></td>
+                      <td>
+                          <Field name='type' component='select' className='input_text'>
+                            {/*TODO: Make dynamic please */}
+                            <option value='text'>Text</option>
+                            <option value='textarea'>Text Area</option>
+                            <option value='link'>Link</option>
+                            <option value='image'>Image</option>
+                            <option value='float'>Number</option>
+                          </Field>
+                      </td>
+                      <td><Field name='order' className='input_text'  type='number' /></td>
+                    </tr>
+                </tbody>
+            </table>
+              </Form>
+            </Formik>
+          </AppModal>
+
 
             <div className="d-flex justify-content-end align-items-center px-0 mx-0 pb-3">
               <AppButtonSm
