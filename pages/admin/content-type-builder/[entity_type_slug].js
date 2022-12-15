@@ -167,7 +167,7 @@ export default function ContentTypeBuilder({cache}) {
             </div>
     
             <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
-              <AppCreatebutton title='Add another field' />
+              <AppCreatebutton title='Add another field' onClick={() => dispatch({type: SET_SHOW, payload: true})} link='' />
               <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
               <AppButtonLg title='Delete' icon={<FaTrash />} className='button_delete' onClick={showDeleteModal} />
             </div>

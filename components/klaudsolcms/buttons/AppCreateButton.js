@@ -1,8 +1,9 @@
 import { FaPlus } from "react-icons/fa";
 import Link from 'next/link';
-const AppCreateButton = ({title, link}) => {
+const AppCreateButton = ({title, link, onClick}) => {
     return (
-        <Link href={link ? link : '/'} passHref><button className="btn_create_entry"> <FaPlus className="icon_general"/>{title}</button></Link>
+        <button className="btn_create_entry"
+        onClick={onClick}>  <FaPlus className="icon_general"/>{title}</button>
     )
 }
  
