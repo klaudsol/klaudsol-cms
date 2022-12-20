@@ -51,13 +51,13 @@ class Session {
     const db = new DB();
     
     const isLoggedInSQL = `
-      SELECT 'isLoggedIn' AS name, EXISTS(SELECT sme_sessions.session FROM sme_sessions 
-      JOIN sme_people ON sme_sessions.people_id = sme_people.id 
+      SELECT 'isLoggedIn' AS name, EXISTS(SELECT sessions.session FROM sessions 
+      JOIN people ON sessions.people_id = people.id 
       WHERE 
-        sme_sessions.session = :session AND
-        sme_sessions.session IS NOT NULL AND
-        sme_sessions.session_expiry >= NOW() AND
-        sme_people.login_enabled = 1
+        sessions.session = :session AND
+        sessions.session IS NOT NULL AND
+        sessions.session_expiry >= NOW() AND
+        people.login_enabled = 1
       LIMIT 1) as value
       `;
       

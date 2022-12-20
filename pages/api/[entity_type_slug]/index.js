@@ -30,6 +30,7 @@ import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { resolveValue } from '@/components/EntityAttributeValue';
 import { setCORSHeaders } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
+import { assert } from '@/lib/Permissions';
 
 export default withSession(handler);
 
@@ -115,6 +116,11 @@ async function handler(req, res) {
 
   async function create(req, res) { 
     try{
+
+      await assert({
+        loggedIn: true,
+       }, req);
+
       const { entry } = req.body;
       await Entity.create(entry);
       res.status(OK).json({message: 'Successfully created a new entry'}) 
