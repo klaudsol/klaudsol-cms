@@ -24,6 +24,7 @@ SOFTWARE.
 **/
 
 import EntityType from '@backend/models/core/EntityType';
+import Attribute from '@backend/models/core/Attribute';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
@@ -60,6 +61,12 @@ async function create(req, res) {
     console.error(attribute);
     const entityType = await EntityType.findBySlug(slug);
     console.error(entityType);
+    await Attribute.create({
+      entity_type_id: entityType.entity_type_id,
+      name: attribute.name,
+      type: attribute.type,
+      order: attribute.order
+    }); 
     res.status(OK).json({message: 'Successfully created a new entry'}) 
   }
   catch (error) {

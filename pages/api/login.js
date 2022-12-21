@@ -34,6 +34,7 @@ async function loginHandler(req, res) {
     return;
   
   } catch (error) {
+    console.error(error);
     if (error instanceof UnauthorizedError) {
       res.status(422).json({message: "Invalid username or password."});
       return;
