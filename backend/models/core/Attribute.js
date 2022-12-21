@@ -50,6 +50,20 @@ export default class Attribute {
           value_double
         })); 
   }
+  
+  static async create({entity_type_id, name, type, order}) {
+    const db = new DB();
+
+    const insertSQL = 'INSERT into attributes (`entity_type_id`, `name`, `type`, `order`) VALUES (:entity_type_id, :name, :type, :order)';
+    
+    await db.executeStatement(insertSQL, [
+      {name: 'entity_type_id', value:{longValue: entity_type_id}},
+      {name: 'name', value:{stringValue: name}},
+      {name: 'type', value:{stringValue: type}},
+      {name: 'order', value:{longValue: order}},
+    ]);
+
+  }
 }
 
 
