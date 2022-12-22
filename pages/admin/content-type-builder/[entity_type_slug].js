@@ -29,7 +29,7 @@ import { VscListSelection } from 'react-icons/vsc';
 import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
 
 import RootContext from '@/components/contexts/RootContext';
-import { loadEntityTypes } from '@/components/reducers/actions';
+import { loadEntityTypes, loadEntityType } from '@/components/reducers/actions';
 import {Formik, Form, Field} from 'formik';
 
 export default function ContentTypeBuilder({cache}) {
@@ -146,6 +146,10 @@ export default function ContentTypeBuilder({cache}) {
 
   const showAddAttributeModal = () => {
     dispatch({type: SET_SHOW, payload: true});
+ };
+ 
+  const hideAddAttributeModal = () => {
+    dispatch({type: SET_SHOW, payload: false});
   };
 
   const performDelete = ({typeSlug}) => {
@@ -174,9 +178,7 @@ export default function ContentTypeBuilder({cache}) {
     },
     onSubmit: (values) => {
       (async () => {
-        //alert(JSON.stringify(values));
         try {
-          //dispatch({type: SAVING})
           const response = await slsFetch(`/api/entity_types/${entity_type_slug}/attributes`, {
             method: 'POST',
             headers: {
@@ -189,11 +191,12 @@ export default function ContentTypeBuilder({cache}) {
               }
            })
           });
-          dispatch({type: SET_SHOW, payload: true})    
         } catch(ex) {
           console.error(ex);  
         } finally {
           //dispatch({type: CLEANUP})
+          await loadEntityType({rootState, rootDispatch, typeSlug: entity_type_slug});
+          hideAddAttributeModal(); 
         }
       })();
     }
