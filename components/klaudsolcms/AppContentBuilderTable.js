@@ -1,6 +1,7 @@
 import RootContext from '@/components/contexts/RootContext';
 import { useContext, useEffect, useState } from 'react';
 import SkeletonContentBuilder from "@/components/klaudsolcms/skeleton/SkeletonContentBuilder";
+import { loadEntityType } from '@/components/reducers/actions';
 
 const AppContentBuilderTable = ({typeSlug}) => {
 
@@ -9,26 +10,13 @@ const AppContentBuilderTable = ({typeSlug}) => {
 
    const data = ({rootState, typeSlug}) => Object.entries(rootState.entityType[typeSlug]?.data ?? {});
    const hasHash = ({rootState, typeSlug}) => rootState.entityType[typeSlug]?.metadata?.hash;
-   const hashEqualTo = ({rootState, typeSlug, hash}) => rootState.entityType[typeSlug]?.metadata?.hash === hash;
 
     useEffect(() => {
       (async () => {
-        try {
-          setLoading(true);
-          //refactor to reducers/actions
-          const rawEntityType = await fetch(`/api/entity_types/${typeSlug}`);
-          const entityType = await rawEntityType.json();
-          if (rootState.entityType[typeSlug] && hashEqualTo({typeSlug, hash: entityType.metadata.hash})) {
-            setLoading(false);
-            //use cache, do nothing
-          } else {
-            rootDispatch({type: 'SET_ENTITY_TYPE', payload: {slug: typeSlug, entityType}});
-          }
-        } catch(error) {
-          //do nothing for now
-        } finally {
-          setLoading(false);
-        }
+        await loadEntityType({rootState, rootDispatch, typeSlug, 
+          onStartLoad: () => setLoading(true),
+          onEndLoad: () => setLoading(false)
+        });
       })();
     }, [typeSlug]);
 
