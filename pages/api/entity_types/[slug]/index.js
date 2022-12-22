@@ -54,7 +54,7 @@ async function handler(req, res) {
       const { slug } = req.query;
 
       const entityTypes = await EntityType.all();
-      const rawEntityType = await EntityType.find({slug});
+      const rawEntityType = await EntityType.whereSlug({slug});
 
       const data = rawEntityType.reduce((collection, item) => {
 
@@ -62,8 +62,10 @@ async function handler(req, res) {
 
             ...collection,
             ...!collection[item.attribute_name] && item.attribute_name &&  {[item.attribute_name] : {
+              name: item.attribute_name,
               type: item.attribute_type,
-              order: item.attribute_order
+              order: item.attribute_order,
+              attribute_id: item.attribute_id
             }}
 
 

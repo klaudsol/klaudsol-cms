@@ -1,7 +1,7 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FaTimes } from 'react-icons/fa'
-const AppInfoModal = ({show, onClose, onClick, modalTitle, children, buttonTitle}) => {
+const AppInfoModal = ({show, onClose, onClick, modalTitle, children, buttonTitle, isConfirmDialog=false}) => {
     return ( 
         <>
         <Modal show={show} onHide={onClose}>
@@ -11,9 +11,21 @@ const AppInfoModal = ({show, onClose, onClick, modalTitle, children, buttonTitle
             </Modal.Header>
             <Modal.Body>{children}</Modal.Body>
             <Modal.Footer className='modal_header'>
-              <Button className='btn_modal' onClick={onClose}>
-                {buttonTitle}
-              </Button>
+              {!isConfirmDialog &&
+                <Button className='btn_modal' onClick={onClick}>
+                  {buttonTitle}
+                </Button>
+              }
+              {isConfirmDialog &&
+                <>
+                  <Button className='btn_modal' onClick={onClick}>
+                    OK
+                  </Button>
+                  <Button className='btn_modal' onClick={onClose}>
+                    Cancel 
+                  </Button>
+                </>
+              }
             </Modal.Footer>
           </Modal>
         </>
