@@ -75,7 +75,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
             onClick={() => console.error(`Deleting attribute ${currentAttribute?.attribute_id}...`)}
             isConfirmDialog={true}
           >
-            Are you sure you want to delete attribute "{currentAttribute?.name}"?
+            Are you sure you want to delete attribute &quot;{currentAttribute?.name}&quot;?
           </AppInfoModal>
         </> 
     );
