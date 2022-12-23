@@ -40,6 +40,7 @@ class EntityTypes {
 
     //TODO: Refactor as whereSlug
     static async find({slug}) {
+      console.error("EntityType.find is deprecated. Use EntityType.whereSlug instead.");
       const db = new DB();
 
       const sql = `
@@ -49,7 +50,8 @@ class EntityTypes {
           entity_types.slug,
           attributes.name,
           attributes.type,
-          attributes.order
+          attributes.order,
+          attributes.id
         FROM entity_types LEFT JOIN attributes ON entity_types.id = attributes.entity_type_id 
         WHERE entity_types.slug = :slug
         ORDER BY attributes.\`order\` ASC
@@ -66,12 +68,17 @@ class EntityTypes {
         {stringValue: attribute_name},
         {stringValue: attribute_type},
         {longValue: attribute_order},
+        {longValue: attribute_id}
       ]) => ({
         entity_type_id, entity_type_name, entity_type_slug,
-        attribute_name, attribute_type, attribute_order
+        attribute_name, attribute_type, attribute_order, attribute_id
       })); 
 
     } 
+
+    static async whereSlug({slug}) {
+      return this.find({slug});
+    }
 
     static async create({name, slug}) {
 
@@ -88,6 +95,7 @@ class EntityTypes {
       return true;
 
     }
+
 
     static async create({name, slug}) {
 
