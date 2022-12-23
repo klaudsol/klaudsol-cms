@@ -8,7 +8,7 @@ class EntityTypes {
   
         const sql = `SELECT entity_types.id, entity_types.name, entity_types.slug from entity_types`;
          
-        const data = await db.exectuteStatement(sql, []);
+        const data = await db.executeStatement(sql, []);
         
         return data.records.map(([
             {longValue: entity_type_id},
