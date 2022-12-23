@@ -4,6 +4,7 @@ import SkeletonContentBuilder from "@/components/klaudsolcms/skeleton/SkeletonCo
 import AppContentBuilderButtons from "@/components/klaudsolcms/buttons/AppContentBuilderButtons";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { loadEntityType } from '@/components/reducers/actions';
+import { slsFetch } from '@/components/Util'; 
 
 const AppContentBuilderTable = ({typeSlug}) => {
 
@@ -24,9 +25,26 @@ const AppContentBuilderTable = ({typeSlug}) => {
       })();
     }, [typeSlug]);
 
-    const onDeleteAttribute = (attribute) => (evt) => {
+    const onDeleteAttributeConfirmation = (attribute) => (evt) => {
       setModalVisible(true);
       setCurrentAttribute(attribute);
+    };
+
+    const onDeleteAttribute = (attribute) => (evt) => {
+      (async () => {
+        try {
+          const valuesRaw = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
+            method: "DELETE"
+          });  
+          const values = await valuesRaw.json();
+  
+         } catch (ex) {
+          console.error(ex.stack);
+         } finally {
+          await loadEntityType({rootState, rootDispatch, typeSlug});
+          setModalVisible(false);
+         }
+      })();
     };
  
 
@@ -58,7 +76,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
                         <AppContentBuilderButtons 
                           isDisabled={false} 
                           showEdit={false} 
-                          onDelete={onDeleteAttribute(attribute)} 
+                          onDelete={onDeleteAttributeConfirmation(attribute)} 
                         />
                       </td>
                     </tr>
@@ -72,7 +90,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
             show={isModalVisible} 
             modalTitle={'Delete confirmation'}
             onClose={() => setModalVisible(false)}
-            onClick={() => console.error(`Deleting attribute ${currentAttribute?.attribute_id}...`)}
+            onClick={onDeleteAttribute(currentAttribute)}
             isConfirmDialog={true}
           >
             Are you sure you want to delete attribute &quot;{currentAttribute?.name}&quot;?

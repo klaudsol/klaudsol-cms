@@ -23,14 +23,11 @@ SOFTWARE.
 
 **/
 
-import EntityType from '@backend/models/core/EntityType';
-import Attribute from '@backend/models/core/Attribute';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
-import { createHash } from '@/lib/Hash';
-import { setCORSHeaders } from '@/lib/API';
 import { assert } from '@/lib/Permissions';
+import { OK } from '@/lib/HttpStatuses';
+import Attribute from '@backend/models/core/Attribute';
 
 export default withSession(handler);
 
@@ -38,8 +35,8 @@ async function handler(req, res) {
   
   try {
     switch(req.method) {
-      case "POST":
-        return create(req, res); 
+      case "DELETE":
+        return del(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -48,26 +45,18 @@ async function handler(req, res) {
   }
 }
 
-async function create(req, res) { 
+async function del(req, res) {
   try{
 
-    const { slug } = req.query;
+    const { slug: typeSlug, name } = req.query;
 
     await assert({
       loggedIn: true,
      }, req);
 
-    const { attribute } = req.body;
-    console.error(attribute);
-    const entityType = await EntityType.findBySlug(slug);
-    console.error(entityType);
-    await Attribute.create({
-      entity_type_id: entityType.entity_type_id,
-      name: attribute.name,
-      type: attribute.type,
-      order: attribute.order
-    }); 
-    res.status(OK).json({message: 'Successfully created a new attribute.'}) 
+     await Attribute.deleteWhere({type_slug: typeSlug, name});
+
+    res.status(OK).json({message: 'Successfully deleted the attribute.'}) 
   }
   catch (error) {
     await defaultErrorHandler(error, req, res);
