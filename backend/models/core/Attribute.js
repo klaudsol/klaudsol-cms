@@ -1,8 +1,10 @@
 import DB from '@backend/data_access/DB';
+import EntityType from '@backend/models/core/EntityType';
 
 
 export default class Attribute {
 
+    //TODO: Refactor to whereEntityTypeSlug()
     static async where_entity_type_slug({entity_type_slug}) {
       const db = new DB();
 
@@ -62,6 +64,37 @@ export default class Attribute {
       {name: 'type', value:{stringValue: type}},
       {name: 'order', value:{longValue: order}},
     ]);
+
+  }
+
+  static async deleteWhere({type_slug, name}) {
+
+    const db = new DB();
+
+    const entityTypeSQL = 'SELECT id FROM entity_types WHERE `slug` = :slug LIMIT 1';
+
+    const entityTypeData = await db.executeStatement(entityTypeSQL, [
+      {name: 'slug', value:{stringValue: type_slug}},
+    ]);
+
+    const records = entityTypeData.records.map(([
+      {longValue: id}
+    ]) => ({
+      id
+    }));
+
+    let entityTypeId = 0;
+
+    if (records.length >= 1) {
+      entityTypeId = records[0].id;
+    }
+
+
+    const deleteSQL = 'DELETE FROM attributes WHERE `entity_type_id` = :entityTypeId AND `name` = :name';
+    await db.executeStatement(deleteSQL, [
+      {name: 'entityTypeId', value:{longValue: entityTypeId}},
+      {name: 'name', value:{stringValue: name}},
+    ])
 
   }
 }
