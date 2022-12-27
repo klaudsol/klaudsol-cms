@@ -17,6 +17,7 @@ import AppBackButton from '@/components/klaudsolcms/buttons/AppBackButton'
 import AppContentBuilderButtons from '@/components/klaudsolcms/buttons/AppContentBuilderButtons'
 import AppModal from '@/components/klaudsolcms/AppModal';
 import AddFieldBody from '@/components/klaudsolcms/modals/modal_body/AddFieldBody';
+import AddEditAnotherFieldModal, {ADD_MODE} from '@/components/klaudsolcms/modals/AddEditAnotherFieldModal';
 
 import IconText from '@/components/klaudsolcms/field_icons/IconText';
 import IconNumber from '@/components/klaudsolcms/field_icons/IconNumber';
@@ -30,7 +31,6 @@ import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayou
 
 import RootContext from '@/components/contexts/RootContext';
 import { loadEntityTypes, loadEntityType } from '@/components/reducers/actions';
-import {Formik, Form, Field} from 'formik';
 
 export default function ContentTypeBuilder({cache}) {
   const router = useRouter();
@@ -225,55 +225,25 @@ export default function ContentTypeBuilder({cache}) {
             </div>
           </div>
 
-          <p>  Build the data architecture of your content  </p>
+          <p>  Build the data architecture of your content.  </p>
 
+          {/*TODO: 
           <div className="d-flex justify-content-end align-items-center px-0 mx-0 pb-3"> 
             <AppButtonSm title='Configure the view' icon={<VscListSelection />} isDisabled={false}/>
           </div>
+          */}
 
           <AppContentBuilderTable typeSlug={entity_type_slug} />
     
           <button className="btn_add_field" onClick={() => dispatch({type: SET_SHOW, payload: true})}> <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another field collection type </button>
 
-          <AppModal show={state.show} 
-            onClose={() => dispatch({type: SET_SHOW, payload: false})} 
+          <AddEditAnotherFieldModal 
+            mode={ADD_MODE}
+            formParams={formikParams} 
+            show={state.show}
+            onClose={() => dispatch({type: SET_SHOW, payload: false})}
             onClick={onAddAnotherField}
-            modalTitle='Add another field' 
-            buttonTitle='Add'> 
-            {/* TODO: */}
-            {/* <AddFieldBody /> */}
-            <Formik {...formikParams}>
-              <Form>
-                
-                <table id="table_general">
-                {/*table head*/}
-                <thead> 
-                    <tr>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Order</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                      <td><Field name='name' className='input_text' /></td>
-                      <td>
-                          <Field name='type' component='select' className='input_text'>
-                            {/*TODO: Make dynamic please */}
-                            <option value='text'>Text</option>
-                            <option value='textarea'>Text Area</option>
-                            <option value='link'>Link</option>
-                            <option value='image'>Image</option>
-                            <option value='float'>Number</option>
-                          </Field>
-                      </td>
-                      <td><Field name='order' className='input_text'  type='number' /></td>
-                    </tr>
-                </tbody>
-            </table>
-              </Form>
-            </Formik>
-          </AppModal>
+          />
 
           <AppModal show={state.showDeleteConfirmationModal} 
             onClick={() => performDelete({typeSlug: entity_type_slug})} 

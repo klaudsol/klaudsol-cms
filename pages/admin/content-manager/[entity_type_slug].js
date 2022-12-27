@@ -153,8 +153,10 @@ export default function ContentManager({cache}) {
 
         <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3"> 
             <div className="d-flex flex-row px-0">
-              <AppIconButton icon={<FaSearch/>} /> 
+              {/*TODO:
+                <AppIconButton icon={<FaSearch/>} /> 
               <AppButtonSm title='Filters' icon={<IoFilter />} isDisabled={false}/>
+              */}
             </div>
 
             <div className="d-flex flex-row px-0"> 

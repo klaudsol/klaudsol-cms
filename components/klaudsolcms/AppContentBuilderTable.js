@@ -1,17 +1,21 @@
 import RootContext from '@/components/contexts/RootContext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import SkeletonContentBuilder from "@/components/klaudsolcms/skeleton/SkeletonContentBuilder";
 import AppContentBuilderButtons from "@/components/klaudsolcms/buttons/AppContentBuilderButtons";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { loadEntityType } from '@/components/reducers/actions';
-import { slsFetch } from '@/components/Util'; 
+import { slsFetch } from '@/components/Util';  
+import AddEditAnotherFieldModal, {EDIT_MODE} from '@/components/klaudsolcms/modals/AddEditAnotherFieldModal';
 
 const AppContentBuilderTable = ({typeSlug}) => {
 
    const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
    const [loading, setLoading] = useState(false);
    const [isModalVisible, setModalVisible] = useState(false);
+   const [isEditModalVisible, setEditModalVisible] = useState(false);
    const [currentAttribute, setCurrentAttribute] = useState();
+   const [formParams, setFormParams] = useState({});
+   const formRef = useRef();
 
    const data = ({rootState, typeSlug}) => Object.entries(rootState.entityType[typeSlug]?.data ?? {});
    const hasHash = ({rootState, typeSlug}) => rootState.entityType[typeSlug]?.metadata?.hash;
@@ -25,12 +29,12 @@ const AppContentBuilderTable = ({typeSlug}) => {
       })();
     }, [typeSlug]);
 
-    const onDeleteAttributeConfirmation = (attribute) => (evt) => {
+    const onDeleteAttributeConfirmation = attribute => evt => {
       setModalVisible(true);
       setCurrentAttribute(attribute);
     };
 
-    const onDeleteAttribute = (attribute) => (evt) => {
+    const onDeleteAttribute = attribute => evt => {
       (async () => {
         try {
           const valuesRaw = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
@@ -46,7 +50,54 @@ const AppContentBuilderTable = ({typeSlug}) => {
          }
       })();
     };
- 
+
+    const onEditAttribute = attribute => evt => {
+      setEditModalVisible(true);
+      setCurrentAttribute(attribute);
+      setFormParams(formParamsFromAttribute(attribute));
+    };
+
+    const onUpdateField = evt => {
+      console.error("Under construction");
+    };
+
+    const formParamsFromAttribute = attribute => ({
+      innerRef: formRef,
+      initialValues: {
+        name: attribute?.name,
+        type: attribute?.type,
+        order: attribute?.order
+      },
+      onSubmit: (values) => {
+        (async () => {
+          try {
+
+            /*
+            const response = await slsFetch(`/api/entity_types/${entity_type_slug}/attributes`, {
+              method: 'POST',
+              headers: {
+                'Content-type': 'application/json'
+              },
+              body: JSON.stringify({
+                attribute: {
+                ...{typeSlug: entity_type_slug},
+                ...values
+                }
+             })
+            });
+            */
+          } catch(ex) {
+            console.error(ex);  
+          } finally {
+            /*
+            //dispatch({type: CLEANUP})
+            await loadEntityType({rootState, rootDispatch, typeSlug: entity_type_slug});
+            hideAddAttributeModal(); 
+            */
+          }
+        })();
+      }
+    });
 
     return ( 
         <>
@@ -75,8 +126,8 @@ const AppContentBuilderTable = ({typeSlug}) => {
                       <td>
                         <AppContentBuilderButtons 
                           isDisabled={false} 
-                          showEdit={false} 
                           onDelete={onDeleteAttributeConfirmation(attribute)} 
+                          onEdit={onEditAttribute(attribute)}
                         />
                       </td>
                     </tr>
@@ -95,6 +146,15 @@ const AppContentBuilderTable = ({typeSlug}) => {
           >
             Are you sure you want to delete attribute &quot;{currentAttribute?.name}&quot;?
           </AppInfoModal>
+
+          {/*Edit modal */} 
+          <AddEditAnotherFieldModal 
+            mode={EDIT_MODE}
+            show={isEditModalVisible}
+            formParams={formParams}
+            onClose={() => setEditModalVisible(false)}
+            onClick={onUpdateField}
+          />
         </> 
     );
 }
