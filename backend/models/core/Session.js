@@ -17,7 +17,7 @@ class Session {
     if(!session) throw new UnauthorizedError('Session not found.');
     const db = new DB();
     const sql =  `SELECT people_id, sme_tenant_id from sme_sessions where session = :session AND session_expiry > NOW()`;
-    const data = await db.exectuteStatement(sql, [
+    const data = await db.executeStatement(sql, [
       {name: 'session', value:{stringValue: session}},
     ]);
     
@@ -139,7 +139,7 @@ class Session {
     
     sql = sqlArray.join(' UNION ');
     
-    const rawData = await db.exectuteStatement(sql, Object.values(params));
+    const rawData = await db.executeStatement(sql, Object.values(params));
     
     const data = Object.fromEntries(rawData.records.map(([{stringValue: key}, {longValue: value}]) => [key, value]));
     
