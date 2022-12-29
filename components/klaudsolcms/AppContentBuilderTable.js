@@ -70,9 +70,6 @@ const AppContentBuilderTable = ({typeSlug}) => {
       },
       onSubmit: (values) => {
         
-        console.error("Under construction");
-        console.error(JSON.stringify(attribute.attribute_id));
-        console.error(JSON.stringify(values));
  
         (async () => {
           try {
