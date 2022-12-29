@@ -67,28 +67,16 @@ export default class Attribute {
 
   }
 
+  static async _entityType({type_slug}) {
+
+  }
+
   static async deleteWhere({type_slug, name}) {
 
     const db = new DB();
 
-    const entityTypeSQL = 'SELECT id FROM entity_types WHERE `slug` = :slug LIMIT 1';
-
-    const entityTypeData = await db.executeStatement(entityTypeSQL, [
-      {name: 'slug', value:{stringValue: type_slug}},
-    ]);
-
-    const records = entityTypeData.records.map(([
-      {longValue: id}
-    ]) => ({
-      id
-    }));
-
-    let entityTypeId = 0;
-
-    if (records.length >= 1) {
-      entityTypeId = records[0].id;
-    }
-
+    const entityType = await EntityType.findBySlug(type_slug, { db });
+    const entityTypeId = entityType.entity_type_id;
 
     const deleteSQL = 'DELETE FROM attributes WHERE `entity_type_id` = :entityTypeId AND `name` = :name';
     await db.executeStatement(deleteSQL, [
@@ -98,7 +86,25 @@ export default class Attribute {
 
   }
 
-  //static async updateWhere({type_slug, name})
+  static async updateWhere({type_slug, name: oldName, attribute}) {
+
+    const db = new DB();
+
+    const entityType = await EntityType.findBySlug(type_slug, { db });
+    const entityTypeId = entityType.entity_type_id;
+
+    const {name, type, order} = attribute;
+
+    const updateSQL = 'UPDATE attributes SET `name` = :name, `type` = :type, `order` = :order WHERE `entity_type_id` = :entity_type_id AND `name` = :old_name';
+    await db.executeStatement(updateSQL, [
+      {name: 'entity_type_id', value:{longValue: entityTypeId}},
+      {name: 'old_name', value:{stringValue: oldName}},
+      {name: 'name', value:{stringValue: name}},
+      {name: 'type', value:{stringValue: type}},
+      {name: 'order', value:{longValue: order}},
+    ])
+
+  }
 }
 
 
