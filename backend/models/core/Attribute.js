@@ -97,6 +97,8 @@ export default class Attribute {
     ])
 
   }
+
+  //static async updateWhere({type_slug, name})
 }
 
 

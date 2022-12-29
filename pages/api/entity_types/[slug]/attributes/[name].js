@@ -37,6 +37,8 @@ async function handler(req, res) {
     switch(req.method) {
       case "DELETE":
         return del(req, res);
+      case "PUT":
+        return update(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -61,4 +63,22 @@ async function del(req, res) {
   catch (error) {
     await defaultErrorHandler(error, req, res);
   }
+}
+
+async function update(req, res) {
+  try{
+
+    const { slug: typeSlug, name } = req.query;
+
+    await assert({
+      loggedIn: true,
+     }, req);
+
+    //await Attribute.deleteWhere({type_slug: typeSlug, name});
+
+    res.status(OK).json({message: 'Successfully updated the attribute.'}) 
+  }
+  catch (error) {
+    await defaultErrorHandler(error, req, res);
+  }  
 }
