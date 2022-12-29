@@ -20,8 +20,8 @@ class EntityTypes {
     }
 
     //findBy* - returns only one entry
-    static async findBySlug(slug) {
-      const db = new DB();
+    static async findBySlug(slug, {db: _db} = {}) {
+      const db = _db ?? new DB();
   
       const sql = `SELECT entity_types.id, entity_types.name, entity_types.slug from entity_types WHERE entity_types.slug = :slug LIMIT 1`;
        

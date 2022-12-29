@@ -69,12 +69,13 @@ async function update(req, res) {
   try{
 
     const { slug: typeSlug, name } = req.query;
-
+    const { attribute } = req.body;
+    
     await assert({
       loggedIn: true,
      }, req);
 
-    //await Attribute.deleteWhere({type_slug: typeSlug, name});
+    await Attribute.updateWhere({type_slug: typeSlug, name, attribute});
 
     res.status(OK).json({message: 'Successfully updated the attribute.'}) 
   }
