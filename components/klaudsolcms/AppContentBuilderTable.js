@@ -54,14 +54,14 @@ const AppContentBuilderTable = ({typeSlug}) => {
     const onEditAttribute = attribute => evt => {
       setEditModalVisible(true);
       setCurrentAttribute(attribute);
-      setFormParams(formParamsFromAttribute(attribute));
+      setFormParams(updateFormParamsFromAttribute(attribute));
     };
 
     const onUpdateField = evt => {
-      console.error("Under construction");
+     if(formRef.current) formRef.current.handleSubmit();
     };
 
-    const formParamsFromAttribute = attribute => ({
+    const updateFormParamsFromAttribute = attribute => ({
       innerRef: formRef,
       initialValues: {
         name: attribute?.name,
@@ -69,31 +69,31 @@ const AppContentBuilderTable = ({typeSlug}) => {
         order: attribute?.order
       },
       onSubmit: (values) => {
+        
+        console.error("Under construction");
+        console.error(JSON.stringify(attribute.attribute_id));
+        console.error(JSON.stringify(values));
+ 
         (async () => {
           try {
 
-            /*
-            const response = await slsFetch(`/api/entity_types/${entity_type_slug}/attributes`, {
-              method: 'POST',
+            const response = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
+              method: 'PUT',
               headers: {
                 'Content-type': 'application/json'
               },
               body: JSON.stringify({
                 attribute: {
-                ...{typeSlug: entity_type_slug},
                 ...values
                 }
              })
             });
-            */
+
           } catch(ex) {
             console.error(ex);  
           } finally {
-            /*
-            //dispatch({type: CLEANUP})
-            await loadEntityType({rootState, rootDispatch, typeSlug: entity_type_slug});
-            hideAddAttributeModal(); 
-            */
+            await loadEntityType({rootState, rootDispatch, typeSlug});
+            setEditModalVisible(false);
           }
         })();
       }
