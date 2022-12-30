@@ -22,7 +22,7 @@ const SidebarFooterIcon = ({title}) => {
       };
     return ( 
          <DropdownButton drop='up' id='sidebar_footer_icon' title={title}>
-            <Dropdown.Item className='sidebar_footer_items'><Link href='/admin/profile'><a className='sidebar_footer_profile'>Profile</a></Link></Dropdown.Item>
+            <Dropdown.Item className='sidebar_footer_items'><Link href='/admin/me'><a className='sidebar_footer_profile'>Profile</a></Link></Dropdown.Item>
             <Dropdown.Item className='sidebar_footer_items'><button className='sidebar_footer_logout' onClick={onLogout}> Log out </button></Dropdown.Item>
         </DropdownButton>
      );

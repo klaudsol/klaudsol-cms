@@ -111,6 +111,8 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
     return new People(fromAurora(data.records[0], People.fields()))
   }
 
+
+  //TODO: Remove password change here.
   static async updateUserInfo({id, first_name, last_name, email, oldPassword, newPassword, sme_timezone_id}){
     const db = new DB();
       const encryptedPasswordPhrase =  newPassword ? 'encrypted_password = sha2(CONCAT(:newPassword, salt), 256),' : '';
@@ -143,6 +145,43 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
 
       const data = await db.executeStatement(updateSql, Object.values(executeStatementParam)); 
       return true;
+      
+  }
+
+  //A password changer needs a method of its own for security purposes
+  static async updatePassword({id, oldPassword, newPassword}){
+
+    //early exit if the old password or the new password is not provided.
+    if (!oldPassword || !newPassword) throw new Error('Passwords are required.');
+
+    const db = new DB();
+
+    //TODO: for security reasons, replace the salt as well for every password change.
+    const updateSql =  `
+    UPDATE people  
+    SET
+      encrypted_password = sha2(CONCAT(:newPassword, salt), 256) 
+    WHERE id = :id`;
+
+    //Check if the provided oldPassword is correct.
+    const checkPasswordSql = `SELECT id FROM people 
+                              WHERE id = :id AND encrypted_password = sha2(CONCAT(:oldPassword, salt), 256) AND login_enabled = 1  LIMIT 1`;
+      
+    const sqlPass = await db.executeStatement(checkPasswordSql, [
+      {name: 'id', value: {longValue: id}},
+      {name: 'oldPassword', value:{stringValue: oldPassword}}
+    ]);
+    if (sqlPass.records.length === 0) {
+      throw new RecordNotFound("Incorrect password");
+    }
+
+    const executeStatementParam = [
+      {name: 'id', value: {longValue: id}},
+      {name: 'newPassword', value: {stringValue: newPassword}},
+    ];
+
+    const data = await db.executeStatement(updateSql, executeStatementParam); 
+    return true;
       
   }
   
