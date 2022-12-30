@@ -73,12 +73,6 @@ async function update(req, res) {
 
     const session = await Session.getSession(session_token);
     await People.updatePassword({id: session.people_id, oldPassword: current_password, newPassword: password});
-    console.error(req.body);
-    console.error("hey");
-    console.error(JSON.stringify(session));
-
-
-    //await EntityType.delete({slug});
 
     res.status(OK).json({message: 'Successfully changed your password.'}); 
   }
