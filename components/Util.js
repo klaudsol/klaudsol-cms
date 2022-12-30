@@ -50,7 +50,14 @@ export const slsFetch = async (url, params, extra) => {
       if (unauthorized) unauthorized(); 
       return null;
     } else {
-      throw new Error(`Response status: ${response.status}`);
+      const responseJson = await response.json();
+
+      if(responseJson.message) {
+        //Frontend can parse response of backend
+        throw new Error(responseJson.message);
+      } else {
+        throw new Error(`Response status: ${response.status}`);
+      }
     }
 }  
 
