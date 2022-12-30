@@ -37,7 +37,7 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                 {sidebarButtons.map((button, i) => (
                   <div className='sidebar_button_category_container' key={i}>
                     <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} passHref>
-                      <a className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')} passHref>{button.icon} {button.title}</a>
+                      <a className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}>{button.icon} {button.title}</a>
                     </Link>
                   </div>
               ))}
