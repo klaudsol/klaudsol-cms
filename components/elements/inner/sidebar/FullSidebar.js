@@ -1,19 +1,13 @@
 
 import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarNav} from '@coreui/react'
-
 import { FaChevronLeft } from 'react-icons/fa'
-
 import React from 'react';
-
 import Link from 'next/link';
-
 import 'simplebar/dist/simplebar.min.css'
-
 import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
-
 import { BiBuildings } from 'react-icons/bi';
-
 import { BsFillGearFill } from 'react-icons/bs';
+import cx from 'classnames';
 
 const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
   
@@ -41,11 +35,11 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
         <div className='sidebar_container'>
             <div>
                 {sidebarButtons.map((button, i) => (
-                 <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} passHref>
                   <div className='sidebar_button_category_container' key={i}>
-                    <button className={router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref>{button.icon} {button.title}</button>
+                    <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} passHref>
+                      <a className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}>{button.icon} {button.title}</a>
+                    </Link>
                   </div>
-                </Link>
               ))}
             </div>
           </div>
