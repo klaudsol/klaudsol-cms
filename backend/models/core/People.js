@@ -165,7 +165,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
 
     //Check if the provided oldPassword is correct.
     const checkPasswordSql = `SELECT id FROM people 
-                              where id = :id AND encrypted_password = sha2(CONCAT(:oldPassword, salt), 256) LIMIT 1`;
+                              WHERE id = :id AND encrypted_password = sha2(CONCAT(:oldPassword, salt), 256) AND login_enabled = 1  LIMIT 1`;
       
     const sqlPass = await db.executeStatement(checkPasswordSql, [
       {name: 'id', value: {longValue: id}},
