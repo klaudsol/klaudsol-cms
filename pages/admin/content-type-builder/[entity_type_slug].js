@@ -34,6 +34,14 @@ import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayou
 import RootContext from "@/components/contexts/RootContext";
 import { loadEntityTypes, loadEntityType } from "@/components/reducers/actions";
 
+// Open Edit modal
+// Input updated stuff
+// Submit
+// Send PUT request to server
+// Update DB w/ updated stuff
+// Return the updated info
+// Display on screen
+
 export default function ContentTypeBuilder({ cache }) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
@@ -242,6 +250,7 @@ export default function ContentTypeBuilder({ cache }) {
                   title="Edit"
                   icon={<MdModeEditOutline />}
                   isDisabled={false}
+                  onClick={() => console.log("this button is functional")}
                 />
               </div>
 
