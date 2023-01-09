@@ -1,9 +1,10 @@
 import { useState, useContext } from "react";
 import { Formik, Form, Field } from "formik";
+import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 
-export default function CollectionTypeBody({ formRef }) {
+export default function EditCollectionTypeBody({ formRef, slug, hideModal }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const formikParams = {
@@ -11,12 +12,11 @@ export default function CollectionTypeBody({ formRef }) {
     innerRef: formRef,
     onSubmit: (values) => {
       console.error(JSON.stringify(values));
-
       (async () => {
         try {
           //refactor to reducers/actions
-          await fetch(`/api/entity_types`, {
-            method: "POST",
+          await fetch(`/api/entity_types/${slug}`, {
+            method: "PUT",
             body: JSON.stringify(values),
             headers: {
               "Content-Type": "application/json",
@@ -25,6 +25,7 @@ export default function CollectionTypeBody({ formRef }) {
         } catch (error) {
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });
+          hideModal();
         }
       })();
     },

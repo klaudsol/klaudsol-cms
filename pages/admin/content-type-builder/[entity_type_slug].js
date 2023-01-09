@@ -31,6 +31,7 @@ import { MdModeEditOutline } from "react-icons/md";
 import { VscListSelection } from "react-icons/vsc";
 import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
 import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
+import EditCollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/EditCollectionTypeBody";
 
 import RootContext from "@/components/contexts/RootContext";
 import { loadEntityTypes, loadEntityType } from "@/components/reducers/actions";
@@ -199,6 +200,10 @@ export default function ContentTypeBuilder({ cache }) {
     dispatch({ type: SHOW_EDIT_CTYPE_MODAL });
   };
 
+  const hideEditCTypeModal = () => {
+    dispatch({ type: HIDE_EDIT_CTYPE_MODAL });
+  };
+
   const performDelete = ({ typeSlug }) => {
     (async () => {
       console.error(`deleting... ${typeSlug}`);
@@ -214,6 +219,13 @@ export default function ContentTypeBuilder({ cache }) {
     evt.preventDefault();
     if (formikRef.current) {
       formikRef.current.handleSubmit();
+    }
+  };
+
+  const onEditContentType = (evt) => {
+    evt.preventDefault();
+    if (editCTypeFormikRef.current) {
+      editCTypeFormikRef.current.handleSubmit();
     }
   };
 
@@ -322,12 +334,16 @@ export default function ContentTypeBuilder({ cache }) {
 
             <AppModal
               show={state.showEditCTypeModal}
-              onClick={() => console.log("clicked")}
+              onClick={onEditContentType}
               onClose={() => dispatch({ type: HIDE_EDIT_CTYPE_MODAL })}
               modalTitle="Edit collection type"
               buttonTitle="Continue"
             >
-              <CollectionTypeBody formRef={editCTypeFormikRef} />
+              <EditCollectionTypeBody
+                formRef={editCTypeFormikRef}
+                slug={entity_type_slug}
+                hideModal={hideEditCTypeModal}
+              />
             </AppModal>
 
             <AppModal
