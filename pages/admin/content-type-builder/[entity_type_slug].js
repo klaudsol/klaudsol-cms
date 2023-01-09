@@ -36,15 +36,6 @@ import EditCollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/E
 import RootContext from "@/components/contexts/RootContext";
 import { loadEntityTypes, loadEntityType } from "@/components/reducers/actions";
 
-// Open Edit modal
-// -- Show prev. values
-// Input updated stuff
-// Submit
-// Send PUT request to server
-// Update DB w/ updated stuff
-// Return the updated info
-// Display on screen
-
 export default function ContentTypeBuilder({ cache }) {
   const router = useRouter();
   const { entity_type_slug } = router.query;

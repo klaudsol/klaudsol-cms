@@ -11,7 +11,7 @@ export default function EditCollectionTypeBody({ formRef, hideModal }) {
 
   const entityTypes = rootState.entityTypes;
   const currentEntityType = entityTypes.find(
-    (etype) => etype.entity_type_slug === slug
+    (eType) => eType.entity_type_slug === slug
   );
   const name = currentEntityType?.entity_type_name;
 
