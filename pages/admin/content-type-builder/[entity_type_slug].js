@@ -36,6 +36,7 @@ import RootContext from "@/components/contexts/RootContext";
 import { loadEntityTypes, loadEntityType } from "@/components/reducers/actions";
 
 // Open Edit modal
+// -- Show prev. values
 // Input updated stuff
 // Submit
 // Send PUT request to server
@@ -49,6 +50,7 @@ export default function ContentTypeBuilder({ cache }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const formikRef = useRef();
+  const editCTypeFormikRef = useRef();
 
   const initialState = {
     show: false,
@@ -325,7 +327,7 @@ export default function ContentTypeBuilder({ cache }) {
               modalTitle="Edit collection type"
               buttonTitle="Continue"
             >
-              <CollectionTypeBody formRef={formikRef} />
+              <CollectionTypeBody formRef={editCTypeFormikRef} />
             </AppModal>
 
             <AppModal
