@@ -30,6 +30,7 @@ import { FaCheck, FaPlusCircle, FaPlus } from "react-icons/fa";
 import { MdModeEditOutline } from "react-icons/md";
 import { VscListSelection } from "react-icons/vsc";
 import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
+import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
 
 import RootContext from "@/components/contexts/RootContext";
 import { loadEntityTypes, loadEntityType } from "@/components/reducers/actions";
@@ -62,6 +63,8 @@ export default function ContentTypeBuilder({ cache }) {
   const SET_ENTITY_TYPE_NAME = "SET_ENTITY_TYPE_NAME";
   const SHOW_DELETE_CONFIRMATION_MODAL = "SHOW_DELETE_CONFIRMATION_MODAL";
   const HIDE_DELETE_CONFIRMATION_MODAL = "HIDE_DELETE_CONFIRMATION_MODAL";
+  const SHOW_EDIT_CTYPE_MODAL = "SHOW_EDIT_CTYPE_MODAL";
+  const HIDE_EDIT_CTYPE_MODAL = "HIDE_EDIT_CTYPE_MODAL";
 
   const LOADING = "LOADING";
 
@@ -101,6 +104,17 @@ export default function ContentTypeBuilder({ cache }) {
         return {
           ...state,
           showDeleteConfirmationModal: false,
+        };
+
+      case SHOW_EDIT_CTYPE_MODAL:
+        return {
+          ...state,
+          showEditCTypeModal: true,
+        };
+      case HIDE_EDIT_CTYPE_MODAL:
+        return {
+          ...state,
+          showEditCTypeModal: false,
         };
     }
   };
@@ -179,6 +193,10 @@ export default function ContentTypeBuilder({ cache }) {
     dispatch({ type: SET_SHOW, payload: false });
   };
 
+  const showEditCTypeModal = () => {
+    dispatch({ type: SHOW_EDIT_CTYPE_MODAL });
+  };
+
   const performDelete = ({ typeSlug }) => {
     (async () => {
       console.error(`deleting... ${typeSlug}`);
@@ -250,7 +268,7 @@ export default function ContentTypeBuilder({ cache }) {
                   title="Edit"
                   icon={<MdModeEditOutline />}
                   isDisabled={false}
-                  onClick={() => console.log("this button is functional")}
+                  onClick={showEditCTypeModal}
                 />
               </div>
 
@@ -299,6 +317,16 @@ export default function ContentTypeBuilder({ cache }) {
               onClose={() => dispatch({ type: SET_SHOW, payload: false })}
               onClick={onAddAnotherField}
             />
+
+            <AppModal
+              show={state.showEditCTypeModal}
+              onClick={() => console.log("clicked")}
+              onClose={() => dispatch({ type: HIDE_EDIT_CTYPE_MODAL })}
+              modalTitle="Edit collection type"
+              buttonTitle="Continue"
+            >
+              <CollectionTypeBody formRef={formikRef} />
+            </AppModal>
 
             <AppModal
               show={state.showDeleteConfirmationModal}
