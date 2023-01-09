@@ -335,7 +335,7 @@ export default function ContentTypeBuilder({ cache }) {
             <AppModal
               show={state.showEditCTypeModal}
               onClick={onEditContentType}
-              onClose={() => dispatch({ type: HIDE_EDIT_CTYPE_MODAL })}
+              onClose={hideEditCTypeModal}
               modalTitle="Edit collection type"
               buttonTitle="Continue"
             >
