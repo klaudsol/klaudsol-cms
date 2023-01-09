@@ -51,7 +51,6 @@ export default function ContentTypeBuilder({ cache }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const formikRef = useRef();
-  const editCTypeFormikRef = useRef();
 
   const initialState = {
     show: false,
@@ -215,17 +214,10 @@ export default function ContentTypeBuilder({ cache }) {
     })();
   };
 
-  const onAddAnotherField = (evt) => {
+  const onFormSubmit = (evt) => {
     evt.preventDefault();
     if (formikRef.current) {
       formikRef.current.handleSubmit();
-    }
-  };
-
-  const onEditContentType = (evt) => {
-    evt.preventDefault();
-    if (editCTypeFormikRef.current) {
-      editCTypeFormikRef.current.handleSubmit();
     }
   };
 
@@ -329,18 +321,18 @@ export default function ContentTypeBuilder({ cache }) {
               formParams={formikParams}
               show={state.show}
               onClose={() => dispatch({ type: SET_SHOW, payload: false })}
-              onClick={onAddAnotherField}
+              onClick={onFormSubmit}
             />
 
             <AppModal
               show={state.showEditCTypeModal}
-              onClick={onEditContentType}
+              onClick={onFormSubmit}
               onClose={hideEditCTypeModal}
               modalTitle="Edit collection type"
               buttonTitle="Continue"
             >
               <EditCollectionTypeBody
-                formRef={editCTypeFormikRef}
+                formRef={formikRef}
                 hideModal={hideEditCTypeModal}
               />
             </AppModal>
