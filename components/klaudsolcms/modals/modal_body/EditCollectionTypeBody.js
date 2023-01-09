@@ -4,8 +4,10 @@ import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 
-export default function EditCollectionTypeBody({ formRef, slug, hideModal }) {
+export default function EditCollectionTypeBody({ formRef, hideModal }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const router = useRouter();
+  const slug = router.query.entity_type_slug;
 
   const formikParams = {
     initialValues: {},
@@ -22,6 +24,8 @@ export default function EditCollectionTypeBody({ formRef, slug, hideModal }) {
               "Content-Type": "application/json",
             },
           });
+
+          router.push(`/admin/content-type-builder/${values.slug}`);
         } catch (error) {
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });

@@ -341,7 +341,6 @@ export default function ContentTypeBuilder({ cache }) {
             >
               <EditCollectionTypeBody
                 formRef={editCTypeFormikRef}
-                slug={entity_type_slug}
                 hideModal={hideEditCTypeModal}
               />
             </AppModal>
