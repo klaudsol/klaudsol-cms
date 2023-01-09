@@ -7,16 +7,16 @@ import RootContext from "@/components/contexts/RootContext";
 export default function EditCollectionTypeBody({ formRef, hideModal }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const router = useRouter();
-  const currentSlug = router.query.entity_type_slug;
+  const slug = router.query.entity_type_slug;
+
   const entityTypes = rootState.entityTypes;
   const currentEntityType = entityTypes.find(
-    (etype) => etype.entity_type_slug === currentSlug
+    (etype) => etype.entity_type_slug === slug
   );
-  // Component renders 4 times upon submitting the form.
-  // The name and the slug are undefined in 2/4 of the renders
+  // This component renders 4 times upon submitting the form.
+  // The name is undefined in 2/4 of the renders
   // which will cause an error
   const name = currentEntityType?.entity_type_name;
-  const slug = currentEntityType?.entity_type_slug;
 
   const formikParams = {
     initialValues: {
@@ -29,7 +29,7 @@ export default function EditCollectionTypeBody({ formRef, hideModal }) {
       (async () => {
         try {
           //refactor to reducers/actions
-          await fetch(`/api/entity_types/${currentSlug}`, {
+          await fetch(`/api/entity_types/${slug}`, {
             method: "PUT",
             body: JSON.stringify(values),
             headers: {
