@@ -40,6 +40,8 @@ async function handler(req, res) {
         return get(req, res);
       case "DELETE":
         return del(req, res);
+      case "PUT":
+        return update(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -98,6 +100,35 @@ async function del(req, res) {
     const { slug } = req.query;
     await EntityType.delete({ slug });
     res.status(OK).json({ message: "Successfully delete the entity type" });
+  } catch (error) {
+    await defaultErrorHandler(error, req, res);
+  }
+}
+
+async function update(req, res) {
+  try {
+    await assert(
+      {
+        loggedIn: true,
+      },
+      req
+    );
+
+    const { slug: oldSlug } = req.query;
+    const { name, slug: newSlug } = req.body;
+
+    await EntityType.update({ name, newSlug, oldSlug });
+
+    const output = {
+      data: { name, newSlug },
+      metadata: {},
+    };
+
+    output.metadata.hash = createHash(output);
+
+    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
+    res.status(OK).json(output ?? []);
   } catch (error) {
     await defaultErrorHandler(error, req, res);
   }
