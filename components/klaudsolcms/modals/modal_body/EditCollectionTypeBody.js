@@ -13,9 +13,6 @@ export default function EditCollectionTypeBody({ formRef, hideModal }) {
   const currentEntityType = entityTypes.find(
     (etype) => etype.entity_type_slug === slug
   );
-  // This component renders 4 times upon submitting the form.
-  // The name is undefined in 2/4 of the renders
-  // which will cause an error
   const name = currentEntityType?.entity_type_name;
 
   const formikParams = {
