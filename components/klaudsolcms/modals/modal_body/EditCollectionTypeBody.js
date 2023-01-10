@@ -22,7 +22,6 @@ export default function EditCollectionTypeBody({ formRef, hideModal }) {
     },
     innerRef: formRef,
     onSubmit: (values) => {
-      console.error(JSON.stringify(values));
       (async () => {
         try {
           //refactor to reducers/actions
