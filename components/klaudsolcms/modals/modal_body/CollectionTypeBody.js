@@ -5,15 +5,27 @@ import RootContext from "@/components/contexts/RootContext";
 
 // TO BE SEPARATED INTO ANOTHER COMPONENT
 function DependentField(props) {
-    const { values, setFieldValue } = useFormikContext();
-    const [field] = useField(props);
-    const name = values.name;
+  const { values, setFieldValue } = useFormikContext();
+  const [field] = useField(props);
+  const name = values.name;
 
-    useEffect(() => {
-        setFieldValue(props.name, name);
-    }, [name])
+  useEffect(() => {
+    const nameSplit = name?.split(" ");
+    const nameFiltered = nameSplit?.filter((i) => i !== ""); // For extra whitespaces
+    const nameJoin = nameFiltered?.join("-");
 
-    return <input {...props} {...field} />
+    // Makes dashes instantly appear when user types space
+    if (name?.endsWith(" ")) {
+      const newName = `${nameJoin}-`;
+      setFieldValue(props.name, newName);
+
+      return;
+    }
+
+    setFieldValue(props.name, nameJoin);
+  }, [name]);
+
+  return <input {...props} {...field} />;
 }
 
 export default function CollectionTypeBody({ formRef }) {
@@ -56,18 +68,14 @@ export default function CollectionTypeBody({ formRef }) {
             <div className="row">
               <div className="col">
                 <p className="mt-2"> Display Name </p>
-                <Field 
-                    type="text" 
-                    className="input_text" 
-                    name="name" 
-                />
+                <Field type="text" className="input_text" name="name" />
               </div>
               <div className="col">
                 <p className="mt-2"> API ID &#40;Slug&#41; </p>
-                <DependentField 
-                    type="text" 
-                    className="input_text" 
-                    name="slug" 
+                <DependentField
+                  type="text"
+                  className="input_text"
+                  name="slug"
                 />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
                   The UID is used to generate the API routes and databases
