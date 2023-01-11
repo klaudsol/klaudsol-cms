@@ -4,12 +4,14 @@ import { useFormikContext, useField } from "formik";
 const DependentField = (props) => {
   const { values, setFieldValue } = useFormikContext();
   const [field] = useField(props);
-  const { format, inputToMirror } = props;
+
+  const { format, inputToMirror, name } = props;
   const value = values[inputToMirror];
 
   // Remove inputToMirror & format pros because it is not a legit input
   // attribute and it will give us a warning of we put it on input
-  const filteredProps = Object.keys(props).reduce((acc, curr) => {
+  const propKeys = Object.keys(props);
+  const filteredProps = propKeys.reduce((acc, curr) => {
     if (curr === "inputToMirror" || curr === "format") return acc;
 
     acc[curr] = props[curr];
@@ -18,7 +20,7 @@ const DependentField = (props) => {
 
   useEffect(() => {
     const outputVal = format(value);
-    setFieldValue(props.name, outputVal);
+    setFieldValue(name, outputVal);
   }, [value]);
 
   return <input {...filteredProps} {...field} />;
@@ -29,3 +31,9 @@ DependentField.defaultProps = {
 };
 
 export default DependentField;
+
+// HOW IT WORKS:
+// This field accepts all of the atrributes of an input, and two special attributes:
+// The 'name' of the input to mirror (inputToMirror), and the optional format function (format).
+// We need the name of the input that we need to mirror so that we can mirror it,
+// and the format function lets us format our mirrored input.
