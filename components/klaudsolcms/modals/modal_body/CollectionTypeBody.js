@@ -7,15 +7,25 @@ import RootContext from "@/components/contexts/RootContext";
 function DependentField(props) {
   const { values, setFieldValue } = useFormikContext();
   const [field] = useField(props);
-  const name = values.name;
+  const inputToMirror = props.inputToMirror;
+  const value = values[inputToMirror];
+
+  // Remove inputToMirror prop because it is not a legit input attribute
+  // and it will give us a warning of we put it on input
+  const filteredProps = Object.keys(props).reduce((acc, curr) => {
+    if (curr === "inputToMirror") return acc;
+
+    acc[curr] = props[curr];
+    return acc;
+  }, {});
 
   useEffect(() => {
-    const nameSplit = name?.split(" ");
+    const nameSplit = value?.split(" ");
     const nameFiltered = nameSplit?.filter((i) => i !== ""); // For extra whitespaces
     const nameJoin = nameFiltered?.join("-");
 
     // Makes dashes instantly appear when user types space
-    if (name?.endsWith(" ")) {
+    if (value?.endsWith(" ")) {
       const newName = `${nameJoin}-`;
       setFieldValue(props.name, newName);
 
@@ -25,7 +35,7 @@ function DependentField(props) {
     setFieldValue(props.name, nameJoin);
   }, [name]);
 
-  return <input {...props} {...field} />;
+  return <input {...filteredProps} {...field} />;
 }
 
 export default function CollectionTypeBody({ formRef }) {
@@ -76,6 +86,7 @@ export default function CollectionTypeBody({ formRef }) {
                   type="text"
                   className="input_text"
                   name="slug"
+                  inputToMirror="name"
                 />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
                   The UID is used to generate the API routes and databases
