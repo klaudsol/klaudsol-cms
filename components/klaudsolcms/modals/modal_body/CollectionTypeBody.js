@@ -10,8 +10,6 @@ export default function CollectionTypeBody({ formRef }) {
     initialValues: {},
     innerRef: formRef,
     onSubmit: (values) => {
-      console.error(JSON.stringify(values));
-
       (async () => {
         try {
           //refactor to reducers/actions
@@ -41,19 +39,26 @@ export default function CollectionTypeBody({ formRef }) {
                 <button className="btn_modal_settings"> Basic settings </button>
               </div>
             </div>
-            <div className="block_bar"></div>
+            <div className="block_bar" />
             <div className="row">
               <div className="col">
                 <p className="mt-2"> Display Name </p>
-                <Field type="text" className="input_text" name="name" />
+                <Field 
+                    type="text" 
+                    className="input_text" 
+                    name="name" 
+                />
               </div>
               <div className="col">
                 <p className="mt-2"> API ID &#40;Slug&#41; </p>
-                <Field type="text" className="input_text" name="slug" />
+                <Field 
+                    type="text" 
+                    className="input_text" 
+                    name="slug" 
+                />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
-                  {" "}
                   The UID is used to generate the API routes and databases
-                  tables/collections{" "}
+                  tables/collections
                 </p>
               </div>
             </div>

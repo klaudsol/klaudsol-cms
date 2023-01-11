@@ -9,6 +9,7 @@ export default function EditCollectionTypeBody({ formRef, hideModal }) {
   const router = useRouter();
   const slug = router.query.entity_type_slug;
 
+  // Find the name of the current entity type
   const entityTypes = rootState.entityTypes;
   const currentEntityType = entityTypes.find(
     (eType) => eType.entity_type_slug === slug
@@ -54,19 +55,26 @@ export default function EditCollectionTypeBody({ formRef, hideModal }) {
                 <button className="btn_modal_settings"> Basic settings </button>
               </div>
             </div>
-            <div className="block_bar"></div>
+            <div className="block_bar" />
             <div className="row">
               <div className="col">
                 <p className="mt-2"> Display Name </p>
-                <Field type="text" className="input_text" name="name" />
+                <Field 
+                    type="text" 
+                    className="input_text"
+                    name="name" 
+                />
               </div>
               <div className="col">
                 <p className="mt-2"> API ID &#40;Slug&#41; </p>
-                <Field type="text" className="input_text" name="slug" />
+                <Field 
+                    type="text" 
+                    className="input_text"
+                    name="slug" 
+                />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
-                  {" "}
                   The UID is used to generate the API routes and databases
-                  tables/collections{" "}
+                  tables/collections
                 </p>
               </div>
             </div>

@@ -113,8 +113,7 @@ class EntityTypes {
   static async create({ name, slug }) {
     const db = new DB();
 
-    const insertEntitiesSQL =
-      "INSERT INTO entity_types (slug, name) VALUES (:slug, :name)";
+    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name) VALUES (:slug, :name)";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "slug", value: { stringValue: slug } },
@@ -140,8 +139,7 @@ class EntityTypes {
 
   static async update({ name, newSlug, oldSlug }) {
     const db = new DB();
-    const updateEntityTypesSQL =
-      "UPDATE entity_types SET slug = :newSlug, name = :name WHERE slug = :oldSlug";
+    const updateEntityTypesSQL = "UPDATE entity_types SET slug = :newSlug, name = :name WHERE slug = :oldSlug";
     const executeStatementParam = [
       { name: "name", value: { stringValue: name } },
       { name: "newSlug", value: { stringValue: newSlug } },
