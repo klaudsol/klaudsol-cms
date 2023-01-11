@@ -1,7 +1,22 @@
-import { useState, useContext } from "react";
-import { Formik, Form, Field } from "formik";
+import { useState, useContext, useEffect } from "react";
+import { Formik, Form, Field, useFormikContext, useField } from "formik";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
+
+// TO BE SEPARATED INTO ANOTHER COMPONENT
+function DependentField(props) {
+    const { values, setFieldValue } = useFormikContext();
+    const [field] = useField(props);
+    const name = values.name;
+
+    useEffect(() => {
+        if(name) {
+            setFieldValue(props.name, name);
+        }
+    }, [name])
+
+    return <input {...props} {...field} />
+}
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
@@ -51,7 +66,7 @@ export default function CollectionTypeBody({ formRef }) {
               </div>
               <div className="col">
                 <p className="mt-2"> API ID &#40;Slug&#41; </p>
-                <Field 
+                <DependentField 
                     type="text" 
                     className="input_text" 
                     name="slug" 
