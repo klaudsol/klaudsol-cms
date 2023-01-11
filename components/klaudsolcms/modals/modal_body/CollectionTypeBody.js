@@ -7,36 +7,29 @@ import RootContext from "@/components/contexts/RootContext";
 function DependentField(props) {
   const { values, setFieldValue } = useFormikContext();
   const [field] = useField(props);
-  const inputToMirror = props.inputToMirror;
+  const { format, inputToMirror } = props;
   const value = values[inputToMirror];
 
-  // Remove inputToMirror prop because it is not a legit input attribute
-  // and it will give us a warning of we put it on input
+  // Remove inputToMirror & format pros because it is not a legit input
+  // attribute and it will give us a warning of we put it on input
   const filteredProps = Object.keys(props).reduce((acc, curr) => {
-    if (curr === "inputToMirror") return acc;
+    if (curr === "inputToMirror" || curr === "format") return acc;
 
     acc[curr] = props[curr];
     return acc;
   }, {});
 
   useEffect(() => {
-    const nameSplit = value?.split(" ");
-    const nameFiltered = nameSplit?.filter((i) => i !== ""); // For extra whitespaces
-    const nameJoin = nameFiltered?.join("-");
-
-    // Makes dashes instantly appear when user types space
-    if (value?.endsWith(" ")) {
-      const newName = `${nameJoin}-`;
-      setFieldValue(props.name, newName);
-
-      return;
-    }
-
-    setFieldValue(props.name, nameJoin);
-  }, [name]);
+    const outputVal = format(value);
+    setFieldValue(props.name, outputVal);
+  }, [value]);
 
   return <input {...filteredProps} {...field} />;
 }
+
+DependentField.defaultProps = {
+  format: (value) => value,
+};
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
@@ -63,6 +56,20 @@ export default function CollectionTypeBody({ formRef }) {
     },
   };
 
+  const dependentFieldFormat = (value) => {
+    const valueSplit = value?.split(" ");
+    console.log(valueSplit);
+    const filteredSplit = valueSplit?.filter((i) => i !== "");
+    const joinedSplit = filteredSplit?.join("-");
+
+    // makes dashes instantly appear when user types space
+    if (!value?.endsWith(" ")) return joinedSplit;
+
+    const newVal = `${joinedSplit}-`;
+
+    return newVal;
+  };
+
   return (
     <>
       <Formik {...formikParams}>
@@ -87,6 +94,7 @@ export default function CollectionTypeBody({ formRef }) {
                   className="input_text"
                   name="slug"
                   inputToMirror="name"
+                  format={dependentFieldFormat}
                 />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
                   The UID is used to generate the API routes and databases
