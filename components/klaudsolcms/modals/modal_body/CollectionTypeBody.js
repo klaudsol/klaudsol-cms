@@ -10,9 +10,7 @@ function DependentField(props) {
     const name = values.name;
 
     useEffect(() => {
-        if(name) {
-            setFieldValue(props.name, name);
-        }
+        setFieldValue(props.name, name);
     }, [name])
 
     return <input {...props} {...field} />
