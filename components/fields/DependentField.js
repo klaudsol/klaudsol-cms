@@ -5,21 +5,9 @@ const DependentField = (props) => {
   const { values, setFieldValue } = useFormikContext();
   const [field] = useField(props);
 
-  const { format, inputToMirror, name } = props;
+  const { format, inputToMirror, name, ...filteredProps } = props;
+  filteredProps.name = name;
   const value = values[inputToMirror];
-
-  // Remove inputToMirror & format props because it is not a legit input
-  // attribute and it will give us a warning of we put it on an input element
-  const propKeys = Object.keys(props);
-  const initialValue = {};
-  const filteredPropsReducer = (acc, curr) => {
-    if (curr === "inputToMirror" || curr === "format") return acc;
-
-    const newObj = { ...acc, [curr]: props[curr] };
-
-    return newObj;
-  };
-  const filteredProps = propKeys.reduce(filteredPropsReducer, initialValue);
 
   useEffect(() => {
     const outputVal = format(value);
