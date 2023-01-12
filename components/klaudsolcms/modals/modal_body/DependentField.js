@@ -8,8 +8,8 @@ const DependentField = (props) => {
   const { format, inputToMirror, name } = props;
   const value = values[inputToMirror];
 
-  // Remove inputToMirror & format pros because it is not a legit input
-  // attribute and it will give us a warning of we put it on input
+  // Remove inputToMirror & format props because it is not a legit input
+  // attribute and it will give us a warning of we put it on an input element
   const propKeys = Object.keys(props);
   const filteredProps = propKeys.reduce((acc, curr) => {
     if (curr === "inputToMirror" || curr === "format") return acc;
