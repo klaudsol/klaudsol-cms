@@ -205,11 +205,16 @@ export default function ContentTypeBuilder({ cache }) {
     })();
   };
 
-  const onFormSubmit = (evt) => {
+  const onFormSubmit = (evt, func = () => {}) => {
     evt.preventDefault();
     if (formikRef.current) {
       formikRef.current.handleSubmit();
+      func();
     }
+  };
+
+  const onEditCTypeSubmit = (evt) => {
+    onFormSubmit(evt, hideEditCTypeModal);
   };
 
   const formikParams = {
@@ -317,15 +322,12 @@ export default function ContentTypeBuilder({ cache }) {
 
             <AppModal
               show={state.showEditCTypeModal}
-              onClick={onFormSubmit}
+              onClick={onEditCTypeSubmit}
               onClose={hideEditCTypeModal}
               modalTitle="Edit collection type"
               buttonTitle="Continue"
             >
-              <EditCollectionTypeBody
-                formRef={formikRef}
-                hideModal={hideEditCTypeModal}
-              />
+              <EditCollectionTypeBody formRef={formikRef} />
             </AppModal>
 
             <AppModal

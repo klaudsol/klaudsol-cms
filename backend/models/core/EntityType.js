@@ -5,7 +5,13 @@ class EntityTypes {
   static async all() {
     const db = new DB();
 
-    const sql = `SELECT entity_types.id, entity_types.name, entity_types.slug FROM entity_types`;
+    const sql = `
+        SELECT 
+          entity_types.id, 
+          entity_types.name, 
+          entity_types.slug 
+        FROM entity_types
+          `;
 
     const data = await db.executeStatement(sql, []);
 
@@ -26,7 +32,14 @@ class EntityTypes {
   static async findBySlug(slug, { db: _db } = {}) {
     const db = _db ?? new DB();
 
-    const sql = `SELECT entity_types.id, entity_types.name, entity_types.slug FROM entity_types WHERE entity_types.slug = :slug LIMIT 1`;
+    const sql = `
+        SELECT 
+          entity_types.id, 
+          entity_types.name, 
+          entity_types.slug 
+        FROM entity_types 
+        WHERE entity_types.slug = :slug LIMIT 1
+          `;
 
     const data = await db.executeStatement(sql, [
       { name: "slug", value: { stringValue: slug } },
@@ -98,8 +111,7 @@ class EntityTypes {
   static async create({ name, slug }) {
     const db = new DB();
 
-    const insertEntitiesSQL =
-      "INSERT INTO entity_types (slug, name) VALUES (:slug, :name)";
+    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name) VALUES (:slug, :name)";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "slug", value: { stringValue: slug } },

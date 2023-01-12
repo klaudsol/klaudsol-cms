@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 
-export default function EditCollectionTypeBody({ formRef, hideModal }) {
+export default function EditCollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const router = useRouter();
   const slug = router.query.entity_type_slug;
@@ -38,7 +38,6 @@ export default function EditCollectionTypeBody({ formRef, hideModal }) {
         } catch (error) {
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });
-          hideModal();
         }
       })();
     },
