@@ -14,8 +14,9 @@ const DependentField = (props) => {
   const filteredProps = propKeys.reduce((acc, curr) => {
     if (curr === "inputToMirror" || curr === "format") return acc;
 
-    acc[curr] = props[curr];
-    return acc;
+    const newObj = { ...acc, [curr]: props[curr] };
+
+    return newObj;
   }, {});
 
   useEffect(() => {
