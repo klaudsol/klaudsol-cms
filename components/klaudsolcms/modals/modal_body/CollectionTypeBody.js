@@ -68,7 +68,7 @@ export default function CollectionTypeBody({ formRef }) {
                   type="text"
                   className="input_text"
                   name="slug"
-                  inputToMirror="name"
+                  fieldToMirror="name"
                   format={dependentFieldFormat}
                 />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
