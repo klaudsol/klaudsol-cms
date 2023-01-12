@@ -30,18 +30,18 @@ export default function CollectionTypeBody({ formRef }) {
   };
 
   const dependentFieldFormat = (value) => {
-    if (!value) return;
-
-    const valueSplit = value.split(" ");
-    const filteredSplit = valueSplit.filter((i) => i !== "");
-    const joinedSplit = filteredSplit.join("-");
+    const valueSplit = value?.split(" ");
+    // Prevents extra spaces from becoming '-'
+    const filteredSplit = valueSplit?.filter((i) => i !== "");
+    const joinedSplit = filteredSplit?.join("-");
 
     // If the user types in space as the first letter, a '-'
     // will appear, this will prevent it
-    if (value.trim() === "") return "";
-    if (!value.endsWith(" ")) return joinedSplit;
+    if (value?.trim() === "") return "";
+    if (!value?.endsWith(" ")) return joinedSplit;
 
-    // Makes dashes instantly appear when user types space
+    // Makes dashes instantly appear when user types
+    //  a space at end of string
     const newVal = `${joinedSplit}-`;
 
     return newVal;
