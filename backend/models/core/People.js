@@ -25,7 +25,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
   const db = new DB();
   const sql = `select * from sme_people_professional`;
               
-  const data = await db.exectuteStatement(sql, []);
+  const data = await db.executeStatement(sql, []);
  
   if (data.records.length === 0) {
     return null;
@@ -42,7 +42,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       const db = new DB();
       const sql = `SELECT id, salt, first_name, last_name, role FROM people 
         WHERE email=:email AND encrypted_password = sha2(CONCAT(:password, salt), 256) AND login_enabled = 1 LIMIT 1;`;
-      const data = await db.exectuteStatement(sql, [
+      const data = await db.executeStatement(sql, [
         {name: 'email', value:{stringValue: email}},
         {name: 'password', value:{stringValue: password}}
       ]);
@@ -65,7 +65,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       const sessionSql = `INSERT INTO sessions (\`people_id\`, \`session\`, \`session_expiry\`)  
         VALUES(:id, :session, DATE_ADD(NOW(), INTERVAL 744 HOUR))`;
         
-      await db.exectuteStatement(sessionSql, [
+      await db.executeStatement(sessionSql, [
         {name: 'session', value:{stringValue: session_token}},
         {name: 'id', value:{longValue: userId}},
       ]);
@@ -73,7 +73,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       //Query available permissions
       let defaultEntityType, defaultEntityTypeData;
       const defaultEntityTypeSQL = `SELECT entity_types.slug from entity_types LIMIT 1`;
-      defaultEntityTypeData = await db.exectuteStatement(defaultEntityTypeSQL, []);
+      defaultEntityTypeData = await db.executeStatement(defaultEntityTypeSQL, []);
       [{stringValue: defaultEntityType}] = defaultEntityTypeData.records[0];
  
       return { session_token, user: {firstName, lastName, role, defaultEntityType} };
@@ -99,7 +99,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
                   sme_people.sme_tenant_id = :sme_tenant_id
                   LIMIT 1`;
                   
-    const data = await db.exectuteStatement(sql, [
+    const data = await db.executeStatement(sql, [
       {name: 'people_id', value:{longValue: people_id}},
       {name: 'sme_tenant_id', value:{longValue: session_data.sme_tenant_id}},
     ]);
@@ -111,6 +111,8 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
     return new People(fromAurora(data.records[0], People.fields()))
   }
 
+
+  //TODO: Remove password change here.
   static async updateUserInfo({id, first_name, last_name, email, oldPassword, newPassword, sme_timezone_id}){
     const db = new DB();
       const encryptedPasswordPhrase =  newPassword ? 'encrypted_password = sha2(CONCAT(:newPassword, salt), 256),' : '';
@@ -121,7 +123,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       // !oldPassword/!newPassword is not working.
       // Validations for updating password
       if (oldPassword || newPassword){
-        const sqlPass = await db.exectuteStatement(checkPasswordSql, [
+        const sqlPass = await db.executeStatement(checkPasswordSql, [
           {name: 'id', value: {longValue: id}},
           {name: 'oldPassword', value:{stringValue: oldPassword}}
         ]);
@@ -141,8 +143,45 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
 
       if(!newPassword) delete executeStatementParam.newPassword;
 
-      const data = await db.exectuteStatement(updateSql, Object.values(executeStatementParam)); 
+      const data = await db.executeStatement(updateSql, Object.values(executeStatementParam)); 
       return true;
+      
+  }
+
+  //A password changer needs a method of its own for security purposes
+  static async updatePassword({id, oldPassword, newPassword}){
+
+    //early exit if the old password or the new password is not provided.
+    if (!oldPassword || !newPassword) throw new Error('Passwords are required.');
+
+    const db = new DB();
+
+    //TODO: for security reasons, replace the salt as well for every password change.
+    const updateSql =  `
+    UPDATE people  
+    SET
+      encrypted_password = sha2(CONCAT(:newPassword, salt), 256) 
+    WHERE id = :id`;
+
+    //Check if the provided oldPassword is correct.
+    const checkPasswordSql = `SELECT id FROM people 
+                              WHERE id = :id AND encrypted_password = sha2(CONCAT(:oldPassword, salt), 256) AND login_enabled = 1  LIMIT 1`;
+      
+    const sqlPass = await db.executeStatement(checkPasswordSql, [
+      {name: 'id', value: {longValue: id}},
+      {name: 'oldPassword', value:{stringValue: oldPassword}}
+    ]);
+    if (sqlPass.records.length === 0) {
+      throw new RecordNotFound("Incorrect password");
+    }
+
+    const executeStatementParam = [
+      {name: 'id', value: {longValue: id}},
+      {name: 'newPassword', value: {stringValue: newPassword}},
+    ];
+
+    const data = await db.executeStatement(updateSql, executeStatementParam); 
+    return true;
       
   }
   
@@ -153,7 +192,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
     try {
       const db = new DB();
       const sessionSql = "DELETE FROM sme_sessions WHERE `session` = :session";
-      await db.exectuteStatement(sessionSql, [
+      await db.executeStatement(sessionSql, [
         {name: 'session', value:{stringValue: session_token}},
       ]);
       return true;
@@ -174,7 +213,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       sme_people.login_enabled = 1 
     `;  
     try {
-      const data = await db.exectuteStatement(sql, [
+      const data = await db.executeStatement(sql, [
         {name: 'session', value:{stringValue: session_token}},
       ]);
       
@@ -208,7 +247,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
         LIMIT 1
       `;  
       
-      const data = await db.exectuteStatement(sql, [
+      const data = await db.executeStatement(sql, [
         {name: 'session', value:{stringValue: session}},
       ]);
       
@@ -248,7 +287,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
         ORDER BY first_name ASC
       `;  
       
-      const data = await db.exectuteStatement(sql, [
+      const data = await db.executeStatement(sql, [
         {name: 'session', value:{stringValue: session}},
       ]);
       
@@ -278,7 +317,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       {name: 'sme_tenant_id', value:{longValue: sme_tenant_id}},
     ];
                 
-    const data = await db.exectuteStatement(sql, executeStatementParam);
+    const data = await db.executeStatement(sql, executeStatementParam);
    
     if (data.records.length === 0) {
       return null;

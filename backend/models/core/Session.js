@@ -16,14 +16,18 @@ class Session {
   static async getSession(session){ 
     if(!session) throw new UnauthorizedError('Session not found.');
     const db = new DB();
-    const sql =  `SELECT people_id, sme_tenant_id from sme_sessions where session = :session AND session_expiry > NOW()`;
-    const data = await db.exectuteStatement(sql, [
+    const sql =  `SELECT people_id from sessions where session = :session AND session_expiry > NOW() LIMIT 1`;
+    const data = await db.executeStatement(sql, [
       {name: 'session', value:{stringValue: session}},
     ]);
     
     if (data.records.length === 0) throw new UnauthorizedError('Session not found.');
      
-    return new Session(fromAurora(data.records[0], Session.fields()));
+    return data.records.map(([
+      {longValue: people_id}
+    ]) => ({
+      people_id
+    }))[0];
   }
   
   /**
@@ -139,7 +143,7 @@ class Session {
     
     sql = sqlArray.join(' UNION ');
     
-    const rawData = await db.exectuteStatement(sql, Object.values(params));
+    const rawData = await db.executeStatement(sql, Object.values(params));
     
     const data = Object.fromEntries(rawData.records.map(([{stringValue: key}, {longValue: value}]) => [key, value]));
     

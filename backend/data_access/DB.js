@@ -49,7 +49,7 @@ class DB {
   
   //OMG the typo has been here the whole time!
   async exectuteStatement(sql, parameters=[]) {
-    console.error("Migrate to executeStatement ASAP!");
+    console.error("Migrate to exectuteStatement to executeStatement ASAP!");
     return this.executeStatement(sql, parameters);  
   }
   

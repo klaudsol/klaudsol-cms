@@ -80,7 +80,8 @@
 }
 
 .sidebar_buttons,
-.sidebar_buttons_active {
+.sidebar_buttons_active
+ {
     background-color: #eceff1;
     width: 100%;
     padding: 7px;
@@ -88,15 +89,21 @@
     border: transparent;
     text-align: left;
     padding-left: 15px;
+    display: block;
+    text-decoration: none;
+    color: #000;
 }
 
 
 .sidebar_buttons:hover {
     background-color: #b0bec5;
+    text-decoration: none;
+    color: #000;
 
 }
 
-.sidebar_buttons_active {
+.sidebar_buttons_active,
+.sidebar_buttons_active:hover {
     background-color: #455a64;
     color: #eceff1;
 }
@@ -198,6 +205,10 @@
     margin-left: 230px;
     background-color: #fff;
     height: 100vh;
+}
+
+.main-container__single {
+  margin-left: 0;
 }
 
 

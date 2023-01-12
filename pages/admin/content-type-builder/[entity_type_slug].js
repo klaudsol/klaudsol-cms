@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 
 
 /** kladusol CMS components */
+
 import AppContentBuilderTable from "@/components/klaudsolcms/AppContentBuilderTable";
 import AppCreatebutton from "@/components/klaudsolcms/buttons/AppCreateButton";
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
@@ -27,6 +28,7 @@ import AddFieldBody from "@/components/klaudsolcms/modals/modal_body/AddFieldBod
 import IconText from "@/components/klaudsolcms/field_icons/IconText";
 import IconNumber from "@/components/klaudsolcms/field_icons/IconNumber";
 import IconMedia from "@/components/klaudsolcms/field_icons/IconMedia";
+
 
 /** react-icons */
 
@@ -44,8 +46,7 @@ import { VscListSelection } from 'react-icons/vsc';
 import ContentTypeBuilderLayout from "components/layouts/ContentTypeBuilderLayout";
 
 import RootContext from '@/components/contexts/RootContext';
-import { loadEntityTypes } from '@/components/reducers/actions';
-import {Formik, Form, Field} from 'formik';
+import { loadEntityTypes, loadEntityType } from '@/components/reducers/actions';
 
 
 export default function ContentTypeBuilder({ cache }) {
@@ -182,6 +183,10 @@ export default function ContentTypeBuilder({ cache }) {
 
   const showAddAttributeModal = () => {
     dispatch({type: SET_SHOW, payload: true});
+ };
+ 
+  const hideAddAttributeModal = () => {
+    dispatch({type: SET_SHOW, payload: false});
   };
 
   const performDelete = ({typeSlug}) => {
@@ -211,9 +216,7 @@ export default function ContentTypeBuilder({ cache }) {
     },
     onSubmit: (values) => {
       (async () => {
-        //alert(JSON.stringify(values));
         try {
-          //dispatch({type: SAVING})
           const response = await slsFetch(`/api/entity_types/${entity_type_slug}/attributes`, {
             method: 'POST',
             headers: {
@@ -226,11 +229,12 @@ export default function ContentTypeBuilder({ cache }) {
               }
            })
           });
-          dispatch({type: SET_SHOW, payload: true})    
         } catch(ex) {
           console.error(ex);  
         } finally {
           //dispatch({type: CLEANUP})
+          await loadEntityType({rootState, rootDispatch, typeSlug: entity_type_slug});
+          hideAddAttributeModal(); 
         }
       })();
     }
@@ -287,47 +291,26 @@ export default function ContentTypeBuilder({ cache }) {
             </div>
 
 
-            <p> Build the data architecture of your content </p>
+          <p>  Build the data architecture of your content.  </p>
 
-          <AppModal show={state.show} 
-            onClose={() => dispatch({type: SET_SHOW, payload: false})} 
+          {/*TODO: 
+          <div className="d-flex justify-content-end align-items-center px-0 mx-0 pb-3"> 
+            <AppButtonSm title='Configure the view' icon={<VscListSelection />} isDisabled={false}/>
+          </div>
+          */}
+
+          <AppContentBuilderTable typeSlug={entity_type_slug} />
+    
+          <button className="btn_add_field" onClick={() => dispatch({type: SET_SHOW, payload: true})}> <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another field collection type </button>
+
+
+          <AddEditAnotherFieldModal 
+            mode={ADD_MODE}
+            formParams={formikParams} 
+            show={state.show}
+            onClose={() => dispatch({type: SET_SHOW, payload: false})}
             onClick={onAddAnotherField}
-            modalTitle='Add another field' 
-            buttonTitle='Add'> 
-            {/* TODO: */}
-            {/* <AddFieldBody /> */}
-            <Formik {...formikParams}>
-              <Form>
-                
-                <table id="table_general">
-                {/*table head*/}
-                <thead> 
-                    <tr>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Order</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                      <td><Field name='name' className='input_text' /></td>
-                      <td>
-                          <Field name='type' component='select' className='input_text'>
-                            {/*TODO: Make dynamic please */}
-                            <option value='text'>Text</option>
-                            <option value='textarea'>Text Area</option>
-                            <option value='link'>Link</option>
-                            <option value='image'>Image</option>
-                            <option value='float'>Number</option>
-                          </Field>
-                      </td>
-                      <td><Field name='order' className='input_text'  type='number' /></td>
-                    </tr>
-                </tbody>
-            </table>
-              </Form>
-            </Formik>
-          </AppModal>
+          />
 
 
             <div className="d-flex justify-content-end align-items-center px-0 mx-0 pb-3">

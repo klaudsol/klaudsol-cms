@@ -20,17 +20,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 **/
 
-import EntityType from '@backend/models/core/EntityType';
-import Attribute from '@backend/models/core/Attribute';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
-import { createHash } from '@/lib/Hash';
-import { setCORSHeaders } from '@/lib/API';
 import { assert } from '@/lib/Permissions';
+import { OK, UNPROCESSABLE_ENTITY } from '@/lib/HttpStatuses';
+import Session from '@/backend/models/core/Session';
+import People from '@/backend/models/core/People';
+import RecordNotFound from 'components/errors/RecordNotFound';
 
 export default withSession(handler);
 
@@ -38,8 +36,8 @@ async function handler(req, res) {
   
   try {
     switch(req.method) {
-      case "POST":
-        return create(req, res); 
+      case "PUT":
+        return update(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -48,28 +46,42 @@ async function handler(req, res) {
   }
 }
 
-async function create(req, res) { 
+async function update(req, res) { 
   try{
 
-    const { slug } = req.query;
-
     await assert({
-      loggedIn: true,
-     }, req);
+     loggedIn: true,
+    }, req);
 
-    const { attribute } = req.body;
-    console.error(attribute);
-    const entityType = await EntityType.findBySlug(slug);
-    console.error(entityType);
-    await Attribute.create({
-      entity_type_id: entityType.entity_type_id,
-      name: attribute.name,
-      type: attribute.type,
-      order: attribute.order
-    }); 
-    res.status(OK).json({message: 'Successfully created a new attribute.'}) 
+    const { session_token } = req.session;
+    const { current_password, password, confirmation_password } = req.body; 
+
+    //these should be captured by the front-end validator, but the backend should detect
+    //it as well.
+    if (!password) {
+      res.status(UNPROCESSABLE_ENTITY).json({message: 'A password is required.'}); 
+      return;
+    }
+
+    if (password !== confirmation_password) {
+      res.status(UNPROCESSABLE_ENTITY).json({message: 'The password does not match the confirmation password.'});
+      return;
+    } 
+
+
+
+
+    const session = await Session.getSession(session_token);
+    await People.updatePassword({id: session.people_id, oldPassword: current_password, newPassword: password});
+
+    res.status(OK).json({message: 'Successfully changed your password.'}); 
   }
   catch (error) {
-    await defaultErrorHandler(error, req, res);
+    if (error instanceof RecordNotFound) {
+      res.status(422).json({message: "Incorrect password."});
+      return;
+    } else {
+      await defaultErrorHandler(error, req, res);
+    }
   }
 }

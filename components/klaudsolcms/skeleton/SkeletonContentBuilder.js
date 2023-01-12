@@ -4,8 +4,9 @@ const SkeletonContentBuilder = () => {
 
 
     const columns = [
-        {accessor: 'name', displayName: 'NAME'},
-        {accessor: 'type', displayName: 'TYPE'},
+        {accessor: 'name', displayName: 'Name'},
+        {accessor: 'type', displayName: 'Type'},
+        {accessor: 'order', displayName: 'Order'},
         {accessor: 'button', displayName: ''},
     ]
 
@@ -13,7 +14,8 @@ const SkeletonContentBuilder = () => {
         return {
             name: SKELETON_FILLER, 
             type: SKELETON_FILLER, 
-            button:  <AppContentBuilderButtons isDisabled={true} /> 
+            order: SKELETON_FILLER, 
+            button:  <AppContentBuilderButtons showEdit={false} showDelete={false} /> 
         }
       })
 
