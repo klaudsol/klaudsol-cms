@@ -38,11 +38,9 @@ export default function CollectionTypeBody({ formRef }) {
     // If the user types in space as the first letter, a '-'
     // will appear, the trim() method below will prevent it
     if (value?.trim() === "") return "";
-    if (!value?.endsWith(" ")) return joinedSplit;
+    if (value?.endsWith(" ")) return `${joinedSplit}-`;
 
-    const newVal = `${joinedSplit}-`;
-
-    return newVal;
+    return joinedSplit;
   };
 
   return (
