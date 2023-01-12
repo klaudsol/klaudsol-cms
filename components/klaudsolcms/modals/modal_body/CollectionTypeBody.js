@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { Formik, Form, Field, useFormikContext, useField } from "formik";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
-import DependentField from "@/components/klaudsolcms/modals/modal_body/DependentField";
+import DependentField from "@/components/fields/DependentField";
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
