@@ -36,12 +36,10 @@ export default function CollectionTypeBody({ formRef }) {
     const joinedSplit = filteredSplit?.join("-");
 
     // If the user types in space as the first letter, a '-'
-    // will appear, this will prevent it
+    // will appear, the trim() method below will prevent it
     if (value?.trim() === "") return "";
     if (!value?.endsWith(" ")) return joinedSplit;
 
-    // Makes dashes instantly appear when user types
-    //  a space at end of string
     const newVal = `${joinedSplit}-`;
 
     return newVal;
