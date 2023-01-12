@@ -51,7 +51,7 @@ Username: admin@klaudsol.com
 Password: admin
 ```
 
-Note: The database is being refreshed every 24 hours. Your data will be removed!
+Note: The database is being refreshed every 24 hours. Your data will be removed!!
 
 ## Screenshots
 
