@@ -56,8 +56,8 @@ export default function ContentTypeBuilder({ cache }) {
   const SET_ENTITY_TYPE_NAME = "SET_ENTITY_TYPE_NAME";
   const SHOW_DELETE_CONFIRMATION_MODAL = "SHOW_DELETE_CONFIRMATION_MODAL";
   const HIDE_DELETE_CONFIRMATION_MODAL = "HIDE_DELETE_CONFIRMATION_MODAL";
-  const SHOW_EDIT_CTYPE_MODAL = "SHOW_EDIT_CTYPE_MODAL";
-  const HIDE_EDIT_CTYPE_MODAL = "HIDE_EDIT_CTYPE_MODAL";
+  const SHOW_EDIT_CONTENT_TYPE_MODAL = "SHOW_EDIT_CONTENT_TYPE_MODAL";
+  const HIDE_EDIT_CONTENT_TYPE_MODAL = "HIDE_EDIT_CONTENT_TYPE";
 
   const LOADING = "LOADING";
 
@@ -99,15 +99,15 @@ export default function ContentTypeBuilder({ cache }) {
           showDeleteConfirmationModal: false,
         };
 
-      case SHOW_EDIT_CTYPE_MODAL:
+      case SHOW_EDIT_CONTENT_TYPE_MODAL:
         return {
           ...state,
-          showEditCTypeModal: true,
+          showEditContentTypeModal: true,
         };
-      case HIDE_EDIT_CTYPE_MODAL:
+      case HIDE_EDIT_CONTENT_TYPE_MODAL:
         return {
           ...state,
-          showEditCTypeModal: false,
+          showEditContentTypeModal: false,
         };
     }
   };
@@ -186,12 +186,12 @@ export default function ContentTypeBuilder({ cache }) {
     dispatch({ type: SET_SHOW, payload: false });
   };
 
-  const showEditCTypeModal = () => {
-    dispatch({ type: SHOW_EDIT_CTYPE_MODAL });
+  const showEditContentTypeModal = () => {
+    dispatch({ type: SHOW_EDIT_CONTENT_TYPE_MODAL });
   };
 
-  const hideEditCTypeModal = () => {
-    dispatch({ type: HIDE_EDIT_CTYPE_MODAL });
+  const hideEditContentTypeModal = () => {
+    dispatch({ type: HIDE_EDIT_CONTENT_TYPE_MODAL });
   };
 
   const performDelete = ({ typeSlug }) => {
@@ -205,16 +205,16 @@ export default function ContentTypeBuilder({ cache }) {
     })();
   };
 
-  const onFormSubmit = (evt, func = () => {}) => {
+  const onFormSubmit = (evt, callback = () => {}) => {
     evt.preventDefault();
     if (formikRef.current) {
       formikRef.current.handleSubmit();
-      func();
+      callback();
     }
   };
 
-  const onEditCTypeSubmit = (evt) => {
-    onFormSubmit(evt, hideEditCTypeModal);
+  const onEditContentTypeModal = (evt) => {
+    onFormSubmit(evt, hideEditContentTypeModal);
   };
 
   const formikParams = {
@@ -270,7 +270,7 @@ export default function ContentTypeBuilder({ cache }) {
                   title="Edit"
                   icon={<MdModeEditOutline />}
                   isDisabled={false}
-                  onClick={showEditCTypeModal}
+                  onClick={showEditContentTypeModal}
                 />
               </div>
 
@@ -307,9 +307,8 @@ export default function ContentTypeBuilder({ cache }) {
               className="btn_add_field"
               onClick={() => dispatch({ type: SET_SHOW, payload: true })}
             >
-              {" "}
               <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another
-              field collection type{" "}
+              field collection type
             </button>
 
             <AddEditAnotherFieldModal
@@ -321,9 +320,9 @@ export default function ContentTypeBuilder({ cache }) {
             />
 
             <AppModal
-              show={state.showEditCTypeModal}
-              onClick={onEditCTypeSubmit}
-              onClose={hideEditCTypeModal}
+              show={state.showEditContentTypeModal}
+              onClick={onEditContentTypeModal}
+              onClose={hideEditContentTypeModal}
               modalTitle="Edit collection type"
               buttonTitle="Continue"
             >
