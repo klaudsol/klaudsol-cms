@@ -1,25 +1,40 @@
 import { useState, useContext } from "react";
 import { Formik, Form, Field } from "formik";
+import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 
-export default function CollectionTypeBody({ formRef }) {
+export default function EditCollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const router = useRouter();
+  const slug = router.query.entity_type_slug;
+
+  // Find the name of the current entity type
+  const entityTypes = rootState.entityTypes;
+  const currentEntityType = entityTypes.find(
+    (eType) => eType.entity_type_slug === slug
+  );
+  const name = currentEntityType?.entity_type_name;
 
   const formikParams = {
-    initialValues: {},
+    initialValues: {
+      name,
+      slug,
+    },
     innerRef: formRef,
     onSubmit: (values) => {
       (async () => {
         try {
           //refactor to reducers/actions
-          await fetch(`/api/entity_types`, {
-            method: "POST",
+          await fetch(`/api/entity_types/${slug}`, {
+            method: "PUT",
             body: JSON.stringify(values),
             headers: {
               "Content-Type": "application/json",
             },
           });
+
+          router.push(`/admin/content-type-builder/${values.slug}`);
         } catch (error) {
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });
@@ -45,7 +60,7 @@ export default function CollectionTypeBody({ formRef }) {
                 <p className="mt-2"> Display Name </p>
                 <Field 
                     type="text" 
-                    className="input_text" 
+                    className="input_text"
                     name="name" 
                 />
               </div>
@@ -53,7 +68,7 @@ export default function CollectionTypeBody({ formRef }) {
                 <p className="mt-2"> API ID &#40;Slug&#41; </p>
                 <Field 
                     type="text" 
-                    className="input_text" 
+                    className="input_text"
                     name="slug" 
                 />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
