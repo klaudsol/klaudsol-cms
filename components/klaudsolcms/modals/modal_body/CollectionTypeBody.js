@@ -1,7 +1,8 @@
-import { useState, useContext } from "react";
-import { Formik, Form, Field } from "formik";
+import { useState, useContext, useEffect } from "react";
+import { Formik, Form, Field, useFormikContext, useField } from "formik";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
+import DependentField from "@/components/fields/DependentField";
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
@@ -28,6 +29,20 @@ export default function CollectionTypeBody({ formRef }) {
     },
   };
 
+  const dependentFieldFormat = (value) => {
+    const valueSplit = value?.split(" ");
+    // Prevents extra spaces from becoming '-'
+    const filteredSplit = valueSplit?.filter((i) => i !== "");
+    const joinedSplit = filteredSplit?.join("-");
+
+    // If the user types in space as the first letter, a '-'
+    // will appear, the trim() method below will prevent it
+    if (value?.trim() === "") return "";
+    if (value?.endsWith(" ")) return `${joinedSplit}-`;
+
+    return joinedSplit;
+  };
+
   return (
     <>
       <Formik {...formikParams}>
@@ -43,18 +58,16 @@ export default function CollectionTypeBody({ formRef }) {
             <div className="row">
               <div className="col">
                 <p className="mt-2"> Display Name </p>
-                <Field 
-                    type="text" 
-                    className="input_text" 
-                    name="name" 
-                />
+                <Field type="text" className="input_text" name="name" />
               </div>
               <div className="col">
                 <p className="mt-2"> API ID &#40;Slug&#41; </p>
-                <Field 
-                    type="text" 
-                    className="input_text" 
-                    name="slug" 
+                <DependentField
+                  type="text"
+                  className="input_text"
+                  name="slug"
+                  fieldToMirror="name"
+                  format={dependentFieldFormat}
                 />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
                   The UID is used to generate the API routes and databases
