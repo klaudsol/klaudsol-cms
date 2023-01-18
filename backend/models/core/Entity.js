@@ -83,12 +83,12 @@ class Entity {
                 
       const data = await db.executeStatement(sql, [
           {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
-          {name: 'slug', value:{longValue: slug}},
+          {name: 'slug', value:{stringValue: slug}},
       ]);
       
       return data.records.map(([
-          {longValue: slug},
           {longValue: entity_type_id},
+          {stringValue: slug},
           {stringValue: entity_type_name},
           {stringValue: entity_type_slug},
           {stringValue: entities_slug},
