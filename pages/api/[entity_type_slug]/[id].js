@@ -60,11 +60,14 @@ async function get(req, res) {
     // If user typed in the id instead of the slug
     if(parseInt(slug) && rawData.length === 0) {
         const item = await Entity.find({entity_type_slug, id: slug})
-        const itemSlug = item[0].entities_slug;
-        // Can be shortened to `${itemSlug}`
-        res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
 
-        return
+        if(item.length > 1) {
+            const itemSlug = item[0].entities_slug;
+            // Can be shortened to `${itemSlug}`
+            res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
+
+            return;
+        }
     }
 
     const initialFormat = {
