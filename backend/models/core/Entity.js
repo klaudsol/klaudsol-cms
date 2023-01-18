@@ -76,7 +76,7 @@ class Entity {
       LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
       WHERE 
           entity_types.slug = :entity_type_slug AND 
-          entities.id = :slug
+          entities.slug = :slug
           
       ORDER BY attributes.\`order\` ASC
           `;
@@ -101,8 +101,8 @@ class Entity {
           {stringValue: value_datetime},
           {stringValue: value_double}
         ]) => ({
-          slug, 
           entity_type_id,
+          slug, 
           entity_type_name, 
           entity_type_slug, 
           entities_slug, 
