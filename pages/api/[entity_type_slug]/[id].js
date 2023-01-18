@@ -55,6 +55,16 @@ async function get(req, res) {
   try {
     const { entity_type_slug, id: slug } = req.query;
 
+    // If user typed in the id instead of the slug
+    if(parseInt(slug)) {
+        const item = await Entity.find({entity_type_slug, id: slug})
+        const itemSlug = item[0].entities_slug;
+        // Can be shortened to `${itemSlug}`
+        res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
+
+        return
+    }
+
     const rawData = await Entity.findBySlug({ entity_type_slug, slug });
 
     const initialFormat = {
