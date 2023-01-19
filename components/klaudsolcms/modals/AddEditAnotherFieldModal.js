@@ -4,13 +4,14 @@ import {Formik, Form, Field} from 'formik';
 export const ADD_MODE = 'ADD_MODE';
 export const EDIT_MODE = 'EDIT_MODE';
 
-export default function AddEditAnotherFieldModal({formParams, show, onClose, onClick, mode}) {
+export default function AddEditAnotherFieldModal({formParams, show, onClose, onClick, mode,isLoading}) {
 
   return (
 
     <AppModal show={show} 
       onClose={onClose}
       onClick={onClick}
+      isLoading={isLoading}
       modalTitle={mode === ADD_MODE ? 'Add another field' : 'Edit field'} 
       buttonTitle={mode === ADD_MODE ? 'Add': 'Update'}> 
     {/* TODO: */}

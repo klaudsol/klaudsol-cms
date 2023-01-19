@@ -1,7 +1,8 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FaTimes } from 'react-icons/fa'
-const AppModal = ({show, onClose, onClick, modalTitle, children, buttonTitle}) => {
+import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
+const AppModal = ({show, onClose, onClick, modalTitle, children, buttonTitle,isLoading}) => {
     return ( 
         <>
         <Modal show={show} onHide={onClose} centered size="lg">
@@ -11,6 +12,7 @@ const AppModal = ({show, onClose, onClick, modalTitle, children, buttonTitle}) =
             </Modal.Header>
             <Modal.Body>{children}</Modal.Body>
             <Modal.Footer className='modal_header'>
+              {isLoading && <AppButtonSpinner/>}
               <Button className='btn_modal' onClick={onClick}>
                 {buttonTitle}
               </Button>
