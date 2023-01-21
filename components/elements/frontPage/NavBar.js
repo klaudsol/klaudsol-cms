@@ -20,7 +20,7 @@ const NavBar = () => {
                 <div className='image-logo' >
                   <Image width="60" height="60" src='/sme-logo-no-border.png' style={{width: '60px', marginRight: '10px', position: 'relative', top: '20px'}} alt='SME Logo' />
                 </div>
-                <Link href='/' className='navbar-brand'>
+                <Link href='/' className='navbar-brand' passHref>
                     <strong>SME</strong>
                 </Link>
               </div>

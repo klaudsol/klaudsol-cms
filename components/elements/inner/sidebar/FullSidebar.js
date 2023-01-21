@@ -24,7 +24,7 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-         <Link href='/admin' className='sidebar_header'>
+         <Link href='/admin' className='sidebar_header' passHref>
             <b> KlaudSol CMS Dashboard </b> 
           </Link>
           
