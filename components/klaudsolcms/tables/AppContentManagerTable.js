@@ -16,6 +16,7 @@ const AppContentManagerTable = ({columns, entries, entity_type_slug}) => {
             {entries.map((entry, i) => (
                 <tr key={i}>
                     {columns.map((col, index) => (
+                        /* Would be nice if this was refactored to remove legacy behavior*/
                         <Link href={`/admin/content-manager/${entity_type_slug}/${entry.id}`} legacyBehavior passHref key={index}><td key={index}>{entry[col.accessor]}</td></Link>
                     ))}
                 </tr>
