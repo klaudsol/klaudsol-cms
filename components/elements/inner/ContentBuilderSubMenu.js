@@ -127,7 +127,7 @@ const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
 
               { !state.isSkeletonVisible &&
                 rootState.entityTypes.map((type, i) => (
-                   <Link href={`/admin/content-type-builder/${type.entity_type_slug}`} passHref key={type.id}>
+                   <Link href={`/admin/content-type-builder/${type.entity_type_slug}`} key={type.id}>
                      <button data-current-type-slug={currentTypeSlug} key={i} className={currentTypeSlug === type.entity_type_slug ? 'content_menu_item_active' : 'content_menu_item'}>
                        <li> {type.entity_type_name}</li>
                       </button>

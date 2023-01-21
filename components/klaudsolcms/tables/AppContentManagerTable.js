@@ -16,7 +16,7 @@ const AppContentManagerTable = ({columns, entries, entity_type_slug}) => {
             {entries.map((entry, i) => (
                 <tr key={i}>
                     {columns.map((col, index) => (
-                        <Link href={`/admin/content-manager/${entity_type_slug}/${entry.id}`} passHref legacyBehavior key={index}><td key={index}>{entry[col.accessor]}</td></Link>
+                        <Link href={`/admin/content-manager/${entity_type_slug}/${entry.id}`} legacyBehavior key={index}><td key={index}>{entry[col.accessor]}</td></Link>
                     ))}
                 </tr>
             ))}

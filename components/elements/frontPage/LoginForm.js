@@ -108,7 +108,7 @@ const LoginForm = ({className, ...props}) => {
 					  <label className='mb-2 mt-4'>Password</label>
               		<input type='password' className='input_login' autoComplete="email" onChange={e => setPassword(e.target.value)} />
             	</div>
-              <Link href='/admin/' passHref>
+              <Link href='/admin/'>
             <button className='btn_login' onClick={onSubmit}>
                {state.isLoading && <AppButtonSpinner />} Log in
             </button> 

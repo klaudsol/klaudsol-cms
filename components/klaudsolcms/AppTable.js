@@ -16,7 +16,7 @@ const AppTable = ({columns, entries, rows, entity_type_slug}) => {
            {rows.map((row, i) => (
             <tr key={i}>
                 {columns.map((col, index) => (
-                   <Link href={`/admin/content-manager/${entity_type_slug}/${row}`} passHref legacyBehavior key={index}><td key={index}> {entries.map((entry, ind) => (
+                   <Link href={`/admin/content-manager/${entity_type_slug}/${row}`} legacyBehavior key={index}><td key={index}> {entries.map((entry, ind) => (
                    <div key={ind}>
                       {entry.row_id === row && entry[col.accessor]}
                    </div>

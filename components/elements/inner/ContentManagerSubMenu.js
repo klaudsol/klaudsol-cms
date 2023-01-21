@@ -97,7 +97,7 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
               ))}
                { !state.isLoading &&
                   rootState.entityTypes.map((type, i) => (
-                     <Link href={`/admin/content-manager/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
+                     <Link href={`/admin/content-manager/${type.entity_type_slug}`} key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
                   ))
                }
             </div>

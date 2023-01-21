@@ -27,7 +27,7 @@ const CollapsedSidebar = ({sidebarButtons, firstName, lastName, defaultEntityTyp
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-         <Link href='/admin' className='sidebar_header' passHref>
+         <Link href='/admin' className='sidebar_header'>
             <b>  CMS  </b>
           </Link>
           
@@ -38,7 +38,7 @@ const CollapsedSidebar = ({sidebarButtons, firstName, lastName, defaultEntityTyp
         <div className='collapsed-sidebar-items'>
             <div>
                 {sidebarButtons.map((button, i) => (
-                 <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} passHref>
+                 <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path}>
                   <div className='collapsed-buttons' key={i}>
                     <button className={router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons'} passHref>{button.icon}</button>
                   </div>
