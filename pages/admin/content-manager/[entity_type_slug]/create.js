@@ -72,10 +72,6 @@ export default function CreateNewEntry({ cache }) {
           type: SET_VALIDATE_ALL,
           payload: Object.assign({}, ...validateValues),
         });
-        dispatch({
-          type: SET_ALL_INITIAL_VALUES,
-          payload: Object.assign({}, ...initialValues),
-        });
         dispatch({ type: SET_ATTRIBUTES, payload: values.metadata.attributes });
         dispatch({
           type: SET_ENTITY_TYPE_ID,
