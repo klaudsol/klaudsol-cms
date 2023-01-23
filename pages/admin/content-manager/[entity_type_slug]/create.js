@@ -175,6 +175,14 @@ export default function CreateNewEntry({ cache }) {
                                   type="text"
                                   {...field}
                                   className="input_text mb-2"
+                                  style={
+                                    meta.touched && meta.error
+                                      ? {
+                                          borderColor: "red",
+                                          outlineColor: "red",
+                                        }
+                                      : {}
+                                  }
                                 />
                                 {meta.touched && meta.error && (
                                   <div style={{ color: "red" }}>
