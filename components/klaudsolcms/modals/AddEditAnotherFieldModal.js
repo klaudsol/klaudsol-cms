@@ -1,17 +1,9 @@
 import AppModal from "@/components/klaudsolcms/AppModal";
 import { Formik, Form, Field } from "formik";
+import { inputValues } from "./modal_body/constants";
 
 export const ADD_MODE = "ADD_MODE";
 export const EDIT_MODE = "EDIT_MODE";
-
-const input = [
-  { value: "text", option: "Text"},
-  { value: "textarea", option: "Text Area"},
-  { value: "link", option: "Link"},
-  { value: "image", option: "Image"},
-  { value: "float", option: "Number"},
-
-];
 
 export default function AddEditAnotherFieldModal({
   formParams,
@@ -28,8 +20,6 @@ export default function AddEditAnotherFieldModal({
       modalTitle={mode === ADD_MODE ? "Add another field" : "Edit field"}
       buttonTitle={mode === ADD_MODE ? "Add" : "Update"}
     >
-      {/* TODO: */}
-      {/* <AddFieldBody /> */}
       <Formik {...formParams}>
         <Form>
           <table id="table_general">
@@ -48,14 +38,7 @@ export default function AddEditAnotherFieldModal({
                 </td>
                 <td className="table-box">
                   <Field name="type" component="select" className="input_text">
-                    {/*TODO: Make dynamic please */}
-                    {/* <option value='text'>Text</option>
-                    <option value='textarea'>Text Area</option>
-                    <option value='link'>Link</option>
-                    <option value='image'>Image</option>
-                    <option value='float'>Number</option> */}
-                  
-                    {input.map((e, key) => {
+                    {inputValues.map((e, key) => {
                       return (
                         <option key={key} value={e.value}>
                           {e.option}
