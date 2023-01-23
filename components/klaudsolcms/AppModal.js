@@ -13,7 +13,7 @@ const AppModal = ({
 }) => (
   <Modal 
    show={show} 
-   onHide={onClose} 
+   onHide={!isLoading ? onClose : null} 
    centered size="lg"
    >
     <Modal.Header className="modal_header">
