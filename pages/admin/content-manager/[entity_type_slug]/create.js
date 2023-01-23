@@ -25,100 +25,27 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 
+import {
+  initialState,
+  createEntriesReducer,
+  LOADING,
+  REFRESH,
+  CLEANUP,
+  SAVING,
+  SET_ATTRIBUTES,
+  SET_ENTRIES,
+  SET_SHOW,
+  SET_ENTITY_TYPE_ID,
+  SET_VALIDATE_ALL,
+  SET_ALL_INITIAL_VALUES,
+} from "@/components/reducers/createReducer";
+
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
 
   const { entity_type_slug } = router.query;
 
-  const initialState = {
-    attributes: {},
-    isLoading: false,
-    isRefresh: true,
-    isSaving: false,
-    show: false,
-    entity_type_id: null,
-  };
-
-  const LOADING = "LOADING";
-  const REFRESH = "REFRESH";
-  const CLEANUP = "CLEANUP";
-  const SAVING = "SAVING";
-
-  const SET_ATTRIBUTES = "SET_ATTRIBUTES";
-  const SET_ENTRIES = "SET_ENTRIES";
-  const SET_SHOW = "SET_SHOW";
-  const SET_ENTITY_TYPE_ID = "SET_ENTITY_TYPE_ID";
-  const SET_VALIDATE_ALL = "SET_VALIDATE_ALL";
-  const SET_ALL_INITIAL_VALUES = "SET_ALL_INITIAL_VALUES";
-
-  //refactor to global reducer
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case LOADING:
-        return {
-          ...state,
-          isLoading: true,
-        };
-
-      case SAVING:
-        return {
-          ...state,
-          isSaving: true,
-          isLoading: true,
-        };
-
-      case REFRESH:
-        return {
-          ...state,
-          isRefresh: false,
-        };
-
-      case CLEANUP:
-        return {
-          ...state,
-          isLoading: false,
-          isSaving: false,
-        };
-
-      case SET_ATTRIBUTES:
-        return {
-          ...state,
-          attributes: action.payload,
-        };
-
-      case SET_ENTRIES:
-        return {
-          ...state,
-          entries: action.payload,
-        };
-
-      case SET_SHOW:
-        return {
-          ...state,
-          show: action.payload,
-        };
-
-      case SET_ENTITY_TYPE_ID:
-        return {
-          ...state,
-          entity_type_id: action.payload,
-        };
-
-      case SET_VALIDATE_ALL:
-        return {
-          ...state,
-          set_validate_all: action.payload,
-        };
-
-      case SET_ALL_INITIAL_VALUES:
-        return {
-          ...state,
-          set_all_initial_values: action.payload,
-        };
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(createEntriesReducer, initialState);
   const formRef = useRef();
 
   const metaDataHandler = (data, val) =>
