@@ -18,15 +18,15 @@ const AppModal = ({
    >
     <Modal.Header className="modal_header">
       <Modal.Title>{modalTitle}</Modal.Title>
-      <button className="icon_modal_close" onClick={onClose}>
+      <button disabled={isLoading} className="icon_modal_close" onClick={onClose}>
         {" "}
-        <FaTimes />{" "}
+        <FaTimes/>{" "}
       </button>
     </Modal.Header>
     <Modal.Body>{children}</Modal.Body>
     <Modal.Footer className="modal_header">
       {isLoading && <AppButtonSpinner />}
-      <Button className="btn_modal" onClick={onClick}>
+      <Button disabled={isLoading} className="btn_modal" onClick={onClick}>
         {buttonTitle}
       </Button>
     </Modal.Footer>

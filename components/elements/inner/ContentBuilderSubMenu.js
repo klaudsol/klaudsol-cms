@@ -99,6 +99,7 @@ const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
       })();
     }, [rootState]);
 
+
     return ( 
     <>
          <div className="submenu_container">
@@ -118,7 +119,7 @@ const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
             <div className="d-flex flex-column mx-0 px-0">
               {state.isSkeletonVisible && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
   
-                <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
+              <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
                 <div className='skeleton-bullet'/>
                 <div className='skeleton-submenu-text' />
               </div>
