@@ -30,7 +30,7 @@ export default function AddEditAnotherFieldModal({formParams, show, onClose, onC
         <tbody>
             <tr>
               <td><Field name='name' className='input_text' /></td>
-              <td style={{width: '150px'}}>
+              <td className='table-box'>
                   <Field name='type' component='select' className='input_text'>
                     {/*TODO: Make dynamic please */}
                     <option value='text'>Text</option>
@@ -40,7 +40,7 @@ export default function AddEditAnotherFieldModal({formParams, show, onClose, onC
                     <option value='float'>Number</option>
                   </Field>
               </td>
-              <td style={{width: '150px'}}><Field name='order' className='input_text'  type='number' /></td>
+              <td className='table-box'><Field name='order' className='input_text'  type='number' /></td>
             </tr>
         </tbody>
     </table>
