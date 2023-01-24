@@ -102,7 +102,7 @@ export default function CreateNewEntry({ cache }) {
 
   const formikParams = {
     innerRef: formRef,
-    initialValues: {},
+    initialValues: { ...state.set_all_initial_values, slug: "" },
     onSubmit: (values) => {
       (async () => {
         const { slug } = values;
