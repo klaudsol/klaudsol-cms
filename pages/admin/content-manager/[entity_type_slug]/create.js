@@ -96,13 +96,21 @@ export default function CreateNewEntry({ cache }) {
     return slug.replaceAll(" ", "-").toLowerCase();
   };
 
+  const formatSlug = (slug) => {
+    return slug.toLowerCase().replace(/\s+/g, "-");
+  };
+
   const formikParams = {
     innerRef: formRef,
     initialValues: { ...state.set_all_initial_values, slug: "" },
     onSubmit: (values) => {
       (async () => {
+        const { slug } = values;
+        const formattedSlug = formatSlug(slug);
+
         const entry = {
           ...values,
+          slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
         console.log(entry);
