@@ -1,7 +1,7 @@
 import Link from 'next/link';
 const AppContentManagerTable = ({columns, entries, entity_type_slug}) => {
     return ( 
-        <>
+        <div id="table_general_main">
         <table id="table_general">
             {/*table head*/}
             <thead> 
@@ -22,7 +22,7 @@ const AppContentManagerTable = ({columns, entries, entity_type_slug}) => {
             ))}
             </tbody>
         </table>
-        </> 
+        </div> 
     );
 }
  

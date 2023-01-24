@@ -205,11 +205,15 @@
     margin-left: 230px;
     background-color: #fff;
     height: 100vh;
-    overflow-x: scroll;
+    overflow-x: hidden;
 }
 
 .main-container__single {
   margin-left: 0;
+}
+
+.py-4{
+    height: 75vh;
 }
 
 
@@ -590,6 +594,12 @@ $onFocus: #323C4E;
 =================================================================
 **/
 
+
+#table_general_main{
+overflow-x: scroll;
+height: 100%;
+}
+
 #table_general, #table_skeleton {
     font-size: 12px;
     width: 100%;
@@ -661,6 +671,7 @@ $onFocus: #323C4E;
     font-size: 60px;
     margin-bottom: 20px;
 }
+
 
 /**
 =========================================================
