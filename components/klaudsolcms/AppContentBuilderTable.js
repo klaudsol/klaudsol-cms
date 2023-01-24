@@ -103,6 +103,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
           )}
 
           {hasHash({rootState, typeSlug}) && (
+
             <table id="table_general">
                 {/*table head*/}
                 <thead> 
@@ -131,6 +132,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
                 ))}
                 </tbody>
             </table>
+
           )}
 
           {/*Delete confirmation modal */}

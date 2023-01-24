@@ -34,13 +34,14 @@ export default function CollectionTypeBody({ formRef }) {
     // Prevents extra spaces from becoming '-'
     const filteredSplit = valueSplit?.filter((i) => i !== "");
     const joinedSplit = filteredSplit?.join("-");
+    const lowerCasedVal = joinedSplit?.toLowerCase();
 
     // If the user types in space as the first letter, a '-'
     // will appear, the trim() method below will prevent it
     if (value?.trim() === "") return "";
-    if (value?.endsWith(" ")) return `${joinedSplit}-`;
+    if (value?.endsWith(" ")) return `${lowerCasedVal}-`;
 
-    return joinedSplit;
+    return lowerCasedVal;
   };
 
   return (
