@@ -225,6 +225,7 @@ export default function ContentTypeBuilder({ cache }) {
     onSubmit: (values) => {
       (async () => {
         try {
+          dispatch({ type: LOADING, payload: true });
           const response = await slsFetch(
             `/api/entity_types/${entity_type_slug}/attributes`,
             {
@@ -250,6 +251,7 @@ export default function ContentTypeBuilder({ cache }) {
             typeSlug: entity_type_slug,
           });
           hideAddAttributeModal();
+          dispatch({ type: LOADING, payload: false });
         }
       })();
     },
@@ -317,6 +319,7 @@ export default function ContentTypeBuilder({ cache }) {
               show={state.show}
               onClose={() => dispatch({ type: SET_SHOW, payload: false })}
               onClick={onFormSubmit}
+              isLoading={state.isLoading}
             />
 
             <AppModal

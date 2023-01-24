@@ -1,9 +1,32 @@
+import cx from "classnames";
+import { Field } from "formik";
+import TypesValidator from "@/components/renderers/validation/RegexValidator";
+import ErrorRenderer from "./ErrorRenderer";
 
-import cx from 'classnames';
-import { Field } from 'formik';
+const FloatRenderer = ({ 
+  className, 
+  name, 
+  type, 
+  errors, 
+  touched }) => (
+  <>
+    <Field
+      type="float"
+      name={name}
+      className={cx("input_text mb-2", className)}
+      validate={(v) => TypesValidator(v, type)}
+      style={
+        errors[name] && touched[name]
+          ? { borderColor: "red", outline: "none" }
+          : {}
+      }
+    />
+    <ErrorRenderer 
+      name={name}
+      errors={errors} 
+      touched={touched} 
+      />
+  </>
+);
 
-export default function FloatRenderer({className, ...params}) {
-  return (
-    <Field type="number" className={cx("input_text mb-2", className)} {...params} />
-  );  
-}
+export default FloatRenderer;
