@@ -106,7 +106,7 @@ const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
             <div className="px-3 py-3">
                <div className='d-flex justify-content-between align-items-center mx-0 px-0 my-0 py-0'>
                    <a className='submenu_title'> <b> {title}</b> </a>
-                   <AppIconButton icon={<FaSearch className='search_icon'/>} /> 
+                   {/* <AppIconButton icon={<FaSearch className='search_icon'/>} />  */}
                 </div>
                <div className="submenu_bar"></div>
             </div>

@@ -153,7 +153,7 @@ export default function ContentManager({cache}) {
 
         <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3"> 
             <div className="d-flex flex-row px-0">
-              {/*TODO:
+              {/* TODO:
                 <AppIconButton icon={<FaSearch/>} /> 
               <AppButtonSm title='Filters' icon={<IoFilter />} isDisabled={false}/>
               */}
@@ -161,7 +161,7 @@ export default function ContentManager({cache}) {
 
             <div className="d-flex flex-row px-0"> 
               <AppDropdown title={ state.columns.length + ' items selected'} items={state.columns} id='dropdown_general' isCheckbox={true}/>
-              <AppIconButton icon={<BsGearFill/>} /> 
+              {/* <AppIconButton icon={<BsGearFill/>} />  */}
             </div>
         </div>
 
