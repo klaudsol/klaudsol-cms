@@ -85,8 +85,8 @@ class Entity {
       ]);
       
       return data.records.map(([
+          {longValue: id},
           {longValue: entity_type_id},
-          {stringValue: slug},
           {stringValue: entity_type_name},
           {stringValue: entity_type_slug},
           {stringValue: entities_slug},
@@ -99,8 +99,8 @@ class Entity {
           {stringValue: value_datetime},
           {stringValue: value_double}
         ]) => ({
+          id, 
           entity_type_id,
-          slug, 
           entity_type_name, 
           entity_type_slug, 
           entities_slug, 
