@@ -265,7 +265,7 @@ export default function Type({cache}) {
                <p style={{fontSize: '11px'}}> INFORMATION </p>
                <div className="block_bar"></div>
              
-              <div className="d-flex align-items-center justify-content-between mt-4git ">
+              <div className="d-flex align-items-center justify-content-between mt-4">
                 <p style={{fontSize: '12px'}}> <b> Created </b> </p>
                 <p style={{fontSize: '12px'}}>  2 days ago  </p>
               </div>
