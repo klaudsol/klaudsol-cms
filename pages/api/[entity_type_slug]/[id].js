@@ -56,23 +56,13 @@ async function get(req, res) {
     const { entity_type_slug, id: slug } = req.query;
 
     const stringData = await Entity.findBySlug({ entity_type_slug, slug });
-    const intData =
-      parseInt(slug) && stringData.length === 0
-        ? await Entity.find({ entity_type_slug, id: slug })
-        : "";
+    const intData = parseInt(slug) && stringData.length === 0
+                    ? await Entity.find({ entity_type_slug, id: slug })
+                    : "";
 
-    const rawData = stringData.length > 0 ? stringData : intData;
-
-    /* // If user typed in the id instead of the slug */
-    /* // If slug is equal to one of the IDs, prioritize slug */
-    /* if (parseInt(slug) && rawData.length === 0) { */
-    /*   const item = await Entity.find({ entity_type_slug, id: slug }); */
-    /**/
-    /*   if (item.length !== 0) { */
-    /*     const itemSlug = item[0].entities_slug; */
-    /*     return res.redirect(`/api/${entity_type_slug}/${itemSlug}`); */
-    /*   } */
-    /* } */
+    const rawData = stringData.length > 0 ? stringData :
+                    intData.length > 0 ? intData :
+                    [];
 
     const initialFormat = {
       data: {},
