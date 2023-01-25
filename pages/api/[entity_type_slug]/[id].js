@@ -55,6 +55,9 @@ async function get(req, res) {
   try {
     const { entity_type_slug, id: slug } = req.query;
 
+    // Code might look weird, but it allows us to access the resource
+    // using the slug and id, while taking into account the non existent
+    // slugs/ids without throwing an error 500
     const stringData = await Entity.findBySlug({ entity_type_slug, slug });
     const intData = parseInt(slug) && stringData.length === 0
                     ? await Entity.find({ entity_type_slug, id: slug })
