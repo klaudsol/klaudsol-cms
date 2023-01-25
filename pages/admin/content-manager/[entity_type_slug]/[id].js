@@ -261,11 +261,11 @@ export default function Type({cache}) {
             </div>
           </div>
           <div className="col-3 mx-0">
-            <div className="container_new_entry px-3 py-4"> 
+            <div className="container_new_entry edit_new_entry px-3 py-4"> 
                <p style={{fontSize: '11px'}}> INFORMATION </p>
                <div className="block_bar"></div>
              
-              <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center justify-content-between mt-4git ">
                 <p style={{fontSize: '12px'}}> <b> Created </b> </p>
                 <p style={{fontSize: '12px'}}>  2 days ago  </p>
               </div>
@@ -287,8 +287,8 @@ export default function Type({cache}) {
               </div>
 
             </div>
-            <button className="new_entry_block_button mt-2">  <MdModeEditOutline  className='icon_block_button' /> Edit the model </button>
-            <button className="new_entry_block_button mt-2">  <VscListSelection  className='icon_block_button' /> Configure the view </button>
+            {/* <button className="new_entry_block_button mt-2">  <MdModeEditOutline  className='icon_block_button' /> Edit the model </button>
+            <button className="new_entry_block_button mt-2">  <VscListSelection  className='icon_block_button' /> Configure the view </button> */}
             <button className="new_entry_block_button_delete mt-2" onClick={onDelete}>  {state.isDeleting ? <><AppButtonSpinner />  Deleting... </> : <>
             <FaTrash  className='icon_block_button' /> Delete the entry
             </> }</button>
