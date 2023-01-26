@@ -42,17 +42,17 @@
     "jspdf": "^2.5.1",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.34",
-    "next": "^11.1.4",
+    "next": "^13.1.5",
     "node-fetch": "^3.2.3",
     "pdf-lib": "^1.17.1",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-calendar": "^3.4.0",
     "react-component-export-image": "^1.0.6",
     "react-confirm-alert": "2.0.2",
     "react-csv-downloader": "^2.8.0",
     "react-datepicker": "^4.8.0",
-    "react-dom": "^17.0.2",
+    "react-dom": "^18.2.0",
     "react-hook-form": "^7.33.0",
     "react-icons": "^4.3.1",
     "react-live-clock": "^5.8.1",
@@ -67,6 +67,6 @@
   },
   "devDependencies": {
     "eslint": "7.32.0",
-    "eslint-config-next": "12.1.0"
+    "eslint-config-next": "^13.1.5"
   }
 }
