@@ -21,7 +21,7 @@ const NavBar = () => {
                   <Image width="60" height="60" src='/sme-logo-no-border.png' style={{width: '60px', marginRight: '10px', position: 'relative', top: '20px'}} alt='SME Logo' />
                 </div>
                 <Link href='/'>
-                  <a className='navbar-brand'><strong>SME</strong></a>
+                  <strong>SME</strong>
                 </Link>
               </div>
 
