@@ -238,23 +238,50 @@ export default function Type({ cache }) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
-        <ContentManagerLayout>
-          <div className="py-4">
-            <AppBackButton
-              link={`/admin/content-manager/${entity_type_slug}`}
-            />
-            <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
-              <div>
-                <h3> {entity_type_slug} </h3>
-                <a
-                  href={`/api/${entity_type_slug}/${id}`}
-                  passHref
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  api/{entity_type_slug}/{id}
-                </a>
-                <p> API ID : {id} </p>
+      <ContentManagerLayout>
+      <div className="py-4">
+        <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
+        <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
+          <div>
+          <h3> {entity_type_slug} </h3>
+          <a href={`/api/${entity_type_slug}/${id}`} passHref target='_blank' rel="noreferrer">api/{entity_type_slug}/{id}</a>
+          <p> API ID : {id} </p>
+          </div>
+          <AppButtonLg title={state.isSaving ? 'Saving' : 'Save'} icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />} onClick={onSubmit}/>
+        </div>
+        <div className="row mt-4">
+          <div className="col-9">
+            <div className="container_new_entry py-4 px-4"> 
+            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
+                <div>
+                  <div className="skeleton-label" />
+                  <div className="skeleton-text" />
+                  <div />
+                </div>
+             ))}
+            { !state.isLoading &&
+          state.attributes.map((attr, i) => (<div key={i}> {
+            state.columns.map((col, i) => attr[col] && (
+            <div key={i}>
+              <p className="mt-1"> <b>{col}</b> </p>
+              {/*Note: this is just a quick and dirty fix. Long term fix is to use the AdminRenderer component*/}
+              {(attr[col].type === 'text' || attr[col].type === 'image' ||attr[col].type === 'link') && (<input type="text"  className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+              {attr[col].type === 'textarea' && (<textarea className='input_textarea' defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+              {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
+            </div>
+            ))
+          } </div>))
+        }
+            </div>
+          </div>
+          <div className="col-3 mx-0">
+            <div className="container_new_entry edit_new_entry px-3 py-4"> 
+               <p style={{fontSize: '11px'}}> INFORMATION </p>
+               <div className="block_bar"></div>
+             
+              <div className="d-flex align-items-center justify-content-between mt-4">
+                <p style={{fontSize: '12px'}}> <b> Created </b> </p>
+                <p style={{fontSize: '12px'}}>  2 days ago  </p>
               </div>
               <AppButtonLg
                 title={state.isSaving ? "Saving" : "Save"}
@@ -402,6 +429,11 @@ export default function Type({ cache }) {
                 </button>
               </div>
             </div>
+            {/* <button className="new_entry_block_button mt-2">  <MdModeEditOutline  className='icon_block_button' /> Edit the model </button>
+            <button className="new_entry_block_button mt-2">  <VscListSelection  className='icon_block_button' /> Configure the view </button> */}
+            <button className="new_entry_block_button_delete mt-2" onClick={onDelete}>  {state.isDeleting ? <><AppButtonSpinner />  Deleting... </> : <>
+            <FaTrash  className='icon_block_button' /> Delete the entry
+            </> }</button>
           </div>
           <AppInfoModal
             show={state.show}

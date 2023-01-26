@@ -23,88 +23,32 @@ import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import TypesValidator from "@/components/renderers/validation/RegexValidator";
+
+import {
+  initialState,
+  createEntriesReducer,
+  LOADING,
+  REFRESH,
+  CLEANUP,
+  SAVING,
+  SET_ATTRIBUTES,
+  SET_ENTRIES,
+  SET_SHOW,
+  SET_ENTITY_TYPE_ID,
+  SET_VALIDATE_ALL,
+  SET_ALL_INITIAL_VALUES,
+} from "@/components/reducers/createReducer";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
 
   const { entity_type_slug } = router.query;
-
-  const initialState = {
-    attributes: {},
-    isLoading: false,
-    isRefresh: true,
-    isSaving: false,
-    show: false,
-    entity_type_id: null,
-  };
-
-  const LOADING = "LOADING";
-  const REFRESH = "REFRESH";
-  const CLEANUP = "CLEANUP";
-  const SAVING = "SAVING";
-
-  const SET_ATTRIBUTES = "SET_ATTRIBUTES";
-  const SET_ENTRIES = "SET_ENTRIES";
-  const SET_SHOW = "SET_SHOW";
-  const SET_ENTITY_TYPE_ID = "SET_ENTITY_TYPE_ID";
-
-  //refactor to global reducer
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case LOADING:
-        return {
-          ...state,
-          isLoading: true,
-        };
-
-      case SAVING:
-        return {
-          ...state,
-          isSaving: true,
-          isLoading: true,
-        };
-
-      case REFRESH:
-        return {
-          ...state,
-          isRefresh: false,
-        };
-
-      case CLEANUP:
-        return {
-          ...state,
-          isLoading: false,
-          isSaving: false,
-        };
-
-      case SET_ATTRIBUTES:
-        return {
-          ...state,
-          attributes: action.payload,
-        };
-
-      case SET_ENTRIES:
-        return {
-          ...state,
-          entries: action.payload,
-        };
-
-      case SET_SHOW:
-        return {
-          ...state,
-          show: action.payload,
-        };
-
-      case SET_ENTITY_TYPE_ID:
-        return {
-          ...state,
-          entity_type_id: action.payload,
-        };
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(createEntriesReducer, initialState);
   const formRef = useRef();
+
+  const metaDataHandler = (data, val) =>
+    Object.entries(data).map(([attributeName]) => ({ [attributeName]: val }));
 
   useEffect(() => {
     (async () => {
@@ -113,6 +57,20 @@ export default function CreateNewEntry({ cache }) {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
         const values = await valuesRaw.json();
 
+        const validateValues = metaDataHandler(
+          values.metadata.attributes,
+          true
+        );
+        const initialValues = metaDataHandler(values.metadata.attributes, "");
+
+        dispatch({
+          type: SET_ALL_INITIAL_VALUES,
+          payload: Object.assign({}, ...initialValues),
+        });
+        dispatch({
+          type: SET_VALIDATE_ALL,
+          payload: Object.assign({}, ...validateValues),
+        });
         dispatch({ type: SET_ATTRIBUTES, payload: values.metadata.attributes });
         dispatch({
           type: SET_ENTITY_TYPE_ID,
@@ -128,22 +86,30 @@ export default function CreateNewEntry({ cache }) {
 
   const onSubmit = (evt) => {
     evt.preventDefault();
-    if (formRef.current) {
-      formRef.current.handleSubmit();
-    }
+    formRef.current.handleSubmit();
+    state.set_validate_all &&
+      formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
 
   const createSlug = (slug) => {
     return slug.replaceAll(" ", "-").toLowerCase();
   };
 
+  const formatSlug = (slug) => {
+    return slug.toLowerCase().replace(/\s+/g, "-");
+  };
+
   const formikParams = {
     innerRef: formRef,
-    initialValues: {},
+    initialValues: { ...state.set_all_initial_values, slug: "" },
     onSubmit: (values) => {
       (async () => {
+        const { slug } = values;
+        const formattedSlug = formatSlug(slug);
+
         const entry = {
           ...values,
+          slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
         console.log(entry);
@@ -186,47 +152,71 @@ export default function CreateNewEntry({ cache }) {
                 onClick={onSubmit}
               />
             </div>
-
             <div className="row mt-4">
               <div className="col-9">
                 <div className="container_new_entry py-4 px-4">
                   {state.isLoading &&
-                    Array.from(
-                      { length: DEFAULT_SKELETON_ROW_COUNT },
-                      (e, i) => (
-                        <div key={i}>
-                          <div className="skeleton-label" />
-                          <div className="skeleton-text" />
-                          <div />
-                        </div>
-                      )
-                    )}
+                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, () => (
+                      <div>
+                        <div className="skeleton-label" />
+                        <div className="skeleton-text" />
+                        <div />
+                      </div>
+                    ))}
 
                   {!state.isLoading && (
                     <Formik {...formikParams}>
-                      <Form>
-                        <p className="mt-1">
-                          <b> slug </b>
-                        </p>
-                        <Field
-                          type="text"
-                          className="input_text mb-2"
-                          name="slug"
-                        />
-                        {Object.entries(state.attributes)
-                          .sort(sortByOrderAsc)
-                          .map(([attributeName, attribute]) => (
-                            <div key={attributeName}>
-                              <p className="mt-1">
-                                <b> {attributeName} </b>
-                              </p>
-                              <AdminRenderer
-                                type={attribute.type}
-                                name={attributeName}
-                              />
-                            </div>
-                          ))}
-                      </Form>
+                      {(props) => (
+                        <Form>
+                          <p className="mt-1">
+                            {" "}
+                            <b> slug </b>
+                          </p>
+                          <Field
+                            name="slug"
+                            validate={(e) => TypesValidator(e, "text")}
+                          >
+                            {({ field, meta }) => (
+                              <div>
+                                <input
+                                  type="text"
+                                  {...field}
+                                  className="input_text mb-2"
+                                  style={
+                                    meta.touched && meta.error
+                                      ? {
+                                          borderColor: "red",
+                                          outlineColor: "red",
+                                        }
+                                      : {}
+                                  }
+                                />
+                                {meta.touched && meta.error && (
+                                  <div style={{ color: "red" }}>
+                                    {meta.error}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </Field>
+                          {Object.entries(state.attributes)
+                            .sort(sortByOrderAsc)
+                            .map(([attributeName, attribute]) => (
+                              <div key={attributeName}>
+                                <p className="mt-1">
+                                  {" "}
+                                  <b> {attributeName} </b>
+                                </p>
+                                <AdminRenderer
+                                  errors={props.errors}
+                                  touched={props.touched}
+                                  type={attribute.type}
+                                  name={attributeName}
+                                />
+                              </div>
+                            ))}
+                        </Form>
+                      )}
                     </Formik>
                   )}
                 </div>
@@ -238,39 +228,45 @@ export default function CreateNewEntry({ cache }) {
 
                   <div className="d-flex align-items-center justify-content-between my-2">
                     <p style={{ fontSize: "12px" }}>
-                      <b> Created </b>
+                      {" "}
+                      <b> Created </b>{" "}
                     </p>
                     <p style={{ fontSize: "12px" }}> now </p>
                   </div>
 
                   <div className="d-flex align-items-center justify-content-between">
                     <p style={{ fontSize: "12px" }}>
-                      <b> By </b>
+                      {" "}
+                      <b> By </b>{" "}
                     </p>
                     <p style={{ fontSize: "12px" }}> </p>
                   </div>
 
                   <div className="d-flex align-items-center justify-content-between">
                     <p style={{ fontSize: "12px" }}>
-                      <b> Last update </b>
+                      {" "}
+                      <b> Last update </b>{" "}
                     </p>
                     <p style={{ fontSize: "12px" }}> now </p>
                   </div>
 
                   <div className="d-flex align-items-center justify-content-between">
                     <p style={{ fontSize: "12px" }}>
-                      <b> By </b>
+                      {" "}
+                      <b> By </b>{" "}
                     </p>
                     <p style={{ fontSize: "12px" }}> </p>
                   </div>
                 </div>
                 <button className="new_entry_block_button mt-2">
-                  <MdModeEditOutline className="icon_block_button" />
-                  Edit the model
+                  {" "}
+                  <MdModeEditOutline className="icon_block_button" /> Edit the
+                  model{" "}
                 </button>
                 <button className="new_entry_block_button mt-2">
-                  <VscListSelection className="icon_block_button" />
-                  Configure the view
+                  {" "}
+                  <VscListSelection className="icon_block_button" /> Configure
+                  the view{" "}
                 </button>
               </div>
             </div>
@@ -284,7 +280,7 @@ export default function CreateNewEntry({ cache }) {
             buttonTitle="Close"
           >
             {" "}
-            You have successfully created a new entry.
+            You have successfully created a new entry.{" "}
           </AppInfoModal>
         </ContentManagerLayout>
       </div>
