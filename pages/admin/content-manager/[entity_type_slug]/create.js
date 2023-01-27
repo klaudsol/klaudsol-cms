@@ -202,20 +202,23 @@ export default function CreateNewEntry({ cache }) {
                           </Field>
                           {Object.entries(state.attributes)
                             .sort(sortByOrderAsc)
-                            .map(([attributeName, attribute]) => (
-                              <div key={attributeName}>
-                                <p className="mt-1">
-                                  {" "}
-                                  <b> {attributeName} </b>
-                                </p>
-                                <AdminRenderer
-                                  errors={props.errors}
-                                  touched={props.touched}
-                                  type={attribute.type}
-                                  name={attributeName}
-                                />
-                              </div>
-                            ))}
+                            .map(([attributeName, attribute]) => {
+                              console.log(attribute);
+                              return (
+                                <div key={attributeName}>
+                                  <p className="mt-1">
+                                    {" "}
+                                    <b> {attributeName} </b>
+                                  </p>
+                                  <AdminRenderer
+                                    errors={props.errors}
+                                    touched={props.touched}
+                                    type={attribute.type}
+                                    name={attributeName}
+                                  />
+                                </div>
+                              );
+                            })}
                         </Form>
                       )}
                     </Formik>

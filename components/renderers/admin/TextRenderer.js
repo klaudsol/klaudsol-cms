@@ -3,15 +3,10 @@ import { Field } from "formik";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import ErrorRenderer from "./ErrorRenderer";
 
-const TextRenderer = ({ 
-  className, 
-  name, 
-  type, 
-  errors, 
-  touched }) => (
+const TextRenderer = ({ className, name, type, errors, touched }) => (
   <>
     <Field
-      type="text"
+      type={type}
       name={name}
       className={cx("input_text mb-2", className)}
       validate={(v) => TypesValidator(v, type)}
@@ -21,11 +16,7 @@ const TextRenderer = ({
           : {}
       }
     />
-    <ErrorRenderer 
-      name={name} 
-      errors={errors} 
-      touched={touched} 
-      />
+    <ErrorRenderer name={name} errors={errors} touched={touched} />
   </>
 );
 
