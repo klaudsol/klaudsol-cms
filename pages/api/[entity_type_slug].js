@@ -31,8 +31,15 @@ import { resolveValue } from '@/components/EntityAttributeValue';
 import { setCORSHeaders } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
+import multer from 'multer';
 
 export default withSession(handler);
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+}
 
 async function handler(req, res) {
   
@@ -114,15 +121,24 @@ async function handler(req, res) {
     }
   }
 
+
   async function create(req, res) { 
+    const storage = multer.memoryStorage();
+    const multerSetup = multer({ storage });
+    const upload = multerSetup.any();
+
+    upload(req, res, function (err) {
+        console.log(req.body);
+        console.log(req.files);
+    })
+
     try{
 
       await assert({
         loggedIn: true,
        }, req);
 
-      const { entry } = req.body;
-      await Entity.create(entry);
+      /* await Entity.create(entry); */
       res.status(OK).json({message: 'Successfully created a new entry'}) 
     }
     catch (error) {

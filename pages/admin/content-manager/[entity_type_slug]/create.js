@@ -100,6 +100,16 @@ export default function CreateNewEntry({ cache }) {
     return slug.toLowerCase().replace(/\s+/g, "-");
   };
 
+  const convertToFormData = (entry) => {
+    const formData = new FormData();
+    const propertyNames = Object.keys(entry);
+    propertyNames.forEach((property) => {
+      formData.append(property, entry[property]);
+    });
+
+    return formData;
+  };
+
   const formikParams = {
     innerRef: formRef,
     initialValues: { ...state.set_all_initial_values, slug: "" },
@@ -113,15 +123,14 @@ export default function CreateNewEntry({ cache }) {
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
-        console.log(entry);
+
+        const formattedEntries = convertToFormData(entry);
+
         try {
           dispatch({ type: SAVING });
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({ entry }),
+            body: formattedEntries,
           });
           const { message, homepage } = await response.json();
           dispatch({ type: SET_SHOW, payload: true });
@@ -203,7 +212,6 @@ export default function CreateNewEntry({ cache }) {
                           {Object.entries(state.attributes)
                             .sort(sortByOrderAsc)
                             .map(([attributeName, attribute]) => {
-                              console.log(attribute);
                               return (
                                 <div key={attributeName}>
                                   <p className="mt-1">
