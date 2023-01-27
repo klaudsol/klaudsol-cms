@@ -208,15 +208,114 @@
     overflow-x: hidden;
 }
 
+.container-fluid {
+    padding: 0px 40px 0px 40px;
+}
+
+.pagination-general{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  color: #323C4E;
+
+  .pagination-dropdown{
+     
+    width: 60px;
+    height: 28px;
+    outline: #323C4E;
+    margin-right: 6px;
+    padding: 0px 5px 0px 5px;
+    border-radius: 4px;
+    color: #323C4E;
+  }
+
+  .pagination-dropdown::after{
+     transform: rotate(180deg);
+  }
+
+  .pagination{
+    font-size: 0.9em;
+    
+  }
+
+  .pagination-buttons-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #323C4E;
+
+    .page-number-button{
+      display: flex;
+      width: 22px;
+      height: 28px;
+      justify-content: center;
+      align-items: center;
+      outline: none;
+      border-radius: 2px;
+      color: #323C4E;
+      border: none;
+      box-shadow: 0 0 10px rgb(87, 85, 85);
+      margin: 0px 5px 0px 5px;
+
+      &.active{ 
+        box-shadow: inset -4px -3px 4px rgba(42, 53, 66, 0.3);
+        cursor: default;
+      }
+    }
+
+    .page-shift-button-left,  .page-shift-button-right{
+        outline: none;
+        border: none;
+        background: none;
+        padding: 0px;   
+        .page-shift-icons{
+            display: block;
+        }
+        svg{
+            width: 2em;
+            color: #323C4E;          
+        }
+        &:disabled{
+            opacity: 60%;
+        }
+      }
+      
+      .page-number{
+        padding: 3px;
+     }
+
+     .page-shift-button-left-double,  .page-shift-button-right-double{
+        outline: none;
+        border: none;
+        background: none;
+        padding: 0px;   
+        .page-shift-icons-double{
+            display: block;
+        }
+        svg{
+            width: 2em;
+            color: #323C4E;   
+           
+        }
+        &:disabled{
+            opacity: 60%;
+        }
+      }
+      
+      .page-number{
+        padding: 3px;
+     }
+    
+  }
+}
+
+
+
 .main-container__single {
   margin-left: 0;
 }
-
-.py-4{
-    height: 75vh;
-}
-
-
 
 .submenu_title {
     color: #455a64 !important;
@@ -598,6 +697,8 @@ $onFocus: #323C4E;
 #table_general_main{
 overflow-x: scroll;
 height: 100%;
+border: 1px solid #b0bec5;
+border-radius: 5px;
 }
 
 #table_general, #table_skeleton {
