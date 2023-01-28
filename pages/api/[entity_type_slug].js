@@ -41,6 +41,21 @@ export const config = {
     },
 }
 
+async function parseFormData(req, res) {
+    const storage = multer.memoryStorage();
+    const multerSetup = multer({ storage });
+    const upload = multerSetup.any();
+
+    await new Promise((resolve, reject) => {
+        upload(req, res, (result) => {
+            if(result instanceof Error) return reject(result);
+            return resolve(result);
+        });
+    });
+
+    return { req, res };
+}
+
 async function handler(req, res) {
   
   try {
@@ -48,7 +63,8 @@ async function handler(req, res) {
       case "GET":
         return get(req, res); 
       case "POST":
-        return create(req, res); 
+        const { req: parsedReq, res: parsedRes} = await parseFormData(req, res);
+        return create(parsedReq, parsedRes); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -123,25 +139,19 @@ async function handler(req, res) {
 
 
   async function create(req, res) { 
-    const storage = multer.memoryStorage();
-    const multerSetup = multer({ storage });
-    const upload = multerSetup.any();
+    console.log(req.body);
+    console.log(req.files);
 
-    upload(req, res, function (err) {
-        console.log(req.body);
-        console.log(req.files);
-    })
-
-    try{
-
-      await assert({
-        loggedIn: true,
-       }, req);
-
-      /* await Entity.create(entry); */
-      res.status(OK).json({message: 'Successfully created a new entry'}) 
-    }
-    catch (error) {
-      await defaultErrorHandler(error, req, res);
-    }
+    /* try{ */
+    /**/
+    /*   await assert({ */
+    /*     loggedIn: true, */
+    /*    }, req); */
+    /**/
+    /*   /* await Entity.create(entry); */
+    /*   res.status(OK).json({message: 'Successfully created a new entry'})  */
+    /* } */
+    /* catch (error) { */
+    /*   await defaultErrorHandler(error, req, res); */
+    /* } */
   }
