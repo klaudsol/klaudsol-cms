@@ -28,10 +28,9 @@ import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { resolveValue } from '@/components/EntityAttributeValue';
-import { setCORSHeaders } from '@/lib/API';
+import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
-import multer from 'multer';
 
 export default withSession(handler);
 
@@ -41,21 +40,6 @@ export const config = {
     },
 }
 
-async function parseFormData(req, res) {
-    const storage = multer.memoryStorage();
-    const multerSetup = multer({ storage });
-    const upload = multerSetup.any();
-
-    await new Promise((resolve, reject) => {
-        upload(req, res, (result) => {
-            if(result instanceof Error) return reject(result);
-            return resolve(result);
-        });
-    });
-
-    return { req, res };
-}
-
 async function handler(req, res) {
   
   try {
@@ -63,7 +47,7 @@ async function handler(req, res) {
       case "GET":
         return get(req, res); 
       case "POST":
-        const { req: parsedReq, res: parsedRes} = await parseFormData(req, res);
+        const { req: parsedReq, res: parsedRes } = await parseFormData(req, res);
         return create(parsedReq, parsedRes); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
