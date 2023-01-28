@@ -12,7 +12,7 @@ const AppInfoModal = ({show, onClose, onClick, modalTitle, children, buttonTitle
             <Modal.Body>{children}</Modal.Body>
             <Modal.Footer className='modal_header'>
               {!isConfirmDialog &&
-                <Button className='btn_modal' onClick={onClose}>
+                <Button className='btn_modal' onClick={onClick ?? onClose}>
                   {buttonTitle}
                 </Button>
               }

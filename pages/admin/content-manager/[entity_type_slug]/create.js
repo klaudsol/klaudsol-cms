@@ -25,6 +25,8 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+
 import {
   initialState,
   createEntriesReducer,
@@ -267,7 +269,7 @@ export default function CreateNewEntry({ cache }) {
           <AppInfoModal
             show={state.show}
             onClose={() =>
-              router.push(`/admin/content-manager/${entity_type_slug}`)
+              redirectToManagerEntitySlug(entity_type_slug)
             }
             modalTitle="Success"
             buttonTitle="Close"

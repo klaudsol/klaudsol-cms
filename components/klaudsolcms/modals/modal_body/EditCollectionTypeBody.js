@@ -3,6 +3,7 @@ import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
+import { redirectToBuilderTypeSlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
 export default function EditCollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
@@ -34,7 +35,7 @@ export default function EditCollectionTypeBody({ formRef }) {
             },
           });
 
-          router.push(`/admin/content-type-builder/${values.slug}`);
+          redirectToBuilderTypeSlug(values.slug);
         } catch (error) {
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });
