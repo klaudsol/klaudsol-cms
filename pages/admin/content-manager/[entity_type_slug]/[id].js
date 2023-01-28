@@ -299,7 +299,7 @@ export default function Type({cache}) {
          <AppInfoModal show={state.show} 
                        onClose={() => 
                        (dispatch({type: SET_SHOW, payload: false}),
-                       redirectToManagerEntitySlug(entity_type_slug) 
+                       redirectToManagerEntitySlug(router,entity_type_slug) 
                        )}  
                        modalTitle='Success' 
                        buttonTitle='Close'> 

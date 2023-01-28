@@ -269,7 +269,7 @@ export default function CreateNewEntry({ cache }) {
           <AppInfoModal
             show={state.show}
             onClose={() =>
-              redirectToManagerEntitySlug(entity_type_slug)
+              redirectToManagerEntitySlug(router,entity_type_slug)
             }
             modalTitle="Success"
             buttonTitle="Close"

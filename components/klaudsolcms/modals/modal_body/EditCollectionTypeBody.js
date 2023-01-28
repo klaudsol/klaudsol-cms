@@ -35,7 +35,7 @@ export default function EditCollectionTypeBody({ formRef }) {
             },
           });
 
-          redirectToBuilderTypeSlug(values.slug);
+          redirectToBuilderTypeSlug(router,values.slug);
         } catch (error) {
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });
