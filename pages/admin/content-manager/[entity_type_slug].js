@@ -175,6 +175,11 @@ export default function ContentManager({ cache }) {
             )}
           </div>
 
+            <div className="d-flex flex-row px-0"> 
+              <AppDropdown title={ state.columns.length + ' items selected'} items={state.columns} id='dropdown_general' isCheckbox={true}/>
+              {/* <AppIconButton icon={<BsGearFill/>} />  */}
+            </div>
+        </div>
           {/*<div className="d-flex justify-content-between align-items-center">
           <div className="d-flex flex-row">
             <AppDropdown title='10' items={entryNumber} id='dropdown_entries' isCheckbox={false}/>
