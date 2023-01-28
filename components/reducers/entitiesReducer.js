@@ -90,5 +90,10 @@ export const reducer = (state, action) => {
         ...state,
         setsRenderer: action.payload,
       };
+    case SET_FIRST_FETCH:
+      return {
+        ...state,
+        firstFetch: action.payload
+      }
   }
 };

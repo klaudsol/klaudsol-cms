@@ -1,43 +1,45 @@
 import React from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
+import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
 
 import {
   SET_ENTRIES,
   SET_PAGE,
   PAGE_SETS_RENDERER,
+  LOADING
 } from "@/components/reducers/entitiesReducer";
 
 const AppContentPagination = ({
-  dispatch,
-  defaultEntry,
-  defaultPage,
-  rows,
-  setsRenderer,
+  dispatch, 
+  defaultEntry, // represents the LIMIT in api 
+  defaultPage,  // represents the OFFSET in api
+  rows,         // total number of entities the slug has.
+  setsRenderer, // offset in the maximumNumberOfPage. default value is zero.  
+  isLoading,
+  EntryValues, // options entry value in dropdown
+  maximumNumberOfPage // maximum number of page displayed
 }) => {
-  const offsetRenderer = 10;
-  const limit = rows - setsRenderer * offsetRenderer;
+
+  const limit = rows - setsRenderer * maximumNumberOfPage;
+  const lengthParams = limit > maximumNumberOfPage ? maximumNumberOfPage : limit;
 
   const setRendererIsZero = setsRenderer === 0;
-  const rightButtonStatus = setsRenderer === Math.floor(rows / offsetRenderer);
+  const rightButtonStatus = setsRenderer === Math.floor(rows / maximumNumberOfPage);
 
   const minPage = 0;
   const minPageEntry = 0;
   // left double arrow
-  const prevPageEntry = (setsRenderer - 1) * offsetRenderer;
+  const prevPageEntry = (setsRenderer - 1) * maximumNumberOfPage;
   const prevPage = setsRenderer - 1;
  // left arrow
 
 
-  const maxPage = Math.floor(rows / offsetRenderer);
-  const maxPageEntry = (Math.floor(rows / offsetRenderer) * offsetRenderer);
+  const maxPage = Math.floor(rows / maximumNumberOfPage);
+  const maxPageEntry = (Math.floor(rows / maximumNumberOfPage) * maximumNumberOfPage);
  // right double arrow
 
- console.log(defaultPage)
- console.log(setsRenderer)
-
-
-  const nextPageEntry = (setsRenderer + 1) * offsetRenderer; 
+  const nextPageEntry = (setsRenderer + 1) * maximumNumberOfPage; 
   const nextPage = setsRenderer + 1;
 // right arrow
 
@@ -53,21 +55,20 @@ const AppContentPagination = ({
   return (
     <div className="pagination-general">
       <div>
-        <select
+        {EntryValues && <select
           defaultValue={defaultEntry}
           name="pagination"
           className="pagination-dropdown"
           onChange={onChangeEntry}
         >
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-          <option value="40">40</option>
-          <option value="50">50</option>
-        </select>
+          {EntryValues.map((val,i)=>(
+            <option key={i} value={val}>{val}</option>
+          ))}
+        </select>}
         <label htmlFor="pagination">Entries per page</label>
       </div>
       <div className="pagination-buttons-container">
+        {isLoading && <AppButtonSpinner/>}
         <button
           className="page-shift-button-left-double"
           disabled={setRendererIsZero}
@@ -109,28 +110,28 @@ const AppContentPagination = ({
         </button>
         {rows &&
           Array.from(
-            { length: limit > offsetRenderer ? offsetRenderer : limit },
+            { length: lengthParams },
             (_, i) => (
               <button
                 className={
                   Number(defaultPage) !==
-                  (setRendererIsZero ? i : setsRenderer * offsetRenderer + i)
+                  (setRendererIsZero ? i : setsRenderer * maximumNumberOfPage + i)
                     ? "page-number-button"
                     : "page-number-button active"
                 }
                 key={i}
                 disabled={
                   Number(defaultPage) ===
-                  (setRendererIsZero ? i : setsRenderer * offsetRenderer + i)
+                  (setRendererIsZero ? i : setsRenderer * maximumNumberOfPage + i)
                 }
                 onClick={() =>
                   shiftPage(
-                    setRendererIsZero ? i : setsRenderer * offsetRenderer + i
+                    setRendererIsZero ? i : setsRenderer * maximumNumberOfPage + i
                   )
                 }
               >
                 <span className="page-number">
-                  {i + offsetRenderer * setsRenderer + 1}
+                  {i + maximumNumberOfPage * setsRenderer + 1}
                 </span>
               </button>
             )

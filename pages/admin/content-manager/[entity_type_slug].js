@@ -3,7 +3,7 @@ import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 import { getSessionCache } from "@/lib/Session";
 
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { slsFetch } from "@/components/Util";
 import { useRouter } from "next/router";
 
@@ -24,23 +24,29 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
 import {
   initialState,
-  reducer, 
+  reducer,
   LOADING,
   CLEANUP,
   SET_VALUES,
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ROWS,
-  SET_FIRST_FETCH
+  SET_FIRST_FETCH,
+  SET_PAGE,
+  PAGE_SETS_RENDERER
 } from "@/components/reducers/entitiesReducer";
+
+import {maximumNumberOfPage,EntryValues} from "components/klaudsolcms/pagination/contentPaginationVariables"
+
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
+  const defaultPageRender = 0;
+  const controllerRef = useRef();
+
 
   /** Data Arrays : to be fetched from database soon */
-
- 
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -48,11 +54,22 @@ export default function ContentManager({ cache }) {
   useEffect(() => {
     (async () => {
       try {
-          dispatch({ type: LOADING });
-       
+        dispatch({ type: LOADING });
+     
+
+        if (controllerRef.current) {
+          controllerRef.current.abort();
+        }
+        const controller = new AbortController();
+        controllerRef.current = controller;
+
+       // Assign a new AbortController for the latest fetch to our useRef variable
+
         const valuesRaw = await slsFetch(
-          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`
+          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`,
+          { signal: controllerRef.current?.signal }
         );
+
         const values = await valuesRaw.json();
         const pageNumber = Math.ceil(values.metadata.total_rows / state.entry);
         dispatch({ type: SET_ROWS, payload: pageNumber });
@@ -72,13 +89,23 @@ export default function ContentManager({ cache }) {
         columns.unshift({ accessor: "id", displayName: "ID" });
         dispatch({ type: SET_COLUMNS, payload: columns });
         dispatch({ type: SET_VALUES, payload: entries });
+        controllerRef.current = null;
       } catch (ex) {
-        console.error(ex.stack);
+        console.log(ex)
       } finally {
-        dispatch({ type: CLEANUP });
+        !controllerRef.current && dispatch({ type: CLEANUP });
+        dispatch({ type: SET_FIRST_FETCH, payload: false });
       }
+      
+      
+
     })();
-  }, [entity_type_slug, state.page,state.entry, state.setsRenderer]);
+  }, [entity_type_slug, state.page, state.entry, state.setsRenderer]);
+
+  useEffect(() => {
+    dispatch({type: SET_PAGE,payload: defaultPageRender});
+    dispatch({type: PAGE_SETS_RENDERER,payload: defaultPageRender});
+  }, [entity_type_slug]);
 
   return (
     <CacheContext.Provider value={cache}>
@@ -124,22 +151,26 @@ export default function ContentManager({ cache }) {
               </div>
             </div>
 
-            {state.isLoading && <SkeletonTable />}
-            {!state.isLoading && (
+            {state.isLoading && state.firstFetch && <SkeletonTable />}
+            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && (
               <AppContentManagerTable
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}
               />
             )}
-            {!state.isLoading && (
+            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && (
               <AppContentPagination
-                dispatch={dispatch}
+                dispatch={dispatch} 
                 defaultEntry={state.entry}
                 defaultPage={state.page}
                 entity_type_slug={entity_type_slug}
                 rows={state.rows}
                 setsRenderer={state.setsRenderer}
+                isLoading={state.isLoading} 
+                maximumNumberOfPage={maximumNumberOfPage}
+                EntryValues={EntryValues} // Array (optional) if you want to add "select" options for entries per page 
+                                          // default value is 10
               />
             )}
           </div>
