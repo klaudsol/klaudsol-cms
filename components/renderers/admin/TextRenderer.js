@@ -4,7 +4,7 @@ import FileField from "@/components/fields/FileField";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import ErrorRenderer from "./ErrorRenderer";
 
-const TextRenderer = ({ className, name, type, errors, touched }) => {
+const TextRenderer = ({ className, name, type, errors, touched, accept }) => {
   /* const setFileTovalues = (e) => { */
   /*   console.log(e.target.files); */
   /* }; */
@@ -14,6 +14,7 @@ const TextRenderer = ({ className, name, type, errors, touched }) => {
       {type === "file" ? (
         <FileField
           type={type}
+          accept={accept}
           name={name}
           className={cx("input_text mb-2", className)}
           validate={(v) => TypesValidator(v, type)}

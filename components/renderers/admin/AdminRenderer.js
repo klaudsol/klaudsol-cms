@@ -9,7 +9,13 @@ const AdminRenderer = ({ type, ...params }) => {
       return <TextRenderer type="type" {...params} />;
     case CMS_TYPES.LINK:
     case CMS_TYPES.IMAGE:
-      return <TextRenderer type="file" accept="image/*" {...params} />;
+      return (
+        <TextRenderer
+          type="file"
+          accept="image/png, image/gif, image/jpeg"
+          {...params}
+        />
+      );
     case CMS_TYPES.TEXT_AREA:
       return <TextAreaRenderer type={type} {...params} />;
     case CMS_TYPES.FLOAT:
@@ -18,4 +24,5 @@ const AdminRenderer = ({ type, ...params }) => {
       return null;
   }
 };
+
 export default AdminRenderer;
