@@ -5,7 +5,7 @@ export const initialState = {
   entity_type_name: null,
   isLoading: false,
   isRefresh: true,
-  entry: 1,
+  entry: 10,
   page: 0,
   rows:null,
   setsRenderer:0,
