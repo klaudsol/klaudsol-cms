@@ -31,7 +31,7 @@ import { resolveValue } from '@/components/EntityAttributeValue';
 import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
-import { uploadImagesToBucket } from '@backend/data_access/S3'
+import { addImagesToBucket } from '@backend/data_access/S3'
 
 export default withSession(handler);
 
@@ -131,7 +131,7 @@ async function create(req, res) {
 
         const { files, body: bodyRaw } = req;
         const body = JSON.parse(JSON.stringify(bodyRaw));
-        const entry = await uploadImagesToBucket(files, body)
+        const entry = await addImagesToBucket(files, body)
 
         console.log(entry);
 

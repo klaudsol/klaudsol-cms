@@ -92,7 +92,9 @@ export const generateEntries = (resFromS3, files, body) => {
   return entries;
 };
 
-export const uploadFileToBucket = async (s3, { Key, Body, ContentType }) => {
+export const uploadFileToBucket = async ({ Key, Body, ContentType }) => {
+  const s3 = initializeS3();
+
   const params = {
     Bucket: AWS_S3_BUCKET,
     Key,
@@ -113,8 +115,7 @@ export const uploadFilesToBucket = async (s3Instance, files) => {
   return res;
 };
 
-export const uploadImagesToBucket = async (files, body) => {
-  const s3 = initializeS3();
+export const addImagesToBucket = async (files, body) => {
   const paramsRaw = getS3Params(files);
   const params = await formatS3Params(paramsRaw);
   const resFromS3 = await uploadFilesToBucket(s3, params);
