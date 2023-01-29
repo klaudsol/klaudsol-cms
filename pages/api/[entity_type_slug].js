@@ -129,18 +129,18 @@ async function create(req, res) {
             loggedIn: true,
         }, req);
 
-        console.log(req.files[0]);
-
         const params = {
             Key: req.files[0].originalname,
             Body: req.files[0].buffer,
             ContentType: req.files[0].mimetype,
         }
 
-        const resFromS3 = await addImageToBucket(params);
-        /* console.log(resFromS3); */
+        const body = JSON.parse(JSON.stringify(req.body));
 
-        /* await Entity.create(entry); */
+        const resFromS3 = await addImageToBucket(params);
+        const entry = { [req.files[0].fieldname]: resFromS3.Location, ...body };
+
+        await Entity.create(entry);
         res.status(OK).json({message: 'Successfully created a new entry'}) 
     } catch (error) {
       await defaultErrorHandler(error, req, res);
