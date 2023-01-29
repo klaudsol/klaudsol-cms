@@ -135,12 +135,14 @@ async function create(req, res) {
             ContentType: req.files[0].mimetype,
         }
 
+        console.log(params);
+
         const body = JSON.parse(JSON.stringify(req.body));
 
-        const resFromS3 = await addImageToBucket(params);
-        const entry = { [req.files[0].fieldname]: resFromS3.Location, ...body };
+        /* const resFromS3 = await addImageToBucket(params); */
+        /* const entry = { [req.files[0].fieldname]: resFromS3.Location, image2: resFromS3.Location, ...body }; */
 
-        await Entity.create(entry);
+        /* await Entity.create(entry); */
         res.status(OK).json({message: 'Successfully created a new entry'}) 
     } catch (error) {
       await defaultErrorHandler(error, req, res);
