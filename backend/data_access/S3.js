@@ -7,6 +7,7 @@ const AWS_SECRET_ACCESS_KEY = process.env.AURORA_AWS_SECRET_ACCESS_KEY;
 const AWS_REGION = process.env.AURORA_AWS_REGION;
 const AWS_S3_BUCKET = process.env.AWS_S3_BUCKET;
 
+// Should be put in another file since this can be used globally
 const generateRandVals = async (size) => {
   const randomBytes = promisify(crypto.randomBytes);
   const rawBytes = await randomBytes(size);
@@ -47,7 +48,7 @@ export const getS3Params = (files) => {
   return listOfParams;
 };
 
-export const convertS3ParamsToImage = async (params) => {
+export const generateUniqueKey = async (params) => {
   const generateNewParams = (param, i) => {
     const keySplit = param.Key.split(" ");
     const keyJoin = keySplit.join("_");
@@ -65,7 +66,7 @@ export const convertS3ParamsToImage = async (params) => {
   return newParams;
 };
 
-export const getS3Entries = (resFromS3, files, body) => {
+export const generateEntries = (resFromS3, files, body) => {
   const initialValue = {};
   const reducer = (acc, curr, index) => {
     const newObj = {
@@ -81,9 +82,7 @@ export const getS3Entries = (resFromS3, files, body) => {
   return entries;
 };
 
-export const addImageToBucket = async ({ Key, Body, ContentType }) => {
-  const s3 = initializeS3();
-
+export const uploadFileToBucket = async (s3, { Key, Body, ContentType }) => {
   const params = {
     Bucket: AWS_S3_BUCKET,
     Key,
@@ -97,9 +96,19 @@ export const addImageToBucket = async ({ Key, Body, ContentType }) => {
   return res;
 };
 
-export const addImagesToBucket = async (files) => {
-  const promises = files.map((file) => addImageToBucket(file));
+export const uploadFilesToBucket = async (s3Instance, files) => {
+  const promises = files.map((file) => uploadFileToBucket(s3Instance, file));
   const res = await Promise.all(promises);
 
   return res;
+};
+
+export const uploadImagesToBucket = async (files, body) => {
+  const s3 = initializeS3();
+  const paramsRaw = getS3Params(files);
+  const params = await generateUniqueKey(paramsRaw);
+  const resFromS3 = await uploadFilesToBucket(s3, params);
+  const entry = await generateEntries(resFromS3, files, body);
+
+  return entry;
 };
