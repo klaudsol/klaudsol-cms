@@ -7,6 +7,14 @@ const AWS_SECRET_ACCESS_KEY = process.env.AURORA_AWS_SECRET_ACCESS_KEY;
 const AWS_REGION = process.env.AURORA_AWS_REGION;
 const AWS_S3_BUCKET = process.env.AWS_S3_BUCKET;
 
+const generateRandVals = async (size) => {
+  const randomBytes = promisify(crypto.randomBytes);
+  const rawBytes = await randomBytes(size);
+  const randVal = rawBytes.toString("hex");
+
+  return randVal;
+};
+
 const s3Config = {
   accessKeyId: AWS_ACCESS_KEY_ID,
   secretAccessKey: AWS_SECRET_ACCESS_KEY,
@@ -39,8 +47,22 @@ export const getS3Params = (files) => {
   return listOfParams;
 };
 
-export const convertS3ParamsToImage = (params) => {
-  return params;
+export const convertS3ParamsToImage = async (params) => {
+  const generateNewParams = (param, i) => {
+    const keySplit = param.Key.split(" ");
+    const keyJoin = keySplit.join("_");
+    const randVal = randomVals[i];
+    const formattedKey = `${randVal}_${keyJoin}`;
+    const newObj = { ...param, Key: formattedKey };
+
+    return newObj;
+  };
+
+  const promises = params.map(() => generateRandVals(4));
+  const randomVals = await Promise.all(promises);
+  const newParams = params.map(generateNewParams);
+
+  return newParams;
 };
 
 export const getS3Entries = (resFromS3, files, body) => {

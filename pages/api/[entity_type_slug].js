@@ -133,9 +133,7 @@ async function create(req, res) {
         const body = JSON.parse(JSON.stringify(bodyRaw));
 
         const paramsRaw = getS3Params(files);
-        const params = convertS3ParamsToImage(paramsRaw);
-
-        console.log(params);
+        const params = await convertS3ParamsToImage(paramsRaw);
         const resFromS3 = await addImagesToBucket(params);
         const entry = await getS3Entries(resFromS3, files, body);
 
