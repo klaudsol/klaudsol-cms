@@ -48,20 +48,25 @@ export const getS3Params = (files) => {
   return listOfParams;
 };
 
-export const generateUniqueKey = async (params) => {
-  const generateNewParams = (param, i) => {
-    const keySplit = param.Key.split(" ");
-    const keyJoin = keySplit.join("_");
-    const randVal = randomVals[i];
-    const formattedKey = `${randVal}_${keyJoin}`;
-    const newObj = { ...param, Key: formattedKey };
+export const generateUniqueKey = async (key) => {
+  const randVal = await generateRandVals(4);
+  const keySplit = key.split(" ");
+  const keyJoin = keySplit.join("_");
+  const formattedKey = `${randVal}_${keyJoin}`;
 
-    return newObj;
-  };
+  return formattedKey;
+};
 
-  const promises = params.map(() => generateRandVals(4));
-  const randomVals = await Promise.all(promises);
-  const newParams = params.map(generateNewParams);
+export const formatS3Param = async (param) => {
+  const uniqueKey = await generateUniqueKey(param.Key);
+  const newParams = { ...param, Key: uniqueKey };
+
+  return newParams;
+};
+
+export const formatS3Params = async (params) => {
+  const promises = params.map((param) => formatS3Param(param));
+  const newParams = await Promise.all(promises);
 
   return newParams;
 };
@@ -106,7 +111,7 @@ export const uploadFilesToBucket = async (s3Instance, files) => {
 export const uploadImagesToBucket = async (files, body) => {
   const s3 = initializeS3();
   const paramsRaw = getS3Params(files);
-  const params = await generateUniqueKey(paramsRaw);
+  const params = await formatS3Params(paramsRaw);
   const resFromS3 = await uploadFilesToBucket(s3, params);
   const entry = await generateEntries(resFromS3, files, body);
 

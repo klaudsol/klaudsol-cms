@@ -134,8 +134,9 @@ async function create(req, res) {
         const entry = await uploadImagesToBucket(files, body)
 
         await Entity.create(entry);
+
         res.status(OK).json({message: 'Successfully created a new entry'}) 
     } catch (error) {
       await defaultErrorHandler(error, req, res);
     }
-  }
+}
