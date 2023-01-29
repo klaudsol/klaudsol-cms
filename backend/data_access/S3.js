@@ -108,8 +108,8 @@ export const uploadFileToBucket = async ({ Key, Body, ContentType }) => {
   return res;
 };
 
-export const uploadFilesToBucket = async (s3Instance, files) => {
-  const promises = files.map((file) => uploadFileToBucket(s3Instance, file));
+export const uploadFilesToBucket = async (files) => {
+  const promises = files.map((file) => uploadFileToBucket(file));
   const res = await Promise.all(promises);
 
   return res;
@@ -118,7 +118,7 @@ export const uploadFilesToBucket = async (s3Instance, files) => {
 export const addImagesToBucket = async (files, body) => {
   const paramsRaw = getS3Params(files);
   const params = await formatS3Params(paramsRaw);
-  const resFromS3 = await uploadFilesToBucket(s3, params);
+  const resFromS3 = await uploadFilesToBucket(params);
   const entry = await generateEntries(resFromS3, files, body);
 
   return entry;
