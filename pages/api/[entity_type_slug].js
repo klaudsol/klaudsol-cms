@@ -133,6 +133,8 @@ async function create(req, res) {
         const body = JSON.parse(JSON.stringify(bodyRaw));
         const entry = await uploadImagesToBucket(files, body)
 
+        console.log(entry);
+
         await Entity.create(entry);
 
         res.status(OK).json({message: 'Successfully created a new entry'}) 

@@ -71,16 +71,21 @@ export const formatS3Params = async (params) => {
   return newParams;
 };
 
-export const generateEntries = (resFromS3, files, body) => {
-  const initialValue = {};
-  const reducer = (acc, curr, index) => {
-    const newObj = {
-      [curr.fieldname]: resFromS3[index].Location,
-    };
-
-    return { ...acc, ...newObj };
+export const generateEntry = (resFromS3, file, body) => {
+  const fileProperty = {
+    [file.fieldname]: resFromS3.Location,
   };
 
+  return { ...fileProperty, ...body };
+};
+
+export const generateEntries = (resFromS3, files, body) => {
+  const initialValue = {};
+  const reducer = (acc, curr, i) => {
+    const fileProperty = generateEntry(resFromS3[i], curr, {});
+
+    return { ...fileProperty, ...acc };
+  };
   const filteredFiles = files.reduce(reducer, initialValue);
   const entries = { ...body, ...filteredFiles };
 
