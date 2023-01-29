@@ -31,7 +31,7 @@ import { resolveValue } from '@/components/EntityAttributeValue';
 import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
-import { addImageToBucket } from '@backend/data_access/S3'
+import { addImagesToBucket, getS3Params, getS3Entries, convertS3ParamsToImage } from '@backend/data_access/S3'
 
 export default withSession(handler);
 
@@ -129,20 +129,17 @@ async function create(req, res) {
             loggedIn: true,
         }, req);
 
-        const params = {
-            Key: req.files[0].originalname,
-            Body: req.files[0].buffer,
-            ContentType: req.files[0].mimetype,
-        }
+        const { files, body: bodyRaw } = req;
+        const body = JSON.parse(JSON.stringify(bodyRaw));
+
+        const paramsRaw = getS3Params(files);
+        const params = convertS3ParamsToImage(paramsRaw);
 
         console.log(params);
+        const resFromS3 = await addImagesToBucket(params);
+        const entry = await getS3Entries(resFromS3, files, body);
 
-        const body = JSON.parse(JSON.stringify(req.body));
-
-        /* const resFromS3 = await addImageToBucket(params); */
-        /* const entry = { [req.files[0].fieldname]: resFromS3.Location, image2: resFromS3.Location, ...body }; */
-
-        /* await Entity.create(entry); */
+        await Entity.create(entry);
         res.status(OK).json({message: 'Successfully created a new entry'}) 
     } catch (error) {
       await defaultErrorHandler(error, req, res);

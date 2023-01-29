@@ -19,6 +19,46 @@ export const initializeS3 = () => {
   return s3;
 };
 
+export const getS3Param = (file) => {
+  return {
+    Key: file.originalname,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+};
+
+export const getS3Params = (files) => {
+  const initialValue = [];
+  const reducer = (acc, curr) => {
+    const newParamsObj = getS3Param(curr);
+
+    return [...acc, newParamsObj];
+  };
+  const listOfParams = files.reduce(reducer, initialValue);
+
+  return listOfParams;
+};
+
+export const convertS3ParamsToImage = (params) => {
+  return params;
+};
+
+export const getS3Entries = (resFromS3, files, body) => {
+  const initialValue = {};
+  const reducer = (acc, curr, index) => {
+    const newObj = {
+      [curr.fieldname]: resFromS3[index].Location,
+    };
+
+    return { ...acc, ...newObj };
+  };
+
+  const filteredFiles = files.reduce(reducer, initialValue);
+  const entries = { ...body, ...filteredFiles };
+
+  return entries;
+};
+
 export const addImageToBucket = async ({ Key, Body, ContentType }) => {
   const s3 = initializeS3();
 
@@ -30,8 +70,14 @@ export const addImageToBucket = async ({ Key, Body, ContentType }) => {
     ACL: "public-read",
   };
 
-  /* console.log(params); */
   const res = await s3.upload(params).promise();
+
+  return res;
+};
+
+export const addImagesToBucket = async (files) => {
+  const promises = files.map((file) => addImageToBucket(file));
+  const res = await Promise.all(promises);
 
   return res;
 };
