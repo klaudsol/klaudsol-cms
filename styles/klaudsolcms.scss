@@ -205,10 +205,15 @@
     margin-left: 230px;
     background-color: #fff;
     height: 100vh;
+    overflow-x: hidden;
 }
 
 .main-container__single {
   margin-left: 0;
+}
+
+.py-4{
+    height: 75vh;
 }
 
 
@@ -589,6 +594,12 @@ $onFocus: #323C4E;
 =================================================================
 **/
 
+
+#table_general_main{
+overflow-x: scroll;
+height: 100%;
+}
+
 #table_general, #table_skeleton {
     font-size: 12px;
     width: 100%;
@@ -661,6 +672,7 @@ $onFocus: #323C4E;
     margin-bottom: 20px;
 }
 
+
 /**
 =========================================================
             CREATE NEW ENTRY STYLES
@@ -673,6 +685,10 @@ $onFocus: #323C4E;
     justify-content: start;
     align-items: flex-start;
     text-align: start;
+}
+
+.edit_new_entry {
+    height: fit-content;
 }
 
 
@@ -793,6 +809,10 @@ $onFocus: #323C4E;
     color: #455a64;
 }
 
+.icon_modal_close:disabled{
+    opacity: 80%;
+}
+
 .modal_header {
     background-color: #fff;
 }
@@ -802,8 +822,12 @@ $onFocus: #323C4E;
     outline: none;
     box-shadow: none;
     border: none;
-    margin-right: 15px;
+    margin-right: 15px;  
+}
 
+.btn_modal:disabled {
+  background-color:  #455a64;
+  opacity: 80%;
 }
 
 .btn_modal:hover {
@@ -919,4 +943,10 @@ $onFocus: #323C4E;
     height: 20px;
     width: 100%;
     margin-bottom: 20px;
+}
+
+#table_general {
+    .table-box {
+        width: 150px;
+    }
 }
