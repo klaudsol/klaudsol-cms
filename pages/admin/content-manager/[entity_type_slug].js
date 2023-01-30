@@ -151,6 +151,7 @@ export default function ContentManager({ cache }) {
               </div>
             </div>
 
+
             {state.isLoading && state.firstFetch && <SkeletonTable />}
             {(state.firstFetch ? !state.isLoading : !state.firstFetch) && (
               <AppContentManagerTable
@@ -174,6 +175,11 @@ export default function ContentManager({ cache }) {
               />
             )}
           </div>
+
+            <div className="d-flex flex-row px-0"> 
+              <AppDropdown title={ state.columns.length + ' items selected'} items={state.columns} id='dropdown_general' isCheckbox={true}/>
+              {/* <AppIconButton icon={<BsGearFill/>} />  */}
+            </div>
 
           {/*<div className="d-flex justify-content-between align-items-center">
           <div className="d-flex flex-row">

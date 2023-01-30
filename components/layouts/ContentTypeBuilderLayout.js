@@ -8,7 +8,7 @@ const ContentTypeBuilderLayout = ({children, currentTypeSlug}) => {
 
         <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
         <ContentBuilderSubMenu title='Content-Type Builder' currentTypeSlug={currentTypeSlug} />
-            <div className="body flex-grow-1 px-3 main-container">
+            <div className="body flex-grow-1 px-5 main-container">
               <AppContent>
                     {children}
               </AppContent>
