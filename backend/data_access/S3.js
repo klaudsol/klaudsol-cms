@@ -73,7 +73,11 @@ export const formatS3Params = async (params) => {
 
 export const generateEntry = (resFromS3, file, body) => {
   const fileProperty = {
-    [file.fieldname]: resFromS3.Location,
+    [file.fieldname]: {
+      originalName: file.originalname,
+      link: resFromS3.Location,
+      name: resFromS3.Key,
+    },
   };
 
   return { ...fileProperty, ...body };
@@ -120,6 +124,7 @@ export const addImagesToBucket = async (files, body) => {
   const params = await formatS3Params(paramsRaw);
   const resFromS3 = await uploadFilesToBucket(params);
   const entry = await generateEntries(resFromS3, files, body);
+  console.log(entry);
 
   return entry;
 };
