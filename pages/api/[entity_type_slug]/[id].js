@@ -59,14 +59,14 @@ async function get(req, res) {
 
     // If user typed in the id instead of the slug
     // If slug is equal to one of the IDs, prioritize slug
-    if(parseInt(slug) && rawData.length === 0) {
-        const item = await Entity.find({entity_type_slug, id: slug});
+    // if(parseInt(slug) && rawData.length === 0) {
+    //     const item = await Entity.find({entity_type_slug, id: slug});
 
-        if(item.length !== 0) {
-            const itemSlug = item[0].entities_slug;
-            return res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
-        }
-    }
+    //     if(item.length !== 0) {
+    //         const itemSlug = item[0].entities_slug;
+    //         return res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
+    //     }
+    // }
 
     const initialFormat = {
       data: {},

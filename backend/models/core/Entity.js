@@ -62,6 +62,8 @@ class Entity {
     static async findBySlug({entity_type_slug, slug}) {
       const db = new DB();
 
+      console.log(entity_type_slug)
+      console.log(slug)
       const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
                   attributes.name, attributes.type, attributes.\`order\`,
                   \`values\`.value_string, 
@@ -75,18 +77,18 @@ class Entity {
                   LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                   WHERE 
                       entity_types.slug = :entity_type_slug AND 
-                      entities.slug = :slug
+                      entities.id = :slug
                   ORDER BY attributes.\`order\` ASC
                   `;
                 
       const data = await db.executeStatement(sql, [
           {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
-          {name: 'slug', value:{stringValue: slug}},
+          {name: 'slug', value:{longValue: slug}},
       ]);
       
       return data.records.map(([
           {longValue: entity_type_id},
-          {stringValue: slug},
+          {longValue: slug},
           {stringValue: entity_type_name},
           {stringValue: entity_type_slug},
           {stringValue: entities_slug},
