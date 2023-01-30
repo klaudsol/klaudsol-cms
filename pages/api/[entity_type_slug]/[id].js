@@ -117,10 +117,10 @@ async function del(req, res) {
     );
 
     const { id } = req.query;
-    const s3Values = await Entity.findImagesFromEntity(id);
-    const s3KeysToDelete = s3Values.map((value) => value[4].stringValue);
+    const imagesData = await Entity.findImagesFromEntity(id);
+    const imageKeys = s3Values.map((value) => value[4].stringValue);
 
-    if (s3KeysToDelete.length > 0) await deleteFilesFromBucket(s3KeysToDelete);
+    if (imageKeys.length > 0) await deleteFilesFromBucket(imageKeys);
 
     await Entity.delete({ id });
 
