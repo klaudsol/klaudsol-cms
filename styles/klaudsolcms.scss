@@ -254,13 +254,13 @@
       align-items: center;
       outline: none;
       border-radius: 2px;
-      color: #323C4E;
-      border: none;
-      box-shadow: 0 0 10px rgb(87, 85, 85);
+      color: #333b3fe5;
+      border: 1px solid #333b3fe5;
       margin: 0px 5px 0px 5px;
 
       &.active{ 
-        box-shadow: inset -4px -3px 4px rgba(42, 53, 66, 0.3);
+        border: 1px solid #333b3f8f;
+        color:#333b3f8f;
         cursor: default;
       }
     }
