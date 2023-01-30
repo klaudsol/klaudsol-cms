@@ -128,10 +128,12 @@ async function del(req, res) {
 
     const { id } = req.query;
     const s3Values = await Entity.getImageValsFromEntity(id);
-    const s3KeysToDelete = s3Values.map((value) => value[4].stringValue)
+    const s3KeysToDelete = s3Values.map((value) => value[4].stringValue);
 
-    await deleteFilesFromBucket(s3KeysToDelete);
+    if (s3KeysToDelete.length > 0) await deleteFilesFromBucket(s3KeysToDelete);
+
     await Entity.delete({ id });
+
     res.status(OK).json({ message: "Successfully delete the entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
