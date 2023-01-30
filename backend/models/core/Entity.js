@@ -249,6 +249,10 @@ class Entity {
         
       // Gets the rows in `values` table that have images
       const imageAttributes = attributes.records.filter((attribute) => attribute[2].stringValue === 'image');
+
+      // If user did not use image attribute, dont proceed
+      if(imageAttributes.length === 0) return true;
+
       const imageAttributesIDs = imageAttributes.map((attribute) => attribute[0].longValue)
       const joinedAttributes = imageAttributesIDs.join(', ');
       // I had to manually put the joinedAttributes below because if I were to put it on the 2nd
