@@ -290,6 +290,7 @@ class Entity {
           [
             { name: 'value_id', value: { longValue: valueId } },
             { name: 'attribute_id', value: { longValue: imageAttributeId } },
+            { name: 'entity_id', value: { longValue: lastInsertedEntityID } },
             //Refactor to encapsulate type switch
             { name: 'link', value: { stringValue: imageData.link } },
             { name: 'name', value: { stringValue: imageData.name } },
@@ -300,11 +301,13 @@ class Entity {
       const insertImagesBatchSQL = `INSERT INTO \`images\`(
             value_id, 
             attribute_id,
+            entity_id,
             link, 
             name 
         ) VALUES (
             :value_id, 
             :attribute_id, 
+            :entity_id,
             :link, 
             :name 
         )`; 
