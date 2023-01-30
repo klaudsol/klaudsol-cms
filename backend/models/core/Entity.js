@@ -61,9 +61,14 @@ class Entity {
 
     static async findBySlug({entity_type_slug, slug}) {
       const db = new DB();
+       
+      function isNumber(str) {
+        return !isNaN(str);
+      }
 
-      console.log(entity_type_slug)
-      console.log(slug)
+     const propertyType = isNumber(slug) ? "longValue" : "stringValue" 
+     const conditionType = isNumber(slug) ? "entities.id" : "entities.slug";
+     
       const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
                   attributes.name, attributes.type, attributes.\`order\`,
                   \`values\`.value_string, 
@@ -77,18 +82,18 @@ class Entity {
                   LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                   WHERE 
                       entity_types.slug = :entity_type_slug AND 
-                      entities.id = :slug
+                      ${conditionType} = :slug
                   ORDER BY attributes.\`order\` ASC
                   `;
                 
       const data = await db.executeStatement(sql, [
           {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
-          {name: 'slug', value:{longValue: slug}},
+          {name: 'slug', value:{[propertyType]: slug}},
       ]);
       
       return data.records.map(([
           {longValue: entity_type_id},
-          {longValue: slug},
+          {[propertyType]: slug},
           {stringValue: entity_type_name},
           {stringValue: entity_type_slug},
           {stringValue: entities_slug},
