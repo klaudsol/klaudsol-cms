@@ -54,20 +54,10 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
-    const { entity_type_slug, id: slug } = req.query;
+    const { entity_type_slug, id } = req.query;
 
-    const rawData = await Entity.findBySlug({ entity_type_slug, slug });
-
-    // If user typed in the id instead of the slug
-    // If slug is equal to one of the IDs, prioritize slug
-    if(parseInt(slug) && rawData.length === 0) {
-        const item = await Entity.find({entity_type_slug, id: slug});
-
-        if(item.length !== 0) {
-            const itemSlug = item[0].entities_slug;
-            return res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
-        }
-    }
+    const rawData = await Entity.find({ entity_type_slug, id });
+    console.log(rawData);
 
     const initialFormat = {
       data: {},
@@ -127,7 +117,7 @@ async function del(req, res) {
     );
 
     const { id } = req.query;
-    const s3Values = await Entity.getImageValsFromEntity(id);
+    const s3Values = await Entity.findImagesFromEntity(id);
     const s3KeysToDelete = s3Values.map((value) => value[4].stringValue);
 
     if (s3KeysToDelete.length > 0) await deleteFilesFromBucket(s3KeysToDelete);
