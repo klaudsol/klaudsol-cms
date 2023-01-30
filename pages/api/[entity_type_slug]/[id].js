@@ -24,6 +24,7 @@ SOFTWARE.
 **/
 
 import Entity from "@backend/models/core/Entity";
+import { deleteFilesFromBucket } from "@/backend/data_access/S3";
 import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
@@ -126,6 +127,10 @@ async function del(req, res) {
     );
 
     const { id } = req.query;
+    const s3Values = await Entity.getImageValsFromEntity(id);
+    const s3KeysToDelete = s3Values.map((value) => value[4].stringValue)
+
+    await deleteFilesFromBucket(s3KeysToDelete);
     await Entity.delete({ id });
     res.status(OK).json({ message: "Successfully delete the entry" });
   } catch (error) {

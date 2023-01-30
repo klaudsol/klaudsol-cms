@@ -119,6 +119,27 @@ export const uploadFilesToBucket = async (files) => {
   return res;
 };
 
+export const generateS3ParamsForDeletion = (keysRaw) => {
+  const keys = keysRaw.map((key) => ({ Key: key }));
+  const params = {
+    Bucket: AWS_S3_BUCKET,
+    Delete: {
+      Objects: keys,
+    },
+  };
+
+  return params;
+};
+
+export const deleteFilesFromBucket = async (keys) => {
+  const s3 = initializeS3();
+  const params = generateS3ParamsForDeletion(keys);
+
+  const res = await s3.deleteObjects(params).promise();
+
+  return res;
+};
+
 export const addImagesToBucket = async (files, body) => {
   const paramsRaw = getS3Params(files);
   const params = await formatS3Params(paramsRaw);
