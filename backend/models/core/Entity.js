@@ -1,15 +1,19 @@
 import DB from '@backend/data_access/DB';
-
+import { isNumber } from '@/components/Util';
 
 class Entity {
 
     static async findBySlugOrId({entity_type_slug, slug}) {
       const db = new DB();      
-     function isNumber(str) {
-        return !isNaN(str);
-      }
+      
+      // slug can be id # (number) or slugname (string)
+      // check the slug weather it consists numbers only in which return true, otherwise it will return false
+      
      const propertyType = isNumber(slug) ? "longValue" : "stringValue" 
-     const conditionType = isNumber(slug) ? "entities.id" : "entities.slug";
+     const conditionType = isNumber(slug) ? "entities.id" : "entities.slug"; 
+     
+     // if the type of slug is a number, propertyType and conditionType will be longValue and enitities.id respectively,
+     // and will be used for the query's condition WHERE and property name for "slug" in the map method
 
       const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
                   attributes.name, attributes.type, attributes.\`order\`,
