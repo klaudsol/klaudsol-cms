@@ -4,8 +4,8 @@ import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSub
 import { getSessionCache } from "@/lib/Session";
 
 import { useRouter } from "next/router";
-import { useEffect, useReducer, useCallback } from "react";
-import { slsFetch } from "@/components/Util";
+import { useEffect, useReducer, useCallback, useRef } from "react";
+import { slsFetch, sortByOrderAsc } from "@/components/Util";
 
 /** kladusol CMS components */
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
@@ -18,8 +18,12 @@ import { FaCheck, FaTrash } from "react-icons/fa";
 import { MdModeEditOutline } from "react-icons/md";
 import { VscListSelection } from "react-icons/vsc";
 import { Col } from "react-bootstrap";
+import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+
+import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+
 import {
   initialState,
   actions,
@@ -32,6 +36,7 @@ export default function Type({ cache }) {
   const { entity_type_slug, id } = router.query;
 
   const [state, dispatch] = useReducer(entityReducer, initialState);
+  const formRef = useRef();
 
   const onTextInputChange = (
     entries,
@@ -54,12 +59,10 @@ export default function Type({ cache }) {
         const values = await valuesRaw.json();
 
         const entries = values.data;
-        const columns = Object.keys(values.metadata.attributes);
-        const attributes = Object.values(values.metadata);
+        const attributes = values.metadata.attributes;
         const entity_type_id = values.metadata.entity_type_id;
 
         dispatch({ type: actions.SET_ATTRIBUTES, payload: attributes });
-        dispatch({ type: actions.SET_COLUMNS, payload: columns });
         dispatch({ type: actions.SET_VALUES, payload: entries });
         dispatch({ type: actions.SET_ENTITY_TYPE_ID, payload: entity_type_id });
       } catch (ex) {
@@ -131,6 +134,39 @@ export default function Type({ cache }) {
     [entity_type_slug, id]
   );
 
+  const getFormikInitialVals = () => {
+    const { slug, id, ...initialValues } = state.values;
+
+    return initialValues;
+  };
+
+  const formikParams = {
+    innerRef: formRef,
+    initialValues: getFormikInitialVals(),
+    onSubmit: (values) => {
+      (async () => {
+        const entry = {
+          ...values,
+          entity_type_id: state.entity_type_id,
+        };
+
+        try {
+          dispatch({ type: actions.SAVING });
+          const response = await slsFetch(`/api/${entity_type_slug}`, {
+            method: "POST",
+            body: entry,
+          });
+          const { message, homepage } = await response.json();
+          dispatch({ type: actions.SET_SHOW, payload: true });
+        } catch (ex) {
+          console.error(ex);
+        } finally {
+          dispatch({ type: actions.CLEANUP });
+        }
+      })();
+    },
+  };
+
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
@@ -169,73 +205,32 @@ export default function Type({ cache }) {
                         <div />
                       </div>
                     ))}
-                  {!state.isLoading &&
-                    state.attributes.map((attr, i) => (
-                      <div key={i}>
-                        {" "}
-                        {state.columns.map(
-                          (col, i) =>
-                            attr[col] && (
-                              <div key={i}>
-                                <p className="mt-1">
-                                  {" "}
-                                  <b>{col}</b>{" "}
-                                </p>
-                                {/*Note: this is just a quick and dirty fix. Long term fix is to use the AdminRenderer component*/}
-                                {(attr[col].type === "text" ||
-                                  attr[col].type === "image" ||
-                                  attr[col].type === "link") && (
-                                  <input
-                                    type="text"
-                                    className="input_text mb-2"
-                                    defaultValue={state.values[col]}
-                                    onChange={(e) =>
-                                      onTextInputChange(
-                                        state.values,
-                                        col,
-                                        e.target.value,
-                                        `${col}_type`,
-                                        attr[col].type
-                                      )
-                                    }
+
+                  {!state.isLoading && (
+                    <Formik {...formikParams}>
+                      {(props) => (
+                        <Form>
+                          {Object.entries(state.attributes)
+                            .sort(sortByOrderAsc)
+                            .map(([attributeName, attribute]) => {
+                              return (
+                                <div key={attribute}>
+                                  <p className="mt-1">
+                                    <b> {attributeName} </b>
+                                  </p>
+                                  <AdminRenderer
+                                    errors={props.errors}
+                                    touched={props.touched}
+                                    type={attribute.type}
+                                    name={attributeName}
                                   />
-                                )}
-                                {attr[col].type === "textarea" && (
-                                  <textarea
-                                    className="input_textarea"
-                                    defaultValue={state.values[col]}
-                                    onChange={(e) =>
-                                      onTextInputChange(
-                                        state.values,
-                                        col,
-                                        e.target.value,
-                                        `${col}_type`,
-                                        attr[col].type
-                                      )
-                                    }
-                                  />
-                                )}
-                                {attr[col].type === "float" && (
-                                  <input
-                                    type="number"
-                                    className="input_text mb-2"
-                                    defaultValue={state.values[col]}
-                                    onChange={(e) =>
-                                      onTextInputChange(
-                                        state.values,
-                                        col,
-                                        e.target.value,
-                                        `${col}_type`,
-                                        attr[col].type
-                                      )
-                                    }
-                                  />
-                                )}
-                              </div>
-                            )
-                        )}{" "}
-                      </div>
-                    ))}
+                                </div>
+                              );
+                            })}
+                        </Form>
+                      )}
+                    </Formik>
+                  )}
                 </div>
               </div>
               <div className="col-3 mx-0">
