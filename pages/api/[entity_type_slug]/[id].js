@@ -143,7 +143,10 @@ async function update(req, res) {
       entity_id = null,
       entity_type_id = null,
     } = req.body;
-    await Entity.update({ entries, entity_type_id, entity_id });
+
+    console.log(entries);
+
+    /* await Entity.update({ entries, entity_type_id, entity_id }); */
     res.status(OK).json({ message: "Successfully created a new entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);

@@ -1,8 +1,10 @@
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { useFormikContext, useField } from "formik";
+import Image from "next/image";
 import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
 
 const FileField = (props) => {
+  const [showImage, setShowImage] = useState("");
   const inputRef = useRef();
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
@@ -10,6 +12,7 @@ const FileField = (props) => {
 
   const setFileValue = (e) => {
     const file = e.target.files[0];
+    setShowImage(URL.createObjectURL(file));
 
     setFieldValue(field.name, file);
   };
@@ -24,34 +27,48 @@ const FileField = (props) => {
   };
 
   const buttonStyle = {
-    position: "absolute",
-    top: "0",
-    right: "0",
-    bottom: "0",
     // For aliging with the input
     // The input has a marginBottom: .5rem for some reason
     marginBottom: "0.5rem",
+    marginLeft: 0,
+  };
+
+  const imgStyle = {
+    textAlign: "center",
   };
 
   return (
-    <div style={styles}>
-      <input
-        type="file"
-        {...props}
-        {...formattedField}
-        onChange={setFileValue}
-        hidden="hidden"
-        ref={inputRef}
-      />
-      <span className={props.className}>
-        {value instanceof File ? value.name : value.originalName}
-      </span>
-      <AppButtonLg
-        title="Browse..."
-        className="btn_general_lg--invert_colors"
-        style={buttonStyle}
-        onClick={openUploadMenu}
-      />
+    <div>
+      <div style={styles}>
+        <input
+          type="file"
+          {...props}
+          {...formattedField}
+          onChange={setFileValue}
+          hidden="hidden"
+          ref={inputRef}
+        />
+        <span className={props.className} onClick={openUploadMenu}>
+          {value instanceof File ? value?.name : value?.originalName}
+        </span>
+        <AppButtonLg
+          title="Browse..."
+          className="btn_general_lg--invert_colors"
+          style={buttonStyle}
+          onClick={openUploadMenu}
+        />
+      </div>
+      {showImage && (
+        <div className={props.className} style={imgStyle}>
+          <Image
+            src={showImage}
+            alt="Your uploaded image"
+            width={400}
+            height={300}
+            objectFit="contain"
+          />
+        </div>
+      )}
     </div>
   );
 };

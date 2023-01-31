@@ -73,38 +73,10 @@ export default function Type({ cache }) {
     })();
   }, [entity_type_slug, id]);
 
-  const onSubmit = useCallback(
-    (evt) => {
-      evt.preventDefault();
-      (async () => {
-        try {
-          dispatch({ type: actions.SAVING });
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
-            method: "PUT",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              entries: state.values,
-              entity_type_id: state.entity_type_id,
-              entity_id: id,
-            }),
-          });
-          const { message, homepage } = await response.json();
-          dispatch({
-            type: actions.SET_MODAL_CONTENT,
-            payload: "You have successfully edited the entry.",
-          });
-          dispatch({ type: actions.SET_SHOW, payload: true });
-        } catch (ex) {
-          console.error(ex);
-        } finally {
-          dispatch({ type: actions.CLEANUP });
-        }
-      })();
-    },
-    [state.values, state.columns, id, entity_type_slug, state.entity_type_id]
-  );
+  const onSubmit = (e) => {
+    e.preventDefault();
+    formRef.current.handleSubmit();
+  };
 
   const onDelete = useCallback(
     (evt) => {
@@ -145,18 +117,24 @@ export default function Type({ cache }) {
     initialValues: getFormikInitialVals(),
     onSubmit: (values) => {
       (async () => {
-        const entry = {
-          ...values,
-          entity_type_id: state.entity_type_id,
-        };
-
         try {
           dispatch({ type: actions.SAVING });
-          const response = await slsFetch(`/api/${entity_type_slug}`, {
-            method: "POST",
-            body: entry,
+          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              entries: state.values,
+              entity_type_id: state.entity_type_id,
+              entity_id: id,
+            }),
           });
           const { message, homepage } = await response.json();
+          dispatch({
+            type: actions.SET_MODAL_CONTENT,
+            payload: "You have successfully edited the entry.",
+          });
           dispatch({ type: actions.SET_SHOW, payload: true });
         } catch (ex) {
           console.error(ex);
@@ -293,7 +271,7 @@ export default function Type({ cache }) {
           <AppInfoModal
             show={state.show}
             onClose={() => (
-              dispatch({ type: SET_SHOW, payload: false }),
+              dispatch({ type: actions.SET_SHOW, payload: false }),
               router.push(`/admin/content-manager/${entity_type_slug}`)
             )}
             modalTitle="Success"
