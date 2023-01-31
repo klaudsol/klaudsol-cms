@@ -2,6 +2,7 @@ import { CMS_TYPES } from "@/components/cmsTypes";
 import TextRenderer from "./TextRenderer";
 import TextAreaRenderer from "./TextAreaRenderer";
 import FloatRenderer from "./FloatRenderer";
+import UploadRenderer from "./UploadRenderer.js"
 
 const AdminRenderer = ({ type, ...params }) => {
   switch (type) {
@@ -10,8 +11,7 @@ const AdminRenderer = ({ type, ...params }) => {
       return <TextRenderer type="type" {...params} />;
     case CMS_TYPES.IMAGE:
       return (
-        <TextRenderer
-          type="file"
+        <UploadRenderer
           accept="image/png, image/gif, image/jpeg"
           {...params}
         />

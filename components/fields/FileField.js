@@ -1,7 +1,10 @@
+import { useRef } from "react";
 import { useFormikContext, useField } from "formik";
+import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
 
 const FileField = (props) => {
-  const { values, setFieldValue } = useFormikContext();
+  const inputRef = useRef();
+  const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
   const { onChange, value, ...formattedField } = field;
 
@@ -11,7 +14,46 @@ const FileField = (props) => {
     setFieldValue(field.name, file);
   };
 
-  return <input {...props} {...formattedField} onChange={setFileValue} />;
+  const openUploadMenu = () => inputRef.current.click();
+
+  // Temporary. Create css class later. Can't think of a name right now
+  const styles = {
+    display: "flex",
+    justifyContent: "center",
+    position: "relative",
+  };
+
+  const buttonStyle = {
+    position: "absolute",
+    top: "0",
+    right: "0",
+    bottom: "0",
+    // For aliging with the input
+    // The input has a marginBottom: .5rem for some reason
+    marginBottom: "0.5rem",
+  };
+
+  return (
+    <div style={styles}>
+      <input
+        type="file"
+        {...props}
+        {...formattedField}
+        onChange={setFileValue}
+        hidden="hidden"
+        ref={inputRef}
+      />
+      <span className={props.className}>
+        {value instanceof File ? value.name : value.originalName}
+      </span>
+      <AppButtonLg
+        title="Browse..."
+        className="btn_general_lg--invert_colors"
+        style={buttonStyle}
+        onClick={openUploadMenu}
+      />
+    </div>
+  );
 };
 
 export default FileField;

@@ -214,7 +214,7 @@ export default function Type({ cache }) {
                             .sort(sortByOrderAsc)
                             .map(([attributeName, attribute]) => {
                               return (
-                                <div key={attribute}>
+                                <div key={attributeName}>
                                   <p className="mt-1">
                                     <b> {attributeName} </b>
                                   </p>

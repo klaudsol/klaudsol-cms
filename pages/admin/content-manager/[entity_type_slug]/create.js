@@ -214,7 +214,6 @@ export default function CreateNewEntry({ cache }) {
                             .map(([attributeName, attribute]) => {
                               return (
                                 <div key={attributeName}>
-                                    {console.log(attribute)}
                                   <p className="mt-1">
                                     {" "}
                                     <b> {attributeName} </b>
