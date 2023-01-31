@@ -20,6 +20,7 @@ import { VscListSelection } from 'react-icons/vsc';
 import { Col } from "react-bootstrap";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import { initialState, actions, entityReducer } from '@/components/reducers/entityReducer';
 
 
 export default function Type({cache}) {
@@ -27,129 +28,19 @@ export default function Type({cache}) {
 
   const { entity_type_slug, id } = router.query;
   
-  const initialState = {
-    values: [],
-    attributes: [],
-    columns: [],
-    entity_type_name: null,
-    isLoading: false,
-    isRefresh: true,
-    isSaving: false,
-    isDeleting: false,
-    show: false,
-    entity_type_id: null,
-    modalContent: null,
-  };
-
-  const LOADING = 'LOADING';
-  const REFRESH = 'REFRESH';
-  const SAVING = 'SAVING';
-  const DELETING = 'DELETING';
-  const CLEANUP = 'CLEANUP';
-  const SET_SHOW = 'SET_SHOW';
-  const SET_MODAL_CONTENT = 'SET_MODAL_CONTENT';
-
-  const SET_VALUES = 'SET_VALUES';
-  const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
-  const SET_COLUMNS = 'SET_COLUMNS';
-  const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
-  const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
-
-  const reducer = (state, action) => {
-    switch(action.type) {
-      case LOADING:
-          return {
-            ...state,
-            isLoading: true,
-          }
-
-        case SAVING:
-            return {
-              ...state,
-              isSaving: true,
-              isLoading: true,
-            }
-
-        case DELETING:
-              return {
-                ...state,
-                isDeleting: true,
-                isLoading: true,
-              }
-
-       case REFRESH:
-            return {
-              ...state,
-              isRefresh: false,
-            }
-
-       case CLEANUP:
-            return {
-              ...state,
-              isLoading: false,
-              isSaving: false,
-              isDeleting: false,
-            }
-
-        case SET_SHOW:
-              return {
-                ...state,
-                show: action.payload,
-              }
-            
-      case SET_VALUES:
-        return {
-          ...state,
-          values: action.payload
-        }
-
-        case SET_ATTRIBUTES:
-          return {
-            ...state,
-            attributes: action.payload
-          }
-
-          case SET_COLUMNS:
-            return {
-              ...state,
-              columns: action.payload
-            }
-
-      case SET_ENTITY_TYPE_NAME:
-        return {
-          ...state,
-          entity_type_name: action.payload
-        }
-
-        case SET_ENTITY_TYPE_ID:
-          return {
-            ...state,
-            entity_type_id: action.payload
-          }
-
-          case SET_MODAL_CONTENT:
-            return {
-              ...state,
-              modalContent: action.payload
-            }
-
-
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(entityReducer, initialState);
 
   const onTextInputChange = (entries, col, value, attribute, attribute_type) => {
     entries[col] = value;
     entries[attribute] = attribute_type;
-    dispatch({type: SET_VALUES, payload: entries});
+    dispatch({type: actions.SET_VALUES, payload: entries});
   }
 
   /*** Entity Types List ***/
   useEffect(() => { 
     (async () => {
       try {
-        dispatch({type: LOADING})
+        dispatch({type: actions.LOADING})
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
         const values = await valuesRaw.json();
 
@@ -158,18 +49,16 @@ export default function Type({cache}) {
         const attributes = Object.values(values.metadata);
         const entity_type_id = values.metadata.entity_type_id;
   
-        dispatch({type: SET_ATTRIBUTES, payload: attributes});
-        dispatch({type: SET_COLUMNS, payload: columns});
-        dispatch({type: SET_VALUES, payload: entries});
-        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
+        dispatch({type: actions.SET_ATTRIBUTES, payload: attributes});
+        dispatch({type: actions.SET_COLUMNS, payload: columns});
+        dispatch({type: actions.SET_VALUES, payload: entries});
+        dispatch({type: actions.SET_ENTITY_TYPE_ID, payload: entity_type_id});
       } catch (ex) {
         console.error(ex.stack)
       } finally {
-        dispatch({type: CLEANUP})
+        dispatch({type: actions.CLEANUP})
       }
     
-
-
     })();
   }, [entity_type_slug, id]);
 
@@ -177,7 +66,7 @@ export default function Type({cache}) {
     evt.preventDefault();
     (async () => {
         try {
-          dispatch({type: SAVING})
+          dispatch({type: actions.SAVING})
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: 'PUT',
             headers: {
@@ -186,13 +75,13 @@ export default function Type({cache}) {
             body: JSON.stringify({entries: state.values, entity_type_id: state.entity_type_id, entity_id: id })
           });
           const { message, homepage } = await response.json();    
-          dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
-          dispatch({type: SET_SHOW, payload: true})    
+          dispatch({type: actions.SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
+          dispatch({type: actions.SET_SHOW, payload: true})    
 
         } catch(ex) {
           console.error(ex);  
         } finally {
-          dispatch({type: CLEANUP})
+          dispatch({type: actions.CLEANUP})
         }
     })();
   }, [state.values, state.columns, id, entity_type_slug, state.entity_type_id]);
@@ -201,7 +90,7 @@ export default function Type({cache}) {
     evt.preventDefault();
     (async () => {
         try {
-          dispatch({type: DELETING})
+          dispatch({type: actions.DELETING})
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: 'DELETE',
             headers: {
@@ -209,13 +98,13 @@ export default function Type({cache}) {
             },
           });
           const { message, homepage } = await response.json();   
-          dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully deleted the entry.'})   
-          dispatch({type: SET_SHOW, payload: true}) 
+          dispatch({type: actions.SET_MODAL_CONTENT, payload: 'You have successfully deleted the entry.'})   
+          dispatch({type: actions.SET_SHOW, payload: true}) 
           
         } catch(ex) {
           console.error(ex);  
         } finally {
-          dispatch({type: CLEANUP})
+          dispatch({type: actions.CLEANUP})
         }
     })();
   }, [entity_type_slug, id]);
