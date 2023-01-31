@@ -12,6 +12,12 @@ import "@/styles/klaudsolcms.scss";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import * as gtag from "@/lib/gtag";
+import { Poppins } from '@next/font/google';
+
+const poppins = Poppins({
+  weight: '400',
+  subsets: ['latin'],
+})
 
 export default function MyApp({ Component, pageProps }) {
   const [state, dispatch] = useReducer(rootReducer, rootInitialState);
@@ -35,7 +41,9 @@ export default function MyApp({ Component, pageProps }) {
         </title>
       </Head>
       <RootContext.Provider value={{ state, dispatch }}>
-        <Component {...pageProps} />
+        <div className={poppins.className}>
+         <Component {...pageProps} />
+        </div>
       </RootContext.Provider>
     </React.StrictMode>
   );
