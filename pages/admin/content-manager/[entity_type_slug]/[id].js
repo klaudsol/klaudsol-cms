@@ -20,123 +20,26 @@ import { VscListSelection } from 'react-icons/vsc';
 import { Col } from "react-bootstrap";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-
+import 
+{ initialState,
+  reducer, 
+  LOADING,
+  SAVING,
+  DELETING,
+  CLEANUP,
+  SET_ATTRIBUTES,
+  SET_SHOW,
+  SET_MODAL_CONTENT,
+  SET_VALUES,
+  SET_COLUMNS,
+  SET_ENTITY_TYPE_ID,
+  SET_ENTITY_TYPE_ID_PARENT} from "components/reducers/editAndDeleteReducer";
 
 export default function Type({cache}) {
   const router = useRouter();
 
   const { entity_type_slug, id } = router.query;
   
-  const initialState = {
-    values: [],
-    attributes: [],
-    columns: [],
-    entity_type_name: null,
-    isLoading: false,
-    isRefresh: true,
-    isSaving: false,
-    isDeleting: false,
-    show: false,
-    entity_type_id: null,
-    modalContent: null,
-  };
-
-  const LOADING = 'LOADING';
-  const REFRESH = 'REFRESH';
-  const SAVING = 'SAVING';
-  const DELETING = 'DELETING';
-  const CLEANUP = 'CLEANUP';
-  const SET_SHOW = 'SET_SHOW';
-  const SET_MODAL_CONTENT = 'SET_MODAL_CONTENT';
-
-  const SET_VALUES = 'SET_VALUES';
-  const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
-  const SET_COLUMNS = 'SET_COLUMNS';
-  const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
-  const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
-
-  const reducer = (state, action) => {
-    switch(action.type) {
-      case LOADING:
-          return {
-            ...state,
-            isLoading: true,
-          }
-
-        case SAVING:
-            return {
-              ...state,
-              isSaving: true,
-              isLoading: true,
-            }
-
-        case DELETING:
-              return {
-                ...state,
-                isDeleting: true,
-                isLoading: true,
-              }
-
-       case REFRESH:
-            return {
-              ...state,
-              isRefresh: false,
-            }
-
-       case CLEANUP:
-            return {
-              ...state,
-              isLoading: false,
-              isSaving: false,
-              isDeleting: false,
-            }
-
-        case SET_SHOW:
-              return {
-                ...state,
-                show: action.payload,
-              }
-            
-      case SET_VALUES:
-        return {
-          ...state,
-          values: action.payload
-        }
-
-        case SET_ATTRIBUTES:
-          return {
-            ...state,
-            attributes: action.payload
-          }
-
-          case SET_COLUMNS:
-            return {
-              ...state,
-              columns: action.payload
-            }
-
-      case SET_ENTITY_TYPE_NAME:
-        return {
-          ...state,
-          entity_type_name: action.payload
-        }
-
-        case SET_ENTITY_TYPE_ID:
-          return {
-            ...state,
-            entity_type_id: action.payload
-          }
-
-          case SET_MODAL_CONTENT:
-            return {
-              ...state,
-              modalContent: action.payload
-            }
-
-
-    }
-  };
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const onTextInputChange = (entries, col, value, attribute, attribute_type) => {
@@ -152,17 +55,20 @@ export default function Type({cache}) {
         dispatch({type: LOADING})
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
         const values = await valuesRaw.json();
-        let entries, attributes, columns, entity_type_id;
+        let entries, attributes, columns, entity_type_id_parent, entity_type_id;
   
         entries = values.data;
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
+        entity_type_id_parent = values.metadata.entity_type_id_parent;
         entity_type_id = values.metadata.entity_type_id;
-  
+        
+        
+        dispatch({type: SET_ENTITY_TYPE_ID_PARENT, payload: entity_type_id_parent});
+        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
         dispatch({type: SET_VALUES, payload: entries});
-        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
       } catch (ex) {
         console.error(ex.stack)
       } finally {
@@ -184,7 +90,7 @@ export default function Type({cache}) {
             headers: {
               'Content-type': 'application/json'
             },
-            body: JSON.stringify({entries: state.values, entity_type_id: state.entity_type_id, entity_id: id })
+            body: JSON.stringify({entries: state.values, entity_type_id: state.entity_type_id_parent, entity_id: state.entity_type_id })
           });
           const { message, homepage } = await response.json();    
           dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
@@ -196,14 +102,15 @@ export default function Type({cache}) {
           dispatch({type: CLEANUP})
         }
     })();
-  }, [state.values, state.columns, id, entity_type_slug, state.entity_type_id]);
+  }, [state.values, id, entity_type_slug, state.entity_type_id_parent,state.entity_type_id]);
 
   const onDelete = useCallback((evt) => {
     evt.preventDefault();
     (async () => {
         try {
+
           dispatch({type: DELETING})
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${state.entity_type_id}`, {
             method: 'DELETE',
             headers: {
               'Content-type': 'application/json'
@@ -219,7 +126,7 @@ export default function Type({cache}) {
           dispatch({type: CLEANUP})
         }
     })();
-  }, [entity_type_slug, id]);
+  }, [entity_type_slug, state.entity_type_id]);
  
   return (
     <CacheContext.Provider value={cache}>

@@ -82,6 +82,9 @@ async function get(req, res) {
           ...(!collection.metadata.type && { type: item.entity_type_slug }),
           ...(!collection.metadata.id && {
             entity_type_id: item.entity_type_id,
+            entity_type_slug: item.entities_slug,
+            entity_type_id_parent: item.slug,
+            
           }),
           attributes: {
             ...collection.metadata.attributes,
