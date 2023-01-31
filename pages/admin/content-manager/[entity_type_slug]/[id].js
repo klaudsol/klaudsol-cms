@@ -152,12 +152,11 @@ export default function Type({cache}) {
         dispatch({type: LOADING})
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
         const values = await valuesRaw.json();
-        let entries, attributes, columns, entity_type_id;
-  
-        entries = values.data;
-        columns = Object.keys(values.metadata.attributes);
-        attributes = Object.values(values.metadata);
-        entity_type_id = values.metadata.entity_type_id;
+
+        const entries = values.data;
+        const columns = Object.keys(values.metadata.attributes);
+        const attributes = Object.values(values.metadata);
+        const entity_type_id = values.metadata.entity_type_id;
   
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
