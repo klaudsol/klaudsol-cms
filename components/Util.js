@@ -67,6 +67,10 @@ export const useIndex = (array) => useMemo(() => (
   ),[array]);
 
 export const sortByOrderAsc = (first, second) => first[1].order - second[1].order; 
+
+export const isNumber = (str) => {
+  return !isNaN(str);
+}
   
 
 

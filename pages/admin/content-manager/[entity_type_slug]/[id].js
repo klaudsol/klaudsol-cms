@@ -20,7 +20,7 @@ import { VscListSelection } from 'react-icons/vsc';
 import { Col } from "react-bootstrap";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
 export default function Type({cache}) {
   const router = useRouter();
@@ -238,8 +238,8 @@ export default function Type({cache}) {
         <div className="row mt-4">
           <div className="col-9">
             <div className="container_new_entry py-4 px-4"> 
-            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
-                <div>
+            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, (_, i) => (
+                <div key={i}>
                   <div className="skeleton-label" />
                   <div className="skeleton-text" />
                   <div />
@@ -296,7 +296,15 @@ export default function Type({cache}) {
           
         </div>
          </div>
-         <AppInfoModal show={state.show} onClose={() => (dispatch({type: SET_SHOW, payload: false}) ,router.push(`/admin/content-manager/${entity_type_slug}`) )} modalTitle='Success' buttonTitle='Close'> {state.modalContent} </AppInfoModal>
+         <AppInfoModal show={state.show} 
+                       onClose={() => 
+                       (dispatch({type: SET_SHOW, payload: false}),
+                       redirectToManagerEntitySlug(router,entity_type_slug) 
+                       )}  
+                       modalTitle='Success' 
+                       buttonTitle='Close'> 
+                       {state.modalContent} 
+                       </AppInfoModal>
          
       </ContentManagerLayout>
       </div>

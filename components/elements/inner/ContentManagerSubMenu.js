@@ -87,13 +87,11 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
             </div>
 
             <div className="d-flex flex-column mx-0 px-0">
-            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, () => (
-  
-                    <div className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
-                     <div className='skeleton-bullet'/>
-                     <div className='skeleton-submenu-text' />
-                   </div>
-       
+            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, (_, i) => (
+                <div key={i} className='d-flex flex-row align-items-center justify-content-start skeleton-submenu'>
+                    <div className='skeleton-bullet'/>
+                    <div className='skeleton-submenu-text' />
+               </div>
               ))}
                { !state.isLoading &&
                   rootState.entityTypes.map((type, i) => (
