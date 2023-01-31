@@ -131,17 +131,27 @@ class Entity {
     static async where({entity_type_slug}) {
       const db = new DB();
 
-      const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
-                  attributes.name, attributes.type, attributes.\`order\`,
-                  \`values\`.value_string, 
-                  \`values\`.value_long_string, 
-                  \`values\`.value_integer, 
-                  \`values\`.value_datetime, 
-                  \`values\`.value_double                       
+      const sql = `SELECT 
+                    entities.id, 
+                    entity_types.id, 
+                    entity_types.name, 
+                    entity_types.slug, 
+                    entities.slug, 
+                    attributes.name, 
+                    attributes.type, 
+                    attributes.\`order\`,
+                    \`values\`.value_string, 
+                    \`values\`.value_long_string, 
+                    \`values\`.value_integer, 
+                    \`values\`.value_datetime, 
+                    \`values\`.value_double,
+                    images.name,
+                    images.link
                   FROM entities
                   LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
                   LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
                   LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+                  LEFT JOIN images ON images.entity_id = entities.id AND images.value_id = values.id AND images.attribute_id = attributes.id
                   WHERE 
                       entity_types.slug = :entity_type_slug  
                   ORDER BY entities.id, attributes.\`order\` ASC
@@ -164,7 +174,9 @@ class Entity {
           {stringValue: value_long_string},
           {longValue: value_integer},
           {stringValue: value_datetime},
-          {stringValue: value_double}
+          {stringValue: value_double},
+          {stringValue: images_name},
+          {stringValue: images_link}
         ]) => ({
           id, 
           entity_type_id,
@@ -178,7 +190,9 @@ class Entity {
           value_long_string,
           value_integer,
           value_datetime,
-          value_double
+          value_double,
+          images_name,
+          images_link
         })); 
   }
 

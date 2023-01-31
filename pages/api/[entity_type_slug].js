@@ -67,9 +67,8 @@ async function handler(req, res) {
       const initialFormat = {
         indexedData: {}
       };      
-      
+
       const dataTemp = rawData.reduce((collection, item) => {
-        
         return {
           indexedData: {
             ...collection.indexedData,

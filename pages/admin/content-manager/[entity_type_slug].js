@@ -111,19 +111,22 @@ export default function ContentManager({cache}) {
           dispatch({type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type});
           let columns = [];
           let entries = [];
+            
+            console.log(values);
   
-          entries = Object.values(values.data);
-          columns = Object.keys(values.metadata.attributes).map(col => {
-            return {
-              accessor: col, 
-              displayName: col.toUpperCase(),
-            }
-          });
-  
-          columns.unshift({accessor: 'slug', displayName: 'SLUG'});
-          columns.unshift({accessor: 'id', displayName: 'ID'});
-          dispatch({type: SET_COLUMNS, payload: columns});
-          dispatch({type: SET_VALUES, payload: entries});
+  /*         entries = Object.values(values.data); */
+  /*         columns = Object.keys(values.metadata.attributes).map(col => { */
+  /*           return { */
+  /*             accessor: col,  */
+  /*             displayName: col.toUpperCase(), */
+  /*           } */
+  /*         }); */
+  /*  */
+  /*         columns.unshift({accessor: 'slug', displayName: 'SLUG'}); */
+  /*         columns.unshift({accessor: 'id', displayName: 'ID'}); */
+  /**/
+  /*         dispatch({type: SET_COLUMNS, payload: columns}); */
+  /*         dispatch({type: SET_VALUES, payload: entries}); */
         } catch (ex) {
           console.error(ex.stack)
         } finally {

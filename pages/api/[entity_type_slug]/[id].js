@@ -57,7 +57,6 @@ async function get(req, res) {
     const { entity_type_slug, id } = req.query;
 
     const rawData = await Entity.find({ entity_type_slug, id });
-    console.log(rawData);
 
     const initialFormat = {
       data: {},
@@ -118,7 +117,7 @@ async function del(req, res) {
 
     const { id } = req.query;
     const imagesData = await Entity.findImagesFromEntity(id);
-    const imageKeys = s3Values.map((value) => value[4].stringValue);
+    const imageKeys = imagesData.map((value) => value[4].stringValue);
 
     if (imageKeys.length > 0) await deleteFilesFromBucket(imageKeys);
 
