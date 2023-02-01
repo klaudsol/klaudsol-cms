@@ -49,7 +49,7 @@ const FileField = (props) => {
           ref={inputRef}
         />
         <span className={props.className} onClick={openUploadMenu}>
-          {value instanceof File ? value?.name : value?.originalName}
+          {value?.name}
         </span>
         <AppButtonLg
           title="Browse..."
