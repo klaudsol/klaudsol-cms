@@ -14,6 +14,7 @@ const FileField = (props) => {
 
   const setFileValue = (e) => {
     const file = e.target.files[0];
+
     setImageLink(URL.createObjectURL(file));
 
     setFieldValue(field.name, file);
@@ -21,12 +22,19 @@ const FileField = (props) => {
 
   const openUploadMenu = () => {
     inputRef.current.click();
-    setTouched({ ...touched, [field.name]: true });
+
+    const checkIfUnfocused = () => {
+      if (!value) setTouched({ ...touched, [field.name]: true });
+
+      document.body.onfocus = null;
+    };
+
+    document.body.onfocus = checkIfUnfocused;
   };
 
   return (
     <div>
-      <div className='field_base'>
+      <div className="field_base">
         <input
           type="file"
           onChange={setFileValue}
@@ -49,7 +57,7 @@ const FileField = (props) => {
         />
       </div>
       {imageLink && (
-        <div className={`${props.className} field_image`} >
+        <div className={`${props.className} field_image`}>
           <Image
             src={imageLink}
             alt={value.name}
