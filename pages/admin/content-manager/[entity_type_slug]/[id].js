@@ -60,9 +60,7 @@ export default function Type({cache}) {
         entries = values.data;
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
-        entity_type_id_parent = values.metadata.entity_type_id_parent;
-        entity_type_id = values.metadata.entity_type_id;
-        
+       
         
         dispatch({type: SET_ENTITY_TYPE_ID_PARENT, payload: entity_type_id_parent});
         dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
@@ -75,7 +73,7 @@ export default function Type({cache}) {
         dispatch({type: CLEANUP})
       }
     
-
+      
 
     })();
   }, [entity_type_slug, id]);
@@ -90,7 +88,7 @@ export default function Type({cache}) {
             headers: {
               'Content-type': 'application/json'
             },
-            body: JSON.stringify({entries: state.values, entity_type_id: state.entity_type_id_parent, entity_id: state.entity_type_id })
+            body: JSON.stringify({entries: state.values, entity_type_slug, entity_id: id })
           });
           const { message, homepage } = await response.json();    
           dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
@@ -102,7 +100,7 @@ export default function Type({cache}) {
           dispatch({type: CLEANUP})
         }
     })();
-  }, [state.values, id, entity_type_slug, state.entity_type_id_parent,state.entity_type_id]);
+  }, [state.values, id, entity_type_slug]);
 
   const onDelete = useCallback((evt) => {
     evt.preventDefault();
@@ -110,7 +108,7 @@ export default function Type({cache}) {
         try {
 
           dispatch({type: DELETING})
-          const response = await slsFetch(`/api/${entity_type_slug}/${state.entity_type_id}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: 'DELETE',
             headers: {
               'Content-type': 'application/json'
@@ -126,7 +124,7 @@ export default function Type({cache}) {
           dispatch({type: CLEANUP})
         }
     })();
-  }, [entity_type_slug, state.entity_type_id]);
+  }, [entity_type_slug,id]);
  
   return (
     <CacheContext.Provider value={cache}>
