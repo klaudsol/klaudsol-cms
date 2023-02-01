@@ -266,14 +266,13 @@ class Entity {
     const deleteEntitiesSQL = 'DELETE from entities where id = :id'
     const deleteAttributesSQL = 'DELETE from attributes where entity_type_id = :id'
     const deleteValuesSQL = 'DELETE from \`values\` where entity_id = :id'
-    const getValuesSQL = 'SELECT * FROM \`values\` where entity_id = :id'
 
     let executeStatementParam = [
       { name: 'id', value: { stringValue: id } }
     ]
-    await db.executeStatement(deleteEntitiesSQL, executeStatementParam);
-    await db.executeStatement(deleteAttributesSQL, executeStatementParam);
     await db.executeStatement(deleteValuesSQL, executeStatementParam);
+    await db.executeStatement(deleteAttributesSQL, executeStatementParam);
+    await db.executeStatement(deleteEntitiesSQL, executeStatementParam);
 
 
     return true;
@@ -331,18 +330,6 @@ class Entity {
 
     return true;
   }
-
-    static async findImagesFromEntity(id) {
-        const db = new DB();
-
-        const imageIntrospectionSQL = `SELECT * FROM images WHERE entity_id = :entity_id`;
-        const images = await db.executeStatement(imageIntrospectionSQL, [
-          {name: 'entity_id', value:{ longValue: id }},
-        ]);
-
-        return images.records;
-    }
-
 }
 
 

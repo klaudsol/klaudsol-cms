@@ -115,11 +115,11 @@ async function del(req, res) {
       req
     );
 
-    const { id } = req.query;
-    const imagesData = await Entity.findImagesFromEntity(id);
-    const imageKeys = imagesData.map((value) => value[4].stringValue);
+    const { entity_type_slug, id } = req.query;
+    const entity = await Entity.find({ entity_type_slug, id });
+    const imageNames = entity.flatMap((item) => item.attributes_type === "image" ? item.value_string : []);
 
-    if (imageKeys.length > 0) await deleteFilesFromBucket(imageKeys);
+    if (imageNames.length > 0) await deleteFilesFromBucket(imageNames);
 
     await Entity.delete({ id });
 
