@@ -1,8 +1,9 @@
 import cx from "classnames";
 import FileField from "@/components/fields/FileField";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
+import ErrorRenderer from "./ErrorRenderer";
 
-const FloatRenderer = ({ className, name, type, errors, touched, accept }) => (
+const UploadRenderer = ({ className, name, type, errors, touched, accept }) => (
   <>
     <FileField
       accept={accept}
@@ -15,7 +16,8 @@ const FloatRenderer = ({ className, name, type, errors, touched, accept }) => (
           : {}
       }
     />
+    <ErrorRenderer name={name} errors={errors} touched={touched} />
   </>
 );
 
-export default FloatRenderer;
+export default UploadRenderer;

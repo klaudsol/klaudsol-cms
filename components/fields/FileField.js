@@ -1,35 +1,33 @@
-import { useState, useRef, useEffect } from "react";
-import { useFormikContext, useField } from "formik";
+import { useState, useRef } from "react";
+import { useFormikContext, useField, Field } from "formik";
 import Image from "next/image";
 import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
 
 const FileField = (props) => {
-  const [showImage, setShowImage] = useState("");
-  const inputRef = useRef();
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue, setTouched, touched } = useFormikContext();
   const [field] = useField(props);
+
   const { onChange, value, ...formattedField } = field;
+
+  const [imageLink, setImageLink] = useState(value && value.link);
+  const inputRef = useRef();
 
   const setFileValue = (e) => {
     const file = e.target.files[0];
-    setShowImage(URL.createObjectURL(file));
+    setImageLink(URL.createObjectURL(file));
 
     setFieldValue(field.name, file);
   };
 
-  const openUploadMenu = () => inputRef.current.click();
-
-  useEffect(() => {
-    if (!value?.key) return;
-
-    setShowImage(value.link);
-  }, [value]);
+  const openUploadMenu = () => {
+    inputRef.current.click();
+    setTouched({ ...touched, [field.name]: true });
+  };
 
   // Temporary. Create css class later. Can't think of a name right now
   const styles = {
     display: "flex",
     justifyContent: "center",
-    position: "relative",
   };
 
   const buttonStyle = {
@@ -48,13 +46,17 @@ const FileField = (props) => {
       <div style={styles}>
         <input
           type="file"
-          {...props}
-          {...formattedField}
           onChange={setFileValue}
           hidden="hidden"
           ref={inputRef}
+          {...formattedField}
         />
-        <span className={props.className} onClick={openUploadMenu}>
+        <span
+          className={props.className}
+          style={props.style}
+          value={value?.name || ""}
+          onClick={openUploadMenu}
+        >
           {value?.name}
         </span>
         <AppButtonLg
@@ -64,10 +66,10 @@ const FileField = (props) => {
           onClick={openUploadMenu}
         />
       </div>
-      {showImage && (
+      {imageLink && (
         <div className={props.className} style={imgStyle}>
           <Image
-            src={showImage}
+            src={imageLink}
             alt={value.name}
             width={400}
             height={300}
