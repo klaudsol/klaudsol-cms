@@ -131,7 +131,7 @@ async function create(req, res) {
         const { files, body: bodyRaw } = req;
         const body = JSON.parse(JSON.stringify(bodyRaw));
         const entry = files.length > 0 ? await addImagesToBucket(files, body) : body;
-  
+
         await Entity.create(entry);
 
         res.status(OK).json({message: 'Successfully created a new entry'}) 

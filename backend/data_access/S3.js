@@ -50,9 +50,7 @@ export const getS3Params = (files) => {
 
 export const generateUniqueKey = async (key) => {
   const randVal = await generateRandVals(4);
-  const keySplit = key.split(" ");
-  const keyJoin = keySplit.join("_");
-  const formattedKey = `${randVal}_${keyJoin}`;
+  const formattedKey = `${randVal}_${key}`;
 
   return formattedKey;
 };
@@ -73,11 +71,7 @@ export const formatS3Params = async (params) => {
 
 export const generateEntry = (resFromS3, file, body) => {
   const fileProperty = {
-    [file.fieldname]: {
-      originalName: file.originalname,
-      link: resFromS3.Location,
-      name: resFromS3.Key,
-    },
+    [file.fieldname]: resFromS3.Key,
   };
 
   return { ...fileProperty, ...body };

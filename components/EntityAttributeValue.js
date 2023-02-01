@@ -7,8 +7,11 @@
         return item.value_long_string;
       case 'image':
         if(!item.value_string) return;
+        const bucketBaseUrl = process.env.AWS_S3_BASE_URL;
 
-        return { originalName: item.value_string, name: item.images_name, link: item.images_link };
+        const link = `${bucketBaseUrl}/`
+
+        return { name: item.value_string, link };
       case 'float':
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);

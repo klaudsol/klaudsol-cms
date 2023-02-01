@@ -81,8 +81,7 @@ export default FileField;
 // saves it as form data on state.
 
 // HOW IT WORKS:
-// This field accepts all of the atrributes of an input, and two special attributes:
-// The 'name' of the <Field> element to mirror (fieldToMirror), and the optional
-// format function (format). We need the name of the <Field> element that
-// we need to mirror so that we can mirror it, and the format function lets us
-// format our mirrored input.
+// This field is specifically for uploading images because if we were to use the
+// regular field input without any modifications, then the only the path of the
+// file will be stored, not the file itself. There's also multiple elements
+// aside from an input box due to styling
