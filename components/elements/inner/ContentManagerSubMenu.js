@@ -4,11 +4,8 @@ import RootContext from "@/components/contexts/RootContext";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
 import Link from "next/link";
 import { loadEntityTypes } from "@/components/reducers/actions";
-import { SET_CURRENT_TYPE_SLUG } from "@/components/reducers/actions";
 /** kladusol CMS components */
 import AppIconButton from "@/components/klaudsolcms/buttons/AppIconButton";
-import { SET_ENTITY_TYPES } from "@/components/reducers/actions";
-
 /** react icons */
 import { FaSearch } from "react-icons/fa";
 
@@ -60,11 +57,10 @@ const ContentManagerSubMenu = ({ title, currentTypeSlug }) => {
         onEndLoad,
       });
     })();
-  }, [rootState.entityTypesHash, rootState.entityTypes]);
+  }, [rootState]);
 
 
-  console.log(rootState.currentTypeSlug)
-  
+ 
   return (
     <>
       <div className="submenu_container">
@@ -102,11 +98,10 @@ const ContentManagerSubMenu = ({ title, currentTypeSlug }) => {
                 <button
                   key={i}
                   className={
-                    (currentTypeSlug ?? rootState.currentTypeSlug) === type.entity_type_slug
+                    currentTypeSlug === type.entity_type_slug
                       ? "content_menu_item_active"
                       : "content_menu_item"
                   }
-                  onClick={() => {rootDispatch({type:SET_CURRENT_TYPE_SLUG, payload:{currentTypeSlug:type.entity_type_slug}})}}
                 >
                   <li> {type.entity_type_name} </li>
                 </button>

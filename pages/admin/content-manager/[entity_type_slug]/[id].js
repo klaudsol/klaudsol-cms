@@ -224,7 +224,7 @@ export default function Type({cache}) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
-      <ContentManagerLayout>
+      <ContentManagerLayout currentTypeSlug={entity_type_slug}>
       <div className="py-4">
         <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">

@@ -3,7 +3,6 @@ import {
   RESET_CLIENT_SESSION,
   SET_ENTITY_TYPES,
   SET_COLLAPSE,
-  SET_CURRENT_TYPE_SLUG
 } from '@/components/reducers/actions';
 
 export const rootInitialState = {
@@ -34,12 +33,6 @@ export const rootReducer = (state, action) => {
           entityTypes: action.payload.entityTypes,
           entityTypesHash: action.payload.entityTypesHash,
         }
-
-      case  SET_CURRENT_TYPE_SLUG:
-          return {
-            ...state,
-            currentTypeSlug: action.payload.currentTypeSlug
-          }
 
       case 'SET_ENTITY_TYPE':
         return {
