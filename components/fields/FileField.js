@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useFormikContext, useField, Field } from "formik";
+import { useFormikContext, useField } from "formik";
 import Image from "next/image";
 import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
 
@@ -24,26 +24,9 @@ const FileField = (props) => {
     setTouched({ ...touched, [field.name]: true });
   };
 
-  // Temporary. Create css class later. Can't think of a name right now
-  const styles = {
-    display: "flex",
-    justifyContent: "center",
-  };
-
-  const buttonStyle = {
-    // For aliging with the input
-    // The input has a marginBottom: .5rem for some reason
-    marginBottom: "0.5rem",
-    marginLeft: 0,
-  };
-
-  const imgStyle = {
-    textAlign: "center",
-  };
-
   return (
     <div>
-      <div style={styles}>
+      <div className='field_base'>
         <input
           type="file"
           onChange={setFileValue}
@@ -61,13 +44,12 @@ const FileField = (props) => {
         </span>
         <AppButtonLg
           title="Browse..."
-          className="btn_general_lg--invert_colors"
-          style={buttonStyle}
+          className="btn_general_lg--invert_colors field_btn"
           onClick={openUploadMenu}
         />
       </div>
       {imageLink && (
-        <div className={props.className} style={imgStyle}>
+        <div className={`${props.className} field_image`} >
           <Image
             src={imageLink}
             alt={value.name}

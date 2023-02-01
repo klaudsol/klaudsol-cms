@@ -521,6 +521,23 @@ $onFocus: #323C4E;
     font-size: 12px;
 }
 
+/** Upload field **/
+.field_base {
+    display: flex;
+    justify-content: center;
+}
+
+.field_btn {
+    // For aliging with the input
+    // The input has a marginBottom: .5rem for some reason
+    margin-bottom: 0.5rem;
+    margin-left: 0;
+}
+
+.field_image {
+    text-align: center;
+}
+
 /** Add field type **/
 
 .btn_add_field {
