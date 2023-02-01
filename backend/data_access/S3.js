@@ -139,7 +139,14 @@ export const addImagesToBucket = async (files, body) => {
   const params = await formatS3Params(paramsRaw);
   const resFromS3 = await uploadFilesToBucket(params);
   const entry = await generateEntries(resFromS3, files, body);
-  console.log(entry);
 
   return entry;
+};
+
+export const updateImagesFromBucket = async (files, bodyRaw) => {
+  const { toDelete, ...body } = bodyRaw;
+  const deletedFiles = await deleteFilesFromBucket(toDelete);
+  const uploadedFiles = await addImagesToBucket(files, body);
+
+  return uploadedFiles;
 };

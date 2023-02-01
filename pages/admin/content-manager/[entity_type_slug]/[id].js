@@ -112,6 +112,39 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
+  const getAllFiles = (entry) => {
+    const initialValue = {};
+    const reducer = (acc, curr) => {
+      if (!(entry[curr] instanceof File)) return acc;
+
+      return { ...acc, [curr]: entry[curr] };
+    };
+
+    const entryKeys = Object.keys(entry);
+    const allFiles = entryKeys.reduce(reducer, initialValue);
+
+    return allFiles;
+  };
+
+  const getS3Keys = (files) => {
+    const fileKeys = Object.keys(files);
+    const s3Keys = fileKeys.map((file) => state.values[file].key);
+
+    return s3Keys;
+  };
+
+  const convertToFormData = (entry) => {
+    const formData = new FormData();
+    const propertyNames = Object.keys(entry);
+    propertyNames.forEach((property) => {
+      if (entry[property]?.key) return;
+
+      formData.append(property, entry[property]);
+    });
+
+    return formData;
+  };
+
   const formikParams = {
     innerRef: formRef,
     initialValues: getFormikInitialVals(),
@@ -119,17 +152,27 @@ export default function Type({ cache }) {
       (async () => {
         try {
           dispatch({ type: actions.SAVING });
+
+          const filesToUpload = getAllFiles(values);
+          const s3Keys = getS3Keys(filesToUpload);
+          const newVals = {
+            ...values,
+            toDelete: s3Keys,
+          };
+
+          const entry = {
+            ...newVals,
+            entity_type_id: state.entity_type_id,
+            entity_id: id,
+          };
+
+          const formattedEntries = convertToFormData(entry);
+
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "PUT",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              entries: state.values,
-              entity_type_id: state.entity_type_id,
-              entity_id: id,
-            }),
+            body: formattedEntries,
           });
+
           const { message, homepage } = await response.json();
           dispatch({
             type: actions.SET_MODAL_CONTENT,

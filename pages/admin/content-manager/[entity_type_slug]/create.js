@@ -106,7 +106,6 @@ export default function CreateNewEntry({ cache }) {
     propertyNames.forEach((property) => {
       formData.append(property, entry[property]);
     });
-    formData.append('userID', cache.id);
 
     return formData;
   };

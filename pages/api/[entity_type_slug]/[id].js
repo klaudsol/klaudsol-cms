@@ -29,11 +29,18 @@ import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders } from "@/lib/API";
+import { setCORSHeaders, parseFormData } from "@/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert } from "@/lib/Permissions";
+import { updateImagesFromBucket } from "@/backend/data_access/S3";
 
 export default withSession(handler);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 async function handler(req, res) {
   try {
@@ -41,7 +48,11 @@ async function handler(req, res) {
       case "GET":
         return get(req, res);
       case "PUT":
-        return update(req, res);
+        const { req: parsedReq, res: parsedRes } = await parseFormData(
+          req,
+          res
+        );
+        return update(parsedReq, parsedRes);
       case "DELETE":
         return del(req, res);
       default:
@@ -117,7 +128,9 @@ async function del(req, res) {
 
     const { entity_type_slug, id } = req.query;
     const entity = await Entity.find({ entity_type_slug, id });
-    const imageNames = entity.flatMap((item) => item.attributes_type === "image" ? item.value_string : []);
+    const imageNames = entity.flatMap((item) =>
+      item.attributes_type === "image" ? item.value_string : []
+    );
 
     if (imageNames.length > 0) await deleteFilesFromBucket(imageNames);
 
@@ -138,15 +151,18 @@ async function update(req, res) {
       req
     );
 
-    const {
-      entries = null,
-      entity_id = null,
-      entity_type_id = null,
-    } = req.body;
+    const { files, body: bodyRaw } = req;
+    const { entity_type_id, entity_id, ...entriesRaw } = JSON.parse(
+      JSON.stringify(bodyRaw)
+    );
+    const entriesToBeFormatted = {
+      ...entriesRaw,
+      toDelete: entriesRaw.toDelete.split(","),
+    };
 
-    console.log(entries);
+    const entries = await updateImagesFromBucket(files, entriesToBeFormatted);
 
-    /* await Entity.update({ entries, entity_type_id, entity_id }); */
+    await Entity.update({ entries, entity_type_id, entity_id });
     res.status(OK).json({ message: "Successfully created a new entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
