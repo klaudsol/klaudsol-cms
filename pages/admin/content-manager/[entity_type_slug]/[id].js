@@ -212,7 +212,7 @@ export default function Type({ cache }) {
                 </div>
               </div>
               <div className="col-3 mx-0">
-                <div className="container_new_entry edit_new_entry px-3 py-4">
+                <div className="container_new_entry px-3 py-4">
                   <p style={{ fontSize: "11px" }}> INFORMATION </p>
                   <div className="block_bar"></div>
 

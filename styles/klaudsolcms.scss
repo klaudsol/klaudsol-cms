@@ -686,19 +686,14 @@ height: 100%;
 **/
 
 .container_new_entry {
+    height: fit-content;
     background-color: #fff;
     border: 1px solid lightgray;
     justify-content: start;
     align-items: flex-start;
     text-align: start;
-    height: fit-content;
+    margin-bottom: 10px;
 }
-
-.edit_new_entry {
-    height: fit-content;
-}
-
-
 
 .input_text {
     width: 100%;
