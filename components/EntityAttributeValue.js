@@ -10,7 +10,8 @@
 
         const key = item.value_string;
         const name = key.substring(key.indexOf('_') + 1);
-        const link = `${bucketBaseUrl}/`
+        const keyForLink = key.split(' ').join('+');
+        const link = `${bucketBaseUrl}/${keyForLink}`
 
         return { name, key, link };
       case 'float':
