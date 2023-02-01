@@ -27,7 +27,7 @@ export default function ContentManager({cache}) {
   const { entity_type_slug } = router.query;
 
   /** Data Arrays : to be fetched from database soon */
-
+ 
   const entryNumber = [
     {name: '10'}, 
     {name: '20'},
@@ -98,7 +98,7 @@ export default function ContentManager({cache}) {
         }
     }
   };
-  
+
   const [state, dispatch] = useReducer(reducer, initialState);
 
     /*** Entity Types List ***/
@@ -133,13 +133,12 @@ export default function ContentManager({cache}) {
 
       })();
     }, [entity_type_slug]);
-
+  
   return (
     <CacheContext.Provider value={cache}>
     <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-   
-      <ContentManagerLayout>
-     
+
+      <ContentManagerLayout currentTypeSlug={entity_type_slug}>
         <div className="py-4">
         <AppBackButton link='/admin' />
         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">

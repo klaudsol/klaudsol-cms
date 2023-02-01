@@ -8,6 +8,7 @@ export const SET_CLIENT_SESSION = 'SET_CLIENT_SESSION';
 export const RESET_CLIENT_SESSION = 'RESET_CLIENT_SESSION';
 export const SET_ENTITY_TYPES = 'SET_ENTITY_TYPES';
 export const SET_COLLAPSE = 'SET_COLLAPSE';
+export const SET_CURRENT_TYPE_SLUG = 'SET_CURRENT_TYPE_SLUG';
 
 export async function loadEntityTypes ({rootState, rootDispatch, 
   onStartLoad = () => {}, 
@@ -23,7 +24,7 @@ export async function loadEntityTypes ({rootState, rootDispatch,
     if(rootState.entityTypesHash !== entityTypes.metadata.hash) { 
       rootDispatch({type: SET_ENTITY_TYPES, payload: {
           entityTypes: entityTypes.data,
-          entityTypesHash: entityTypes.metadata.hash
+          entityTypesHash: entityTypes.metadata.hash,
       }});
     }
   } catch (ex) {
