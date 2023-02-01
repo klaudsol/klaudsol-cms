@@ -74,7 +74,6 @@ const ContentManagerSubMenu = ({ title, currentTypeSlug }) => {
           </div>
           <div className="submenu_bar"></div>
         </div>
-
         <div className="d-flex justify-content-between align-items-center px-3 pt-2">
           <p className="content_manager_type_title"> COLLECTION TYPES </p>
           <p className="type_number"> {rootState.entityTypes.length} </p>
@@ -112,5 +111,8 @@ const ContentManagerSubMenu = ({ title, currentTypeSlug }) => {
     </>
   );
 };
+
+
+ 
 
 export default ContentManagerSubMenu;
