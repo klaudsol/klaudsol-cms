@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useFormikContext, useField } from "formik";
 import Image from "next/image";
 import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
@@ -18,6 +18,12 @@ const FileField = (props) => {
   };
 
   const openUploadMenu = () => inputRef.current.click();
+
+  useEffect(() => {
+    if (!value?.key) return;
+
+    setShowImage(value.link);
+  }, [value]);
 
   // Temporary. Create css class later. Can't think of a name right now
   const styles = {
@@ -62,7 +68,7 @@ const FileField = (props) => {
         <div className={props.className} style={imgStyle}>
           <Image
             src={showImage}
-            alt="Your uploaded image"
+            alt={value.name}
             width={400}
             height={300}
             objectFit="contain"
