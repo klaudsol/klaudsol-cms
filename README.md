@@ -44,7 +44,7 @@ nvm use --lts
 
 
 ## Live Demo
-For a live demo, go to https://cms-demo.klaudsol.app
+For a live demo, go to https://cms.demo.klaudsol.app
 
 ```
 Username: admin@klaudsol.com
