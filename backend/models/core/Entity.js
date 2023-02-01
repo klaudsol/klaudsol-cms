@@ -230,9 +230,9 @@ class Entity {
             { name: 'entity_id', value: { longValue: lastInsertedEntityID } },
             { name: 'attribute_id', value: { longValue: attributeId } },
             //Refactor to encapsulate type switch
-            { name: 'value_string', value: ( attributeType == 'text' || attributeType == 'image' || attributeType == 'link' ) ? { stringValue: entries[attributeName] } : { isNull: true } },
-            { name: 'value_long_string', value:  attributeType == 'textarea' ? { stringValue: entries[attributeName] } : { isNull: true } },
-            { name: 'value_double', value:  attributeType == 'float' ? { doubleValue: entries[attributeName] } : { isNull: true } },
+            { name: 'value_string', value: ( attributeType == 'text' || attributeType == 'image' || attributeType == 'link' ) ? { stringValue: entry[attributeName] } : { isNull: true } },
+            { name: 'value_long_string', value:  attributeType == 'textarea' ? { stringValue: entry[attributeName] } : { isNull: true } },
+            { name: 'value_double', value:  attributeType == 'float' ? { doubleValue: entry[attributeName] } : { isNull: true } },
           ]
         ]
       }, []); 
@@ -254,73 +254,6 @@ class Entity {
       
       await db.batchExecuteStatement(insertValuesBatchSQL,valueBatchParams);
         
-      /* // Gets the rows in `values` table that have images */
-      /* const imageAttributes = attributes.records.filter((attribute) => attribute[2].stringValue === 'image'); */
-      /**/
-      /* // If user did not use image attribute, dont proceed */
-      /* if(imageAttributes.length === 0) return true; */
-      /**/
-      /* const imageAttributesIDs = imageAttributes.map((attribute) => attribute[0].longValue) */
-      /* const joinedAttributes = imageAttributesIDs.join(', '); */
-      /* // I had to manually put the joinedAttributes below because if I were to put it on the 2nd */
-      /* // parameter in the values variable, then it will only catch 1 row, not all of it */
-      /* const valueIDsSQL = `SELECT id, attribute_id, value_string  */
-      /*       FROM \`values\`  */
-      /*       WHERE  */
-      /*           entity_id = :entity_id  */
-      /*       AND  */
-      /*           attribute_id IN (${joinedAttributes})  */
-      /*       `; */
-      /**/
-      /* const values = await db.executeStatement(valueIDsSQL,[ */
-      /*   { name: 'entity_id', value: { longValue: lastInsertedEntityID } }, */
-      /*   /* { name: 'attribute_ids', value: { stringValue: joinedAttributes } } */
-      /* ]); */
-      /**/
-      /* // Populates the `image` table */
-      /* const imageBatchParams = values.records.reduce((collection, record) => { */
-      /*   const [ */
-      /*     { longValue: valueId }, */
-      /*     { longValue: attributeId }, */
-      /*     { stringValue: imageName }, */
-      /*   ] = record; */
-      /**/
-      /*   // The return from SELECT in SQL MIGHT not guarantee order */
-      /*   // Line of code below should guarantee order */
-      /*   const currentImageAttribute = imageAttributes.find((attr) => attr[0].longValue === attributeId); */
-      /*   const imageAttributeName = currentImageAttribute[1].stringValue; */
-      /*   const imageAttributeId = currentImageAttribute[0].longValue; */
-      /*   const imageData = entry[imageAttributeName]; */
-      /**/
-      /*   return [  */
-      /*     ...collection, */
-      /*     [ */
-      /*       { name: 'value_id', value: { longValue: valueId } }, */
-      /*       { name: 'attribute_id', value: { longValue: imageAttributeId } }, */
-      /*       { name: 'entity_id', value: { longValue: lastInsertedEntityID } }, */
-      /*       //Refactor to encapsulate type switch */
-      /*       { name: 'link', value: { stringValue: imageData.link } }, */
-      /*       { name: 'name', value: { stringValue: imageData.name } }, */
-      /*     ] */
-      /*   ] */
-      /* }, []);  */
-      /**/
-      /* const insertImagesBatchSQL = `INSERT INTO \`images\`( */
-      /*       value_id,  */
-      /*       attribute_id, */
-      /*       entity_id, */
-      /*       link,  */
-      /*       name  */
-      /*   ) VALUES ( */
-      /*       :value_id,  */
-      /*       :attribute_id,  */
-      /*       :entity_id, */
-      /*       :link,  */
-      /*       :name  */
-      /*   )`;  */
-      /**/
-      /* await db.batchExecuteStatement(insertImagesBatchSQL,imageBatchParams); */
-
       //TODO: end transaction
   
       return true;
