@@ -55,14 +55,13 @@ export default function Type({cache}) {
         dispatch({type: LOADING})
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
         const values = await valuesRaw.json();
-        let entries, attributes, columns, entity_type_id_parent, entity_type_id;
+        let entries, attributes, columns, entity_type_id;
   
         entries = values.data;
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
        
         
-        dispatch({type: SET_ENTITY_TYPE_ID_PARENT, payload: entity_type_id_parent});
         dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
@@ -108,7 +107,7 @@ export default function Type({cache}) {
         try {
 
           dispatch({type: DELETING})
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${state.entity_type_id}`, {
             method: 'DELETE',
             headers: {
               'Content-type': 'application/json'
