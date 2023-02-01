@@ -106,15 +106,15 @@ const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
             <div className="px-3 py-3">
                <div className='d-flex justify-content-between align-items-center mx-0 px-0 my-0 py-0'>
                    <a className='submenu_title'> <b> {title}</b> </a>
-                   <AppIconButton icon={<FaSearch className='search_icon'/>} /> 
+                   {/*<AppIconButton icon={<FaSearch className='search_icon'/>} />*/} 
                 </div>
                <div className="submenu_bar"></div>
             </div>
 
-            <div className="d-flex justify-content-between align-items-center px-3 pt-2">
+            {/*<div className="d-flex justify-content-between align-items-center px-3 pt-2">
                <p className="content_manager_type_title"> COLLECTION TYPES </p>
                <p className="type_number"> {rootState.entityTypes.length} </p>
-            </div>
+            </div>*/}
 
             <div className="d-flex flex-column mx-0 px-0">
               {state.isSkeletonVisible && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, (_,i) => (
