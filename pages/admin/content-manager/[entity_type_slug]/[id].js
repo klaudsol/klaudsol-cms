@@ -21,12 +21,8 @@ import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-<<<<<<< HEAD
-
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-=======
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
->>>>>>> main
 
 import {
   initialState,
@@ -196,7 +192,6 @@ export default function Type({ cache }) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
-<<<<<<< HEAD
         <ContentManagerLayout>
           <div className="py-4">
             <AppBackButton
@@ -258,27 +253,6 @@ export default function Type({ cache }) {
                       )}
                     </Formik>
                   )}
-=======
-      <ContentManagerLayout>
-      <div className="py-4">
-        <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
-        <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
-          <div>
-          <h3> {entity_type_slug} </h3>
-          <a href={`/api/${entity_type_slug}/${id}`} passHref target='_blank' rel="noreferrer">api/{entity_type_slug}/{id}</a>
-          <p> API ID : {id} </p>
-          </div>
-          <AppButtonLg title={state.isSaving ? 'Saving' : 'Save'} icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />} onClick={onSubmit}/>
-        </div>
-        <div className="row mt-4">
-          <div className="col-9">
-            <div className="container_new_entry py-4 px-4"> 
-            {state.isLoading && Array.from({length: DEFAULT_SKELETON_ROW_COUNT}, (_, i) => (
-                <div key={i}>
-                  <div className="skeleton-label" />
-                  <div className="skeleton-text" />
-                  <div />
->>>>>>> main
                 </div>
               </div>
               <div className="col-3 mx-0">
@@ -338,7 +312,6 @@ export default function Type({ cache }) {
               </div>
             </div>
           </div>
-<<<<<<< HEAD
           <AppInfoModal
             show={state.show}
             onClose={() => (
@@ -352,22 +325,6 @@ export default function Type({ cache }) {
             {state.modalContent}{" "}
           </AppInfoModal>
         </ContentManagerLayout>
-=======
-          
-        </div>
-         </div>
-         <AppInfoModal show={state.show} 
-                       onClose={() => 
-                       (dispatch({type: SET_SHOW, payload: false}),
-                       redirectToManagerEntitySlug(router,entity_type_slug) 
-                       )}  
-                       modalTitle='Success' 
-                       buttonTitle='Close'> 
-                       {state.modalContent} 
-                       </AppInfoModal>
-         
-      </ContentManagerLayout>
->>>>>>> main
       </div>
     </CacheContext.Provider>
   );

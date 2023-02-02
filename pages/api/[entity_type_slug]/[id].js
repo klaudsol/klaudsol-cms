@@ -134,7 +134,7 @@ async function del(req, res) {
 
     if (imageNames.length > 0) await deleteFilesFromBucket(imageNames);
 
-    await Entity.delete({ id });
+    await Entity.delete({ id: slug });
 
     res.status(OK).json({ message: "Successfully delete the entry" });
   } catch (error) {
