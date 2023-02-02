@@ -6,7 +6,7 @@ import ErrorRenderer from "./ErrorRenderer";
 const TextRenderer = ({ className, name, type, errors, touched }) => (
   <>
     <Field
-      type={type}
+      type="text"
       name={name}
       className={cx("input_text mb-2", className)}
       validate={(v) => TypesValidator(v, type)}
