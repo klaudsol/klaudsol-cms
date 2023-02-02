@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS `attributes`;
+DROP TABLE IF EXISTS `entities`;
+DROP TABLE IF EXISTS `entity_types`;
+DROP TABLE IF EXISTS `people`;
+DROP TABLE IF EXISTS `sessions`;
+DROP TABLE IF EXISTS `values`;

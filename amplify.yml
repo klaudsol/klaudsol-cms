@@ -6,6 +6,11 @@ frontend:
         - yarn install
     build:
       commands:
+        - (env | grep -e KS_ >> .env.production) || true
+        - (env | grep -e NEXT_PUBLIC_ >> .env.production) || true
+        - (env | grep -e AURORA_ >> .env.production) || true
+        - (env | grep -e SECRET_COOKIE_PASSWORD >> .env.production) || true
+        - (env | grep -e FRONTEND_URL >> .env.production) || true
         - yarn run build
   artifacts:
     baseDirectory: .next

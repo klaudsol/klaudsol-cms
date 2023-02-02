@@ -65,10 +65,11 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
-    const { entity_type_slug, id } = req.query;
+    const { entity_type_slug, id: slug } = req.query;
 
-    const rawData = await Entity.find({ entity_type_slug, id });
+    const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
+    
     const initialFormat = {
       data: {},
       metadata: {
