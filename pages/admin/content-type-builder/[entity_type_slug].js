@@ -196,12 +196,19 @@ export default function ContentTypeBuilder({ cache }) {
 
   const performDelete = ({ typeSlug }) => {
     (async () => {
-      console.error(`deleting... ${typeSlug}`);
-      dispatch({ type: HIDE_DELETE_CONFIRMATION_MODAL });
-      await slsFetch(`/api/entity_types/${typeSlug}`, {
-        method: "DELETE",
-      });
-      loadEntityTypes({ rootState, rootDispatch });
+      try {
+        dispatch({ type: LOADING, payload: true });
+        await slsFetch(`/api/entity_types/${typeSlug}`, {
+          method: "DELETE",
+        });
+        loadEntityTypes({ rootState, rootDispatch });
+          
+        router.push(`/admin`) 
+      } catch (err) {
+      } finally {
+        dispatch({ type: HIDE_DELETE_CONFIRMATION_MODAL })
+        dispatch({ type: LOADING, payload: false });   
+      }
     })();
   };
 
@@ -338,7 +345,9 @@ export default function ContentTypeBuilder({ cache }) {
               onClose={() => dispatch({ type: HIDE_DELETE_CONFIRMATION_MODAL })}
               modalTitle="Confirm Delete"
               buttonTitle="Delete"
+              isLoading={state.isLoading}
             >
+              
               <div>Are you sure you want to delete this entity type?</div>
             </AppModal>
           </div>
