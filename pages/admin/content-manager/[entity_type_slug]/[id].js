@@ -20,13 +20,16 @@ import { VscListSelection } from 'react-icons/vsc';
 import { Col } from "react-bootstrap";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-
+import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import { useRef } from "react";
+import { SET_ALL_INITIAL_VALUES } from "components/reducers/createReducer";
+import { Formik, Form, Field } from "formik";
 
 export default function Type({cache}) {
   const router = useRouter();
 
   const { entity_type_slug, id } = router.query;
-  
+  const formRef = useRef();
   const initialState = {
     values: [],
     attributes: [],
@@ -54,6 +57,7 @@ export default function Type({cache}) {
   const SET_COLUMNS = 'SET_COLUMNS';
   const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
   const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
+  const SET_ALL_VALIDATES = 'SET_ALL_VALIDATES';
 
   const reducer = (state, action) => {
     switch(action.type) {
@@ -132,6 +136,11 @@ export default function Type({cache}) {
               ...state,
               modalContent: action.payload
             }
+        case SET_ALL_VALIDATES:
+          return {
+            ...state,
+            all_validates: action.payload
+          }
 
 
     }
@@ -139,11 +148,6 @@ export default function Type({cache}) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const onTextInputChange = (entries, col, value, attribute, attribute_type) => {
-    entries[col] = value;
-    entries[attribute] = attribute_type;
-    dispatch({type: SET_VALUES, payload: entries});
-  }
 
   /*** Entity Types List ***/
   useEffect(() => { 
@@ -152,13 +156,19 @@ export default function Type({cache}) {
         dispatch({type: LOADING})
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
         const values = await valuesRaw.json();
-        let entries, attributes, columns, entity_type_id;
-  
+        let entries, attributes, columns, entity_type_id, validateValues;
+       
+
         entries = values.data;
+        validateValues = Object.keys(values.data).reduce((a, v) => ({ ...a, [v]: true}), {})
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
         entity_type_id = values.metadata.entity_type_id;
-  
+
+        console.log(values.metadata)
+        
+        console.log(validateValues)
+        dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
         dispatch({type: SET_VALUES, payload: entries});
@@ -174,29 +184,8 @@ export default function Type({cache}) {
     })();
   }, [entity_type_slug, id]);
 
-  const onSubmit = useCallback((evt) => {
-    evt.preventDefault();
-    (async () => {
-        try {
-          dispatch({type: SAVING})
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-type': 'application/json'
-            },
-            body: JSON.stringify({entries: state.values, entity_type_id: state.entity_type_id, entity_id: id })
-          });
-          const { message, homepage } = await response.json();    
-          dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
-          dispatch({type: SET_SHOW, payload: true})    
-
-        } catch(ex) {
-          console.error(ex);  
-        } finally {
-          dispatch({type: CLEANUP})
-        }
-    })();
-  }, [state.values, state.columns, id, entity_type_slug, state.entity_type_id]);
+ 
+  
 
   const onDelete = useCallback((evt) => {
     evt.preventDefault();
@@ -221,6 +210,46 @@ export default function Type({cache}) {
     })();
   }, [entity_type_slug, id]);
  
+
+
+
+
+   const onSubmit = (evt) => {
+    evt.preventDefault();
+    formRef.current.handleSubmit();
+    state.all_validates &&
+    formRef.current.setTouched({ ...state.all_validates});
+  };
+
+
+  const formikParams = {
+    innerRef: formRef,
+    initialValues: {...state.values},
+    onSubmit: (values) => {
+      (async () => {
+          try {
+            dispatch({type: SAVING})
+            const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-type': 'application/json'
+              },
+              body: JSON.stringify({entries: values, entity_type_id: state.entity_type_id, entity_id: id })
+            });
+            const { message, homepage } = await response.json();    
+            dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
+            dispatch({type: SET_SHOW, payload: true})    
+  
+          } catch(ex) {
+            console.error(ex);  
+          } finally {
+            dispatch({type: CLEANUP})
+          }
+      })();
+    },
+  };
+
+
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
@@ -245,18 +274,27 @@ export default function Type({cache}) {
                   <div />
                 </div>
              ))}
-            { !state.isLoading &&
-          state.attributes.map((attr, i) => (<div key={i}> {
-            state.columns.map((col, i) => attr[col] && (
-            <div key={i}>
-              <p className="mt-1"> <b>{col}</b> </p>
-              {/*Note: this is just a quick and dirty fix. Long term fix is to use the AdminRenderer component*/}
-              {(attr[col].type === 'text' || attr[col].type === 'image' ||attr[col].type === 'link') && (<input type="text"  className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
-              {attr[col].type === 'textarea' && (<textarea className='input_textarea' defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
-              {attr[col].type === 'float' && (<input type="number" className="input_text mb-2" defaultValue={state.values[col]} onChange={e => onTextInputChange(state.values, col, e.target.value, `${col}_type`, attr[col].type)}/>)}
-            </div>
-            ))
-          } </div>))
+            {!state.isLoading &&
+          (<Formik {...formikParams}>
+            {(props) => (
+              <Form>
+              {state.attributes.map((attributeName,index)=> (
+                state.columns.map((name,i) => attributeName[name] && index === 0 && (
+                  <div keys={i}>
+                    <p className="mt-1"> <b>{name}</b> </p>
+                     <AdminRenderer
+                       errors={props.errors}
+                       touched={props.touched}
+                       type={attributeName[name].type}
+                       name={name}
+                      />
+                 </div>
+                ))             
+              ))
+              }       
+              </Form>
+            )}
+          </Formik>)
         }
             </div>
           </div>
