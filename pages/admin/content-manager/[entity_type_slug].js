@@ -21,6 +21,7 @@ import { BsGearFill } from "react-icons/bs";
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
+import {contentManagerReducer, initialState, actions} from "@/components/reducers/contentManagerReducer";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
@@ -35,81 +36,17 @@ export default function ContentManager({ cache }) {
     { name: "100" },
   ];
 
-  const initialState = {
-    values: [],
-    columns: [],
-    rows: [],
-    entity_type_name: null,
-    isLoading: false,
-    isRefresh: true,
-  };
-
-  const LOADING = "LOADING";
-  const REFRESH = "REFRESH";
-  const CLEANUP = "CLEANUP";
-
-  const SET_VALUES = "SET_VALUES";
-  const SET_COLUMNS = "SET_COLUMNS";
-  const SET_ENTITY_TYPE_NAME = "SET_ENTITY_TYPE_NAME";
-  const SET_ROWS = "SET_ROWS";
-
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case LOADING:
-        return {
-          ...state,
-          isLoading: true,
-        };
-
-      case REFRESH:
-        return {
-          ...state,
-          isRefresh: false,
-        };
-
-      case CLEANUP:
-        return {
-          ...state,
-          isLoading: false,
-        };
-
-      case SET_VALUES:
-        return {
-          ...state,
-          values: action.payload,
-        };
-
-      case SET_ENTITY_TYPE_NAME:
-        return {
-          ...state,
-          entity_type_name: action.payload,
-        };
-
-      case SET_COLUMNS:
-        return {
-          ...state,
-          columns: action.payload,
-        };
-
-      case SET_ROWS:
-        return {
-          ...state,
-          rows: action.payload,
-        };
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
   /*** Entity Types List ***/
   useEffect(() => {
     (async () => {
       try {
-        dispatch({ type: LOADING });
+        dispatch({ type: actions.LOADING });
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
         const values = await valuesRaw.json();
 
-        dispatch({ type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type });
+        dispatch({ type: actions.SET_ENTITY_TYPE_NAME, payload: values.metadata.type });
 
         const entries = Object.values(values.data);
         const columnValues = Object.keys(values.metadata.attributes).map(
@@ -123,12 +60,12 @@ export default function ContentManager({ cache }) {
           ...columnValues,
         ];
 
-        dispatch({ type: SET_COLUMNS, payload: columns });
-        dispatch({ type: SET_VALUES, payload: entries });
+        dispatch({ type: actions.SET_COLUMNS, payload: columns });
+        dispatch({ type: actions.SET_VALUES, payload: entries });
       } catch (ex) {
         console.error(ex.stack);
       } finally {
-        dispatch({ type: CLEANUP });
+        dispatch({ type: actions.CLEANUP });
       }
     })();
   }, [entity_type_slug]);

@@ -36,18 +36,6 @@ export const getS3Param = (file) => {
   };
 };
 
-export const getS3Params = (files) => {
-  const initialValue = [];
-  const reducer = (acc, curr) => {
-    const newParamsObj = getS3Param(curr);
-
-    return [...acc, newParamsObj];
-  };
-  const listOfParams = files.reduce(reducer, initialValue);
-
-  return listOfParams;
-};
-
 export const generateUniqueKey = async (key) => {
   const randVal = await generateRandVals(4);
   const formattedKey = `${randVal}_${key}`;
@@ -62,32 +50,11 @@ export const formatS3Param = async (param) => {
   return newParams;
 };
 
-export const formatS3Params = async (params) => {
-  const promises = params.map((param) => formatS3Param(param));
-  const newParams = await Promise.all(promises);
-
-  return newParams;
-};
-
-export const generateEntry = (resFromS3, file, body) => {
-  const fileProperty = {
-    [file.fieldname]: resFromS3.Key,
-  };
-
-  return { ...fileProperty, ...body };
-};
-
 export const generateEntries = (resFromS3, files, body) => {
-  const initialValue = {};
-  const reducer = (acc, curr, i) => {
-    const fileProperty = generateEntry(resFromS3[i], curr, {});
+  const newBody = { ...body };
+  files.forEach((file, i) => (newBody[file.fieldname] = resFromS3[i].Key));
 
-    return { ...fileProperty, ...acc };
-  };
-  const filteredFiles = files.reduce(reducer, initialValue);
-  const entries = { ...body, ...filteredFiles };
-
-  return entries;
+  return newBody;
 };
 
 export const uploadFileToBucket = async ({ Key, Body, ContentType }) => {
@@ -102,13 +69,6 @@ export const uploadFileToBucket = async ({ Key, Body, ContentType }) => {
   };
 
   const res = await s3.upload(params).promise();
-
-  return res;
-};
-
-export const uploadFilesToBucket = async (files) => {
-  const promises = files.map((file) => uploadFileToBucket(file));
-  const res = await Promise.all(promises);
 
   return res;
 };
@@ -134,19 +94,23 @@ export const deleteFilesFromBucket = async (keys) => {
   return res;
 };
 
-export const addImagesToBucket = async (files, body) => {
-  const paramsRaw = getS3Params(files);
-  const params = await formatS3Params(paramsRaw);
-  const resFromS3 = await uploadFilesToBucket(params);
-  const entry = await generateEntries(resFromS3, files, body);
+export const uploadFilesToBucket = async (files, body) => {
+  const promise = await files.map(async (file) => {
+    const paramsRaw = getS3Param(file);
+    const params = await formatS3Param(paramsRaw);
+    const resFromS3 = await uploadFileToBucket(params);
 
-  return entry;
+    return resFromS3;
+  });
+  const resFromS3 = await Promise.all(promise);
+  const entries = await generateEntries(resFromS3, files, body);
+
+  return entries;
 };
 
-export const updateImagesFromBucket = async (files, bodyRaw) => {
-  const { toDelete, ...body } = bodyRaw;
-  const deletedFiles = await deleteFilesFromBucket(toDelete);
-  const uploadedFiles = await addImagesToBucket(files, body);
+export const updateFilesFromBucket = async (files, body, toDelete) => {
+  await deleteFilesFromBucket(toDelete);
+  const uploadedFiles = await uploadFilesToBucket(files, body);
 
   return uploadedFiles;
 };

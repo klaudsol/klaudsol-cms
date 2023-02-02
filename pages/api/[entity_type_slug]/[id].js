@@ -32,7 +32,7 @@ import { resolveValue } from "@/components/EntityAttributeValue";
 import { setCORSHeaders, parseFormData } from "@/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert } from "@/lib/Permissions";
-import { updateImagesFromBucket } from "@/backend/data_access/S3";
+import { updateFilesFromBucket } from "@/backend/data_access/S3";
 
 export default withSession(handler);
 
@@ -155,14 +155,16 @@ async function update(req, res) {
     const { entity_type_id, entity_id, ...entriesRaw } = JSON.parse(
       JSON.stringify(bodyRaw)
     );
-    const entriesToBeFormatted = {
-      ...entriesRaw,
-      toDelete: entriesRaw.toDelete.split(","),
-    };
+    const { toDeleteRaw, ...body } = entriesRaw;
+    const toDelete = toDeleteRaw.split(",");
 
-    const entries = await updateImagesFromBucket(files, entriesToBeFormatted);
+    const entries =
+      files.length > 0
+        ? await updateFilesFromBucket(files, body, toDelete)
+        : body;
 
     await Entity.update({ entries, entity_type_id, entity_id });
+
     res.status(OK).json({ message: "Successfully created a new entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);

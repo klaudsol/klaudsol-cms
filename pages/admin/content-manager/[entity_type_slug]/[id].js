@@ -137,7 +137,10 @@ export default function Type({ cache }) {
     const formData = new FormData();
     const propertyNames = Object.keys(entry);
     propertyNames.forEach((property) => {
-      if (entry[property]?.key) return;
+      if (entry[property]?.key) {
+        formData.append(property, entry[property].key);
+        return;
+      }
 
       formData.append(property, entry[property]);
     });
@@ -157,7 +160,7 @@ export default function Type({ cache }) {
           const s3Keys = getS3Keys(filesToUpload);
           const newVals = {
             ...values,
-            toDelete: s3Keys,
+            toDeleteRaw: s3Keys,
           };
 
           const entry = {
