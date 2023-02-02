@@ -126,8 +126,8 @@ async function del(req, res) {
       req
     );
 
-    const { entity_type_slug, id } = req.query;
-    const entity = await Entity.find({ entity_type_slug, id });
+    const { entity_type_slug, id: slug } = req.query;
+    const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });
     const imageNames = entity.flatMap((item) =>
       item.attributes_type === "image" ? item.value_string : []
     );
