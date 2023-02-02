@@ -159,13 +159,10 @@ export default function Type({ cache }) {
 
           const filesToUpload = getAllFiles(values);
           const s3Keys = getS3Keys(filesToUpload);
-          const newVals = {
-            ...values,
-            toDeleteRaw: s3Keys,
-          };
 
           const entry = {
-            ...newVals,
+            ...values,
+            toDeleteRaw: s3Keys,
             entity_type_id: state.entity_type_id,
             entity_id: id,
           };
