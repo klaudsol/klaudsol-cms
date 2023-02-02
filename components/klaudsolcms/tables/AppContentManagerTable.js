@@ -27,6 +27,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
                 <Link
                   href={`/admin/content-manager/${entity_type_slug}/${entry.id}`}
                   passHref
+                  legacyBehavior
                   key={index}
                 >
                   <td key={index}>{checkEntryIfObject(entry, col.accessor)}</td>
