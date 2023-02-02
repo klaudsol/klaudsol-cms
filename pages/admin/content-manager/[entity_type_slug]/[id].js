@@ -136,6 +136,7 @@ export default function Type({ cache }) {
   const convertToFormData = (entry) => {
     const formData = new FormData();
     const propertyNames = Object.keys(entry);
+
     propertyNames.forEach((property) => {
       if (entry[property]?.key) {
         formData.append(property, entry[property].key);
