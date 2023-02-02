@@ -220,8 +220,8 @@ export default function Type({ cache }) {
               <div className="col-9">
                 <div className="container_new_entry py-4 px-4">
                   {state.isLoading &&
-                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, () => (
-                      <div>
+                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, (e, i) => (
+                      <div key={i}>
                         <div className="skeleton-label" />
                         <div className="skeleton-text" />
                         <div />
