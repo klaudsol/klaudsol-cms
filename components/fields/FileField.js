@@ -61,9 +61,9 @@ const FileField = (props) => {
           <Image
             src={imageLink}
             alt={value.name}
-            width={400}
+            width={300}
             height={300}
-            objectFit="contain"
+            loading="lazy"
           />
         </div>
       )}
