@@ -25,6 +25,8 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+
 import {
   initialState,
   createEntriesReducer,
@@ -166,8 +168,8 @@ export default function CreateNewEntry({ cache }) {
               <div className="col-9">
                 <div className="container_new_entry py-4 px-4">
                   {state.isLoading &&
-                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, () => (
-                      <div>
+                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, (_, i) => (
+                      <div key={i}>
                         <div className="skeleton-label" />
                         <div className="skeleton-text" />
                         <div />
@@ -286,7 +288,7 @@ export default function CreateNewEntry({ cache }) {
           <AppInfoModal
             show={state.show}
             onClose={() =>
-              router.push(`/admin/content-manager/${entity_type_slug}`)
+              redirectToManagerEntitySlug(router,entity_type_slug)
             }
             modalTitle="Success"
             buttonTitle="Close"

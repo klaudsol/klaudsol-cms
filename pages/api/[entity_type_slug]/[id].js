@@ -67,7 +67,7 @@ async function get(req, res) {
   try {
     const { entity_type_slug, id: slug } = req.query;
 
-    const rawData = await Entity.find({ entity_type_slug, slug });
+    const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
     const initialFormat = {
       data: {},

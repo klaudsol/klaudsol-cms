@@ -21,8 +21,8 @@ import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
 import {
   initialState,
