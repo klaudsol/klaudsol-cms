@@ -165,9 +165,7 @@ export default function Type({cache}) {
         attributes = Object.values(values.metadata);
         entity_type_id = values.metadata.entity_type_id;
 
-        console.log(values.metadata)
-        
-        console.log(validateValues)
+
         dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
@@ -211,9 +209,6 @@ export default function Type({cache}) {
   }, [entity_type_slug, id]);
  
 
-
-
-
    const onSubmit = (evt) => {
     evt.preventDefault();
     formRef.current.handleSubmit();
@@ -234,7 +229,7 @@ export default function Type({cache}) {
               headers: {
                 'Content-type': 'application/json'
               },
-              body: JSON.stringify({entries: values, entity_type_id: state.entity_type_id, entity_id: id })
+              body: JSON.stringify({entries: values, entity_type_slug,  entity_id: id })
             });
             const { message, homepage } = await response.json();    
             dispatch({type: SET_MODAL_CONTENT, payload: 'You have successfully edited the entry.'})      
