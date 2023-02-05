@@ -55,16 +55,16 @@ export default function Type({cache}) {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);  
         const values = await valuesRaw.json();
         let entries, attributes, columns, entity_type_id, validateValues;
-       
-
-        entries = values.data;
-        validateValues = Object.keys(values.data).reduce((a, v) => ({ ...a, [v]: true}), {})
+        
+        values.metadata.attributes
+        entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
+        validateValues = Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: true}), {})
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
-       
-      
+        
+                  
         dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
-
+       
         dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
@@ -105,7 +105,7 @@ export default function Type({cache}) {
           dispatch({type: CLEANUP})
         }
     })();
-  }, [entity_type_slug, id,state.entity_type_id]);
+  }, [entity_type_slug,state.entity_type_id]);
  
 
    const onSubmit = (evt) => {
@@ -114,6 +114,7 @@ export default function Type({cache}) {
     state.all_validates &&
     formRef.current.setTouched({ ...state.all_validates});
   };
+
 
 
   const formikParams = {
