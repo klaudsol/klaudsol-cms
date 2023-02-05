@@ -24,8 +24,8 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-         <Link href='/admin' passHref>
-         <a className='sidebar_header'> <b> Dashboard </b> </a>
+         <Link href='/admin' className='sidebar_header' passHref>
+            <b>Dashboard</b>
           </Link>
           
         
@@ -36,8 +36,13 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
             <div>
                 {sidebarButtons.map((button, i) => (
                   <div className='sidebar_button_category_container' key={i}>
-                    <Link key={i} href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} passHref>
-                      <a className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}>{button.icon} {button.title}</a>
+                    <Link 
+                        key={i} 
+                        href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
+                        className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}
+                        passHref
+                    >
+                      {button.icon} {button.title}
                     </Link>
                   </div>
               ))}
