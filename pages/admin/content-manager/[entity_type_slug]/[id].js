@@ -177,7 +177,7 @@ export default function Type({cache}) {
               <Form>
               {state.attributes.map((attributeName,index)=> (
                 state.columns.map((name,i) => attributeName[name] && index === 0 && (
-                  <div keys={i}>
+                  <div key={i}>
                     <p className="mt-1" key={i}> <b>{name}</b> </p>
                      <AdminRenderer
                        errors={props.errors}
