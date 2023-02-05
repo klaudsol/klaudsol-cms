@@ -20,7 +20,22 @@ import { VscListSelection } from 'react-icons/vsc';
 import { Col } from "react-bootstrap";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import 
+{ initialState,
+  reducer, 
+  LOADING,
+  SAVING,
+  DELETING,
+  CLEANUP,
+  SET_ATTRIBUTES,
+  SET_SHOW,
+  SET_MODAL_CONTENT,
+  SET_VALUES,
+  SET_COLUMNS,
+  SET_ENTITY_TYPE_ID,
+  SET_ENTITY_TYPE_ID_PARENT,
+  SET_ALL_VALIDATES
+} from "components/reducers/editAndDeleteReducer";import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { useRef } from "react";
 import { SET_ALL_INITIAL_VALUES } from "components/reducers/createReducer";
 import { Formik, Form, Field } from "formik";
@@ -30,124 +45,7 @@ export default function Type({cache}) {
 
   const { entity_type_slug, id } = router.query;
   const formRef = useRef();
-  const initialState = {
-    values: [],
-    attributes: [],
-    columns: [],
-    entity_type_name: null,
-    isLoading: false,
-    isRefresh: true,
-    isSaving: false,
-    isDeleting: false,
-    show: false,
-    entity_type_id: null,
-    modalContent: null,
-  };
-
-  const LOADING = 'LOADING';
-  const REFRESH = 'REFRESH';
-  const SAVING = 'SAVING';
-  const DELETING = 'DELETING';
-  const CLEANUP = 'CLEANUP';
-  const SET_SHOW = 'SET_SHOW';
-  const SET_MODAL_CONTENT = 'SET_MODAL_CONTENT';
-
-  const SET_VALUES = 'SET_VALUES';
-  const SET_ATTRIBUTES = 'SET_ATTRIBUTES';
-  const SET_COLUMNS = 'SET_COLUMNS';
-  const SET_ENTITY_TYPE_NAME = 'SET_ENTITY_TYPE_NAME';
-  const SET_ENTITY_TYPE_ID = 'SET_ENTITY_TYPE_ID';
-  const SET_ALL_VALIDATES = 'SET_ALL_VALIDATES';
-
-  const reducer = (state, action) => {
-    switch(action.type) {
-      case LOADING:
-          return {
-            ...state,
-            isLoading: true,
-          }
-
-        case SAVING:
-            return {
-              ...state,
-              isSaving: true,
-              isLoading: true,
-            }
-
-        case DELETING:
-              return {
-                ...state,
-                isDeleting: true,
-                isLoading: true,
-              }
-
-       case REFRESH:
-            return {
-              ...state,
-              isRefresh: false,
-            }
-
-       case CLEANUP:
-            return {
-              ...state,
-              isLoading: false,
-              isSaving: false,
-              isDeleting: false,
-            }
-
-        case SET_SHOW:
-              return {
-                ...state,
-                show: action.payload,
-              }
-            
-      case SET_VALUES:
-        return {
-          ...state,
-          values: action.payload
-        }
-
-        case SET_ATTRIBUTES:
-          return {
-            ...state,
-            attributes: action.payload
-          }
-
-          case SET_COLUMNS:
-            return {
-              ...state,
-              columns: action.payload
-            }
-
-      case SET_ENTITY_TYPE_NAME:
-        return {
-          ...state,
-          entity_type_name: action.payload
-        }
-
-        case SET_ENTITY_TYPE_ID:
-          return {
-            ...state,
-            entity_type_id: action.payload
-          }
-
-          case SET_MODAL_CONTENT:
-            return {
-              ...state,
-              modalContent: action.payload
-            }
-        case SET_ALL_VALIDATES:
-          return {
-            ...state,
-            all_validates: action.payload
-          }
-
-
-    }
-  };
-
   const [state, dispatch] = useReducer(reducer, initialState);
-
 
   /*** Entity Types List ***/
   useEffect(() => { 
@@ -163,21 +61,21 @@ export default function Type({cache}) {
         validateValues = Object.keys(values.data).reduce((a, v) => ({ ...a, [v]: true}), {})
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
-        entity_type_id = values.metadata.entity_type_id;
-
+       
+      
+        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
 
         dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
         dispatch({type: SET_VALUES, payload: entries});
-        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
       } catch (ex) {
         console.error(ex.stack)
       } finally {
         dispatch({type: CLEANUP})
       }
     
-
+      
 
     })();
   }, [entity_type_slug, id]);
@@ -189,8 +87,9 @@ export default function Type({cache}) {
     evt.preventDefault();
     (async () => {
         try {
+
           dispatch({type: DELETING})
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${state.entity_type_id}`, {
             method: 'DELETE',
             headers: {
               'Content-type': 'application/json'
@@ -206,7 +105,7 @@ export default function Type({cache}) {
           dispatch({type: CLEANUP})
         }
     })();
-  }, [entity_type_slug, id]);
+  }, [entity_type_slug, id,state.entity_type_id]);
  
 
    const onSubmit = (evt) => {

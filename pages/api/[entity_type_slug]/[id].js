@@ -55,19 +55,9 @@ async function get(req, res) {
   try {
     const { entity_type_slug, id: slug } = req.query;
 
-    const rawData = await Entity.findBySlug({ entity_type_slug, slug });
+    const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
-    // If user typed in the id instead of the slug
-    // If slug is equal to one of the IDs, prioritize slug
-    if(parseInt(slug) && rawData.length === 0) {
-        const item = await Entity.find({entity_type_slug, id: slug});
-
-        if(item.length !== 0) {
-            const itemSlug = item[0].entities_slug;
-            return res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
-        }
-    }
-
+    
     const initialFormat = {
       data: {},
       metadata: {
@@ -92,6 +82,9 @@ async function get(req, res) {
           ...(!collection.metadata.type && { type: item.entity_type_slug }),
           ...(!collection.metadata.id && {
             entity_type_id: item.entity_type_id,
+            entity_type_slug: item.entities_slug,
+            entity_type_id_parent: item.slug,
+            
           }),
           attributes: {
             ...collection.metadata.attributes,
@@ -145,9 +138,9 @@ async function update(req, res) {
     const {
       entries = null,
       entity_id = null,
-      entity_type_id = null,
+      entity_type_slug = null,
     } = req.body;
-    await Entity.update({ entries, entity_type_id, entity_id });
+    await Entity.update({ entries, entity_type_slug, entity_id });
     res.status(OK).json({ message: "Successfully created a new entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
