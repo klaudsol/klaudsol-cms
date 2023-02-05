@@ -35,7 +35,8 @@ import
   SET_ENTITY_TYPE_ID,
   SET_ENTITY_TYPE_ID_PARENT,
   SET_ALL_VALIDATES
-} from "components/reducers/editAndDeleteReducer";import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+} from "components/reducers/editAndDeleteReducer";
+import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { useRef } from "react";
 import { SET_ALL_INITIAL_VALUES } from "components/reducers/createReducer";
 import { Formik, Form, Field } from "formik";
@@ -177,7 +178,7 @@ export default function Type({cache}) {
               {state.attributes.map((attributeName,index)=> (
                 state.columns.map((name,i) => attributeName[name] && index === 0 && (
                   <div keys={i}>
-                    <p className="mt-1"> <b>{name}</b> </p>
+                    <p className="mt-1" key={i}> <b>{name}</b> </p>
                      <AdminRenderer
                        errors={props.errors}
                        touched={props.touched}
