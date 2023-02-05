@@ -63,10 +63,9 @@ export default function Type({cache}) {
         validateValues = Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: true}), {})
         columns = Object.keys(values.metadata.attributes);
         attributes = Object.values(values.metadata);
-        
-                  
-        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});
-       
+        entity_type_id = values.metadata.entity_type_id;
+                        
+        dispatch({type: SET_ENTITY_TYPE_ID, payload: entity_type_id});     
         dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({type: SET_ATTRIBUTES, payload: attributes});
         dispatch({type: SET_COLUMNS, payload: columns});
