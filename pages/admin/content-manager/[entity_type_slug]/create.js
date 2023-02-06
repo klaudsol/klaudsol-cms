@@ -30,6 +30,9 @@ import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/ro
 import {
   initialState,
   createEntriesReducer,
+} from "@/components/reducers/createReducer";
+
+import {
   LOADING,
   REFRESH,
   CLEANUP,
@@ -40,7 +43,7 @@ import {
   SET_ENTITY_TYPE_ID,
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
-} from "@/components/reducers/createReducer";
+} from "@/components/reducers/actions";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
@@ -168,13 +171,16 @@ export default function CreateNewEntry({ cache }) {
               <div className="col-9">
                 <div className="container_new_entry py-4 px-4">
                   {state.isLoading &&
-                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, (_, i) => (
-                      <div key={i}>
-                        <div className="skeleton-label" />
-                        <div className="skeleton-text" />
-                        <div />
-                      </div>
-                    ))}
+                    Array.from(
+                      { length: DEFAULT_SKELETON_ROW_COUNT },
+                      (_, i) => (
+                        <div key={i}>
+                          <div className="skeleton-label" />
+                          <div className="skeleton-text" />
+                          <div />
+                        </div>
+                      )
+                    )}
 
                   {!state.isLoading && (
                     <Formik {...formikParams}>
@@ -288,7 +294,7 @@ export default function CreateNewEntry({ cache }) {
           <AppInfoModal
             show={state.show}
             onClose={() =>
-              redirectToManagerEntitySlug(router,entity_type_slug)
+              redirectToManagerEntitySlug(router, entity_type_slug)
             }
             modalTitle="Success"
             buttonTitle="Close"

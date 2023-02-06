@@ -1,22 +1,4 @@
-export const initialState = {
-  values: [],
-  columns: [],
-  rows: [],
-  entity_type_name: null,
-  isLoading: false,
-  isRefresh: true,
-};
-
-const LOADING = "LOADING";
-const REFRESH = "REFRESH";
-const CLEANUP = "CLEANUP";
-
-const SET_VALUES = "SET_VALUES";
-const SET_COLUMNS = "SET_COLUMNS";
-const SET_ENTITY_TYPE_NAME = "SET_ENTITY_TYPE_NAME";
-const SET_ROWS = "SET_ROWS";
-
-export const actions = {
+import {
   LOADING,
   REFRESH,
   CLEANUP,
@@ -24,6 +6,15 @@ export const actions = {
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ROWS,
+} from "./actions";
+
+export const initialState = {
+  values: [],
+  columns: [],
+  rows: [],
+  entity_type_name: null,
+  isLoading: false,
+  isRefresh: true,
 };
 
 export const contentManagerReducer = (state, action) => {

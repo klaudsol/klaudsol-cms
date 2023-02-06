@@ -1,32 +1,4 @@
-export const initialState = {
-  values: [],
-  attributes: [],
-  columns: [],
-  entity_type_name: null,
-  isLoading: false,
-  isRefresh: true,
-  isSaving: false,
-  isDeleting: false,
-  show: false,
-  entity_type_id: null,
-  modalContent: null,
-};
-
-const LOADING = "LOADING";
-const REFRESH = "REFRESH";
-const SAVING = "SAVING";
-const DELETING = "DELETING";
-const CLEANUP = "CLEANUP";
-const SET_SHOW = "SET_SHOW";
-const SET_MODAL_CONTENT = "SET_MODAL_CONTENT";
-
-const SET_VALUES = "SET_VALUES";
-const SET_ATTRIBUTES = "SET_ATTRIBUTES";
-const SET_COLUMNS = "SET_COLUMNS";
-const SET_ENTITY_TYPE_NAME = "SET_ENTITY_TYPE_NAME";
-const SET_ENTITY_TYPE_ID = "SET_ENTITY_TYPE_ID";
-
-export const actions = {
+import {
   LOADING,
   REFRESH,
   SAVING,
@@ -39,6 +11,20 @@ export const actions = {
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ENTITY_TYPE_ID,
+} from "./actions";
+
+export const initialState = {
+  values: [],
+  attributes: [],
+  columns: [],
+  entity_type_name: null,
+  isLoading: false,
+  isRefresh: true,
+  isSaving: false,
+  isDeleting: false,
+  show: false,
+  entity_type_id: null,
+  modalContent: null,
 };
 
 export const entityReducer = (state, action) => {

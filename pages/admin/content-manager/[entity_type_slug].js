@@ -21,7 +21,17 @@ import { BsGearFill } from "react-icons/bs";
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import {contentManagerReducer, initialState, actions} from "@/components/reducers/contentManagerReducer";
+import {
+  contentManagerReducer,
+  initialState,
+} from "@/components/reducers/contentManagerReducer";
+import {
+  LOADING,
+  SET_ENTITY_TYPE_NAME,
+  SET_COLUMNS,
+  SET_VALUES,
+  CLEANUP,
+} from "@/components/reducers/actions";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
@@ -42,11 +52,14 @@ export default function ContentManager({ cache }) {
   useEffect(() => {
     (async () => {
       try {
-        dispatch({ type: actions.LOADING });
+        dispatch({ type: LOADING });
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
         const values = await valuesRaw.json();
 
-        dispatch({ type: actions.SET_ENTITY_TYPE_NAME, payload: values.metadata.type });
+        dispatch({
+          type: SET_ENTITY_TYPE_NAME,
+          payload: values.metadata.type,
+        });
 
         const entries = Object.values(values.data);
         const columnValues = Object.keys(values.metadata.attributes).map(
@@ -60,12 +73,12 @@ export default function ContentManager({ cache }) {
           ...columnValues,
         ];
 
-        dispatch({ type: actions.SET_COLUMNS, payload: columns });
-        dispatch({ type: actions.SET_VALUES, payload: entries });
+        dispatch({ type: SET_COLUMNS, payload: columns });
+        dispatch({ type: SET_VALUES, payload: entries });
       } catch (ex) {
         console.error(ex.stack);
       } finally {
-        dispatch({ type: actions.CLEANUP });
+        dispatch({ type: CLEANUP });
       }
     })();
   }, [entity_type_slug]);

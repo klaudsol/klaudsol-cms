@@ -2,8 +2,8 @@ import AWS from "aws-sdk";
 import { promisify } from "es6-promisify";
 import crypto from "crypto";
 
-const AWS_ACCESS_KEY_ID = process.env.AURORA_AWS_ACCESS_KEY_ID;
-const AWS_SECRET_ACCESS_KEY = process.env.AURORA_AWS_SECRET_ACCESS_KEY;
+const AWS_ACCESS_KEY_ID = process.env.AWS_S3_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_S3_SECRET_ACCESS_KEY;
 const AWS_REGION = process.env.AURORA_AWS_REGION;
 const AWS_S3_BUCKET = process.env.AWS_S3_BUCKET;
 

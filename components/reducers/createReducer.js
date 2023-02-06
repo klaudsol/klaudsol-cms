@@ -1,3 +1,16 @@
+import {
+  LOADING,
+  REFRESH,
+  CLEANUP,
+  SAVING,
+  SET_ATTRIBUTES,
+  SET_ENTRIES,
+  SET_SHOW,
+  SET_ENTITY_TYPE_ID,
+  SET_VALIDATE_ALL,
+  SET_ALL_INITIAL_VALUES,
+} from "./actions";
+
 export const initialState = {
   attributes: {},
   isLoading: false,
@@ -6,18 +19,6 @@ export const initialState = {
   show: false,
   entity_type_id: null,
 };
-
-export const LOADING = "LOADING";
-export const REFRESH = "REFRESH";
-export const CLEANUP = "CLEANUP";
-export const SAVING = "SAVING";
-
-export const SET_ATTRIBUTES = "SET_ATTRIBUTES";
-export const SET_ENTRIES = "SET_ENTRIES";
-export const SET_SHOW = "SET_SHOW";
-export const SET_ENTITY_TYPE_ID = "SET_ENTITY_TYPE_ID";
-export const SET_VALIDATE_ALL = "SET_VALIDATE_ALL";
-export const SET_ALL_INITIAL_VALUES = "SET_ALL_INITIAL_VALUES";
 
 export const createEntriesReducer = (state, action) => {
   switch (action.type) {

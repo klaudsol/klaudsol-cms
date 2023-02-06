@@ -26,9 +26,22 @@ import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/ro
 
 import {
   initialState,
-  actions,
   entityReducer,
 } from "@/components/reducers/entityReducer";
+import {
+  LOADING,
+  REFRESH,
+  SAVING,
+  DELETING,
+  CLEANUP,
+  SET_SHOW,
+  SET_MODAL_CONTENT,
+  SET_VALUES,
+  SET_ATTRIBUTES,
+  SET_COLUMNS,
+  SET_ENTITY_TYPE_NAME,
+  SET_ENTITY_TYPE_ID,
+} from "@/components/reducers/actions";
 
 export default function Type({ cache }) {
   const router = useRouter();
@@ -47,14 +60,14 @@ export default function Type({ cache }) {
   ) => {
     entries[col] = value;
     entries[attribute] = attribute_type;
-    dispatch({ type: actions.SET_VALUES, payload: entries });
+    dispatch({ type: SET_VALUES, payload: entries });
   };
 
   /*** Entity Types List ***/
   useEffect(() => {
     (async () => {
       try {
-        dispatch({ type: actions.LOADING });
+        dispatch({ type: LOADING });
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);
         const values = await valuesRaw.json();
 
@@ -62,13 +75,13 @@ export default function Type({ cache }) {
         const attributes = values.metadata.attributes;
         const entity_type_id = values.metadata.entity_type_id;
 
-        dispatch({ type: actions.SET_ATTRIBUTES, payload: attributes });
-        dispatch({ type: actions.SET_VALUES, payload: entries });
-        dispatch({ type: actions.SET_ENTITY_TYPE_ID, payload: entity_type_id });
+        dispatch({ type: SET_ATTRIBUTES, payload: attributes });
+        dispatch({ type: SET_VALUES, payload: entries });
+        dispatch({ type: SET_ENTITY_TYPE_ID, payload: entity_type_id });
       } catch (ex) {
         console.error(ex.stack);
       } finally {
-        dispatch({ type: actions.CLEANUP });
+        dispatch({ type: CLEANUP });
       }
     })();
   }, [entity_type_slug, id]);
@@ -83,7 +96,7 @@ export default function Type({ cache }) {
       evt.preventDefault();
       (async () => {
         try {
-          dispatch({ type: actions.DELETING });
+          dispatch({ type: DELETING });
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "DELETE",
             headers: {
@@ -92,14 +105,14 @@ export default function Type({ cache }) {
           });
           const { message, homepage } = await response.json();
           dispatch({
-            type: actions.SET_MODAL_CONTENT,
+            type: SET_MODAL_CONTENT,
             payload: "You have successfully deleted the entry.",
           });
-          dispatch({ type: actions.SET_SHOW, payload: true });
+          dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           console.error(ex);
         } finally {
-          dispatch({ type: actions.CLEANUP });
+          dispatch({ type: CLEANUP });
         }
       })();
     },
@@ -155,7 +168,7 @@ export default function Type({ cache }) {
     onSubmit: (values) => {
       (async () => {
         try {
-          dispatch({ type: actions.SAVING });
+          dispatch({ type: SAVING });
 
           const filesToUpload = getAllFiles(values);
           const s3Keys = getS3Keys(filesToUpload);
@@ -176,14 +189,14 @@ export default function Type({ cache }) {
 
           const { message, homepage } = await response.json();
           dispatch({
-            type: actions.SET_MODAL_CONTENT,
+            type: SET_MODAL_CONTENT,
             payload: "You have successfully edited the entry.",
           });
-          dispatch({ type: actions.SET_SHOW, payload: true });
+          dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           console.error(ex);
         } finally {
-          dispatch({ type: actions.CLEANUP });
+          dispatch({ type: CLEANUP });
         }
       })();
     },
@@ -220,13 +233,16 @@ export default function Type({ cache }) {
               <div className="col-9">
                 <div className="container_new_entry py-4 px-4">
                   {state.isLoading &&
-                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, (e, i) => (
-                      <div key={i}>
-                        <div className="skeleton-label" />
-                        <div className="skeleton-text" />
-                        <div />
-                      </div>
-                    ))}
+                    Array.from(
+                      { length: DEFAULT_SKELETON_ROW_COUNT },
+                      (_, i) => (
+                        <div key={i}>
+                          <div className="skeleton-label" />
+                          <div className="skeleton-text" />
+                          <div />
+                        </div>
+                      )
+                    )}
 
                   {!state.isLoading && (
                     <Formik {...formikParams}>
@@ -315,7 +331,7 @@ export default function Type({ cache }) {
           <AppInfoModal
             show={state.show}
             onClose={() => (
-              dispatch({ type: actions.SET_SHOW, payload: false }),
+              dispatch({ type: SET_SHOW, payload: false }),
               router.push(`/admin/content-manager/${entity_type_slug}`)
             )}
             modalTitle="Success"
