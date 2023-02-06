@@ -32,6 +32,7 @@ import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
 import { uploadFilesToBucket } from '@backend/data_access/S3'
+import { filterData } from '@/components/Util';
 
 export default withSession(handler);
 
@@ -60,7 +61,8 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const { entity_type_slug } = req.query;
+      const queries = req.query;
+      const { entity_type_slug } = queries;
       const rawData = await Entity.where({entity_type_slug});
       const rawEntityType = await EntityType.find({slug: entity_type_slug});
 
@@ -105,8 +107,10 @@ async function handler(req, res) {
 
       }, initialMetadata);
 
+      const filteredData = filterData(queries,Object.values(dataTemp.indexedData),)
+      
       const output = {
-        data: Object.values(dataTemp.indexedData), 
+        data: filteredData, 
         metadata: metadata
       }; 
 
