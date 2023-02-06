@@ -1,26 +1,33 @@
 import {
   LOADING,
   REFRESH,
-  CLEANUP,
   SAVING,
-  SET_ATTRIBUTES,
-  SET_ENTRIES,
+  DELETING,
+  CLEANUP,
   SET_SHOW,
+  SET_MODAL_CONTENT,
+  SET_VALUES,
+  SET_ATTRIBUTES,
+  SET_COLUMNS,
+  SET_ENTITY_TYPE_NAME,
   SET_ENTITY_TYPE_ID,
-  SET_VALIDATE_ALL,
-  SET_ALL_INITIAL_VALUES,
 } from "@/lib/actions";
 
 export const initialState = {
-  attributes: {},
+  values: [],
+  attributes: [],
+  columns: [],
+  entity_type_name: null,
   isLoading: false,
   isRefresh: true,
   isSaving: false,
+  isDeleting: false,
   show: false,
   entity_type_id: null,
+  modalContent: null,
 };
 
-export const createEntriesReducer = (state, action) => {
+export const entityReducer = (state, action) => {
   switch (action.type) {
     case LOADING:
       return {
@@ -35,6 +42,13 @@ export const createEntriesReducer = (state, action) => {
         isLoading: true,
       };
 
+    case DELETING:
+      return {
+        ...state,
+        isDeleting: true,
+        isLoading: true,
+      };
+
     case REFRESH:
       return {
         ...state,
@@ -46,18 +60,7 @@ export const createEntriesReducer = (state, action) => {
         ...state,
         isLoading: false,
         isSaving: false,
-      };
-
-    case SET_ATTRIBUTES:
-      return {
-        ...state,
-        attributes: action.payload,
-      };
-
-    case SET_ENTRIES:
-      return {
-        ...state,
-        entries: action.payload,
+        isDeleting: false,
       };
 
     case SET_SHOW:
@@ -66,22 +69,40 @@ export const createEntriesReducer = (state, action) => {
         show: action.payload,
       };
 
+    case SET_VALUES:
+      return {
+        ...state,
+        values: action.payload,
+      };
+
+    case SET_ATTRIBUTES:
+      return {
+        ...state,
+        attributes: action.payload,
+      };
+
+    case SET_COLUMNS:
+      return {
+        ...state,
+        columns: action.payload,
+      };
+
+    case SET_ENTITY_TYPE_NAME:
+      return {
+        ...state,
+        entity_type_name: action.payload,
+      };
+
     case SET_ENTITY_TYPE_ID:
       return {
         ...state,
         entity_type_id: action.payload,
       };
 
-    case SET_VALIDATE_ALL:
+    case SET_MODAL_CONTENT:
       return {
         ...state,
-        set_validate_all: action.payload,
-      };
-
-    case SET_ALL_INITIAL_VALUES:
-      return {
-        ...state,
-        set_all_initial_values: action.payload,
+        modalContent: action.payload,
       };
   }
 };

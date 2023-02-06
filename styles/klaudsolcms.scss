@@ -486,6 +486,11 @@ $onFocus: #323C4E;
     background-color: #b0bec5;
 }
 
+.btn_general_lg--invert_colors {
+    color: #fff;
+    background-color: #455a64;
+}
+
 /** SEARCH BUTTON **/
 
 .btn_icon,
@@ -514,6 +519,23 @@ $onFocus: #323C4E;
 
 .search_icon {
     font-size: 12px;
+}
+
+/** Upload field **/
+.field_base {
+    display: flex;
+    justify-content: center;
+}
+
+.field_btn {
+    // For aliging with the input
+    // The input has a marginBottom: .5rem for some reason
+    margin-bottom: 0.5rem;
+    margin-left: 0;
+}
+
+.field_image {
+    object-fit: contain;
 }
 
 /** Add field type **/
@@ -587,6 +609,7 @@ $onFocus: #323C4E;
     padding-bottom: 7px;
     font-size: 14px;
 }
+
 
 /** 
 =================================================================
@@ -680,18 +703,14 @@ height: 100%;
 **/
 
 .container_new_entry {
+    height: fit-content;
     background-color: #fff;
     border: 1px solid lightgray;
     justify-content: start;
     align-items: flex-start;
     text-align: start;
+    margin-bottom: 10px;
 }
-
-.edit_new_entry {
-    height: fit-content;
-}
-
-
 
 .input_text {
     width: 100%;

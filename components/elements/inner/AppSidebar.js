@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 // sidebar nav config
 import FullSidebar from './sidebar/FullSidebar';
 import CollapsedSidebar from './sidebar/CollapsedSidebar';
-import { SET_COLLAPSE } from 'components/reducers/actions';
+import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 
 const AppSidebar = () => {
