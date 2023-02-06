@@ -161,7 +161,7 @@ export default function ContentManager({cache}) {
 
             <div className="d-flex flex-row px-0"> 
               <AppDropdown title={ state.columns.length + ' items selected'} items={state.columns} id='dropdown_general' isCheckbox={true}/>
-              <AppIconButton icon={<BsGearFill/>} /> 
+              {/* <AppIconButton icon={<BsGearFill/>} />  */}
             </div>
         </div>
 
