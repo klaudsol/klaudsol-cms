@@ -57,16 +57,14 @@ const FileField = (props) => {
         />
       </div>
       {imageLink && (
-        <div className={`${props.className} field_image`}>
-          <Image
-            src={imageLink}
-            alt={value.name}
-            width={800}
-            height={300}
-            loading="lazy"
-            style={{ objectFit: "contain" }}
-          />
-        </div>
+        <Image
+          src={imageLink}
+          alt={value.name}
+          width={800}
+          height={300}
+          loading="lazy"
+          className={`${props.className} field_image`}
+        />
       )}
     </div>
   );

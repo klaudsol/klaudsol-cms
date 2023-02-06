@@ -535,7 +535,7 @@ $onFocus: #323C4E;
 }
 
 .field_image {
-    text-align: center;
+    object-fit: contain;
 }
 
 /** Add field type **/
