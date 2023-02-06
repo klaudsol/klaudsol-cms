@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { useRouter } from 'next/router'; 
 import RootContext from '@/components/contexts/RootContext';
 import { slsFetch } from '@/components/Util';
-import { RESET_CLIENT_SESSION } from '@/components/reducers/actions';
+import { RESET_CLIENT_SESSION } from '@/lib/actions';
 
 const SidebarFooterIcon = ({title}) => {
     const router = useRouter();

@@ -3,7 +3,7 @@ import {
   RESET_CLIENT_SESSION,
   SET_ENTITY_TYPES,
   SET_COLLAPSE,
-} from '@/components/reducers/actions';
+} from '@/lib/actions';
 
 export const rootInitialState = {
   entityTypes: [],

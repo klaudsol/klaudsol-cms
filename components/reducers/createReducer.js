@@ -9,7 +9,7 @@ import {
   SET_ENTITY_TYPE_ID,
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
-} from "./actions";
+} from "@/lib/actions";
 
 export const initialState = {
   attributes: {},

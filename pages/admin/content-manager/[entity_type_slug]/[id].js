@@ -28,6 +28,7 @@ import {
   initialState,
   entityReducer,
 } from "@/components/reducers/entityReducer";
+
 import {
   LOADING,
   REFRESH,
@@ -41,7 +42,7 @@ import {
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ENTITY_TYPE_ID,
-} from "@/components/reducers/actions";
+} from "@/lib/actions";
 
 export default function Type({ cache }) {
   const router = useRouter();

@@ -43,7 +43,7 @@ import {
   SET_ENTITY_TYPE_ID,
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
-} from "@/components/reducers/actions";
+} from "@/lib/actions";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();

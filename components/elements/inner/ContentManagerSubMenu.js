@@ -7,7 +7,7 @@ import { loadEntityTypes } from '@/components/reducers/actions';
 
 /** kladusol CMS components */
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
-import { SET_ENTITY_TYPES } from '@/components/reducers/actions';
+import { SET_ENTITY_TYPES } from '@/lib/actions';
 
 /** react icons */
 import { FaSearch } from 'react-icons/fa'

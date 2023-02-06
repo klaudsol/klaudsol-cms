@@ -31,7 +31,7 @@ import {
   SET_COLUMNS,
   SET_VALUES,
   CLEANUP,
-} from "@/components/reducers/actions";
+} from "@/lib/actions";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
