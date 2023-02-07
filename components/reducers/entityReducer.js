@@ -11,6 +11,7 @@ import {
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ENTITY_TYPE_ID,
+  SET_VALIDATE_ALL
 } from "@/lib/actions";
 
 export const initialState = {
@@ -25,6 +26,7 @@ export const initialState = {
   show: false,
   entity_type_id: null,
   modalContent: null,
+  all_validates: null
 };
 
 export const entityReducer = (state, action) => {
@@ -104,5 +106,10 @@ export const entityReducer = (state, action) => {
         ...state,
         modalContent: action.payload,
       };
+    case SET_VALIDATE_ALL:
+      return {
+        ...state,
+        all_validates: action.payload
+      }
   }
 };
