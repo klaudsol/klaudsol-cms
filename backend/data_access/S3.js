@@ -30,9 +30,11 @@ export const initializeS3 = () => {
 
 export const getS3Param = (file) => {
   return {
+    Bucket: AWS_S3_BUCKET,
     Key: file.originalname,
     Body: file.buffer,
     ContentType: file.mimetype,
+    ACL: "public-read",
   };
 };
 
@@ -57,18 +59,9 @@ export const generateEntries = (resFromS3, files, body) => {
   return newBody;
 };
 
-export const uploadFileToBucket = async ({ Key, Body, ContentType }) => {
+export const uploadFileToBucket = async (param) => {
   const s3 = initializeS3();
-
-  const params = {
-    Bucket: AWS_S3_BUCKET,
-    Key,
-    Body,
-    ContentType,
-    ACL: "public-read",
-  };
-
-  const res = await s3.upload(params).promise();
+  const res = await s3.upload(param).promise();
 
   return res;
 };
@@ -100,8 +93,8 @@ export const deleteFilesFromBucket = async (params) => {
 
 export const addFileToBucket = async (file) => {
   const paramsRaw = getS3Param(file);
-  const params = await formatS3Param(paramsRaw);
-  const resFromS3 = await uploadFileToBucket(params);
+  const param = await formatS3Param(paramsRaw);
+  const resFromS3 = await uploadFileToBucket(param);
 
   return resFromS3;
 };
