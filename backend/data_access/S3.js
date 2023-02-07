@@ -73,8 +73,14 @@ export const uploadFileToBucket = async ({ Key, Body, ContentType }) => {
   return res;
 };
 
+export const generateS3KeyForDeletion = (key) => {
+  return {
+    Key: key,
+  };
+};
+
 export const generateS3ParamsForDeletion = (keysRaw) => {
-  const keys = keysRaw.map((key) => ({ Key: key }));
+  const keys = keysRaw.map(generateS3KeyForDeletion);
   const params = {
     Bucket: AWS_S3_BUCKET,
     Delete: {
@@ -85,32 +91,38 @@ export const generateS3ParamsForDeletion = (keysRaw) => {
   return params;
 };
 
-export const deleteFilesFromBucket = async (keys) => {
+export const deleteFilesFromBucket = async (params) => {
   const s3 = initializeS3();
-  const params = generateS3ParamsForDeletion(keys);
-
   const res = await s3.deleteObjects(params).promise();
 
   return res;
 };
 
-export const uploadFilesToBucket = async (files, body) => {
-  const promise = await files.map(async (file) => {
-    const paramsRaw = getS3Param(file);
-    const params = await formatS3Param(paramsRaw);
-    const resFromS3 = await uploadFileToBucket(params);
+export const addFileToBucket = async (file) => {
+  const paramsRaw = getS3Param(file);
+  const params = await formatS3Param(paramsRaw);
+  const resFromS3 = await uploadFileToBucket(params);
 
-    return resFromS3;
-  });
-  const resFromS3 = await Promise.all(promise);
-  const entries = await generateEntries(resFromS3, files, body);
-
-  return entries;
+  return resFromS3;
 };
 
-export const updateFilesFromBucket = async (files, body, toDelete) => {
-  await deleteFilesFromBucket(toDelete);
-  const uploadedFiles = await uploadFilesToBucket(files, body);
+export const addFilesToBucket = async (files) => {
+  const promise = await files.map(addFileToBucket);
+  const resFromS3 = await Promise.all(promise);
 
-  return uploadedFiles;
+  return resFromS3;
+};
+
+// This function should only do one thing, but it does two things:
+// Getting the params for deletion, and updating the files
+// Need to refactor this to separate the uploading of the file
+// And getting the params for deletion
+// We also need a function to update one file. This function updates
+// multiple files
+export const updateFilesFromBucket = async (file, body, toDelete) => {
+  const paramsForDeletion = generateS3ParamsForDeletion(toDelete);
+  await deleteFilesFromBucket(paramsForDeletion);
+  const uploadedFile = await addFilesToBucket(file, body);
+
+  return uploadedFile;
 };
