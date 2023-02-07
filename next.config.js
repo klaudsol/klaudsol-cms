@@ -9,10 +9,10 @@ const nextConfig = {
     AURORA_RESOURCE_ARN: process.env.AURORA_RESOURCE_ARN,
     AURORA_SECRET_ARN: process.env.AURORA_SECRET_ARN,
     SECRET_COOKIE_PASSWORD: process.env.SECRET_COOKIE_PASSWORD,
-    FRONTEND_URL: process.env.FRONTEND_URL
+    FRONTEND_URL: process.env.FRONTEND_URL,
   },
   images: {
-    domains: (process.env.IMAGE_DOMAINS ?? "").split(",")
+    domains: (process.env.IMAGE_DOMAINS ?? "").split(","),
   },
 };
 

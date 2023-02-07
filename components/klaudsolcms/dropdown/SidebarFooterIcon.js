@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { useRouter } from 'next/router'; 
 import RootContext from '@/components/contexts/RootContext';
 import { slsFetch } from '@/components/Util';
-import { RESET_CLIENT_SESSION } from '@/components/reducers/actions';
+import { RESET_CLIENT_SESSION } from '@/lib/actions';
 
 const SidebarFooterIcon = ({title}) => {
     const router = useRouter();
@@ -22,7 +22,7 @@ const SidebarFooterIcon = ({title}) => {
       };
     return ( 
          <DropdownButton drop='up' id='sidebar_footer_icon' title={title}>
-            <Dropdown.Item className='sidebar_footer_items'><Link href='/admin/me'><a className='sidebar_footer_profile'>Profile</a></Link></Dropdown.Item>
+            <Dropdown.Item className='sidebar_footer_items'><Link href='/admin/me' className='sidebar_footer_profile'>Profile</Link></Dropdown.Item>
             <Dropdown.Item className='sidebar_footer_items'><button className='sidebar_footer_logout' onClick={onLogout}> Log out </button></Dropdown.Item>
         </DropdownButton>
      );

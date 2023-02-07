@@ -27,9 +27,9 @@ const CollapsedSidebar = ({sidebarButtons, firstName, lastName, defaultEntityTyp
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-         <Link href='/admin' passHref>
-         <a className='sidebar_header'> <b>  CMS  </b> </a>
-          </Link>
+         <Link href='/admin' className='sidebar_header' passHref>
+            <b>  CMS  </b>
+         </Link>
           
         
       </CSidebarBrand>

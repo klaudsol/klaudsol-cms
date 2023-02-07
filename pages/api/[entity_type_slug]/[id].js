@@ -24,15 +24,23 @@ SOFTWARE.
 **/
 
 import Entity from "@backend/models/core/Entity";
+import { deleteFilesFromBucket } from "@/backend/data_access/S3";
 import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders } from "@/lib/API";
+import { setCORSHeaders, parseFormData } from "@/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert } from "@/lib/Permissions";
+import { updateFilesFromBucket } from "@/backend/data_access/S3";
 
 export default withSession(handler);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 async function handler(req, res) {
   try {
@@ -40,7 +48,11 @@ async function handler(req, res) {
       case "GET":
         return get(req, res);
       case "PUT":
-        return update(req, res);
+        const { req: parsedReq, res: parsedRes } = await parseFormData(
+          req,
+          res
+        );
+        return update(parsedReq, parsedRes);
       case "DELETE":
         return del(req, res);
       default:
@@ -55,18 +67,7 @@ async function get(req, res) {
   try {
     const { entity_type_slug, id: slug } = req.query;
 
-    const rawData = await Entity.findBySlug({ entity_type_slug, slug });
-
-    // If user typed in the id instead of the slug
-    // If slug is equal to one of the IDs, prioritize slug
-    if(parseInt(slug) && rawData.length === 0) {
-        const item = await Entity.find({entity_type_slug, id: slug});
-
-        if(item.length !== 0) {
-            const itemSlug = item[0].entities_slug;
-            return res.redirect(`/api/${entity_type_slug}/${itemSlug}`);
-        }
-    }
+    const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
     const initialFormat = {
       data: {},
@@ -125,8 +126,16 @@ async function del(req, res) {
       req
     );
 
-    const { id } = req.query;
-    await Entity.delete({ id });
+    const { entity_type_slug, id: slug } = req.query;
+    const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });
+    const imageNames = entity.flatMap((item) =>
+      item.attributes_type === "image" ? item.value_string : []
+    );
+
+    if (imageNames.length > 0) await deleteFilesFromBucket(imageNames);
+
+    await Entity.delete({ id: slug });
+
     res.status(OK).json({ message: "Successfully delete the entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
@@ -142,12 +151,20 @@ async function update(req, res) {
       req
     );
 
-    const {
-      entries = null,
-      entity_id = null,
-      entity_type_id = null,
-    } = req.body;
+    const { files, body: bodyRaw } = req;
+    const { entity_type_id, entity_id, ...entriesRaw } = JSON.parse(
+      JSON.stringify(bodyRaw)
+    );
+    const { toDeleteRaw, ...body } = entriesRaw;
+    const toDelete = toDeleteRaw.split(",");
+
+    const entries =
+      files.length > 0
+        ? await updateFilesFromBucket(files, body, toDelete)
+        : body;
+
     await Entity.update({ entries, entity_type_id, entity_id });
+
     res.status(OK).json({ message: "Successfully created a new entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);

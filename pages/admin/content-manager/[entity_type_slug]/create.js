@@ -25,9 +25,14 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+
 import {
   initialState,
   createEntriesReducer,
+} from "@/components/reducers/createReducer";
+
+import {
   LOADING,
   REFRESH,
   CLEANUP,
@@ -38,7 +43,7 @@ import {
   SET_ENTITY_TYPE_ID,
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
-} from "@/components/reducers/createReducer";
+} from "@/lib/actions";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
@@ -100,6 +105,16 @@ export default function CreateNewEntry({ cache }) {
     return slug.toLowerCase().replace(/\s+/g, "-");
   };
 
+  const convertToFormData = (entry) => {
+    const formData = new FormData();
+    const propertyNames = Object.keys(entry);
+    propertyNames.forEach((property) => {
+      formData.append(property, entry[property]);
+    });
+
+    return formData;
+  };
+
   const formikParams = {
     innerRef: formRef,
     initialValues: { ...state.set_all_initial_values, slug: "" },
@@ -113,15 +128,14 @@ export default function CreateNewEntry({ cache }) {
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
-        console.log(entry);
+
+        const formattedEntries = convertToFormData(entry);
+
         try {
           dispatch({ type: SAVING });
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({ entry }),
+            body: formattedEntries,
           });
           const { message, homepage } = await response.json();
           dispatch({ type: SET_SHOW, payload: true });
@@ -157,13 +171,16 @@ export default function CreateNewEntry({ cache }) {
               <div className="col-9">
                 <div className="container_new_entry py-4 px-4">
                   {state.isLoading &&
-                    Array.from({ length: DEFAULT_SKELETON_ROW_COUNT }, () => (
-                      <div>
-                        <div className="skeleton-label" />
-                        <div className="skeleton-text" />
-                        <div />
-                      </div>
-                    ))}
+                    Array.from(
+                      { length: DEFAULT_SKELETON_ROW_COUNT },
+                      (_, i) => (
+                        <div key={i}>
+                          <div className="skeleton-label" />
+                          <div className="skeleton-text" />
+                          <div />
+                        </div>
+                      )
+                    )}
 
                   {!state.isLoading && (
                     <Formik {...formikParams}>
@@ -202,20 +219,22 @@ export default function CreateNewEntry({ cache }) {
                           </Field>
                           {Object.entries(state.attributes)
                             .sort(sortByOrderAsc)
-                            .map(([attributeName, attribute]) => (
-                              <div key={attributeName}>
-                                <p className="mt-1">
-                                  {" "}
-                                  <b> {attributeName} </b>
-                                </p>
-                                <AdminRenderer
-                                  errors={props.errors}
-                                  touched={props.touched}
-                                  type={attribute.type}
-                                  name={attributeName}
-                                />
-                              </div>
-                            ))}
+                            .map(([attributeName, attribute]) => {
+                              return (
+                                <div key={attributeName}>
+                                  <p className="mt-1">
+                                    {" "}
+                                    <b> {attributeName} </b>
+                                  </p>
+                                  <AdminRenderer
+                                    errors={props.errors}
+                                    touched={props.touched}
+                                    type={attribute.type}
+                                    name={attributeName}
+                                  />
+                                </div>
+                              );
+                            })}
                         </Form>
                       )}
                     </Formik>
@@ -275,7 +294,7 @@ export default function CreateNewEntry({ cache }) {
           <AppInfoModal
             show={state.show}
             onClose={() =>
-              router.push(`/admin/content-manager/${entity_type_slug}`)
+              redirectToManagerEntitySlug(router, entity_type_slug)
             }
             modalTitle="Success"
             buttonTitle="Close"

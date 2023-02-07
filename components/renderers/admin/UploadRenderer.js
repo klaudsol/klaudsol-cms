@@ -1,12 +1,12 @@
 import cx from "classnames";
-import { Field } from "formik";
+import FileField from "@/components/fields/FileField";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import ErrorRenderer from "./ErrorRenderer";
 
-const TextRenderer = ({ className, name, type, errors, touched }) => (
+const UploadRenderer = ({ className, name, type, errors, touched, accept }) => (
   <>
-    <Field
-      type="text"
+    <FileField
+      accept={accept}
       name={name}
       className={cx("input_text mb-2", className)}
       validate={(v) => TypesValidator(v, type)}
@@ -19,4 +19,5 @@ const TextRenderer = ({ className, name, type, errors, touched }) => (
     <ErrorRenderer name={name} errors={errors} touched={touched} />
   </>
 );
-export default TextRenderer;
+
+export default UploadRenderer;

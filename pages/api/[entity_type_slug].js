@@ -28,11 +28,19 @@ import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { resolveValue } from '@/components/EntityAttributeValue';
-import { setCORSHeaders } from '@/lib/API';
+import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
+import { uploadFilesToBucket } from '@backend/data_access/S3'
+import { filterData } from '@/components/Util';
 
 export default withSession(handler);
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+}
 
 async function handler(req, res) {
   
@@ -41,7 +49,8 @@ async function handler(req, res) {
       case "GET":
         return get(req, res); 
       case "POST":
-        return create(req, res); 
+        const { req: parsedReq, res: parsedRes } = await parseFormData(req, res);
+        return create(parsedReq, parsedRes); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -52,16 +61,16 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const { entity_type_slug } = req.query;
+      const queries = req.query;
+      const { entity_type_slug } = queries;
       const rawData = await Entity.where({entity_type_slug});
       const rawEntityType = await EntityType.find({slug: entity_type_slug});
 
       const initialFormat = {
         indexedData: {}
       };      
-      
+
       const dataTemp = rawData.reduce((collection, item) => {
-        
         return {
           indexedData: {
             ...collection.indexedData,
@@ -98,8 +107,10 @@ async function handler(req, res) {
 
       }, initialMetadata);
 
+      const filteredData = filterData(queries,Object.values(dataTemp.indexedData),)
+      
       const output = {
-        data: Object.values(dataTemp.indexedData), 
+        data: filteredData, 
         metadata: metadata
       }; 
 
@@ -114,18 +125,21 @@ async function handler(req, res) {
     }
   }
 
-  async function create(req, res) { 
-    try{
 
-      await assert({
-        loggedIn: true,
-       }, req);
+async function create(req, res) { 
+    try {
+        await assert({
+            loggedIn: true,
+        }, req);
 
-      const { entry } = req.body;
-      await Entity.create(entry);
-      res.status(OK).json({message: 'Successfully created a new entry'}) 
-    }
-    catch (error) {
+        const { files, body: bodyRaw } = req;
+        const body = JSON.parse(JSON.stringify(bodyRaw));
+        const entry = files.length > 0 ? await uploadFilesToBucket(files, body) : body;
+
+        await Entity.create(entry);
+
+        res.status(OK).json({message: 'Successfully created a new entry'}) 
+    } catch (error) {
       await defaultErrorHandler(error, req, res);
     }
-  }
+}
