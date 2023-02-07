@@ -3,7 +3,7 @@ import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 import { getSessionCache } from "@/lib/Session";
 
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { slsFetch } from "@/components/Util";
 import { useRouter } from "next/router";
 
@@ -31,20 +31,18 @@ import {
   SET_COLUMNS,
   SET_VALUES,
   CLEANUP,
+  SET_ROWS,
+  SET_FIRST_FETCH,
+  SET_PAGE,
+  PAGE_SETS_RENDERER,
 } from "@/lib/actions";
+import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
+import { defaultPageRender, maximumNumberOfPage, EntryValues} from "lib/Constants"
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
-
-  /** Data Arrays : to be fetched from database soon */
-
-  const entryNumber = [
-    { name: "10" },
-    { name: "20" },
-    { name: "50" },
-    { name: "100" },
-  ];
+  const controllerRef = useRef();
 
   const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
@@ -52,35 +50,53 @@ export default function ContentManager({ cache }) {
   useEffect(() => {
     (async () => {
       try {
-        dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
+         dispatch({type:LOADING})
+        if (controllerRef.current) {
+          controllerRef.current.abort();
+        }
+        const controller = new AbortController();
+        controllerRef.current = controller;
+       // Assign a new AbortController for the latest fetch to our useRef variable
+
+        const valuesRaw = await slsFetch(
+          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`,
+          { signal: controllerRef.current?.signal }
+        );
+          
         const values = await valuesRaw.json();
+        const pageNumber = Math.ceil(values.metadata.total_rows / state.entry);
+        dispatch({ type: SET_ROWS, payload: pageNumber });
+        console.log(values.data)
+        dispatch({ type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type });
+        let columns = [];
+        let entries = [];
 
-        dispatch({
-          type: SET_ENTITY_TYPE_NAME,
-          payload: values.metadata.type,
-        });
-
-        const entries = Object.values(values.data);
-        const columnValues = Object.keys(values.metadata.attributes).map(
-          (col) => ({
+        entries = Object.values(values.data);
+        columns = Object.keys(values.metadata.attributes).map((col) => {
+          return {
             accessor: col,
             displayName: col.toUpperCase(),
-          })
-        );
-        const columns = [
-          { accessor: "id", displayName: "ID" },
-          ...columnValues,
-        ];
+          };
+        });
 
+        columns.unshift({ accessor: "slug", displayName: "SLUG" });
+        columns.unshift({ accessor: "id", displayName: "ID" });
         dispatch({ type: SET_COLUMNS, payload: columns });
         dispatch({ type: SET_VALUES, payload: entries });
+        controllerRef.current = null;
       } catch (ex) {
-        console.error(ex.stack);
+        console.log(ex)
       } finally {
-        dispatch({ type: CLEANUP });
+        !controllerRef.current && dispatch({ type: CLEANUP });
+        !controllerRef.current && dispatch({ type: SET_FIRST_FETCH, payload: false });       
       }
     })();
+  }, [entity_type_slug, state.page, state.entry, state.setsRenderer]);
+
+
+  useEffect(() => {
+    dispatch({type: SET_PAGE,payload: defaultPageRender});
+    dispatch({type: PAGE_SETS_RENDERER,payload: defaultPageRender});
   }, [entity_type_slug]);
 
   return (
@@ -127,12 +143,26 @@ export default function ContentManager({ cache }) {
               </div>
             </div>
 
-            {state.isLoading && <SkeletonTable />}
-            {!state.isLoading && (
+            {(state.isLoading && state.firstFetch) && <SkeletonTable />}
+            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && (
               <AppContentManagerTable
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}
+              />
+            )}
+            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && (
+              <AppContentPagination
+                dispatch={dispatch}
+                defaultEntry={state.entry}
+                defaultPage={state.page}
+                entity_type_slug={entity_type_slug}
+                rows={state.rows}
+                setsRenderer={state.setsRenderer}
+                isLoading={state.isLoading} 
+                maximumNumberOfPage={maximumNumberOfPage}
+                EntryValues={EntryValues} // Array (optional) if you want to add "select" options for entries per page 
+                                          // default value is 10
               />
             )}
           </div>
