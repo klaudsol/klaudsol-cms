@@ -37,7 +37,6 @@ import { resolveValue } from "@/components/EntityAttributeValue";
 import { setCORSHeaders, parseFormData } from "@/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert } from "@/lib/Permissions";
-import { updateFilesFromBucket } from "@/backend/data_access/S3";
 
 export default withSession(handler);
 
