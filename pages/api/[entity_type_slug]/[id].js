@@ -169,9 +169,15 @@ async function update(req, res) {
       const resFromS3 = await updateFilesFromBucket(files, body, toDelete);
       const entries = generateEntries(resFromS3, files, body);
 
+<<<<<<< HEAD
       await Entity.update({ entries, entity_type_slug, entity_id });
     } else {
       await Entity.update({ entries: body, entity_type_slug, entity_id });
+=======
+      await Entity.update({ entries, entity_type_id, entity_id });
+    } else {
+      await Entity.update({ entries: body, entity_type_id, entity_id });
+>>>>>>> 985e8be312b6554b54410d16be613f2a03a01e2d
     }
 
     res.status(OK).json({ message: "Successfully created a new entry" });
