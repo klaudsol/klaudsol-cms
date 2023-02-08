@@ -93,7 +93,7 @@ export default function Type({ cache }) {
   const onSubmit = (e) => {
     e.preventDefault();
     formRef.current.handleSubmit();
-    state.all_validates && formRef.current.setTouched({ ...state.all_validates});
+    state.allValidates && formRef.current.setTouched({ ...state.allValidates});
   };
 
   const onDelete = useCallback(
@@ -102,7 +102,7 @@ export default function Type({ cache }) {
       (async () => {
         try {
           dispatch({ type: DELETING });
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${state.entityTypeId}`, {
             method: "DELETE",
             headers: {
               "Content-type": "application/json",
