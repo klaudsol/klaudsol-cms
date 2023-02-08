@@ -205,22 +205,37 @@ class Entity {
     return true;
   }
     //Work in progress
-  static async update({entries, entity_type_id, entity_id}) {
+  static async update({entries, entity_type_slug, entity_id}) {
     
     const db = new DB();
+    // entity_type_slug will always be a string
+    // entity_id can be a string or a number
+   // check the entity_id weather it consists numbers only in which return true, otherwise it will return false
+
+   const { propertyType , conditionType } = isNumber(entity_id) ?
+         { propertyType:'longValue', conditionType:'entities.id' } :
+         { propertyType:'stringValue', conditionType:'entities.slug' }
 
     //TODO: start transaction
-    
     //Attribute Introspection
-    const entityIntrospectionSQL = `SELECT id, name, type FROM attributes 
-      WHERE entity_type_id = :entity_type_id ORDER by \`order\``;
+    
+    const entityIntrospectionSQL = `SELECT entities.id , attributes.id, attributes.name, attributes.type                 
+    FROM entities
+    LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+    LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+    LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+    WHERE entity_types.slug = :entity_type_slug AND 
+    ${conditionType} = :entity_id ORDER BY attributes.\`order\``;
     
     const attributes = await db.executeStatement(entityIntrospectionSQL, [
-      {name: 'entity_type_id', value:{longValue: entity_type_id}},
+      {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
+      {name: 'entity_id', value:{[propertyType]: entity_id}},
     ]);
     
+   
     const valueBatchParams = attributes.records.reduce((collection, record) => {
       const [
+        {longValue: entityId},
         {longValue: attributeId},
         {stringValue: attributeName},
         {stringValue: attributeType},
@@ -228,33 +243,65 @@ class Entity {
       
       return [ 
         ...collection,
-        [
-          {name: 'entity_id', value: {longValue: entity_id}},
+        [ 
+          {name: 'entity_id', value: {longValue: entityId}},
           {name: 'attribute_id', value: {longValue: attributeId}},
             //Refactor to encapsulate type switch
-          {name: 'value_string', value: (attributeType == 'text' || attributeType == 'image' || attributeType == 'link') ? {stringValue: entries[attributeName]} : {isNull: true}},
-          {name: 'value_long_string', value:  attributeType == 'textarea' ? {stringValue: entries[attributeName]} : {isNull: true}},
-          {name: 'value_double', value:  attributeType == 'float' ? {doubleValue: entries[attributeName]} : {isNull: true}},
+          {name: 'value_string', value: (attributeType == 'text' || attributeType == 'image' || attributeType == 'link') && entries[attributeName] ? {stringValue: entries[attributeName]} : {isNull: true}},
+          {name: 'value_long_string', value:  attributeType == 'textarea' && entries[attributeName] ?  {stringValue: entries[attributeName]} : {isNull: true}},
+          {name: 'value_double', value:  attributeType == 'float' && entries[attributeName] ? {doubleValue: entries[attributeName]} : {isNull: true}},
         ]
       ]    
-      
-    }, []); 
-    
-    
+
+    }, []);  
+   
+    const getAllIdSQL = `SELECT \`values\`.attribute_id                 
+    FROM entities
+    LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+    LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+    LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+    WHERE entity_types.slug = :entity_type_slug AND 
+    ${conditionType} = :entity_id`;
+
+    const ids = await db.executeStatement(getAllIdSQL, [
+      {name: 'entity_id', value:{[propertyType]: entity_id}},
+      {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
+    ]);
+
+ 
+     // return all the attribute_id from `values` that match the entity_id and :entity_type_slug (parameters) 
+     // use filter method on valueBatchParams and only return array/s that has no thesame value with any of the attributes_ids.
+     // which means, some entries received from the frontend are yet to exist in the db table of `values`
+     // therefore, we need to create 
+
+    const nonExistingVal = valueBatchParams.filter(arr => 
+      !arr.some(obj => 
+        obj.name === 'attribute_id' && 
+        ids.records.some(idArr => obj.value.longValue === idArr[0].longValue) 
+      ) 
+    ); 
+
+   if(nonExistingVal.length){
+    const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
+      value_string, value_long_string, value_double  
+    ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double) 
+    `; 
+
+    await db.batchExecuteStatement(insertValuesBatchSQL,nonExistingVal);
+    console.log("created")
+   }
+   
     //Insert Values by batch
-    const insertValuesBatchSQL = `UPDATE \`values\` SET 
+    const updateValuesBatchSQL = `UPDATE \`values\` SET 
     value_string = :value_string, 
     value_long_string = :value_long_string, 
     value_double = :value_double 
     WHERE entity_id = :entity_id AND attribute_id = :attribute_id
     `; 
 
-    await db.batchExecuteStatement(insertValuesBatchSQL,valueBatchParams);
-    
-
-    
+    await db.batchExecuteStatement(updateValuesBatchSQL,valueBatchParams);
+       
     //TODO: end transaction
-
     return true;
   }
 
