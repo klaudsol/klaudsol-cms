@@ -24,9 +24,9 @@ export const initialState = {
   isSaving: false,
   isDeleting: false,
   show: false,
-  entity_type_id: null,
+  entityTypeId: null,
   modalContent: null,
-  all_validates: null
+  allValidates: null
 };
 
 export const entityReducer = (state, action) => {
@@ -98,7 +98,7 @@ export const entityReducer = (state, action) => {
     case SET_ENTITY_TYPE_ID:
       return {
         ...state,
-        entity_type_id: action.payload,
+        entityTypeId: action.payload,
       };
 
     case SET_MODAL_CONTENT:
@@ -109,7 +109,7 @@ export const entityReducer = (state, action) => {
     case SET_VALIDATE_ALL:
       return {
         ...state,
-        all_validates: action.payload
+        allValidates: action.payload
       }
   }
 };
