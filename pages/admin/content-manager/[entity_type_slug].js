@@ -44,6 +44,17 @@ export default function ContentManager({ cache }) {
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
 
+
+  /** Data Arrays : to be fetched from database soon */
+ 
+  const entryNumber = [
+    { name: "10" },
+    { name: "20" },
+    { name: "50" },
+    { name: "100" },
+  ];
+
+
   const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
   /*** Entity Types List ***/

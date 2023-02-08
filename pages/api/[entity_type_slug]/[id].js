@@ -24,7 +24,12 @@ SOFTWARE.
 **/
 
 import Entity from "@backend/models/core/Entity";
-import { deleteFilesFromBucket } from "@/backend/data_access/S3";
+import {
+  deleteFilesFromBucket,
+  updateFilesFromBucket,
+  generateS3ParamsForDeletion,
+  generateEntries,
+} from "@/backend/data_access/S3";
 import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
@@ -32,7 +37,6 @@ import { resolveValue } from "@/components/EntityAttributeValue";
 import { setCORSHeaders, parseFormData } from "@/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert } from "@/lib/Permissions";
-import { updateFilesFromBucket } from "@/backend/data_access/S3";
 
 export default withSession(handler);
 
@@ -132,7 +136,10 @@ async function del(req, res) {
       item.attributes_type === "image" ? item.value_string : []
     );
 
-    if (imageNames.length > 0) await deleteFilesFromBucket(imageNames);
+    if (imageNames.length > 0) {
+      const params = generateS3ParamsForDeletion(imageNames);
+      await deleteFilesFromBucket(params);
+    }
 
     await Entity.delete({ id: slug });
 
@@ -158,12 +165,14 @@ async function update(req, res) {
     const { toDeleteRaw, ...body } = entriesRaw;
     const toDelete = toDeleteRaw.split(",");
 
-    const entries =
-      files.length > 0
-        ? await updateFilesFromBucket(files, body, toDelete)
-        : body;
+    if (files.length > 0) {
+      const resFromS3 = await updateFilesFromBucket(files, body, toDelete);
+      const entries = generateEntries(resFromS3, files, body);
 
-    await Entity.update({ entries, entity_type_id, entity_id });
+      await Entity.update({ entries, entity_type_id, entity_id });
+    } else {
+      await Entity.update({ entries: body, entity_type_id, entity_id });
+    }
 
     res.status(OK).json({ message: "Successfully created a new entry" });
   } catch (error) {
