@@ -159,7 +159,7 @@ async function update(req, res) {
     );
 
     const { files, body: bodyRaw } = req;
-    const { entity_type_id, entity_id, ...entriesRaw } = JSON.parse(
+    const { entity_type_slug, entity_id, ...entriesRaw } = JSON.parse(
       JSON.stringify(bodyRaw)
     );
     const { toDeleteRaw, ...body } = entriesRaw;
@@ -169,9 +169,9 @@ async function update(req, res) {
       const resFromS3 = await updateFilesFromBucket(files, body, toDelete);
       const entries = generateEntries(resFromS3, files, body);
 
-      await Entity.update({ entries, entity_type_id, entity_id });
+      await Entity.update({ entries, entity_type_slug, entity_id });
     } else {
-      await Entity.update({ entries: body, entity_type_id, entity_id });
+      await Entity.update({ entries: body, entity_type_slug, entity_id });
     }
 
     res.status(OK).json({ message: "Successfully created a new entry" });

@@ -42,6 +42,7 @@ import {
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ENTITY_TYPE_ID,
+  SET_ALL_VALIDATES
 } from "@/lib/actions";
 
 export default function Type({ cache }) {
@@ -72,10 +73,12 @@ export default function Type({ cache }) {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);
         const values = await valuesRaw.json();
 
-        const entries = values.data;
+        const entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
         const attributes = values.metadata.attributes;
         const entity_type_id = values.metadata.entity_type_id;
+        const validateValues = Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: true}), {})
 
+        dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({ type: SET_ATTRIBUTES, payload: attributes });
         dispatch({ type: SET_VALUES, payload: entries });
         dispatch({ type: SET_ENTITY_TYPE_ID, payload: entity_type_id });
@@ -90,6 +93,7 @@ export default function Type({ cache }) {
   const onSubmit = (e) => {
     e.preventDefault();
     formRef.current.handleSubmit();
+    state.allValidates && formRef.current.setTouched({ ...state.allValidates});
   };
 
   const onDelete = useCallback(
@@ -122,7 +126,6 @@ export default function Type({ cache }) {
 
   const getFormikInitialVals = () => {
     const { slug, id, ...initialValues } = state.values;
-
     return initialValues;
   };
 
@@ -177,7 +180,7 @@ export default function Type({ cache }) {
           const entry = {
             ...values,
             toDeleteRaw: s3Keys,
-            entity_type_id: state.entity_type_id,
+            entity_type_slug,
             entity_id: id,
           };
 
@@ -206,7 +209,7 @@ export default function Type({ cache }) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
-        <ContentManagerLayout>
+        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
             <AppBackButton
               link={`/admin/content-manager/${entity_type_slug}`}
@@ -216,7 +219,6 @@ export default function Type({ cache }) {
                 <h3> {entity_type_slug} </h3>
                 <a
                   href={`/api/${entity_type_slug}/${id}`}
-                  passHref
                   target="_blank"
                   rel="noreferrer"
                 >

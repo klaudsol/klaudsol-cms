@@ -62,15 +62,16 @@ async function handler(req, res) {
   async function get(req, res) { 
     try{
       const queries = req.query;
-      const { entity_type_slug } = queries;
-      const rawData = await Entity.where({entity_type_slug});
+      const { entity_type_slug, entry, page } = queries;
+      const rawData = await Entity.findByPageAndEntry({ entity_type_slug, entry, page});
       const rawEntityType = await EntityType.find({slug: entity_type_slug});
+
 
       const initialFormat = {
         indexedData: {}
       };      
 
-      const dataTemp = rawData.reduce((collection, item) => {
+      const dataTemp = rawData.data.reduce((collection, item) => {
         return {
           indexedData: {
             ...collection.indexedData,
@@ -101,8 +102,8 @@ async function handler(req, res) {
             }}
 
           },
-          entity_type_id: item.entity_type_id
-
+          entity_type_id: item.entity_type_id,
+          total_rows: rawData.total_rows
         };
 
       }, initialMetadata);
