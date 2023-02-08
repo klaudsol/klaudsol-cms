@@ -31,7 +31,7 @@ export const rootReducer = (state, action) => {
         return {
           ...state,
           entityTypes: action.payload.entityTypes,
-          entityTypesHash: action.payload.entityTypesHash 
+          entityTypesHash: action.payload.entityTypesHash,
         }
 
       case 'SET_ENTITY_TYPE':

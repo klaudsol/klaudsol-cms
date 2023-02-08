@@ -12,7 +12,7 @@ import { SET_ENTITY_TYPES } from '@/lib/actions';
 /** react icons */
 import { FaSearch } from 'react-icons/fa'
 
-const ContentManagerSubMenu = ({title, defaultType}) => {
+const ContentManagerSubMenu = ({title, currentTypeSlug}) => {
   
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
@@ -30,16 +30,11 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
       isLoading: false,
     };
 
-    const SET_SELECTED_TYPE = 'SET_SELECTED_TYPE';
+
     const LOADING = 'LOADING';
     const reducer = (state, action) => {
       
       switch(action.type) {
-         case SET_SELECTED_TYPE:
-          return {
-            ...state,
-            selectedType: action.payload
-          }
           case LOADING:
           return {
             ...state,
@@ -94,7 +89,7 @@ const ContentManagerSubMenu = ({title, defaultType}) => {
               ))}
                { !state.isLoading &&
                   rootState.entityTypes.map((type, i) => (
-                     <Link href={`/admin/content-manager/${type.entity_type_slug}`} passHref key={i}><button key={i} className={state.selectedType === type.entity_type_id ? 'content_menu_item_active' : 'content_menu_item'} onClick={() => dispatch({type: SET_SELECTED_TYPE, payload: type.entity_type_id})}><li> {type.entity_type_name} </li></button></Link>
+                     <Link href={`/admin/content-manager/${type.entity_type_slug}`} passHref key={i}><button key={i} className={currentTypeSlug === type.entity_type_slug ? 'content_menu_item_active' : 'content_menu_item'}><li> {type.entity_type_name} </li></button></Link>
                   ))
                }
             </div>

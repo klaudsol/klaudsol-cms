@@ -159,7 +159,7 @@ async function update(req, res) {
     );
 
     const { files, body: bodyRaw } = req;
-    const { entity_type_id, entity_id, ...entriesRaw } = JSON.parse(
+    const { entity_type_slug, entity_id, ...entriesRaw } = JSON.parse(
       JSON.stringify(bodyRaw)
     );
     const { toDeleteRaw, ...body } = entriesRaw;
