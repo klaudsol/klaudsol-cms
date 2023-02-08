@@ -216,7 +216,108 @@
     height: 75vh;
 }
 
+.container-fluid {
+    padding: 0px 40px 0px 40px;
+}
 
+.pagination-general{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  color: #323C4E;
+
+  .pagination-dropdown{
+
+    width: 60px;
+    height: 28px;
+    outline: #323C4E;
+    margin-right: 6px;
+    padding: 0px 5px 0px 5px;
+    border-radius: 4px;
+    color: #323C4E;
+  }
+
+  .pagination-dropdown::after{
+     transform: rotate(180deg);
+  }
+}
+
+.pagination{
+    font-size: 0.9em;
+
+  }
+
+  .pagination-buttons-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #323C4E;
+
+    .page-number-button{
+      display: flex;
+      width: 22px;
+      height: 28px;
+      justify-content: center;
+      align-items: center;
+      outline: none;
+      border-radius: 2px;
+      color: #333b3fe5;
+      border: 1px solid #333b3fe5;
+      margin: 0px 5px 0px 5px;
+
+      &.active{ 
+        border: 1px solid #333b3f8f;
+        color:#333b3f8f;
+        cursor: default;
+      }
+    }
+
+    .page-shift-button-left,  .page-shift-button-right{
+        outline: none;
+        border: none;
+        background: none;
+        padding: 0px;   
+        .page-shift-icons{
+            display: block;
+        }
+        svg{
+            width: 2em;
+            color: #323C4E;          
+        }
+        &:disabled{
+            opacity: 60%;
+        }
+      }
+
+      .page-number{
+        padding: 3px;
+     }
+
+     .page-shift-button-left-double,  .page-shift-button-right-double{
+        outline: none;
+        border: none;
+        background: none;
+        padding: 0px;   
+        .page-shift-icons-double{
+            display: block;
+        }
+        svg{
+            width: 2em;
+            color: #323C4E;   
+
+        }
+        &:disabled{
+            opacity: 60%;
+        }
+      }
+
+      .page-number{
+        padding: 3px;
+     }
+
+  }
 
 .submenu_title {
     color: #455a64 !important;
@@ -486,6 +587,11 @@ $onFocus: #323C4E;
     background-color: #b0bec5;
 }
 
+.btn_general_lg--invert_colors {
+    color: #fff;
+    background-color: #455a64;
+}
+
 /** SEARCH BUTTON **/
 
 .btn_icon,
@@ -514,6 +620,23 @@ $onFocus: #323C4E;
 
 .search_icon {
     font-size: 12px;
+}
+
+/** Upload field **/
+.field_base {
+    display: flex;
+    justify-content: center;
+}
+
+.field_btn {
+    // For aliging with the input
+    // The input has a marginBottom: .5rem for some reason
+    margin-bottom: 0.5rem;
+    margin-left: 0;
+}
+
+.field_image {
+    object-fit: contain;
 }
 
 /** Add field type **/
@@ -588,6 +711,7 @@ $onFocus: #323C4E;
     font-size: 14px;
 }
 
+
 /** 
 =================================================================
                     TABLE STYLES
@@ -598,6 +722,8 @@ $onFocus: #323C4E;
 #table_general_main{
 overflow-x: scroll;
 height: 100%;
+border: 1px solid #b0bec5;
+border-radius: 5px;
 }
 
 #table_general, #table_skeleton {
@@ -680,18 +806,14 @@ height: 100%;
 **/
 
 .container_new_entry {
+    height: fit-content;
     background-color: #fff;
     border: 1px solid lightgray;
     justify-content: start;
     align-items: flex-start;
     text-align: start;
+    margin-bottom: 10px;
 }
-
-.edit_new_entry {
-    height: fit-content;
-}
-
-
 
 .input_text {
     width: 100%;

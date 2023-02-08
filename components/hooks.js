@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import RootContext from '@/components/contexts/RootContext';
 import { useRouter} from 'next/router'; 
-import { RESET_CLIENT_SESSION } from '@/components/reducers/actions';
+import { RESET_CLIENT_SESSION } from '@/lib/actions';
   
 export const useLogout = () => {
   const {state, dispatch} = useContext(RootContext);

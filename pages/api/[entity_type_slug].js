@@ -28,11 +28,19 @@ import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { resolveValue } from '@/components/EntityAttributeValue';
-import { setCORSHeaders } from '@/lib/API';
+import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
+import { addFilesToBucket, generateEntries } from '@backend/data_access/S3'
+import { filterData } from '@/components/Util';
 
 export default withSession(handler);
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+}
 
 async function handler(req, res) {
   
@@ -41,7 +49,8 @@ async function handler(req, res) {
       case "GET":
         return get(req, res); 
       case "POST":
-        return create(req, res); 
+        const { req: parsedReq, res: parsedRes } = await parseFormData(req, res);
+        return create(parsedReq, parsedRes); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -52,16 +61,16 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
-      const { entity_type_slug } = req.query;
-      const rawData = await Entity.where({entity_type_slug});
+      const queries = req.query;
+      const { entity_type_slug, entry, page } = queries;
+      const rawData = await Entity.findByPageAndEntry({ entity_type_slug, entry, page});
       const rawEntityType = await EntityType.find({slug: entity_type_slug});
 
       const initialFormat = {
         indexedData: {}
       };      
-      
-      const dataTemp = rawData.reduce((collection, item) => {
-        
+
+      const dataTemp = rawData.data.reduce((collection, item) => {
         return {
           indexedData: {
             ...collection.indexedData,
@@ -92,14 +101,16 @@ async function handler(req, res) {
             }}
 
           },
-          entity_type_id: item.entity_type_id
-
+          entity_type_id: item.entity_type_id,
+          total_rows: rawData.total_rows
         };
 
       }, initialMetadata);
 
+      const filteredData = filterData(queries,Object.values(dataTemp.indexedData),)
+      
       const output = {
-        data: Object.values(dataTemp.indexedData), 
+        data: filteredData, 
         metadata: metadata
       }; 
 
@@ -114,18 +125,27 @@ async function handler(req, res) {
     }
   }
 
-  async function create(req, res) { 
-    try{
 
-      await assert({
-        loggedIn: true,
-       }, req);
+async function create(req, res) { 
+    try {
+        await assert({
+            loggedIn: true,
+        }, req);
 
-      const { entry } = req.body;
-      await Entity.create(entry);
-      res.status(OK).json({message: 'Successfully created a new entry'}) 
-    }
-    catch (error) {
+        const { files, body: bodyRaw } = req;
+        const body = JSON.parse(JSON.stringify(bodyRaw));
+
+        if (files.length > 0) {
+          const resFromS3 = await addFilesToBucket(files, body);
+          const entries = generateEntries(resFromS3, files, body);
+
+          await Entity.create(entries);
+        } else {
+          await Entity.create(body);
+        }
+
+        res.status(OK).json({message: 'Successfully created a new entry'}) 
+    } catch (error) {
       await defaultErrorHandler(error, req, res);
     }
-  }
+}
