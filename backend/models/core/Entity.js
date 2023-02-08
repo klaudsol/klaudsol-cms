@@ -39,7 +39,7 @@ class Entity {
       
       return data.records.map(([
           {longValue: entity_type_id},
-          {[propertyType]: slug},
+          {longValue: slug},
           {stringValue: entity_type_name},
           {stringValue: entity_type_slug},
           {stringValue: entities_slug},
@@ -121,6 +121,90 @@ class Entity {
           value_double
         })); 
   }
+
+  static async findByPageAndEntry({entity_type_slug , entry, page }) {
+    const db = new DB();
+     
+    let totalRows;
+    let totalOrders;
+    
+    const totalRowsSQL = `SELECT COUNT(entities.id) 
+                          from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
+                          WHERE entity_types.slug = :entity_type_slug;
+                          `;
+
+    const totalRowsData = await db.executeStatement(totalRowsSQL,[
+      {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
+    ]);
+
+    [{longValue:totalRows}] = totalRowsData.records[0]
+
+    const totalOrdersSQL = `SELECT COUNT(attributes.order)
+    from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
+    LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+    WHERE entity_types.slug = :entity_type_slug`;
+
+    const totalOrdersData = await db.executeStatement(totalOrdersSQL,[
+      {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
+    ]);
+    [{longValue:totalOrders}] = totalOrdersData.records[0]
+    
+    let limit = entry ? (( totalOrders / totalRows ) * entry ) : 10;
+    let offset = page ? limit * page : 0
+
+    const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
+                attributes.name, attributes.type, attributes.\`order\`,
+                \`values\`.value_string, 
+                \`values\`.value_long_string, 
+                \`values\`.value_integer, 
+                \`values\`.value_datetime, 
+                \`values\`.value_double                       
+                FROM entities
+                LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+                LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+                LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+                WHERE 
+                    entity_types.slug = :entity_type_slug  
+                ORDER BY entities.id, attributes.\`order\` ASC
+                LIMIT ${limit} OFFSET ${offset}
+                `;
+              
+    const dataRaw = await db.executeStatement(sql, [
+        {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
+    ]);
+       
+  const data = dataRaw.records.map(([
+        {longValue: id},
+        {longValue: entity_type_id},
+        {stringValue: entity_type_name},
+        {stringValue: entity_type_slug},
+        {stringValue: entities_slug},
+        {stringValue: attributes_name},
+        {stringValue: attributes_type},
+        {longValue: attributes_order},
+        {stringValue: value_string},
+        {stringValue: value_long_string},
+        {longValue: value_integer},
+        {stringValue: value_datetime},
+        {stringValue: value_double}
+      ]) => ({
+        id, 
+        entity_type_id,
+        entity_type_name, 
+        entity_type_slug, 
+        entities_slug, 
+        attributes_name, 
+        attributes_type, 
+        attributes_order, 
+        value_string,
+        value_long_string,
+        value_integer,
+        value_datetime,
+        value_double
+      })); 
+
+      return {total_rows:totalRows, data}
+}
 
     //Work in progress
     static async create({slug, entity_type_id, ...entry}) {
