@@ -3,7 +3,7 @@ import {
   RESET_CLIENT_SESSION,
   SET_ENTITY_TYPES,
   SET_COLLAPSE,
-} from '@/components/reducers/actions';
+} from '@/lib/actions';
 
 export const rootInitialState = {
   entityTypes: [],
@@ -31,7 +31,7 @@ export const rootReducer = (state, action) => {
         return {
           ...state,
           entityTypes: action.payload.entityTypes,
-          entityTypesHash: action.payload.entityTypesHash 
+          entityTypesHash: action.payload.entityTypesHash,
         }
 
       case 'SET_ENTITY_TYPE':

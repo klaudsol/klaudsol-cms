@@ -7,7 +7,7 @@ import AppModal from '@/components/klaudsolcms/AppModal';
 import CollectionTypeBody from '@/components/klaudsolcms/modals/modal_body/CollectionTypeBody';
 import { DEFAULT_SKELETON_ROW_COUNT } from 'lib/Constants';
 import RootContext from '@/components/contexts/RootContext';
-import { SET_ENTITY_TYPES } from '@/components/reducers/actions';
+import { SET_ENTITY_TYPES } from '@/lib/actions';
 
 const ContentBuilderSubMenu = ({title, currentTypeSlug}) => {
 
