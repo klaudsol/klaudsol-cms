@@ -113,7 +113,7 @@ export default function ContentManager({ cache }) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-        <ContentManagerLayout>
+        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
             <AppBackButton link="/admin" />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
@@ -121,7 +121,6 @@ export default function ContentManager({ cache }) {
                 <h3> {entity_type_slug} </h3>
                 <a
                   href={`/api/${entity_type_slug}`}
-                  passHref
                   target="_blank"
                   rel="noreferrer"
                 >

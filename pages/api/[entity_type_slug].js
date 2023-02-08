@@ -66,6 +66,7 @@ async function handler(req, res) {
       const rawData = await Entity.findByPageAndEntry({ entity_type_slug, entry, page});
       const rawEntityType = await EntityType.find({slug: entity_type_slug});
 
+
       const initialFormat = {
         indexedData: {}
       };      
