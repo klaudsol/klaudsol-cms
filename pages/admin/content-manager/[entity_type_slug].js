@@ -38,7 +38,7 @@ export default function ContentManager({ cache }) {
   const { entity_type_slug } = router.query;
 
   /** Data Arrays : to be fetched from database soon */
-
+ 
   const entryNumber = [
     { name: "10" },
     { name: "20" },

@@ -31,7 +31,7 @@ import { resolveValue } from '@/components/EntityAttributeValue';
 import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
-import { uploadFilesToBucket } from '@backend/data_access/S3'
+import { addFilesToBucket, generateEntries } from '@backend/data_access/S3'
 import { filterData } from '@/components/Util';
 
 export default withSession(handler);
@@ -134,9 +134,15 @@ async function create(req, res) {
 
         const { files, body: bodyRaw } = req;
         const body = JSON.parse(JSON.stringify(bodyRaw));
-        const entry = files.length > 0 ? await uploadFilesToBucket(files, body) : body;
 
-        await Entity.create(entry);
+        if (files.length > 0) {
+          const resFromS3 = await addFilesToBucket(files, body);
+          const entries = generateEntries(resFromS3, files, body);
+
+          await Entity.create(entries);
+        } else {
+          await Entity.create(body);
+        }
 
         res.status(OK).json({message: 'Successfully created a new entry'}) 
     } catch (error) {

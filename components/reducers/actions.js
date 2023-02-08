@@ -23,8 +23,9 @@ export async function loadEntityTypes({
         payload: {
           entityTypes: entityTypes.data,
           entityTypesHash: entityTypes.metadata.hash,
-        },
-      });
+
+      }});       
+
     }
   } catch (ex) {
     console.error(ex.stack);
