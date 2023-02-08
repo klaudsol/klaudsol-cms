@@ -2,10 +2,10 @@ import AWS from "aws-sdk";
 import { promisify } from "es6-promisify";
 import crypto from "crypto";
 
-const AWS_ACCESS_KEY_ID = process.env.AWS_S3_ACCESS_KEY_ID;
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_S3_SECRET_ACCESS_KEY;
-const AWS_REGION = process.env.AURORA_AWS_REGION;
-const AWS_S3_BUCKET = process.env.AWS_S3_BUCKET;
+const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
+const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
+const S3_BUCKET = process.env.S3_BUCKET;
+const REGION = process.env.AURORA_AWS_REGION;
 
 // Should be put in another file since this can be used globally
 const generateRandVals = async (size) => {
@@ -17,9 +17,9 @@ const generateRandVals = async (size) => {
 };
 
 const s3Config = {
-  accessKeyId: AWS_ACCESS_KEY_ID,
-  secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  region: AWS_REGION,
+  accessKeyId: S3_ACCESS_KEY_ID,
+  secretAccessKey: S3_SECRET_ACCESS_KEY,
+  region: REGION,
 };
 
 export const initializeS3 = () => {
@@ -30,7 +30,7 @@ export const initializeS3 = () => {
 
 export const getS3Param = (file) => {
   return {
-    Bucket: AWS_S3_BUCKET,
+    Bucket: S3_BUCKET,
     Key: file.originalname,
     Body: file.buffer,
     ContentType: file.mimetype,
@@ -75,7 +75,7 @@ export const generateS3KeyForDeletion = (key) => {
 export const generateS3ParamsForDeletion = (keysRaw) => {
   const keys = keysRaw.map(generateS3KeyForDeletion);
   const params = {
-    Bucket: AWS_S3_BUCKET,
+    Bucket: S3_BUCKET,
     Delete: {
       Objects: keys,
     },
