@@ -172,7 +172,7 @@ async function update(req, res) {
       await Entity.update({ entries, entity_type_slug, entity_id });
       
     } else {
-      await Entity.update({ entries: body, entity_type_id, entity_id });
+      await Entity.update({ entries: body, entity_type_slug, entity_id });
     }
 
 

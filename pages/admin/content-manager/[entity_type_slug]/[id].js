@@ -102,7 +102,7 @@ export default function Type({ cache }) {
       (async () => {
         try {
           dispatch({ type: DELETING });
-          const response = await slsFetch(`/api/${entity_type_slug}/${state.entityTypeId}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "DELETE",
             headers: {
               "Content-type": "application/json",
@@ -209,7 +209,7 @@ export default function Type({ cache }) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
-        <ContentManagerLayout>
+        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
             <AppBackButton
               link={`/admin/content-manager/${entity_type_slug}`}
@@ -219,7 +219,6 @@ export default function Type({ cache }) {
                 <h3> {entity_type_slug} </h3>
                 <a
                   href={`/api/${entity_type_slug}/${id}`}
-                  passHref
                   target="_blank"
                   rel="noreferrer"
                 >
