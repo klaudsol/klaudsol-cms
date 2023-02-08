@@ -128,7 +128,7 @@ class Entity {
     let totalRows;
     let totalOrders;
     
-    const totalRowsSQL = `select COUNT(entities.id) 
+    const totalRowsSQL = `SELECT COUNT(entities.id) 
                           from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
                           WHERE entity_types.slug = :entity_type_slug;
                           `;
@@ -139,7 +139,7 @@ class Entity {
 
     [{longValue:totalRows}] = totalRowsData.records[0]
 
-    const totalOrdersSQL = `select COUNT(attributes.order)
+    const totalOrdersSQL = `SELECT COUNT(attributes.order)
     from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
     LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
     WHERE entity_types.slug = :entity_type_slug`;
