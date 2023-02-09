@@ -3,11 +3,17 @@ import {promisify} from 'es6-promisify';
 import GlobalConstants  from "@/components/GlobalConstants";
 import crypto from 'crypto';
 
-const AURORA_AWS_ACCESS_KEY_ID = process.env.AURORA_AWS_ACCESS_KEY_ID;
-const AURORA_AWS_SECRET_ACCESS_KEY = process.env.AURORA_AWS_SECRET_ACCESS_KEY;
-const AURORA_RESOURCE_ARN = process.env.AURORA_RESOURCE_ARN;
-const AURORA_SECRET_ARN = process.env.AURORA_SECRET_ARN;
-const AURORA_DATABASE = process.env.AURORA_DATABASE;
+// TODO: 
+// Deprecate AURORA_AWS_ACCESS_KEY_ID,AURORA_AWS_SECRET_ACCESS_KEY,AURORA_RESOURCE_ARN  
+// AURORA_SECRET_ARN
+// AURORA_DATABASE
+// during version 3.0.0 release.
+
+const AURORA_AWS_ACCESS_KEY_ID = process.env.KS_AWS_ACCESS_KEY_ID ?? process.env.KS_AURORA_ACCESS_KEY_ID ?? process.env.AURORA_AWS_ACCESS_KEY_ID;
+const AURORA_AWS_SECRET_ACCESS_KEY = process.env.KS_AWS_SECRET_ACCESS_KEY ?? process.env.KS_AURORA_SECRET_ACCESS_KEY ?? process.env.AURORA_AWS_SECRET_ACCESS_KEY;
+const AURORA_RESOURCE_ARN = process.env.KS_AURORA_RESOURCE_ARN ?? process.env.AURORA_RESOURCE_ARN;
+const AURORA_SECRET_ARN = process.env.KS_AURORA_SECRET_ARN ?? process.env.AURORA_SECRET_ARN;
+const AURORA_DATABASE = process.env.KS_AURORA_DATABASE ?? process.env.AURORA_DATABASE;
 
 const {
   AURORA_AWS_REGION,
