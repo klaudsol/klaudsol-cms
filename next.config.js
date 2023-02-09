@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
   images: {
-    domains: (process.env.IMAGE_DOMAINS ?? "").split(",")
+    domains: (process.env.KS_IMAGE_DOMAINS ?? "").split(","),
   },
 };
 

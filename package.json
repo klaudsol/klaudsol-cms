@@ -43,6 +43,7 @@
     "jspdf": "^2.5.1",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.34",
+    "multer": "^1.4.5-lts.1",
     "next": "^13.1.5",
     "node-fetch": "^3.2.3",
     "pdf-lib": "^1.17.1",
