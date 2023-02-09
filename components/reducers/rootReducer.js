@@ -3,11 +3,13 @@ import {
   RESET_CLIENT_SESSION,
   SET_ENTITY_TYPES,
   SET_COLLAPSE,
+  SET_CURRENT_ENTITY_TYPE
 } from '@/lib/actions';
 
 export const rootInitialState = {
   entityTypes: [],
-  entityType: {}
+  entityType: {},
+  currentContentType:{}
 };
 
 export const rootReducer = (state, action) => {
@@ -31,7 +33,7 @@ export const rootReducer = (state, action) => {
         return {
           ...state,
           entityTypes: action.payload.entityTypes,
-          entityTypesHash: action.payload.entityTypesHash,
+          entityTypesHash: action.payload.entityTypesHash
         }
 
       case 'SET_ENTITY_TYPE':
@@ -47,6 +49,12 @@ export const rootReducer = (state, action) => {
         return {
           ...state,
           collapse: action.payload,
+        }
+      
+      case SET_CURRENT_ENTITY_TYPE:
+        return {
+          ...state,
+          currentContentType: action.payload
         }
         
       default:
