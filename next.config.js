@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
   images: {
-    domains: (process.env.IMAGE_DOMAINS ?? "").split(",")
+    //TODO: Deprecate IMAGE_DOMAINS on v3.0.0 release
+    domains: (process.env.KS_IMAGE_DOMAINS ?? process.env.IMAGE_DOMAINS ?? "").split(",")
   },
 };
 
