@@ -2,10 +2,20 @@ import AWS from "aws-sdk";
 import { promisify } from "es6-promisify";
 import crypto from "crypto";
 
-const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
-const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
-const REGION = process.env.AURORA_AWS_REGION;
-const S3_BUCKET = process.env.S3_BUCKET;
+const S3_ACCESS_KEY_ID =
+  process.env.KS_S3_ACCESS_KEY_ID ??
+  process.env.KS_AWS_ACCESS_KEY_ID ??
+  process.env.AURORA_AWS_ACCESS_KEY_ID;
+const S3_SECRET_ACCESS_KEY =
+  process.env.KS_S3_SECRET_ACCESS_KEY ??
+  process.env.KS_AWS_SECRET_ACCESS_KEY ??
+  process.env.AURORA_AWS_SECRET_ACCESS_KEY;
+//TODO: Deprecate AURORA_AWS_REGION on release V3.0.0
+const REGION =
+  process.env.KS_S3_REGION ??
+  process.env.KS_AWS_REGION ??
+  process.env.AURORA_AWS_REGION;
+const S3_BUCKET = process.env.KS_S3_BUCKET;
 
 // Should be put in another file since this can be used globally
 const generateRandVals = async (size) => {
