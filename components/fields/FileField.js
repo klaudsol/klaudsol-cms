@@ -6,6 +6,9 @@ import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
 const FileField = (props) => {
   const { setFieldValue, setTouched, touched } = useFormikContext();
   const [field] = useField(props);
+  
+  console.log(props)
+  console.log(field)
 
   const { onChange, value, ...formattedField } = field;
 
@@ -25,7 +28,7 @@ const FileField = (props) => {
 
     const checkIfUnfocused = () => {
       if (!value) setTouched({ ...touched, [field.name]: true });
-
+      
       document.body.onfocus = null;
     };
 

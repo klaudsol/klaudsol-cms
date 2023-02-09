@@ -129,8 +129,8 @@ export default function CreateNewEntry({ cache }) {
           entity_type_id: state.entity_type_id,
         };
 
+        console.log(entry)
         const formattedEntries = convertToFormData(entry);
-
         try {
           dispatch({ type: SAVING });
           const response = await slsFetch(`/api/${entity_type_slug}`, {
