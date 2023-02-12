@@ -172,7 +172,7 @@ class Entity {
                 WHERE 
                     entity_types.slug = :entity_type_slug  
                 ORDER BY entities.id, attributes.\`order\` ASC
-                LIMIT ${limit} OFFSET ${offset}
+                ${entry && page ? `LIMIT ${limit} OFFSET ${offset}`:' '}
                 `;
               
     const dataRaw = await db.executeStatement(sql, [
