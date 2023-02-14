@@ -11,7 +11,7 @@ const AdminRenderer = ({ type, ...params }) => {
       return <TextRenderer type="type" {...params} />;
     case CMS_TYPES.IMAGE:
       return (
-        <UploadRenderer accept="image/png, image/gif, image/jpeg" {...params} />
+        <UploadRenderer accept="image/png, image/gif, image/jpeg, image/jfif" {...params} />
       );
     case CMS_TYPES.TEXT_AREA:
       return <TextAreaRenderer type={type} {...params} />;

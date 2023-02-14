@@ -71,8 +71,21 @@ export const sortByOrderAsc = (first, second) => first[1].order - second[1].orde
 export const isNumber = (str) => {
   return !isNaN(str);
 }
-  
 
+export const resolveResource = (rsc) => {
+  if(!rsc) return [];
+
+  switch(rsc.type){
+    case 'image/jpeg':
+    case 'image/jpg':
+    case 'image/gif':
+      const bucketBaseUrl = process.env.KS_S3_BASE_URL;
+      const imageURL = `${bucketBaseUrl}/${rsc.value}`;
+    
+      return {...rsc, link:imageURL}  
+    default: return rsc
+  }
+}
 
 const filterQuery = (queries) => (
   Object.entries(queries)

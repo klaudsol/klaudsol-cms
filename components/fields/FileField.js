@@ -2,23 +2,36 @@ import { useState, useRef } from "react";
 import { useFormikContext, useField } from "formik";
 import Image from "next/image";
 import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
+import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import { FaTrash } from "react-icons/fa";
+import { useEffect } from "react";
 
 const FileField = (props) => {
   const { setFieldValue, setTouched, touched } = useFormikContext();
   const [field] = useField(props);
-  
-  console.log(props)
-  console.log(field)
 
   const { onChange, value, ...formattedField } = field;
 
-  const [imageLink, setImageLink] = useState(value && value.link);
+  const [staticLink,setStaticLink] = useState('');
   const inputRef = useRef();
+  const isFetching = props.isSaving || props.isDeleting; 
+
+  useEffect(()=>{
+   if(props.resetOnNewData) { 
+    !value instanceof File  && setStaticLink('');
+    inputRef.current.value = '';
+  }
+  },[value,props.resetOnNewData])
+
+  console.log(value)
+  console.log(staticLink)
 
   const setFileValue = (e) => {
     const file = e.target.files[0];
 
-    setImageLink(URL.createObjectURL(file));
+    if(!file) return
+
+    setStaticLink(URL.createObjectURL(file));
 
     setFieldValue(field.name, file);
   };
@@ -28,7 +41,7 @@ const FileField = (props) => {
 
     const checkIfUnfocused = () => {
       if (!value) setTouched({ ...touched, [field.name]: true });
-      
+
       document.body.onfocus = null;
     };
 
@@ -41,28 +54,49 @@ const FileField = (props) => {
         <input
           type="file"
           onChange={setFileValue}
+          onClick={(e)=>{console.log(e.target.files[0])}}
           hidden="hidden"
           ref={inputRef}
           {...formattedField}
         />
-        <span
-          className={props.className}
-          style={props.style}
-          value={value?.name || ""}
-          onClick={openUploadMenu}
-        >
-          {value?.name}
-        </span>
+        {!props.offName && (
+          <span
+            className={props.className}
+            style={props.style}
+            value={value?.name || ""}
+            onClick={openUploadMenu}
+          >
+            {value?.name}
+          </span>
+        )}
         <AppButtonLg
-          title="Browse..."
+          title={props.buttonPlaceholder ?? "Browse..."}
           className="btn_general_lg--invert_colors field_btn"
           onClick={openUploadMenu}
+          isDisabled={isFetching}
         />
+        {props.showDeleteButton && (
+          <button
+            className={`new_entry_block_button_delete logo ${isFetching && `delete`}`}
+            onClick={()=>{props.onDelete(setStaticLink)}}
+            type="button"
+            disabled={isFetching}
+          >
+            <div>
+              {props.isDeleting ? (
+                <AppButtonSpinner height={10} />
+              ) : (
+                <FaTrash className="icon_block_button" />
+              )}
+            </div>
+            <p>Remove</p>
+          </button>
+        )}
       </div>
-      {imageLink && (
+      {(value || staticLink) && (
         <Image
-          src={imageLink}
-          alt={value.name}
+          src={value?.link ?? staticLink}
+          alt={value?.name}
           width={800}
           height={300}
           loading="lazy"

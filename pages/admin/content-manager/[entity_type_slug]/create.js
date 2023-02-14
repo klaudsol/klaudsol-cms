@@ -128,8 +128,7 @@ export default function CreateNewEntry({ cache }) {
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
-
-        console.log(entry)
+        
         const formattedEntries = convertToFormData(entry);
         try {
           dispatch({ type: SAVING });
