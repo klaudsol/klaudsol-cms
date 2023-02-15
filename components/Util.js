@@ -73,10 +73,7 @@ export const isNumber = (str) => {
 }
 
 export const findContentTypeName = (arr,slugName) => (
-  arr.find((obj)=> (
-    obj.entity_type_slug === slugName 
-  ))
- )
+arr.find((obj)=> obj.entity_type_slug === slugName));
   
 const filterQuery = (queries) => (
   Object.entries(queries)

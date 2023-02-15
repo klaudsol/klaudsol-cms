@@ -100,7 +100,6 @@ export default function ContentManager({ cache }) {
     dispatch({type: PAGE_SETS_RENDERER,payload: defaultPageRender});
   }, [entity_type_slug]);
 
-  console.log()
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
