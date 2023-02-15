@@ -5,6 +5,7 @@ import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { FaTrash } from "react-icons/fa";
 import { useEffect } from "react";
+import {  SET_CHANGED } from "@/lib/actions" 
 
 const FileField = (props) => {
   const { setFieldValue, setTouched, touched } = useFormikContext();
@@ -29,7 +30,7 @@ const FileField = (props) => {
     if(!file) return
 
     setStaticLink(URL.createObjectURL(file));
-
+    props?.dispatch && props.dispatch({ type: SET_CHANGED, payload:true })
     setFieldValue(field.name, file);
   };
 

@@ -15,7 +15,7 @@ import {
   settingReducer,
   initialState,
 } from "@/components/reducers/settingReducer";
-import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES } from "@/lib/actions";
+import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES, SET_CHANGED } from "@/lib/actions";
 import { defaultLogo } from "@/constants/index";
 import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
 import { validImageTypes } from "@/lib/Constants";
@@ -61,6 +61,7 @@ export default function Settings({ cache }) {
         dispatch({ type: SET_VALUES, payload: {} });
         formRef.current.resetForm({ values: {} });
         setStaticLink('');
+        dispatch({ type: SET_CHANGED, payload:false })
       } catch (ex) {
         console.error(ex);
       } finally {
@@ -108,6 +109,7 @@ export default function Settings({ cache }) {
           const newData = setInitialValues(data);
           dispatch({ type: SET_VALUES, payload: newData });
           formRef.current.resetForm({ values: newData });
+          dispatch({ type: SET_CHANGED, payload:false })
         } catch (ex) {
           console.error(ex);
         } finally {
@@ -132,7 +134,7 @@ export default function Settings({ cache }) {
                     title={state.isSaving ? "Saving" : "Save"}
                     icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
                     onClick={onSubmit}
-                    isDisabled={state.isLoading || state.isSaving || state.isDeleting}
+                    isDisabled={state.isLoading || state.isSaving || state.isDeleting || !state.isChanged}
                   />
                 </div>
               </div>
@@ -153,6 +155,7 @@ export default function Settings({ cache }) {
                         isErrorDisabled={true}
                         offName={true}
                         resetOnNewData={true}
+                        dispatch={dispatch}
                         
                       />
                     </Form>

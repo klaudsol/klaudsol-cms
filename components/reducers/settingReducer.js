@@ -1,10 +1,11 @@
-import { SAVING, LOADING, CLEANUP, SET_VALUES, DELETING } from "@/lib/actions" 
+import { SAVING, LOADING, CLEANUP, SET_VALUES, DELETING, SET_CHANGED } from "@/lib/actions" 
 
 export const initialState = {
   isLoading: true,
   isRefresh: true,
   isDeleting: false,
   isSaving: false,
+  isChanged: false,
   values: {}
 };
 
@@ -39,6 +40,12 @@ export const settingReducer = (state, action) => {
       return {
         ...state,
         values: action.payload
+      }
+    
+    case SET_CHANGED:
+      return {
+        ...state,
+        isChanged: action.payload
       }
   }
 };
