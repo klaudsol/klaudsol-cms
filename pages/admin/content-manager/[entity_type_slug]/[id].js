@@ -49,21 +49,8 @@ export default function Type({ cache }) {
   const router = useRouter();
 
   const { entity_type_slug, id } = router.query;
-
   const [state, dispatch] = useReducer(entityReducer, initialState);
   const formRef = useRef();
-
-  const onTextInputChange = (
-    entries,
-    col,
-    value,
-    attribute,
-    attribute_type
-  ) => {
-    entries[col] = value;
-    entries[attribute] = attribute_type;
-    dispatch({ type: SET_VALUES, payload: entries });
-  };
 
   /*** Entity Types List ***/
   useEffect(() => {
