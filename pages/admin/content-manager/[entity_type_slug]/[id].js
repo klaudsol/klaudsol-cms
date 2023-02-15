@@ -145,7 +145,7 @@ export default function Type({ cache }) {
 
   const getS3Keys = (files) => {
     const fileKeys = Object.keys(files);
-    const s3Keys = fileKeys.filter((file) => state.values[file].key);
+    const s3Keys = fileKeys.filter(file => state.values[file].key);
     
     return s3Keys;
   };
