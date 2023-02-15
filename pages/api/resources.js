@@ -50,8 +50,7 @@ async function create(req, res) {
     }, req);
 
     const { files, body } = req;
-    const [{ mimetype: fileType} ] = files;
-   
+  
     let createdResource;
     if (files.length) {
       const resFromS3 = await addFileToBucket(files[0]);

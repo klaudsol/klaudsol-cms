@@ -18,6 +18,8 @@ import {
 import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES } from "@/lib/actions";
 import { defaultLogo } from "@/constants/index";
 import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
+import { validImageTypes } from "@/lib/Constants";
+
 
 export default function Settings({ cache }) {
   const formRef = useRef();
@@ -26,7 +28,7 @@ export default function Settings({ cache }) {
 
   const setInitialValues = (data) => {
     const initialVal = Object.keys(data).length !== 0 
-      ? { mainlogo: { name: data.slug, link: data.link, key: data.value } }
+      ? { mainlogo: { name: data.key, link: data.link, key: data.value } }
       : {};
       return initialVal;
   };
@@ -66,8 +68,6 @@ export default function Settings({ cache }) {
       }
     })();
   }, []);
-
-  console.log(state.values)
 
   const onSubmit = (evt) => {
     evt.preventDefault();
@@ -141,7 +141,7 @@ export default function Settings({ cache }) {
                   {() => (
                     <Form>
                       <UploadRenderer
-                        accept="image/png, image/gif, image/jpeg, image/jfif"
+                        accept={validImageTypes}
                         name="mainlogo"                     
                         buttonPlaceholder={
                           !isValueExists ? "Upload logo" : "Change logo"

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from 'react'; 
 import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from '@/lib/HttpStatuses';
+import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
 
 export const useFadeEffect = (ref, deps) => {
     
@@ -75,16 +76,16 @@ export const isNumber = (str) => {
 export const resolveResource = (rsc) => {
   if(!rsc) return [];
 
-  switch(rsc.type){
-    case 'image/jpeg':
-    case 'image/jpg':
-    case 'image/gif':
-      const bucketBaseUrl = process.env.KS_S3_BASE_URL;
-      const imageURL = `${bucketBaseUrl}/${rsc.value}`;
-    
-      return {...rsc, link:imageURL}  
-    default: return rsc
-  }
+ if(TYPES_REGEX.IMAGE.test(rsc.value)){
+   
+  const bucketBaseUrl = process.env.KS_S3_BASE_URL;
+  const imageURL = `${bucketBaseUrl}/${rsc.value}`;
+
+  return {...rsc, link:imageURL} 
+ }
+ else{
+  return rsc
+ }
 }
 
 const filterQuery = (queries) => (

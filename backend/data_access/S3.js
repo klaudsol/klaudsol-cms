@@ -75,7 +75,7 @@ return newBody;
 }
 
 export const generateResource = (resFromS3, file) => {
-  const newBody = { name: file.fieldname, key: resFromS3.key, type: file.mimetype }
+  const newBody = { key: file.fieldname, value: resFromS3.key }
   return newBody
 }
 
@@ -156,5 +156,3 @@ export const updateFilesFromBucket = async (file, body, toDelete) => {
   
   return uploadedFile;
 };
-
-

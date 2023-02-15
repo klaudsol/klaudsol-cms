@@ -20,6 +20,7 @@ import {
   generateResource,
   addFileToBucket
 } from "@/backend/data_access/S3";
+import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
 
 export default withSession(handler);
 
@@ -55,25 +56,11 @@ async function get(req, res) {
     const { slug } = req.query;
 
     const resourceData = await Resource.get({ slug });
-
-    let resolvedData;
-
-    if (resourceData.length) {
-      const data = Object.entries(resourceData[0]).reduce(
-        (acc, [key, value]) => {
-          if (value) {
-            acc[!resourceValueTypes.includes(key) ? key : "value"] = value;
-          }
-          return acc;
-        },
-        {}
-      );
-
-      resolvedData = resolveResource(data);
-    }
+  
+    const resolvedResource = resolveResource(resourceData[0])
 
     const output = {
-      data: resolvedData ?? [],
+      data: resolvedResource,
       metadata: {},
     };
 
@@ -81,7 +68,7 @@ async function get(req, res) {
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
     resourceData.length
-      ? res.status(OK).json(output?.data ? output : {})
+      ? res.status(OK).json(output)
       : res.status(NOT_FOUND).json({});
   } catch (error) {
     await defaultErrorHandler(error, req, res);
@@ -101,7 +88,7 @@ async function del(req, res) {
     
     const foundResource = await Resource.get({ slug });
     const imageNames = foundResource.flatMap((item) =>
-      imageTypes.includes(item.type) ? item.value_string : []
+      TYPES_REGEX.IMAGE.test(item.value) ? item.value : []
     );
 
     if (imageNames.length > 0) {
@@ -131,7 +118,8 @@ async function update (req,res) {
 
     const { toDeleteRaw, ...body } = entriesRaw;
     const toDelete = toDeleteRaw.split(",");
-      
+     
+    let updatedResource;
     if (files.length) {
       const params = generateS3ParamsForDeletion(toDelete);
 
@@ -139,40 +127,28 @@ async function update (req,res) {
       const resFromS3 = await addFileToBucket(files[0]);
       const entry = generateResource(resFromS3, files[0]);
       
-      await Resource.update(entry) // receives name, key and type 
+      updatedResource = await Resource.update(entry) // receives name, key and type 
     }
     else if(body) {
-      await Resource.update(body) // receives name, key and type 
+      updatedResource = await Resource.update(body) // receives name, key and type 
     }
     else{
       return res.status(BAD_REQUEST).json({message:'undefined entry'})
     }
    
-  const updatedResources = await Resource.get({ slug });
-    
-  let resolvedData;
-
-    if(updatedResources.length){
-      const data = Object.entries(updatedResources[0]).reduce((acc, [key, value]) => {
-        if (value) {
-          acc[!resourceValueTypes.includes(key) ? key : "value"] = value;
-        }
-        return acc;
-      }, {});
-      resolvedData = resolveResource(data);
-    }
+  const resolvedResource = resolveResource(updatedResource[0])
    
     const output = {
-      data: resolvedData ?? [],
+      data: resolvedResource,
       metadata: {},
     };
 
     output.metadata.hash = createHash(output);
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
-    updatedResources.length > 0
-      ? res.status(OK).json(output.data ? output : {})
-      : res.status(NOT_FOUND).json({});
+    updatedResource.length
+    ? res.status(OK).json(output)
+    : res.status(NOT_FOUND).json({});
 } catch (error) {
   await defaultErrorHandler(error, req, res);
 }

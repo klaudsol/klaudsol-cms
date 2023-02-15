@@ -23,9 +23,6 @@ const FileField = (props) => {
   }
   },[value,props.resetOnNewData])
 
-  console.log(value)
-  console.log(staticLink)
-
   const setFileValue = (e) => {
     const file = e.target.files[0];
 
@@ -52,9 +49,9 @@ const FileField = (props) => {
     <div>
       <div className="field_base">
         <input
+          accept={props.accept}
           type="file"
           onChange={setFileValue}
-          onClick={(e)=>{console.log(e.target.files[0])}}
           hidden="hidden"
           ref={inputRef}
           {...formattedField}
