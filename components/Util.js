@@ -88,6 +88,9 @@ export const resolveResource = (rsc) => {
  }
 }
 
+export const findContentTypeName = (arr,slugName) => (
+arr.find((obj)=> obj.entity_type_slug === slugName));
+  
 const filterQuery = (queries) => (
   Object.entries(queries)
    .filter(([key, value]) => key.startsWith('filters'))
@@ -134,7 +137,7 @@ export const filterData = (queries,Datas) => {
   // frontend value is expected to be handled by JSQ library in the future
 
   // Originally, values are only nested when it detects multiple values with the same operator type,
-  // eg: However, In our case, we are forcing all values to be nested in an array.
+  // However, In our case, we are forcing all values to be nested in an array.
   // also, remove the filters keyword from the property name when returned
 
   // input:  { 'filters[slug][$eq]': ['pizza','potato'],filters[price][$lt]:'4000', entity_type_slug: 'menus' }

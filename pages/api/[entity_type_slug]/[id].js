@@ -163,7 +163,7 @@ async function update(req, res) {
       JSON.stringify(bodyRaw)
     );
     const { toDeleteRaw, ...body } = entriesRaw;
-    const toDelete = toDeleteRaw.split(",");
+    const toDelete = toDeleteRaw ? toDeleteRaw.split(",") : []
 
     if (files.length > 0) {
       const resFromS3 = await updateFilesFromBucket(files, body, toDelete);

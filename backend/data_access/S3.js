@@ -150,8 +150,10 @@ export const addFilesToBucket = async (files) => {
 // We also need a function to update one file. This function updates
 // multiple files
 export const updateFilesFromBucket = async (file, body, toDelete) => {
-  const paramsForDeletion = generateS3ParamsForDeletion(toDelete);
-  await deleteFilesFromBucket(paramsForDeletion);
+  if(toDelete?.length){
+    const paramsForDeletion = generateS3ParamsForDeletion(toDelete);
+    await deleteFilesFromBucket(paramsForDeletion);
+  }
   const uploadedFile = await addFilesToBucket(file, body);
   
   return uploadedFile;
