@@ -12,7 +12,7 @@ export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req, res }) {
     try {
       const response = await slsFetch(
-        `${process.env.FRONTEND_URL}/api/resources/mainlogo`
+        `${process.env.FRONTEND_URL}/api/settings/mainlogo`
       );
       var { data } = await response.json();
     } catch (err) {}

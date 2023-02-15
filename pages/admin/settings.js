@@ -36,7 +36,7 @@ export default function Settings({ cache }) {
   useEffect(() => {
     (async () => {
       try {
-        const response = await slsFetch("/api/resources/mainlogo");
+        const response = await slsFetch("/api/settings/mainlogo");
         const { data } = await response.json();
         const newData = setInitialValues(data);
 
@@ -52,7 +52,7 @@ export default function Settings({ cache }) {
     (async () => {
       try {
         dispatch({ type: DELETING, payload: true });
-        const response = await slsFetch(`/api/resources/mainlogo`, {
+        const response = await slsFetch(`/api/settings/mainlogo`, {
           method: "DELETE",
           headers: {
             "Content-type": "application/json",
@@ -100,7 +100,7 @@ export default function Settings({ cache }) {
 
           const formattedEntries = convertToFormData(newValues);
               
-          const response = await slsFetch(`/api/resources${isCreateMode ? '' : '/mainlogo'}`, {
+          const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
             method: `${isCreateMode ? "POST" : "PUT"}`,
             body: formattedEntries,
           });

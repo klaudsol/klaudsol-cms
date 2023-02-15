@@ -10,12 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { authReducer, initialState } from "@/components/reducers/authReducer";
-import {
-  INIT,
-  ERROR,
-  CLEANUP,
-  SUCCESS
- } from "@/lib/actions";
+import { INIT, ERROR, CLEANUP, SUCCESS } from "@/lib/actions";
 
 const LoginForm = ({ className, logo }) => {
   const router = useRouter();
@@ -61,14 +56,14 @@ const LoginForm = ({ className, logo }) => {
   return (
     <div className="container_login_form">
       <div className="img_login_logo img-responsive">
-       {logo?.link && <Image
+        <Image
           placeholder="blur"
-          blurDataURL={logo?.link}
-          src={logo?.link}
+          blurDataURL={logo?.link ?? '/logo-180x180.png'}
+          src={logo?.link ?? '/logo-180x180.png'}
           alt="cms-logo"
-          width={200}   
+          width={200}
           height={90}
-        />}
+        />
       </div>
       <h4> Welcome to KlaudSol CMS! </h4>
 

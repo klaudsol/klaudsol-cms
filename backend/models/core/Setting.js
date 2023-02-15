@@ -3,9 +3,9 @@ import DB from "@backend/data_access/DB";
 class Resource {
   static async get({ slug }) {
     const db = new DB();
-    const getResourceSQL = `SELECT * FROM \`resources\` WHERE \`key\` = :key`;
+    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key`;
 
-    const resource = await db.executeStatement(getResourceSQL, [
+    const resource = await db.executeStatement(getSettingSQL, [
       { name: "key", value: { stringValue: slug } },
     ]);
 
@@ -20,24 +20,24 @@ class Resource {
 
   static async create({ key, value }) {
     const db = new DB();
-    const getResourceSQL = `SELECT * FROM resources WHERE \`key\` = :key`;
+    const getSettingSQL = `SELECT * FROM settings WHERE \`key\` = :key`;
 
-    const resource = await db.executeStatement(getResourceSQL, [
+    const resource = await db.executeStatement(getSettingSQL, [
       { name: "key", value: { stringValue: key } },
     ]);
 
     if (!resource.records.length) {
-      const insertResourceSQL =
-        "INSERT into resources (`key`, `value`) VALUES (:key, :value)";
+      const insertSettingSQL =
+        "INSERT into settings (`key`, `value`) VALUES (:key, :value)";
 
-      await db.executeStatement(insertResourceSQL, [
+      await db.executeStatement(insertSettingSQL, [
         { name: "key", value: { stringValue: key } },
         { name: "value", value: { stringValue: value } },
       ]);
 
-      const getResourceSQL = `SELECT * FROM resources WHERE \`key\` = :key`;
+      const getSettingSQL = `SELECT * FROM settings WHERE \`key\` = :key`;
 
-      const foundResource = await db.executeStatement(getResourceSQL, [
+      const foundResource = await db.executeStatement(getSettingSQL, [
         { name: "key", value: { stringValue: key } },
       ]);
 
@@ -60,7 +60,7 @@ class Resource {
   static async update({ key, value }) {
     const db = new DB();
 
-    const updateValuesBatchSQL = `UPDATE resources SET 
+    const updateValuesBatchSQL = `UPDATE settings SET 
     value = :value 
     WHERE \`key\` = :key
     `;
@@ -71,8 +71,8 @@ class Resource {
     ];
     await db.executeStatement(updateValuesBatchSQL, valueParams);
 
-    const getResourceSQL = `SELECT * FROM \`resources\` WHERE \`key\` = :key`;
-    const updatedResource = await db.executeStatement(getResourceSQL, [
+    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key`;
+    const updatedResource = await db.executeStatement(getSettingSQL, [
       { name: "key", value: { stringValue: key } },
     ]);
 
@@ -87,12 +87,12 @@ class Resource {
 
   static async delete({ slug }) {
     const db = new DB();
-    const deleteResourceSQL = "DELETE from resources where `key` = :key";
+    const deleteSettingSQL = "DELETE from settings where `key` = :key";
 
     const executeStatementParam = [
       { name: "key", value: { stringValue: slug } },
     ];
-    await db.executeStatement(deleteResourceSQL, executeStatementParam);
+    await db.executeStatement(deleteSettingSQL, executeStatementParam);
   }
 }
 

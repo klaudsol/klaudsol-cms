@@ -107,12 +107,12 @@ CREATE TABLE `values` (
 
 
 --
--- Table structure for table `resources`
+-- Table structure for table `settings`
 --
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `resources` (
+CREATE TABLE `settings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL,
   `value` TEXT NOT NULL,

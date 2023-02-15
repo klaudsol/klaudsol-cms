@@ -7,7 +7,7 @@ import {
   NO_CONTENT_FOUND,
   BAD_REQUEST,
 } from "@/lib/HttpStatuses";
-import Resource from "@/backend/models/core/Resource";
+import Setting from "@/backend/models/core/Setting";
 import { assert } from "@/lib/Permissions";
 import { createHash } from "@/lib/Hash";
 import { resolveResource } from "@/components/Util";
@@ -55,7 +55,7 @@ async function get(req, res) {
   try {
     const { slug } = req.query;
 
-    const resourceData = await Resource.get({ slug });
+    const resourceData = await Setting.get({ slug });
   
     const resolvedResource = resolveResource(resourceData[0])
 
@@ -86,7 +86,7 @@ async function del(req, res) {
 
     const { slug } = req.query;
     
-    const foundResource = await Resource.get({ slug });
+    const foundResource = await Setting.get({ slug });
     const imageNames = foundResource.flatMap((item) =>
       TYPES_REGEX.IMAGE.test(item.value) ? item.value : []
     );
@@ -96,7 +96,7 @@ async function del(req, res) {
       await deleteFilesFromBucket(params);
     }
 
-    await Resource.delete({ slug });
+    await Setting.delete({ slug });
 
     res.status(OK).json({ message: "Successfully deleted the entry" });
   } catch (error) {
@@ -127,10 +127,10 @@ async function update (req,res) {
       const resFromS3 = await addFileToBucket(files[0]);
       const entry = generateResource(resFromS3, files[0]);
       
-      updatedResource = await Resource.update(entry) // receives name, key and type 
+      updatedResource = await Setting.update(entry) // receives name, key and type 
     }
     else if(body) {
-      updatedResource = await Resource.update(body) // receives name, key and type 
+      updatedResource = await Setting.update(body) // receives name, key and type 
     }
     else{
       return res.status(BAD_REQUEST).json({message:'undefined entry'})
