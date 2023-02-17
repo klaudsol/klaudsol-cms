@@ -3,9 +3,10 @@ import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 import { getSessionCache } from "@/lib/Session";
 
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useContext } from "react";
 import { slsFetch } from "@/components/Util";
 import { useRouter } from "next/router";
+import RootContext from '@/components/contexts/RootContext';
 
 /** kladusol CMS components */
 import AppDropdown from "@/components/klaudsolcms/AppDropdown";
@@ -43,19 +44,9 @@ export default function ContentManager({ cache }) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
+  const { state: {currentContentType:{ entity_type_name, entity_type_slug: headerSlug } } } = useContext(RootContext);
 
-
-  /** Data Arrays : to be fetched from database soon */
- 
-  const entryNumber = [
-    { name: "10" },
-    { name: "20" },
-    { name: "50" },
-    { name: "100" },
-  ];
-
-
-  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
+ const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
   /*** Entity Types List ***/
   useEffect(() => {
@@ -77,7 +68,6 @@ export default function ContentManager({ cache }) {
         const values = await valuesRaw.json();
         const pageNumber = Math.ceil(values.metadata.total_rows / state.entry);
         dispatch({ type: SET_ROWS, payload: pageNumber });
-        console.log(values.data)
         dispatch({ type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type });
         let columns = [];
         let entries = [];
@@ -118,13 +108,13 @@ export default function ContentManager({ cache }) {
             <AppBackButton link="/admin" />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
               <div>
-                <h3> {entity_type_slug} </h3>
+                <h3> {entity_type_name} </h3>
                 <a
                   href={`/api/${entity_type_slug}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  api/{entity_type_slug}
+                  api/{headerSlug}
                 </a>
                 <p> {state.values.length} entries found </p>
               </div>

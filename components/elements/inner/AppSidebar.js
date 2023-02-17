@@ -1,6 +1,7 @@
 import { FaFeatherAlt, FaRegUser } from 'react-icons/fa'
 import { BiBuildings } from 'react-icons/bi';
 import { BsFillGearFill } from 'react-icons/bs';
+import { RiSettings3Line } from 'react-icons/ri';
 import { HiOutlineUserCircle } from 'react-icons/hi';
 import React, { useState, useContext, useEffect } from 'react';
 import 'simplebar/dist/simplebar.min.css'
@@ -39,11 +40,11 @@ const AppSidebar = () => {
       path: "/admin/me",
       icon: <FaRegUser className='sidebar_button_icon'/>
     },
-    /*{
+    {
       title: "Settings",
       path: "/admin/settings",
-      icon: <BsFillGearFill className='sidebar_button_icon'/>
-    },*/
+      icon: <RiSettings3Line className='sidebar_button_icon'/>
+    },
 
   ].filter(item => item))
 
