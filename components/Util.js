@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from 'react'; 
 import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from '@/lib/HttpStatuses';
+import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
 
 export const useFadeEffect = (ref, deps) => {
     
@@ -70,6 +71,21 @@ export const sortByOrderAsc = (first, second) => first[1].order - second[1].orde
 
 export const isNumber = (str) => {
   return !isNaN(str);
+}
+
+export const resolveResource = (rsc) => {
+  if(!rsc) return [];
+
+ if(TYPES_REGEX.IMAGE.test(rsc.value)){
+   
+  const bucketBaseUrl = process.env.KS_S3_BASE_URL;
+  const imageURL = `${bucketBaseUrl}/${rsc.value}`;
+
+  return {...rsc, link:imageURL} 
+ }
+ else{
+  return rsc
+ }
 }
 
 export const findContentTypeName = (arr,slugName) => (

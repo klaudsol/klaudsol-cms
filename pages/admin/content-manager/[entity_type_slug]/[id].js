@@ -21,6 +21,7 @@ import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import { getAllFiles, convertToFormData } from "lib/s3FormController";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
@@ -64,7 +65,7 @@ export default function Type({ cache }) {
         const attributes = values.metadata.attributes;
         const entity_type_id = values.metadata.entity_type_id;
         const validateValues = Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: true}), {})
-
+    
         dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({ type: SET_ATTRIBUTES, payload: attributes });
         dispatch({ type: SET_VALUES, payload: entries });
@@ -116,41 +117,11 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
-  const getAllFiles = (entry) => {
-    const initialValue = {};
-    const reducer = (acc, curr) => {
-      if (!(entry[curr] instanceof File)) return acc;
-
-      return { ...acc, [curr]: entry[curr] };
-    };
-
-    const entryKeys = Object.keys(entry);
-    const allFiles = entryKeys.reduce(reducer, initialValue);
-
-    return allFiles;
-  };
-
   const getS3Keys = (files) => {
     const fileKeys = Object.keys(files);
     const s3Keys = fileKeys.filter(file => state.values[file].key);
     
     return s3Keys;
-  };
-
-  const convertToFormData = (entry) => {
-    const formData = new FormData();
-    const propertyNames = Object.keys(entry);
-
-    propertyNames.forEach((property) => {
-      if (entry[property]?.key) {
-        formData.append(property, entry[property].key);
-        return;
-      }
-
-      formData.append(property, entry[property]);
-    });
-
-    return formData;
   };
 
   const formikParams = {
@@ -177,7 +148,7 @@ export default function Type({ cache }) {
             method: "PUT",
             body: formattedEntries,
           });
-
+          
           const { message, homepage } = await response.json();
           dispatch({
             type: SET_MODAL_CONTENT,

@@ -65,9 +65,19 @@ export const formatS3Param = async (param) => {
 export const generateEntries = (resFromS3, files, body) => {
   const newBody = { ...body };
   files.forEach((file, i) => (newBody[file.fieldname] = resFromS3[i].Key));
-
+  
   return newBody;
 };
+
+export const generateEntry = (resFromS3, file) => {
+const newBody = { [file.fieldname]: resFromS3.key }
+return newBody;
+}
+
+export const generateResource = (resFromS3, file) => {
+  const newBody = { key: file.fieldname, value: resFromS3.key }
+  return newBody
+}
 
 export const uploadFileToBucket = async (param) => {
   const s3 = initializeS3();
@@ -94,9 +104,26 @@ export const generateS3ParamsForDeletion = (keysRaw) => {
   return params;
 };
 
+export const generateS3ParamForDeletion = (keyRaw) => {
+  const { Key } = generateS3KeyForDeletion(keyRaw)
+  const params = {
+    Bucket: S3_BUCKET,
+    Key 
+  };
+
+  return params;
+};
+
 export const deleteFilesFromBucket = async (params) => {
   const s3 = initializeS3();
   const res = await s3.deleteObjects(params).promise();
+
+  return res;
+};
+
+export const deleteFileFromBucket = async (params) => {
+  const s3 = initializeS3();
+  const res = await s3.deleteObject(params).promise();
 
   return res;
 };

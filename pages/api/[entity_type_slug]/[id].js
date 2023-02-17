@@ -175,7 +175,6 @@ async function update(req, res) {
       await Entity.update({ entries: body, entity_type_slug, entity_id });
     }
 
-
     res.status(OK).json({ message: "Successfully created a new entry" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
