@@ -615,7 +615,7 @@ $onFocus: #323C4E;
 
 .btn_general_sm:disabled,
 .btn_general_lg:disabled {
-    background-color: lightgray;
+    opacity: 50%;
 }
 
 .search_icon {
@@ -625,7 +625,6 @@ $onFocus: #323C4E;
 /** Upload field **/
 .field_base {
     display: flex;
-    justify-content: center;
 }
 
 .field_btn {
@@ -837,6 +836,19 @@ border-radius: 5px;
 .new_entry_block_button_delete, .button_delete {
     background-color: maroon;
     color: white;
+
+    &.logo {
+        width: 93px;
+        border-radius: 3px;
+        height: 38.5px;
+        margin-left: 10px;
+        display: flex;
+
+        &.delete{
+            opacity: 50%;
+        }
+        
+    }
 }
 
 .block_bar {

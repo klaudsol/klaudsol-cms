@@ -2,20 +2,26 @@
  * Actions are functions that contain one or more dispatch statements.
  */
 
-import { slsFetch } from "@/components/Util";
-import { SET_ENTITY_TYPES } from "@/lib/actions"
+import { slsFetch, findContentTypeName } from "@/components/Util";
+import { SET_ENTITY_TYPES,SET_CURRENT_ENTITY_TYPE } from "@/lib/actions"
 
 export async function loadEntityTypes({
   rootState,
   rootDispatch,
   onStartLoad = () => {},
   onEndLoad = () => {},
-}) {
+  currentTypeSlug
+  }) {
   try {
     onStartLoad();
     const entityTypesRaw = await slsFetch("/api/entity_types");
     const entityTypes = await entityTypesRaw.json();
-
+  
+    rootState.currentContentType.entity_type_slug !== currentTypeSlug &&
+    rootDispatch({
+      type: SET_CURRENT_ENTITY_TYPE,
+      payload: findContentTypeName(entityTypes.data,currentTypeSlug)
+    });       
     //reload entity types list only if there is a change.
     if (rootState.entityTypesHash !== entityTypes.metadata.hash) {
       rootDispatch({
@@ -23,7 +29,7 @@ export async function loadEntityTypes({
         payload: {
           entityTypes: entityTypes.data,
           entityTypesHash: entityTypes.metadata.hash,
-
+          currentContentType:findContentTypeName(entityTypes.data,currentTypeSlug)
       }});       
 
     }

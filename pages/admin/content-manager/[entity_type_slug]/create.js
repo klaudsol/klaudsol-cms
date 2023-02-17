@@ -128,9 +128,8 @@ export default function CreateNewEntry({ cache }) {
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
-
+        
         const formattedEntries = convertToFormData(entry);
-
         try {
           dispatch({ type: SAVING });
           const response = await slsFetch(`/api/${entity_type_slug}`, {
@@ -241,7 +240,7 @@ export default function CreateNewEntry({ cache }) {
                   )}
                 </div>
               </div>
-              <div className="col-3 mx-0">
+              {/* <div className="col-3 mx-0">
                 <div className="container_new_entry px-3 py-4">
                   <p style={{ fontSize: "11px" }}> INFORMATION </p>
                   <div className="block_bar"></div>
@@ -288,7 +287,7 @@ export default function CreateNewEntry({ cache }) {
                   <VscListSelection className="icon_block_button" /> Configure
                   the view{" "}
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
           <AppInfoModal

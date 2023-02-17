@@ -59,11 +59,10 @@ const ContentManagerSubMenu = ({title, currentTypeSlug}) => {
     useEffect(() => { 
       (async () => {
 
-        await loadEntityTypes({rootState, rootDispatch, onStartLoad, onEndLoad});
+        await loadEntityTypes({rootState, rootDispatch, onStartLoad, onEndLoad, currentTypeSlug});
         
       })();
-    }, [rootState]);
-
+    }, [rootState,currentTypeSlug]);
 
     return ( 
     <>
