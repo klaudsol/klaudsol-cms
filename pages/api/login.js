@@ -28,7 +28,7 @@ async function loginHandler(req, res) {
       lastName,
       role,
       defaultEntityType,
-      homepage: `/admin/content-manager/${defaultEntityType}`
+      homepage: '/admin'
     }; 
     await req.session.save();    
     res.status(200).json({message: "OK"});
