@@ -31,6 +31,7 @@ async function loginHandler(req, res) {
       homepage: '/admin',
       forcePasswordChange
     };
+
     await req.session.save();    
     res.status(OK).json({ forcePasswordChange });
     return;

@@ -73,7 +73,6 @@ const LoginForm = ({ className, logo }) => {
           height={90}
         />
       </div>
-      <h4> Welcome to KlaudSol CMS! </h4>
 
       <div className="form_login">
         <div
