@@ -15,7 +15,6 @@ import ForceChangePasswordForm from "@/components/elements/frontPage/ForceChange
 
 const LoginForm = ({ className, logo }) => {
   const router = useRouter();
-  const [, setLoginMode] = useLoginMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -35,7 +34,6 @@ const LoginForm = ({ className, logo }) => {
           });
           const { message, forcePasswordChange } = await response.json();
 
-          console.log(forcePasswordChange)
           if(forcePasswordChange){
             dispatch({ type: 'SET_FORCE_CHANGE_PASSWORD', payload: true });
           }
@@ -44,9 +42,9 @@ const LoginForm = ({ className, logo }) => {
             router.push(`/admin`);
           }
 
-        } catch (ex) {
-          console.error(ex);
-          dispatch({ type: ERROR });
+        } catch (error) {
+          console.error(error);
+          dispatch({ type: ERROR, payload:error.message });
         } finally {
           dispatch({ type: CLEANUP });
         }
@@ -59,11 +57,8 @@ const LoginForm = ({ className, logo }) => {
   const errorBox = useRef();
   const successBox = useRef();
 
-
   useFadeEffect(errorBox, [state.submitted, state.isError]);
   useFadeEffect(successBox, [state.submitted, state.isLoginSuccessful]);
-
-  console.log(state.isForceChangePassword)
 
   return (
     <div className="container_login_form">
@@ -86,7 +81,7 @@ const LoginForm = ({ className, logo }) => {
           className="alert alert-danger useFadeEffect px-3 pt-3 pb-2 mb-0 mt-3"
         >
           {" "}
-          <p>Incorrect username and/or password.</p>{" "}
+          <p> {state.errorMessage} </p>{" "}
         </div>
         <div
           ref={successBox}
@@ -108,7 +103,7 @@ const LoginForm = ({ className, logo }) => {
           type="password"
           className="input_login"
           autoComplete="email"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => !state.isLoading && setPassword(e.target.value)}
         />
       </div>
       <Link href="/admin/" passHref>
@@ -116,7 +111,7 @@ const LoginForm = ({ className, logo }) => {
           {state.isLoading && <AppButtonSpinner />} Log in
         </button>
       </Link>
-      </>: <ForceChangePasswordForm/>
+      </>: <ForceChangePasswordForm email={email} pwd={password}/>
       }
     </div>
   );

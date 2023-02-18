@@ -17,8 +17,8 @@ export const getServerSideProps = withIronSessionSsr(
       var { data } = await response.json();
     } catch (err) {}
 
-    let homepage;
-    if ((homepage = req.session?.cache?.homepage)) {
+    let homepage = req.session?.cache?.homepage;
+    if ((homepage && !req.session?.cache?.forcePasswordChange)) {
       return {
         redirect: {
           permanent: false,

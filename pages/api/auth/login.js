@@ -1,7 +1,7 @@
 import People from '@backend/models/core/People';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { OK } from '@/lib/HttpStatuses';
+import { OK, UNPROCESSABLE_ENTITY } from '@/lib/HttpStatuses';
 import UnauthorizedError from '@/components/errors/UnauthorizedError';
 
 export default withSession(loginHandler);
@@ -16,9 +16,9 @@ async function loginHandler(req, res) {
   const {email=null, password=null} = req.body; 
   
   if (!email || !password) {
-    res.status(422).json({message: "Invalid username or password."});
-    return;
-  }
+    res.status(UNPROCESSABLE_ENTITY).json({message: "Please enter your username/password."});   
+    return
+    }
   
   try {
     const { session_token, user: {firstName, lastName, role, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
@@ -28,16 +28,16 @@ async function loginHandler(req, res) {
       lastName,
       role,
       defaultEntityType,
+      homepage: '/admin',
       forcePasswordChange
-    }; 
+    };
     await req.session.save();    
-    res.status(200).json({ message:"OK", forcePasswordChange });
+    res.status(OK).json({ forcePasswordChange });
     return;
   
   } catch (error) {
-    console.error(error);
     if (error instanceof UnauthorizedError) {
-      res.status(422).json({message: "Invalid username or password."});
+      res.status(UNPROCESSABLE_ENTITY).json({message: "Invalid username or password."});
       return;
     } else {
       await defaultErrorHandler(error, req, res);

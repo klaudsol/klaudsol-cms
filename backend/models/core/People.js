@@ -3,6 +3,8 @@ import { log } from '@/lib/Logger';
 import UnauthorizedError from '@/components/errors/UnauthorizedError';
 import Session from '@backend/models/core/Session';
 import RecordNotFound from 'components/errors/RecordNotFound';
+import { generateRandVals } from '@/components/Util'
+
 class People {
   
   //TODO: Maybe we can interrogate the database so that this becomes DRY-er?
@@ -157,51 +159,37 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
 
     const db = new DB();
 
-    //TODO: for security reasons, replace the salt as well for every password change.
-    const updateSql =  `
-    UPDATE people  
-    SET
-      encrypted_password = sha2(CONCAT(:newPassword, salt), 256) 
-    WHERE id = :id`;
-
     //Check if the provided oldPassword is correct.
     const checkPasswordSql = `SELECT id FROM people 
                               WHERE id = :id AND encrypted_password = sha2(CONCAT(:oldPassword, salt), 256) AND login_enabled = 1  LIMIT 1`;
       
     const sqlPass = await db.executeStatement(checkPasswordSql, [
       {name: 'id', value: {longValue: id}},
-      {name: 'oldPassword', value:{stringValue: oldPassword}}
+      {name: 'oldPassword', value:{stringValue: oldPassword}},
     ]);
     if (sqlPass.records.length === 0) {
       throw new RecordNotFound("Incorrect password");
     }
 
+    const updateSql =  `
+    UPDATE people  
+    SET
+      encrypted_password = sha2(CONCAT(:newPassword, :salt), 256),
+      force_password_change = :force_password_change,
+      salt = :salt
+    WHERE id = :id`;
+
+    const salt = await generateRandVals(5);
     const executeStatementParam = [
       {name: 'id', value: {longValue: id}},
       {name: 'newPassword', value: {stringValue: newPassword}},
+      {name: 'force_password_change', value: {booleanValue: false}},
+      {name: 'salt', value: {stringValue: salt}}
     ];
 
     const data = await db.executeStatement(updateSql, executeStatementParam); 
-    return true;
+    return false;
       
-  }
-  
-  
-  //TODO: Refactor to models/Session
-  
-  static async logout(session_token) {
-    try {
-      const db = new DB();
-      const sessionSql = "DELETE FROM sme_sessions WHERE `session` = :session";
-      await db.executeStatement(sessionSql, [
-        {name: 'session', value:{stringValue: session_token}},
-      ]);
-      return true;
-    } catch (ex) {
-      console.error(ex);  
-      return false;
-    }
-    
   }
   
   //This is deprecated. Use Session.assert instead.

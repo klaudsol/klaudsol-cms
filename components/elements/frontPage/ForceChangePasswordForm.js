@@ -1,18 +1,13 @@
 import { useState, useCallback, useRef, useReducer, useEffect } from "react";
-import {
-  useLoginMode,
-  LOGIN_MODE_SIGNUP,
-} from "@/components/contexts/LoginModeContext";
 import { useFadeEffect, slsFetch } from "@/components/Util";
 import { useRouter } from "next/router";
-import styles from "@/styles/FrontPageLayout.module.scss";
 import Link from "next/link";
-import Image from "next/image";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { authReducer, initialState } from "@/components/reducers/authReducer";
 import { INIT, ERROR, CLEANUP, SUCCESS } from "@/lib/actions";
 
-const ForceChangePasswordForm = () => {
+const ForceChangePasswordForm = ({ pwd }) => {
+  const router = useRouter();
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -22,31 +17,30 @@ const ForceChangePasswordForm = () => {
       evt.preventDefault();
       (async () => {
         try {
-          if(newPassword !== confirmNewPassword){
-            throw new Error('Error')
-          }
-          const response = await slsFetch("/api/auth/forceChangePassword", {
+          dispatch({ type: INIT });
+          const response = await slsFetch("/api/me/password", {
             method: "PUT",
             headers: {
               "Content-type": "application/json",
             },
-            body: JSON.stringify({ newPassword, confirmNewPassword }),
+            body: JSON.stringify({ currentPassword:pwd, newPassword, confirmNewPassword }),
           });
-        } catch (ex) {
-          console.error(ex);
-          dispatch({ type: ERROR });
+          dispatch({ type: SUCCESS });
+          router.push('/admin');
+        } catch (error) {
+          console.log(error)
+          dispatch({ type: ERROR, payload: error?.message });
         } finally {
           dispatch({ type: CLEANUP });
         }
         //}
       })();
     },
-    [newPassword, confirmNewPassword]
+    [newPassword, confirmNewPassword, pwd, router]
   );
 
   const errorBox = useRef();
   const successBox = useRef();
-
 
   useFadeEffect(errorBox, [state.submitted, state.isError]);
   useFadeEffect(successBox, [state.submitted, state.isLoginSuccessful]);
@@ -61,7 +55,7 @@ const ForceChangePasswordForm = () => {
               className="alert alert-danger useFadeEffect px-3 pt-3 pb-2 mb-0 mt-3"
             >
               {" "}
-              <p>Password does not match</p>{" "}
+              <p> {state.errorMessage} </p>{" "}
             </div>
             <div
               ref={successBox}

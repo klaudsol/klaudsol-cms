@@ -62,6 +62,7 @@ CREATE TABLE `people` (
   `email` varchar(255) DEFAULT NULL,
   `encrypted_password` varchar(255) DEFAULT NULL,
   `salt` varchar(255) DEFAULT NULL,
+  `force_password_change` BOOLEAN DEFAULT TRUE,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
