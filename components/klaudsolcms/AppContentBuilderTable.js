@@ -59,7 +59,12 @@ const AppContentBuilderTable = ({typeSlug}) => {
 
     const onUpdateField = evt => {
      if(formRef.current) formRef.current.handleSubmit();
+      setLoading(true)
     };
+
+    const onEditClose = () => {
+      setEditModalVisible(false)
+    }
 
     const updateFormParamsFromAttribute = attribute => ({
       innerRef: formRef,
@@ -91,6 +96,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
           } finally {
             await loadEntityType({rootState, rootDispatch, typeSlug});
             setEditModalVisible(false);
+            setLoading(false)
           }
         })();
       }
@@ -151,8 +157,9 @@ const AppContentBuilderTable = ({typeSlug}) => {
             mode={EDIT_MODE}
             show={isEditModalVisible}
             formParams={formParams}
-            onClose={() => setEditModalVisible(false)}
+            onClose={onEditClose}
             onClick={onUpdateField}
+            isLoading={loading}
           />
         </> 
     );
