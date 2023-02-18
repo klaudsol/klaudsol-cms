@@ -150,7 +150,7 @@ export default function CreateNewEntry({ cache }) {
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-        <ContentManagerLayout>
+       <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
             <AppBackButton
               link={`/admin/content-manager/${entity_type_slug}`}
