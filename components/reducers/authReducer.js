@@ -9,9 +9,9 @@ export const initialState = {
   submitted: false,  
   isError: false,
   isLoading: false,
-  isLoginSuccessful: false
+  isLoginSuccessful: false,
+  isForceChangePassword: false
 };
-
 
 export const authReducer = (state, action) => {
   switch(action.type) {
@@ -39,6 +39,11 @@ export const authReducer = (state, action) => {
       return {
         ...state,
         isLoading: false
+      }
+    case 'SET_FORCE_CHANGE_PASSWORD':
+      return {
+        ...state,
+        isForceChangePassword: action.payload
       }
     default:
       return state;

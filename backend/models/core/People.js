@@ -40,7 +40,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
     try {
       
       const db = new DB();
-      const sql = `SELECT id, salt, first_name, last_name, role FROM people 
+      const sql = `SELECT id, salt, first_name, last_name, role, force_password_change FROM people 
         WHERE email=:email AND encrypted_password = sha2(CONCAT(:password, salt), 256) AND login_enabled = 1 LIMIT 1;`;
       const data = await db.executeStatement(sql, [
         {name: 'email', value:{stringValue: email}},
@@ -57,7 +57,8 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
         {stringValue: userSalt},
         {stringValue: firstName},
         {stringValue: lastName},
-        {stringValue: role}
+        {stringValue: role},
+        {booleanValue: forcePasswordChange}
       ] = user;
       
       const session_token = sha256(`${userId}${userSalt}${Date.now()}`);
@@ -76,7 +77,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       defaultEntityTypeData = await db.executeStatement(defaultEntityTypeSQL, []);
       [{stringValue: defaultEntityType}] = defaultEntityTypeData.records[0];
  
-      return { session_token, user: {firstName, lastName, role, defaultEntityType} };
+      return { session_token, user: {firstName, lastName, role, defaultEntityType, forcePasswordChange } };
       
     } catch (error) {
       log(error.stack);

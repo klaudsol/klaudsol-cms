@@ -11,6 +11,7 @@ import Image from "next/image";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { authReducer, initialState } from "@/components/reducers/authReducer";
 import { INIT, ERROR, CLEANUP, SUCCESS } from "@/lib/actions";
+import ForceChangePasswordForm from "@/components/elements/frontPage/ForceChangePasswordForm";
 
 const LoginForm = ({ className, logo }) => {
   const router = useRouter();
@@ -25,16 +26,24 @@ const LoginForm = ({ className, logo }) => {
       (async () => {
         try {
           dispatch({ type: INIT });
-          const response = await slsFetch("/api/login", {
+          const response = await slsFetch("/api/auth/login", {
             method: "POST",
             headers: {
               "Content-type": "application/json",
             },
             body: JSON.stringify({ email, password }),
           });
-          const { message, homepage } = await response.json();
-          dispatch({ type: SUCCESS });
-          router.push(`/admin`);
+          const { message, forcePasswordChange } = await response.json();
+
+          console.log(forcePasswordChange)
+          if(forcePasswordChange){
+            dispatch({ type: 'SET_FORCE_CHANGE_PASSWORD', payload: true });
+          }
+          else{
+            dispatch({ type: SUCCESS });
+            router.push(`/admin`);
+          }
+
         } catch (ex) {
           console.error(ex);
           dispatch({ type: ERROR });
@@ -50,11 +59,15 @@ const LoginForm = ({ className, logo }) => {
   const errorBox = useRef();
   const successBox = useRef();
 
+
   useFadeEffect(errorBox, [state.submitted, state.isError]);
   useFadeEffect(successBox, [state.submitted, state.isLoginSuccessful]);
 
+  console.log(state.isForceChangePassword)
+
   return (
     <div className="container_login_form">
+      {!state.isForceChangePassword ? <>
       <div className="img_login_logo img-responsive">
         <Image
           placeholder="blur"
@@ -103,6 +116,8 @@ const LoginForm = ({ className, logo }) => {
           {state.isLoading && <AppButtonSpinner />} Log in
         </button>
       </Link>
+      </>: <ForceChangePasswordForm/>
+      }
     </div>
   );
 };

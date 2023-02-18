@@ -21,16 +21,17 @@ async function loginHandler(req, res) {
   }
   
   try {
-    const { session_token, user: {firstName, lastName, role, defaultEntityType} } = await People.login(email, password);
+    const { session_token, user: {firstName, lastName, role, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
     req.session.session_token = session_token;
     req.session.cache = {
       firstName,
       lastName,
       role,
       defaultEntityType,
+      forcePasswordChange
     }; 
     await req.session.save();    
-    res.status(200).json({message: "OK"});
+    res.status(200).json({ message:"OK", forcePasswordChange });
     return;
   
   } catch (error) {
