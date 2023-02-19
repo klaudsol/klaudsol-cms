@@ -2,16 +2,18 @@ import {
  INIT,
  ERROR,
  CLEANUP,
- SUCCESS
+ SUCCESS,
+ SET_FORCE_CHANGE_PASSWORD
 } from "@/lib/actions";
 
 export const initialState = {
   submitted: false,  
   isError: false,
   isLoading: false,
-  isLoginSuccessful: false
+  isLoginSuccessful: false,
+  isForceChangePassword: false,
+  errorMessage:''
 };
-
 
 export const authReducer = (state, action) => {
   switch(action.type) {
@@ -33,12 +35,18 @@ export const authReducer = (state, action) => {
         ...state,
         isLoginSuccessful: false,
         isError: true,
-        submitted: true
+        submitted: true,
+        errorMessage: action.payload
       }
     case CLEANUP:
       return {
         ...state,
         isLoading: false
+      }
+    case SET_FORCE_CHANGE_PASSWORD:
+      return {
+        ...state,
+        isForceChangePassword: action.payload
       }
     default:
       return state;

@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-#vs code
+# vs code
 .vscode/*
 
 # dependencies
@@ -38,3 +38,4 @@ yarn-error.log*
 
 # vercel
 .vercel
+

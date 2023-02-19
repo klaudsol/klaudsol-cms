@@ -3,6 +3,8 @@
 import { useEffect, useMemo } from 'react'; 
 import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from '@/lib/HttpStatuses';
 import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
+import { promisify } from "es6-promisify";
+import crypto from "crypto";
 
 export const useFadeEffect = (ref, deps) => {
     
@@ -62,6 +64,13 @@ export const slsFetch = async (url, params, extra) => {
     }
 }  
 
+export const generateRandVals = async (size) => {
+  const randomBytes = promisify(crypto.randomBytes);
+  const rawBytes = await randomBytes(size);
+  const randVal = rawBytes.toString("hex");
+
+  return randVal;
+};
 
 export const useIndex = (array) => useMemo(() => (
     Object.fromEntries(array.map((item) => [item.id, item]))

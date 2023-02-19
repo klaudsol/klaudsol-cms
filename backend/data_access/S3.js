@@ -1,6 +1,5 @@
 import AWS from "aws-sdk";
-import { promisify } from "es6-promisify";
-import crypto from "crypto";
+import { generateRandVals } from '@/components/Util'
 
 const S3_ACCESS_KEY_ID =
   process.env.KS_S3_ACCESS_KEY_ID ??
@@ -16,15 +15,6 @@ const REGION =
   process.env.KS_AWS_REGION ??
   process.env.AURORA_AWS_REGION;
 const S3_BUCKET = process.env.KS_S3_BUCKET;
-
-// Should be put in another file since this can be used globally
-const generateRandVals = async (size) => {
-  const randomBytes = promisify(crypto.randomBytes);
-  const rawBytes = await randomBytes(size);
-  const randVal = rawBytes.toString("hex");
-
-  return randVal;
-};
 
 const s3Config = {
   accessKeyId: S3_ACCESS_KEY_ID,

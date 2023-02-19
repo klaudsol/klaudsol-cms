@@ -11,10 +11,10 @@ import Image from "next/image";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { authReducer, initialState } from "@/components/reducers/authReducer";
 import { INIT, ERROR, CLEANUP, SUCCESS } from "@/lib/actions";
+import ForceChangePasswordForm from "@/components/elements/frontPage/ForceChangePasswordForm";
 
 const LoginForm = ({ className, logo }) => {
   const router = useRouter();
-  const [, setLoginMode] = useLoginMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -25,19 +25,26 @@ const LoginForm = ({ className, logo }) => {
       (async () => {
         try {
           dispatch({ type: INIT });
-          const response = await slsFetch("/api/login", {
+          const response = await slsFetch("/api/session", {
             method: "POST",
             headers: {
               "Content-type": "application/json",
             },
             body: JSON.stringify({ email, password }),
           });
-          const { message, homepage } = await response.json();
-          dispatch({ type: SUCCESS });
-          router.push(`/admin`);
-        } catch (ex) {
-          console.error(ex);
-          dispatch({ type: ERROR });
+          const { message, forcePasswordChange } = await response.json();
+
+          if(forcePasswordChange){
+            dispatch({ type: 'SET_FORCE_CHANGE_PASSWORD', payload: true });
+          }
+          else{
+            dispatch({ type: SUCCESS });
+            router.push(`/admin`);
+          }
+
+        } catch (error) {
+          console.error(error);
+          dispatch({ type: ERROR, payload:error.message });
         } finally {
           dispatch({ type: CLEANUP });
         }
@@ -55,6 +62,7 @@ const LoginForm = ({ className, logo }) => {
 
   return (
     <div className="container_login_form">
+      {!state.isForceChangePassword && <>
       <div className="img_login_logo img-responsive">
         <Image
           placeholder="blur"
@@ -72,7 +80,7 @@ const LoginForm = ({ className, logo }) => {
           className="alert alert-danger useFadeEffect px-3 pt-3 pb-2 mb-0 mt-3"
         >
           {" "}
-          <p>Incorrect username and/or password.</p>{" "}
+          <p> {state.errorMessage} </p>{" "}
         </div>
         <div
           ref={successBox}
@@ -94,7 +102,7 @@ const LoginForm = ({ className, logo }) => {
           type="password"
           className="input_login"
           autoComplete="email"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => !state.isLoading && setPassword(e.target.value)}
         />
       </div>
       <Link href="/admin/" passHref>
@@ -102,6 +110,9 @@ const LoginForm = ({ className, logo }) => {
           {state.isLoading && <AppButtonSpinner />} Log in
         </button>
       </Link>
+      </> 
+      }
+      {state.isForceChangePassword && <ForceChangePasswordForm email={email} pwd={password}/> }
     </div>
   );
 };
