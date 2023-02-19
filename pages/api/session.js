@@ -3,16 +3,29 @@ import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, UNPROCESSABLE_ENTITY } from '@/lib/HttpStatuses';
 import UnauthorizedError from '@/components/errors/UnauthorizedError';
+import Session from '@backend/models/core/Session';
+import { assertUserIsLoggedIn } from '@/lib/Permissions';
 
-export default withSession(loginHandler);
+export default withSession(handler);
 
-async function loginHandler(req, res) {
-  
-  if (req.method?.toUpperCase() !== 'POST') {
-    res.status(405).json({ message: `METHOD ${req.method} not allowed.`  })
-    return
+
+async function handler(req, res) {
+  try {
+    switch(req.method) {
+      case "POST":
+        return login(req, res);
+      case "DELETE":
+        return logout(req, res); 
+      default:
+        throw new Error(`Unsupported method: ${req.method}`);
+    }
+  } catch (error) {
+    await defaultErrorHandler(error, req, res);
   }
-  
+}
+
+async function login (req, res) {
+   
   const {email=null, password=null} = req.body; 
   
   if (!email || !password) {
@@ -44,5 +57,15 @@ async function loginHandler(req, res) {
       await defaultErrorHandler(error, req, res);
     }
   }
-      
+}
+
+async function logout(req, res) {
+  try {
+    const session_token = assertUserIsLoggedIn(req);
+    await Session.logout(session_token); 
+    req.session.destroy();
+    res.status(200).json({message: 'OK'});
+  } catch (error) {
+    await defaultErrorHandler(error, req, res);
+  }
 }

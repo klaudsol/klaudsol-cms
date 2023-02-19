@@ -25,7 +25,7 @@ const LoginForm = ({ className, logo }) => {
       (async () => {
         try {
           dispatch({ type: INIT });
-          const response = await slsFetch("/api/auth/login", {
+          const response = await slsFetch("/api/session", {
             method: "POST",
             headers: {
               "Content-type": "application/json",
@@ -62,7 +62,7 @@ const LoginForm = ({ className, logo }) => {
 
   return (
     <div className="container_login_form">
-      {!state.isForceChangePassword ? <>
+      {!state.isForceChangePassword && <>
       <div className="img_login_logo img-responsive">
         <Image
           placeholder="blur"
@@ -110,8 +110,9 @@ const LoginForm = ({ className, logo }) => {
           {state.isLoading && <AppButtonSpinner />} Log in
         </button>
       </Link>
-      </>: <ForceChangePasswordForm email={email} pwd={password}/>
+      </> 
       }
+      {state.isForceChangePassword && <ForceChangePasswordForm email={email} pwd={password}/> }
     </div>
   );
 };
