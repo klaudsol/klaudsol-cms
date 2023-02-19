@@ -13,13 +13,9 @@ const FloatRenderer = ({
     <Field
       type="float"
       name={name}
-      className={cx("input_text mb-2", className)}
+      className={cx("general-input-text", 
+      {"general-input-error" : errors[name] && touched[name]})}
       validate={(v) => TypesValidator(v, type)}
-      style={
-        errors[name] && touched[name]
-          ? { borderColor: "red", outline: "none" }
-          : {}
-      }
     />
     <ErrorRenderer 
       name={name}

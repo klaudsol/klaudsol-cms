@@ -19,6 +19,7 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
+import classname from "classnames";
 
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
@@ -183,7 +184,7 @@ export default function CreateNewEntry({ cache }) {
                                 <input
                                   type="text"
                                   {...field}
-                                  className="input_text mb-2"
+                                  className={classname("general-input-text", {"general-input-error" : meta.touched && meta.error})}
                                   style={
                                     meta.touched && meta.error
                                       ? {
@@ -194,8 +195,8 @@ export default function CreateNewEntry({ cache }) {
                                   }
                                 />
                                 {meta.touched && meta.error && (
-                                  <div style={{ color: "red",   fontSize: '11px', marginTop: '0px' }}>
-                                    {meta.error === 'Required' ? 'This field cannot be blank' : meta.error}
+                                  <div className="general-input-error-text">
+                                    {meta.error}
                                   </div>
                                 )}
                               </div>
