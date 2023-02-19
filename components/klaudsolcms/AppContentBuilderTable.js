@@ -59,7 +59,6 @@ const AppContentBuilderTable = ({typeSlug}) => {
 
     const onUpdateField = evt => {
      if(formRef.current) formRef.current.handleSubmit();
-      setLoading(true)
     };
 
     const onEditClose = () => {
@@ -78,7 +77,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
  
         (async () => {
           try {
-
+            setLoading(true)
             const response = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
               method: 'PUT',
               headers: {
