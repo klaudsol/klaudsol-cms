@@ -1,6 +1,4 @@
-import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 import { getSessionCache } from "@/lib/Session";
 
 import { useRouter } from "next/router";
@@ -15,10 +13,7 @@ import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 
 /** react-icons */
-import { FaCheck, FaImage } from "react-icons/fa";
-import { MdModeEditOutline } from "react-icons/md";
-import { VscListSelection } from "react-icons/vsc";
-
+import { FaCheck } from "react-icons/fa";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 
@@ -34,11 +29,9 @@ import {
 
 import {
   LOADING,
-  REFRESH,
   CLEANUP,
   SAVING,
   SET_ATTRIBUTES,
-  SET_ENTRIES,
   SET_SHOW,
   SET_ENTITY_TYPE_ID,
   SET_VALIDATE_ALL,
@@ -97,10 +90,6 @@ export default function CreateNewEntry({ cache }) {
       formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
 
-  const createSlug = (slug) => {
-    return slug.replaceAll(" ", "-").toLowerCase();
-  };
-
   const formatSlug = (slug) => {
     return slug.toLowerCase().replace(/\s+/g, "-");
   };
@@ -155,7 +144,7 @@ export default function CreateNewEntry({ cache }) {
             <AppBackButton
               link={`/admin/content-manager/${entity_type_slug}`}
             />
-            <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
+            <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
               <div>
                 <h3> Create an Entry </h3>
                 <p> API ID : {entity_type_slug} </p>
@@ -166,9 +155,9 @@ export default function CreateNewEntry({ cache }) {
                 onClick={onSubmit}
               />
             </div>
-            <div className="row mt-4">
-              <div className="col-9">
-                <div className="container_new_entry py-4 px-4">
+            <div className="row mt-4 mx-0 px-0">
+              <div className="col-12 mx-0 px-0">
+                <div className=" py-0 px-0 mx-0">
                   {state.isLoading &&
                     Array.from(
                       { length: DEFAULT_SKELETON_ROW_COUNT },
@@ -180,15 +169,11 @@ export default function CreateNewEntry({ cache }) {
                         </div>
                       )
                     )}
-
                   {!state.isLoading && (
                     <Formik {...formikParams}>
                       {(props) => (
                         <Form>
-                          <p className="mt-1">
-                            {" "}
-                            <b> slug </b>
-                          </p>
+                          <p className="general-input-title"> Slug </p>
                           <Field
                             name="slug"
                             validate={(e) => TypesValidator(e, "text")}
@@ -209,8 +194,8 @@ export default function CreateNewEntry({ cache }) {
                                   }
                                 />
                                 {meta.touched && meta.error && (
-                                  <div style={{ color: "red" }}>
-                                    {meta.error}
+                                  <div style={{ color: "red",   fontSize: '11px', marginTop: '0px' }}>
+                                    {meta.error === 'Required' ? 'This field cannot be blank' : meta.error}
                                   </div>
                                 )}
                               </div>
@@ -221,10 +206,7 @@ export default function CreateNewEntry({ cache }) {
                             .map(([attributeName, attribute]) => {
                               return (
                                 <div key={attributeName}>
-                                  <p className="mt-1">
-                                    {" "}
-                                    <b> {attributeName} </b>
-                                  </p>
+                                  <p className="general-input-title"> {attributeName.replaceAll('_', " ")}  </p>
                                   <AdminRenderer
                                     errors={props.errors}
                                     touched={props.touched}

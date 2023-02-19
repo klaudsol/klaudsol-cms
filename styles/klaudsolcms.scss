@@ -818,6 +818,8 @@ border-radius: 5px;
     width: 100%;
     padding: 10px;
     border: 1px solid lightgray;
+    margin-bottom: 0px;
+    border-radius: 5px;
 }
 
 .new_entry_block_button,
@@ -1030,6 +1032,8 @@ border-radius: 5px;
     border-radius: 5px;
     font-size: 12px;
     line-height: 1.5;
+    resize: none;
+    border: 1px solid lightgray;
 }
 
 .skeleton-bullet {
@@ -1084,3 +1088,4 @@ border-radius: 5px;
         width: 150px;
     }
 }
+

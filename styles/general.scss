@@ -1,0 +1,37 @@
+@import '@/styles/ksStyles/ks-colors.scss';
+@import '@/styles/ksStyles/ks-mixins.scss';
+@import '@/styles/ksStyles/ks-dimensions.scss';
+
+.general {
+  &-input {
+    &-title {
+      @include font-semi-bold(12px);
+      @include margin-tb-lr(5px);
+      text-transform: capitalize;
+    }
+
+    &-text {
+      @include general-text-input(12px);
+    }
+
+    &-textarea {
+      @include general-text-input(12px);
+      @include width-height(100%, 15vh);
+      max-height: 500px;
+      line-height: 1.5;
+      resize: none;
+    } 
+
+    &-error {
+      border: 1px solid red;
+      outline: none;
+
+      &-text {
+        @include font-regular(11px);
+        color: red;
+        margin-top: 0px;
+      }
+    }
+  }
+}
+  
