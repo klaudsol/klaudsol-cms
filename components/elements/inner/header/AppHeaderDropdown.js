@@ -29,7 +29,9 @@ const AppHeaderDropdown = () => {
   const onLogout = (evt) => {
     evt.preventDefault();   
     const callback = async () => {
-      await slsFetch('/api/logout');
+      await slsFetch('/api/session',{
+        method: "DELETE"
+      });
       dispatch({type: 'RESET_CLIENT_SESSION'});
       router.push('/');
     };
