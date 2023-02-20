@@ -170,11 +170,11 @@ export const filterData = (queries,Datas) => {
           switch (obj.operator) {
             case '$eq':
                  return obj.value.includes(item[obj.identifier]);
-            case '$eqi':
+            case '$eqi': 
                  return obj.value.map((str)=>(str.toLowerCase())).includes(item[obj.identifier].toLowerCase());
             case '$ne':
                  return !obj.value.includes(item[obj.identifier]);
-            case '$lt':
+            case '$lt': 
                  return !isGreaterThan(obj.value,item[obj.identifier]);
             case '$lte':  
                  return !isGreaterThan(obj.value,item[obj.identifier],true)
@@ -182,7 +182,15 @@ export const filterData = (queries,Datas) => {
                  return isGreaterThan(obj.value,item[obj.identifier]);
             case '$gte': 
                  return isGreaterThan(obj.value,item[obj.identifier],true);
-            default:
+            case '$contains': 
+                 return obj.value.every(value => item[obj.identifier].includes(value)) 
+            case '$notContains': 
+                 return !obj.value.every(value => item[obj.identifier].includes(value))
+            case '$containsi':
+                 return obj.value.every(value => item[obj.identifier].toLowerCase().includes(value.toLowerCase()))
+            case '$notContainsi': 
+                 return obj.value.every(value => item[obj.identifier].toLowerCase().includes(value.toLowerCase()))
+            default: 
               // incomplete 
           }
         });
