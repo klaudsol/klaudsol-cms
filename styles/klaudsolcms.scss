@@ -199,6 +199,7 @@
     border-right: 1px solid lightgray;
     border-left: 1px solid #b0bec5;
     position: fixed;
+    max-width: 230px;
 }
 
 .main-container{
@@ -393,6 +394,7 @@ $onFocus: #323C4E;
     padding: 10px;
     padding-left: 20px;
     width: 100%;
+    max-width: 230px;
 }
 
 .content_menu_item:hover {
