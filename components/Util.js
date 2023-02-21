@@ -5,6 +5,7 @@ import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from "@/lib/HttpStatuses";
 import { TYPES_REGEX } from "@/components/renderers/validation/TypesRegex";
 import { promisify } from "es6-promisify";
 import crypto from "crypto";
+import { operators } from "@/constants/index";
 
 export const useFadeEffect = (ref, deps) => {
   useEffect(() => {
@@ -128,30 +129,6 @@ const convertToNumber = (items) => {
   return converted.includes(NaN) ? false : converted;
 };
 
-const operators = {
-  $eq: "IN",
-  $lt: "<",
-  $lte: "<=",
-  $gt: ">",
-  $gte: ">=",
-  $contains: "LIKE",
-  $notContains: "NOT LIKE",
-};
-
-// (FOR ENTITIES ONLY)
-export const replaceFields = (input) => {
-  // Replace 'slug' with 'entities.slug'
-  let output = input.replace(/slug/g, "entities.slug");
-
-  // Replace 'name' with 'attributes.name'
-  output = output.replace(/name/g, "attributes.name");
-
-  // Replace 'id' with 'entities.id'
-  output = output.replace(/id/g, "entities.id");
-
-  return output;
-};
-
 const substringSearch = (item) => {
   const values = item.match(/\((.*?)\)/)[1].split(", ");
   const converted = values
@@ -160,27 +137,32 @@ const substringSearch = (item) => {
   return converted;
 };
 
-const valueTypesIterator = (operator, value, { isSubstringSearch }) => {
+const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
   const valueTypes = ["value_string", "value_long_string", "value_double"];
+  const isNotCovertible = isNumber(value);
 
-  const combinedValues = valueTypes.map((columnName, index) => {
-    return `${columnName} ${operator} ${!isSubstringSearch ? `("${value}")`: `"${value}"`}${
-      valueTypes.length != index + 1 ? " OR" : ""
+  const convertedValue = isNotCovertible ? value : `"${value}"`;
+  const finalValue = isNotCovertible ? convertedValue : `(${convertedValue})`;
+
+  let combinedValues;
+  if (!isNotCovertible) {
+    combinedValues = valueTypes.map((columnName, index) => {
+      return `${columnName} ${operator} ${
+        !isSubstringSearch ? `${finalValue}` : `"%${value}%"`
+      }${valueTypes.length != index + 1 ? " OR" : ""}`;
+    });
+  } else {
+    combinedValues = `value_double ${operator} ${
+      !isSubstringSearch ? `${finalValue}` : `"%${value}%"`
     }`;
-  });
+    // only return long_double
+  }
 
-  return combinedValues.join(" ");
+  return isNotCovertible ? combinedValues : `${combinedValues.join(" ")}`;
 };
 
 export const transformQuery = (queries) => {
   const filteredQueries = filterQuery(queries);
-
-  // filterQuery
-  // the function filters out the object and only return property that starts with 'filters'.
-  // check if the value is only containing numbers, convert to number if true.
-  // NOTE: THIS IS TEMPORARY!! for now, we can only access the api through web URL
-  // in which all values are expected to be string. and so this will allow you to test and filter numbers such as ids, prices etc.
-  // frontend value is expected to be handled by JSQ library in the future
 
   // Originally, values are only nested when it detects multiple values with the same operator type,
   // However, In our case, we are forcing all values to be nested in an array.
@@ -201,38 +183,26 @@ export const transformQuery = (queries) => {
   //         ]
 
   const SQLconditions = formattedQueries.map((obj) => {
-    if (obj.value.length > 1) {
-      switch (obj.operator) {
-        case "contains":
-        case "notContains":
-          return substringSearch(
-            `attributes.name ${operators[obj.operator]} ("${obj.identifier}")`
-          );
+    // incomplete
+    // for now, this function can only receive a single filter value.
+    switch (obj.operator) {
+      case "$contains":
+      case "$notContains":
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0],
+          true
+        )})`;
 
-        default:
-          return `attributes.name ${operators[obj.operator]} ("${
-            obj.identifier
-          }")`;
-      }
-    } else {
-      switch (obj.operator) {
-        case "$contains":
-        case "$notContains":
-          return `attributes.name = "${
-            obj.identifier
-          }" AND ${valueTypesIterator(operators[obj.operator], obj.value[0], {
-            isSubstringSearch: true,
-          })}`;
-
-        default:
-          return `attributes.name = "${
-            obj.identifier
-          }" AND ${valueTypesIterator(operators[obj.operator], obj.value[0])}`;
-      }
+      default:
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0]
+        )})`;
     }
   });
 
-  console.log(SQLconditions);
-
-  return SQLconditions.join(" ");
+  return SQLconditions.length > 1
+    ? SQLconditions.join(" AND ")
+    : SQLconditions.join(" ");
 };

@@ -12,3 +12,14 @@ export const defaultLogo = {
   name: "defaultLogo",
   display: "(Default)",
 };
+
+export const operators = {
+  $eq: "IN",
+  $lt: "<",
+  $lte: "<=",
+  $gt: ">",
+  $gte: ">=",
+  $contains: "LIKE",
+  $notContains: "NOT LIKE",
+};
+
