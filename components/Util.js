@@ -129,6 +129,20 @@ const convertToNumber = (items) => {
   return converted.includes(NaN) ? false : converted;
 };
 
+export const sortData = (data, sortValue) => {
+  return Object.values(data).sort((a, b) => {
+    if (a[sortValue] < b[sortValue]) {
+      return -1;
+    }
+
+    if (a[sortValue] > b[sortValue]) {
+      return 1;
+    }
+
+    return 0;
+  });
+}
+
 const substringSearch = (item) => {
   const values = item.match(/\((.*?)\)/)[1].split(", ");
   const converted = values
