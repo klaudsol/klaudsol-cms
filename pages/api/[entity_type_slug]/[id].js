@@ -138,7 +138,6 @@ async function del(req, res) {
     
     console.log(imageNames)
     if (imageNames.length > 0) {
-      throw new Error('dont delete it meow')
       const params = generateS3ParamsForDeletion(imageNames);
       await deleteFilesFromBucket(params);
     }
