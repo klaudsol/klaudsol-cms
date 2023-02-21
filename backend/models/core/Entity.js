@@ -1,5 +1,5 @@
 import DB from '@backend/data_access/DB';
-import { isNumber } from '@/components/Util';
+import { isNumber, transformQuery, replaceFields } from '@/components/Util';
 
 class Entity {
 
@@ -122,14 +122,14 @@ class Entity {
         })); 
   }
 
-  static async findByPageAndEntry({entity_type_slug , entry, page }) {
+  static async findByPageAndEntry({entity_type_slug , entry, page },queries) {
     const db = new DB();
      
+   const transformedQueries = transformQuery(queries);
 
     let totalRows;
     let totalOrders;
     
-
     const totalRowsSQL = `SELECT COUNT(entities.id) 
                           from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
                           WHERE entity_types.slug = :entity_type_slug;
@@ -171,10 +171,12 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug  
+                    ${transformedQueries.length ? `AND (${transformedQueries})` : ''}
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}`:' '}
                 `;
-              
+     console.log(sql) 
+                
     const dataRaw = await db.executeStatement(sql, [
         {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
     ]);

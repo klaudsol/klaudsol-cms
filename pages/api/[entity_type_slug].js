@@ -32,7 +32,7 @@ import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
 import { assert } from '@/lib/Permissions';
 import { addFilesToBucket, generateEntries } from '@backend/data_access/S3'
-import { filterData } from '@/components/Util';
+import { transformQuery } from '@/components/Util';
 
 export default withSession(handler);
 
@@ -63,7 +63,7 @@ async function handler(req, res) {
     try{
       const queries = req.query;
       const { entity_type_slug, entry, page } = queries;
-      const rawData = await Entity.findByPageAndEntry({ entity_type_slug, entry, page});
+      const rawData = await Entity.findByPageAndEntry({ entity_type_slug, entry, page}, queries);
       const rawEntityType = await EntityType.find({slug: entity_type_slug});
 
 
@@ -107,11 +107,9 @@ async function handler(req, res) {
         };
 
       }, initialMetadata);
-
-      const filteredData = filterData(queries,Object.values(dataTemp.indexedData),)
-      
+   
       const output = {
-        data: filteredData, 
+        data: dataTemp.indexedData, 
         metadata: metadata
       }; 
 
