@@ -135,8 +135,10 @@ async function del(req, res) {
     const imageNames = entity.flatMap((item) =>
       item.attributes_type === "image" ? item.value_string : []
     );
-
+    
+    console.log(imageNames)
     if (imageNames.length > 0) {
+      throw new Error('dont delete it meow')
       const params = generateS3ParamsForDeletion(imageNames);
       await deleteFilesFromBucket(params);
     }
@@ -164,7 +166,7 @@ async function update(req, res) {
     );
     const { toDeleteRaw, ...body } = entriesRaw;
     const toDelete = toDeleteRaw ? toDeleteRaw.split(",") : []
-
+    
     if (files.length > 0) {
       const resFromS3 = await updateFilesFromBucket(files, body, toDelete);
       const entries = generateEntries(resFromS3, files, body);

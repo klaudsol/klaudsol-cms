@@ -21,7 +21,7 @@ import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-import { getAllFiles, convertToFormData } from "lib/s3FormController";
+import { getAllFiles, convertToFormData, getS3Keys } from "lib/s3FormController";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
@@ -43,7 +43,8 @@ import {
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ENTITY_TYPE_ID,
-  SET_ALL_VALIDATES
+  SET_ALL_VALIDATES,
+  SET_S3_TO_DELETE,
 } from "@/lib/actions";
 
 export default function Type({ cache }) {
@@ -61,12 +62,23 @@ export default function Type({ cache }) {
         const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);
         const values = await valuesRaw.json();
 
-        const entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
+        const entries = {
+          ...Object.keys(values.metadata.attributes).reduce(
+            (a, v) => ({ ...a, [v]: "" }),
+            {}
+          ),
+          ...values.data,
+        };
+        const imageToDelete = Object.values(entries).filter((obj) => obj.key);
         const attributes = values.metadata.attributes;
         const entity_type_id = values.metadata.entity_type_id;
-        const validateValues = Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: true}), {})
-    
-        dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
+        const validateValues = Object.keys(values.metadata.attributes).reduce(
+          (a, v) => ({ ...a, [v]: true }),
+          {}
+        );
+
+        dispatch({ type: SET_S3_TO_DELETE, payload: imageToDelete });
+        dispatch({ type: SET_ALL_VALIDATES, payload: validateValues });
         dispatch({ type: SET_ATTRIBUTES, payload: attributes });
         dispatch({ type: SET_VALUES, payload: entries });
         dispatch({ type: SET_ENTITY_TYPE_ID, payload: entity_type_id });
@@ -81,7 +93,7 @@ export default function Type({ cache }) {
   const onSubmit = (e) => {
     e.preventDefault();
     formRef.current.handleSubmit();
-    state.allValidates && formRef.current.setTouched({ ...state.allValidates});
+    state.allValidates && formRef.current.setTouched({ ...state.allValidates });
   };
 
   const onDelete = useCallback(
@@ -117,13 +129,6 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
-  const getS3Keys = (files) => {
-    const fileKeys = Object.keys(files);
-    const s3Keys = fileKeys.filter(file => state.values[file].key);
-    
-    return s3Keys;
-  };
-
   const formikParams = {
     innerRef: formRef,
     initialValues: getFormikInitialVals(),
@@ -132,12 +137,11 @@ export default function Type({ cache }) {
         try {
           dispatch({ type: SAVING });
 
-          const filesToUpload = getAllFiles(values);
-          const s3Keys = getS3Keys(filesToUpload);
+          const toDeleteRaw = getS3Keys(values, state.imageToDelete)
 
           const entry = {
             ...values,
-            toDeleteRaw: s3Keys,
+            toDeleteRaw,
             entity_type_slug,
             entity_id: id,
           };
@@ -148,7 +152,7 @@ export default function Type({ cache }) {
             method: "PUT",
             body: formattedEntries,
           });
-          
+
           const { message, homepage } = await response.json();
           dispatch({
             type: SET_MODAL_CONTENT,
