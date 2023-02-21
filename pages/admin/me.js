@@ -20,9 +20,9 @@ export default function Settings({cache}) {
   const formikParams =  {
     innerRef: formRef,
     initialValues: {
-      current_password: '',
-      password: '',
-      confirmation_password: ''
+      currentPassword: '',
+      newPassword: '',
+      cconfirmNewPassword: ''
     },
     onSubmit: (values) => {
 

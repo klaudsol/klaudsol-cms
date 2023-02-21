@@ -199,6 +199,7 @@
     border-right: 1px solid lightgray;
     border-left: 1px solid #b0bec5;
     position: fixed;
+    max-width: 230px;
 }
 
 .main-container{
@@ -393,6 +394,7 @@ $onFocus: #323C4E;
     padding: 10px;
     padding-left: 20px;
     width: 100%;
+    max-width: 230px;
 }
 
 .content_menu_item:hover {
@@ -818,6 +820,8 @@ border-radius: 5px;
     width: 100%;
     padding: 10px;
     border: 1px solid lightgray;
+    margin-bottom: 0px;
+    border-radius: 5px;
 }
 
 .new_entry_block_button,
@@ -1030,6 +1034,8 @@ border-radius: 5px;
     border-radius: 5px;
     font-size: 12px;
     line-height: 1.5;
+    resize: none;
+    border: 1px solid lightgray;
 }
 
 .skeleton-bullet {
@@ -1084,3 +1090,4 @@ border-radius: 5px;
         width: 150px;
     }
 }
+
