@@ -136,7 +136,7 @@ async function del(req, res) {
       item.attributes_type === "image" ? item.value_string : []
     );
 
-    if (imageNames.length > 0) {
+    if (imageNames.length) {
       const params = generateS3ParamsForDeletion(imageNames);
       await deleteFilesFromBucket(params);
     }

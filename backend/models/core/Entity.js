@@ -396,6 +396,21 @@ class Entity {
     return true;
   }
 
+  static async getAllImagesKeyBySlug({ slug }){
+    const db = new DB();
+
+    const sql = `SELECT \`values\`.value_string from entities
+    LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+    LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+    LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+    WHERE entity_types.slug = :slug AND attributes.type = "image"`;
+
+    const attributes = await db.executeStatement(sql, [
+      {name: 'slug', value:{stringValue: slug}},
+    ]);
+
+    return attributes.records.map(([{stringValue:key}])=>(key))
+  }
 }
 
 

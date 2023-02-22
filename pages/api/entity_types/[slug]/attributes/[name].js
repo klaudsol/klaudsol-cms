@@ -28,6 +28,10 @@ import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { assert } from '@/lib/Permissions';
 import { OK } from '@/lib/HttpStatuses';
 import Attribute from '@backend/models/core/Attribute';
+import {
+  deleteFilesFromBucket,
+  generateS3ParamsForDeletion,
+} from "@/backend/data_access/S3";
 
 export default withSession(handler);
 
@@ -55,8 +59,13 @@ async function del(req, res) {
     await assert({
       loggedIn: true,
      }, req);
+     
+     const imageNames = await Attribute.deleteWhere({type_slug: typeSlug, name});
 
-     await Attribute.deleteWhere({type_slug: typeSlug, name});
+     if(imageNames.length) {
+      const params = generateS3ParamsForDeletion(imageNames);
+      await deleteFilesFromBucket(params);
+    }
 
     res.status(OK).json({message: 'Successfully deleted the attribute.'}) 
   }
