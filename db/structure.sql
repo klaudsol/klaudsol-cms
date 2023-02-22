@@ -10,7 +10,11 @@ CREATE TABLE `attributes` (
   `order` int(11) NOT NULL DEFAULT '1',
   `entity_type_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_order` (`order`)
+  KEY `idx_order` (`order`),
+  CONSTRAINT fk_attributes_entity_types
+  FOREIGN KEY (entity_type_id)
+  REFERENCES entity_types(id)
+  ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -26,7 +30,11 @@ CREATE TABLE `entities` (
   `entity_type_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_slug` (`slug`),
-  KEY `idx_entity_type_id` (`entity_type_id`)
+  KEY `idx_entity_type_id` (`entity_type_id`),
+  CONSTRAINT fk_entities_entity_types
+  FOREIGN KEY (entity_type_id)
+  REFERENCES entity_types(id)
+  ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -102,7 +110,11 @@ CREATE TABLE `values` (
   `value_double` decimal(19,4) DEFAULT NULL,
   `row_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_entities_attributes` (`entity_id`,`attribute_id`)
+  KEY `idx_entities_attributes` (`entity_id`,`attribute_id`),
+  CONSTRAINT fk_values_entities
+  FOREIGN KEY (entity_id)
+  REFERENCES entities(id)
+  ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
