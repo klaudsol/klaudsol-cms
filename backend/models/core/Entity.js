@@ -128,11 +128,11 @@ class Entity {
   static async findByPageAndEntry({ entity_type_slug, entry, page }, queries) {
     const db = new DB();
 
-    const transformedQueries = transformQuery(queries);
+    const condition = transformQuery(queries);
 
     let totalRows;
     let totalOrders;
-
+   
     const totalRowsSQL = `SELECT COUNT(entities.id) 
                           from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
                           WHERE entity_types.slug = :entity_type_slug;
@@ -163,26 +163,25 @@ class Entity {
     let Ids;
     let idsCondition;
 
-    if (transformedQueries.length) {
-      const getId = `SELECT entities.id                      
-    FROM entities
-    LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
-    LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
-    LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
-    WHERE 
-        entity_types.slug = :entity_type_slug  
-        ${transformedQueries.length ? `AND (${transformedQueries})` : ""}
-    ORDER BY entities.id, attributes.\`order\` ASC
-    `;
-
-      const rawIds = await db.executeStatement(getId, [
-        { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
-      ]);
-
-      Ids = rawIds.records.map((innerArray) => innerArray[0].longValue).flat();
-
-      idsCondition = `(${Ids.map(String).join(",")})`;
-    }
+      if (condition.length) {
+        const getId = `SELECT entities.id                      
+      FROM entities
+      LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+      LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+      LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+      WHERE 
+          entity_types.slug = :entity_type_slug  
+          ${condition.length ? `AND (${condition})` : ""}
+      `;
+  
+        const rawIds = await db.executeStatement(getId, [
+          { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
+        ]);
+  
+        Ids = rawIds.records.map((innerArray) => innerArray[0].longValue).flat();
+  
+        idsCondition = `(${Ids.map(String).join(",")})`;
+      }
 
     const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
                 attributes.name, attributes.type, attributes.\`order\`,
@@ -197,7 +196,7 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug  
-                    ${Ids ? `AND entities.id IN ${idsCondition}` : ""}
+                  ${`AND entities.id IN  ${Ids.length ? idsCondition:'(null)'}`}
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
                 `;

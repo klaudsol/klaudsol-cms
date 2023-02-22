@@ -141,7 +141,7 @@ export const sortData = (data, sortValue) => {
 
     return 0;
   });
-}
+};
 
 const substringSearch = (item) => {
   const values = item.match(/\((.*?)\)/)[1].split(", ");
@@ -196,27 +196,30 @@ export const transformQuery = (queries) => {
   //          {value:['4000'], operator:'$lt', identifier:'price'},
   //         ]
 
-  const SQLconditions = formattedQueries.map((obj) => {
+  const transformCondition = (obj) => {
     // incomplete
     // for now, this function can only receive a single filter value.
-    switch (obj.operator) {
-      case "$contains":
-      case "$notContains":
-        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
-          operators[obj.operator],
-          obj.value[0],
-          true
-        )})`;
+    // refactor in future for multiple filter
 
-      default:
-        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
-          operators[obj.operator],
-          obj.value[0]
-        )})`;
-    }
-  });
+      switch (obj.operator) {
+        case "$contains":
+        case "$notContains":
+          return `(attributes.name = "${
+            obj.identifier
+          }" AND ${valueTypesIterator(
+            operators[obj.operator],
+            obj.value[0],
+            true
+          )})`;
 
-  return SQLconditions.length > 1
-    ? SQLconditions.join(" AND ")
-    : SQLconditions.join(" ");
+        default:
+          return `(attributes.name = "${
+            obj.identifier
+          }" AND ${valueTypesIterator(operators[obj.operator], obj.value[0])})`;
+      }
+    };
+  
+  const SQLconditions = transformCondition(formattedQueries[0]);
+
+  return SQLconditions;
 };
