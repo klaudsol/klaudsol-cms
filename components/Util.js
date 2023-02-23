@@ -182,6 +182,29 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
   return isNotCovertible ? combinedValues : `${combinedValues.join(" ")}`;
 };
 
+const transformConditions = (arr) => {
+
+   const transformedConditions = arr.map((obj)=>{
+    switch (obj.operator) {
+      case "$contains":
+      case "$notContains":
+        return `(attributes.name = "${
+          obj.identifier
+        }" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0],
+          true
+        )})`;
+
+      default:
+        return `(attributes.name = "${
+          obj.identifier
+        }" AND ${valueTypesIterator(operators[obj.operator], obj.value[0])})`;
+    }
+   })
+    return transformedConditions;
+  };
+
 export const transformQuery = (queries) => {
   const filteredQueries = filterQuery(queries);
 
@@ -203,30 +226,7 @@ export const transformQuery = (queries) => {
   //          {value:['4000'], operator:'$lt', identifier:'price'},
   //         ]
 
-  const transformCondition = (obj) => {
-    // incomplete
-    // for now, this function can only receive a single filter value.
-    // refactor in future for multiple filter
+  const SQLconditions = transformConditions(formattedQueries);
 
-      switch (obj.operator) {
-        case "$contains":
-        case "$notContains":
-          return `(attributes.name = "${
-            obj.identifier
-          }" AND ${valueTypesIterator(
-            operators[obj.operator],
-            obj.value[0],
-            true
-          )})`;
-
-        default:
-          return `(attributes.name = "${
-            obj.identifier
-          }" AND ${valueTypesIterator(operators[obj.operator], obj.value[0])})`;
-      }
-    };
-  
-  const SQLconditions = transformCondition(formattedQueries[0]);
-
-  return SQLconditions;
+  return formattedQueries.length > 1 ? SQLconditions.join(" OR ") : SQLconditions.join(',')
 };
