@@ -1,6 +1,10 @@
 import { slugTooltipText } from "constants";
 import Link from "next/link";
 import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
+import { BsFillQuestionCircleFill, BsQuestionLg } from "react-icons/bs";
+import { AiFillQuestionCircle, AiOutlineQuestionCircle } from "react-icons/ai";
+import { FaRegQuestionCircle } from "react-icons/fa";
+import { RiQuestionLine } from "react-icons/ri";
 
 const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
 
@@ -19,13 +23,16 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
           <tr>
             {columns.map((col, i) => (
               <th key={i}>
-                {col.displayName === 'SLUG' ?    
+                {col.displayName === 'SLUG' ?  
+                <>
+                {col.displayName}
                 <GeneralHoverTooltip 
-                  text="Slug"
-                  className="general-table-header-slug"
+                  icon={<RiQuestionLine className="general-tooltip-icon"/>}
+                  className="general-tooltip-button"
                   tooltipText={slugTooltipText}
                   position="top"
-                /> : col.displayName}
+                /> 
+                </> : col.displayName}
               </th>
             ))}
           </tr>

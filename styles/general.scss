@@ -12,10 +12,17 @@
       &-slug {
         @include font-semi-bold(12px);
         @include padding-all();
-        @include margin-tb-lr(5px);
+        @include margin-all();
         text-transform: capitalize;
-        background-color: transparent !important;
         border: none;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+
+        &-icon {
+          @include font-regular(14px);
+          margin-left: 3px;
+          margin-top: -10px;
+        }
 
         &:hover {
           background-color: transparent !important;
@@ -61,6 +68,17 @@
           background-color: transparent !important;
         }
       }
+    }
+  }
+
+  &-tooltip {
+    &-button {
+      background-color: transparent !important
+    }
+    &-icon {
+      @include font-regular(14px);
+      margin-left: 3px;
+      margin-bottom: 2px;
     }
   }
 }

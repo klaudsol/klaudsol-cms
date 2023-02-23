@@ -1,8 +1,9 @@
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Button from 'react-bootstrap/Button';
+import { BsFillQuestionCircleFill } from 'react-icons/bs';
 
-const GeneralHoverTooltip = ({ className, text, tooltipText, position }) => (
+const GeneralHoverTooltip = ({ className, icon, text, tooltipText, position }) => (
   <OverlayTrigger
     placement={position}
     overlay={<Tooltip id="button-tooltip-2">{tooltipText}</Tooltip>}
@@ -13,7 +14,7 @@ const GeneralHoverTooltip = ({ className, text, tooltipText, position }) => (
         {...triggerHandler}
         ref={ref}
         className={className}
-      > {text} 
+      > {text} {icon}
       </Button>
     )}
   </OverlayTrigger>   

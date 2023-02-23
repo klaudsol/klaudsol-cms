@@ -31,6 +31,7 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
+import { RiQuestionLine } from "react-icons/ri";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
@@ -132,13 +133,13 @@ export default function CreateNewEntry({ cache }) {
 
   return (
     <CacheContext.Provider value={cache}>
-      <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
+      <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
             <AppBackButton
               link={`/admin/content-manager/${entity_type_slug}`}
             />
-            <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
+            <div className="d-flex justify-content-between align-items-center mt-2 mx-0 px-0">
               <div>
                 <h3> Create an Entry </h3>
                 <p> API ID : {entity_type_slug} </p>
@@ -167,12 +168,15 @@ export default function CreateNewEntry({ cache }) {
                     <Formik {...formikParams}>
                       {(props) => (
                         <Form>  
+                          <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
+                          <p className="general-input-title-slug"> Slug </p> 
                           <GeneralHoverTooltip 
-                            text="Slug"
-                            className="general-input-title-slug"
+                            icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
+                            className="general-table-header-slug"
                             tooltipText={slugTooltipText}
-                            position="left"
+                            position="top"
                           /> 
+                          </div>
                           <Field
                             name="slug"
                             validate={(e) => TypesValidator(e, "text")}
