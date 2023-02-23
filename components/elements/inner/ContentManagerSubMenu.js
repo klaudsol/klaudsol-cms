@@ -4,10 +4,11 @@ import RootContext from '@/components/contexts/RootContext';
 import { DEFAULT_SKELETON_ROW_COUNT } from 'lib/Constants';
 import Link from 'next/link';
 import { loadEntityTypes } from '@/components/reducers/actions';
+import {  findContentTypeName } from "@/components/Util";
 
 /** kladusol CMS components */
 import AppIconButton from '@/components/klaudsolcms/buttons/AppIconButton'
-import { SET_ENTITY_TYPES } from '@/lib/actions';
+import { SET_ENTITY_TYPES, SET_CURRENT_ENTITY_TYPE } from '@/lib/actions';
 
 /** react icons */
 import { FaSearch } from 'react-icons/fa'
@@ -59,10 +60,16 @@ const ContentManagerSubMenu = ({title, currentTypeSlug}) => {
     useEffect(() => { 
       (async () => {
 
-        await loadEntityTypes({rootState, rootDispatch, onStartLoad, onEndLoad, currentTypeSlug});
+        const entityTypes = await loadEntityTypes({rootState, rootDispatch, onStartLoad, onEndLoad});
+
+        rootState.currentContentType.entity_type_slug !== currentTypeSlug && entityTypes &&
+        rootDispatch({
+          type: SET_CURRENT_ENTITY_TYPE,
+          payload: findContentTypeName(entityTypes.data, currentTypeSlug)
+        });  
         
       })();
-    }, [rootState,currentTypeSlug]);
+    }, [currentTypeSlug]);
 
     return ( 
     <>

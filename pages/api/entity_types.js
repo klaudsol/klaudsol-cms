@@ -30,6 +30,7 @@ import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
 import { setCORSHeaders } from '@/lib/API';
+import { setDefaultEntityType } from '@/lib/cacheModifier';
 
 export default withSession(handler);
 
@@ -68,18 +69,18 @@ async function handler(req, res) {
   }
 
   async function create(req, res) { 
-
-
     try{
       const { name, slug } = req.body;
-      await EntityType.create({name, slug});
+      const defaultEntityType =  await EntityType.create({name, slug});
       const output = {
         data: {name, slug},
         metadata: {}
       }
       
       output.metadata.hash = createHash(output);
-      
+       
+      await setDefaultEntityType(req, defaultEntityType)
+ 
       setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
       res.status(OK).json(output ?? []);
       //entityTypes ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})

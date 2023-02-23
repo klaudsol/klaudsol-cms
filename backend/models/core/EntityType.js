@@ -132,8 +132,11 @@ class EntityTypes {
       { name: "name", value: { stringValue: name } },
     ]);
 
-    //TODO: return something valuable here
-    return true;
+    const defaultEntityTypeSQL = `SELECT entity_types.slug FROM entity_types ORDER BY id DESC LIMIT 1`;
+    const defaultEntityTypeData = await db.executeStatement(defaultEntityTypeSQL, []);
+    const [{ stringValue: defaultEntityType }] = defaultEntityTypeData.records[0];
+
+    return defaultEntityType
   }
 
   static async delete({ slug }) {
@@ -144,9 +147,12 @@ class EntityTypes {
       { name: "slug", value: { stringValue: slug } },
     ];
     await db.executeStatement(deleteEntityTypesSQL, executeStatementParam);
+ 
+    const defaultEntityTypeSQL = `SELECT entity_types.slug FROM entity_types ORDER BY id DESC LIMIT 1`;
+    const defaultEntityTypeData = await db.executeStatement(defaultEntityTypeSQL, []);
+    const [{ stringValue: defaultEntityType }] = defaultEntityTypeData.records[0];
 
-    //TODO: return something valuable here
-    return true;
+    return defaultEntityType
   }
 
   static async update({ name, newSlug, oldSlug }) {
@@ -160,8 +166,11 @@ class EntityTypes {
 
     await db.executeStatement(updateEntityTypesSQL, executeStatementParam);
 
-    //TODO: return something valuable here
-    return true;
+ const defaultEntityTypeSQL = `SELECT entity_types.slug FROM entity_types ORDER BY id DESC LIMIT 1`;
+    const defaultEntityTypeData = await db.executeStatement(defaultEntityTypeSQL, []);
+    const [{ stringValue: defaultEntityType }] = defaultEntityTypeData.records[0];
+
+    return defaultEntityType
   }
 }
 

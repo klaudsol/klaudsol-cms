@@ -30,6 +30,7 @@ import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { createHash } from "@/lib/Hash";
 import { setCORSHeaders } from "@/lib/API";
 import { assert } from "@/lib/Permissions";
+import { setDefaultEntityType } from '@/lib/cacheModifier';
 
 export default withSession(handler);
 
@@ -97,8 +98,11 @@ async function del(req, res) {
       req
     );
 
-    const { slug } = req.query;
-    await EntityType.delete({ slug });
+   const { slug } = req.query;
+   const defaultEntityType =  await EntityType.delete({ slug });
+
+   await setDefaultEntityType(req, defaultEntityType)
+
     res.status(OK).json({ message: "Successfully delete the entity type" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
@@ -117,7 +121,7 @@ async function update(req, res) {
     const { slug: oldSlug } = req.query;
     const { name, slug: newSlug } = req.body;
 
-    await EntityType.update({ name, newSlug, oldSlug });
+   const defaultEntityType = await EntityType.update({ name, newSlug, oldSlug });
 
     const output = {
       data: { name, newSlug },
@@ -127,6 +131,8 @@ async function update(req, res) {
     output.metadata.hash = createHash(output);
 
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
+    await setDefaultEntityType(req, defaultEntityType)
 
     res.status(OK).json(output ?? []);
   } catch (error) {

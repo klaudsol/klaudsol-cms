@@ -44,7 +44,7 @@ export default function ContentManager({ cache }) {
   const router = useRouter();
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
-  const { state: {currentContentType:{ entity_type_name, entity_type_slug: headerSlug } } } = useContext(RootContext);
+  const { state: rootState } = useContext(RootContext);
 
  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
@@ -108,13 +108,13 @@ export default function ContentManager({ cache }) {
             <AppBackButton link="/admin" />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
               <div>
-                <h3> {entity_type_name} </h3>
+                <h3> {rootState?.currentContentType?.entityTypeName} </h3>
                 <a
                   href={`/api/${entity_type_slug}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  api/{headerSlug}
+                  api/{entity_type_slug}
                 </a>
                 <p> {state.values.length} entries found </p>
               </div>
