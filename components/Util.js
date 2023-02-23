@@ -130,17 +130,24 @@ const convertToNumber = (items) => {
 };
 
 export const sortData = (data, sortValue) => {
-  return Object.values(data).sort((a, b) => {
-    if (a[sortValue] < b[sortValue]) {
+  const splitted = sortValue.split(':');
+  const [identifier, order] = splitted;
+
+  let sortedData = Object.values(data).sort((a, b) => {
+    if (a[identifier] < b[identifier]) {
       return -1;
     }
-
-    if (a[sortValue] > b[sortValue]) {
+    if (a[identifier] > b[identifier]) {
       return 1;
     }
-
     return 0;
   });
+   
+  if(order.toLowerCase() === 'desc'){
+    sortedData = sortedData.reverse()
+  }
+
+  return sortedData
 };
 
 const substringSearch = (item) => {
