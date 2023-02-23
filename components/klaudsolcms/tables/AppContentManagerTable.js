@@ -28,7 +28,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
                 {col.displayName}
                 <GeneralHoverTooltip 
                   icon={<RiQuestionLine className="general-tooltip-icon"/>}
-                  className="general-tooltip-button"
+                  className="general-table-header-slug"
                   tooltipText={slugTooltipText}
                   position="top"
                 /> 
