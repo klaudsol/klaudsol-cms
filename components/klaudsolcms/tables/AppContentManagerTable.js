@@ -1,10 +1,7 @@
 import { slugTooltipText } from "constants";
+import { RiQuestionLine } from "react-icons/ri";
 import Link from "next/link";
 import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
-import { BsFillQuestionCircleFill, BsQuestionLg } from "react-icons/bs";
-import { AiFillQuestionCircle, AiOutlineQuestionCircle } from "react-icons/ai";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { RiQuestionLine } from "react-icons/ri";
 
 const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
 
