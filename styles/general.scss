@@ -8,6 +8,19 @@
       @include font-semi-bold(12px);
       @include margin-tb-lr(5px);
       text-transform: capitalize;
+
+      &-slug {
+        @include font-semi-bold(12px);
+        @include padding-all();
+        @include margin-tb-lr(5px);
+        text-transform: capitalize;
+        background-color: transparent !important;
+        border: none;
+
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
     }
 
     &-text {
@@ -30,6 +43,23 @@
         @include font-regular(11px);
         color: red;
         margin-top: 5px;
+      }
+    }
+  }
+
+  &-table {
+    &-header {
+      &-slug {
+        @include font-regular(12px);
+        @include padding-all();
+        @include margin-tb-lr(5px);
+        text-transform: uppercase;
+        background-color: transparent !important;
+        border: none;
+
+        &:hover {
+          background-color: transparent !important;
+        }
       }
     }
   }

@@ -1,33 +1,14 @@
 import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@/lib/Session";
-
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useRef } from "react";
 import { slsFetch, sortByOrderAsc } from "@/components/Util";
 import { Formik, Form, Field } from "formik";
-
-/** kladusol CMS components */
-import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
-import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
-import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
-import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
-
-/** react-icons */
-import { FaCheck } from "react-icons/fa";
-import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-
-import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import TypesValidator from "@/components/renderers/validation/RegexValidator";
-import classname from "classnames";
-
-import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
-
+import { slugTooltipText } from "constants";
 import {
   initialState,
   createEntriesReducer,
 } from "@/components/reducers/createReducer";
-
 import {
   LOADING,
   CLEANUP,
@@ -38,6 +19,18 @@ import {
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
 } from "@/lib/actions";
+import { FaCheck } from "react-icons/fa";
+import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+import classname from "classnames";
+import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
+import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
+import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
+import ContentManagerLayout from "components/layouts/ContentManagerLayout";
+import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import TypesValidator from "@/components/renderers/validation/RegexValidator";
+import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
@@ -173,8 +166,13 @@ export default function CreateNewEntry({ cache }) {
                   {!state.isLoading && (
                     <Formik {...formikParams}>
                       {(props) => (
-                        <Form>
-                          <p className="general-input-title"> Slug </p>
+                        <Form>  
+                          <GeneralHoverTooltip 
+                            text="Slug"
+                            className="general-input-title-slug"
+                            tooltipText={slugTooltipText}
+                            position="left"
+                          /> 
                           <Field
                             name="slug"
                             validate={(e) => TypesValidator(e, "text")}
