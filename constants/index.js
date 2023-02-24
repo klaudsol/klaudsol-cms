@@ -12,3 +12,5 @@ export const defaultLogo = {
   name: "defaultLogo",
   display: "(Default)",
 };
+
+export const slugTooltipText = "Slugs are the URL-friendly names of your contents. You can access the contens in your API via their numerical ID (e.g. /api/articles/12) or their slug (e.g. /api/articles/my-first-blog-post)";
