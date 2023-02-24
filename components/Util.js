@@ -6,6 +6,7 @@ import { TYPES_REGEX } from "@/components/renderers/validation/TypesRegex";
 import { promisify } from "es6-promisify";
 import crypto from "crypto";
 import { operators } from "@/constants/index";
+import { resourceValueTypes } from "@/components/cmsTypes";
 
 export const useFadeEffect = (ref, deps) => {
   useEffect(() => {
@@ -130,7 +131,7 @@ const convertToNumber = (items) => {
 };
 
 export const sortData = (data, sortValue) => {
-  const splitted = sortValue.split(':');
+  const splitted = sortValue.split(":");
   const [identifier, order] = splitted;
 
   let sortedData = Object.values(data).sort((a, b) => {
@@ -142,12 +143,12 @@ export const sortData = (data, sortValue) => {
     }
     return 0;
   });
-   
-  if(order.toLowerCase() === 'desc'){
-    sortedData = sortedData.reverse()
+
+  if (order.toLowerCase() === "desc") {
+    sortedData = sortedData.reverse();
   }
 
-  return sortedData
+  return sortedData;
 };
 
 const substringSearch = (item) => {
@@ -183,27 +184,29 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
 };
 
 const transformConditions = (arr) => {
-
-   const transformedConditions = arr.map((obj)=>{
+  const transformedConditions = arr.map((obj) => {
     switch (obj.operator) {
       case "$contains":
       case "$notContains":
-        return `(attributes.name = "${
-          obj.identifier
-        }" AND ${valueTypesIterator(
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
           operators[obj.operator],
           obj.value[0],
           true
         )})`;
 
       default:
-        return `(attributes.name = "${
-          obj.identifier
-        }" AND ${valueTypesIterator(operators[obj.operator], obj.value[0])})`;
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0]
+        )})`;
     }
-   })
-    return transformedConditions;
-  };
+  });
+  return transformedConditions;
+};
+
+const checkValues =  (str, values) => (
+  values.every(value => str.includes(value))
+)
 
 export const transformQuery = (queries) => {
   const filteredQueries = filterQuery(queries);
@@ -228,5 +231,37 @@ export const transformQuery = (queries) => {
 
   const SQLconditions = transformConditions(formattedQueries);
 
-  return formattedQueries.length > 1 ? SQLconditions.join(" OR ") : SQLconditions.join(',')
+  if (formattedQueries.length > 1) {
+    // let result = "";
+
+    // for (let i = 0; i < SQLconditions.length; i++) {
+    //   if (i === 0) {
+    //     result += SQLconditions[i];
+    //   } else if (checkValues(SQLconditions[i], resourceValueTypes)) {
+    //     result += " OR " + SQLconditions[i];
+    //   } else if (SQLconditions[i].includes("value_double") && !checkValues(SQLconditions[i], resourceValueTypes)) {
+    //     result += " AND " + SQLconditions[i];
+    //   } else {
+    //     result += " OR " + SQLconditions[i];
+    //   }
+    // }
+
+    let result = SQLconditions.reduce((combined, each, i) => {
+      if (i === 0) {
+        return each;
+      } else if (checkValues(each, resourceValueTypes)) {
+        return combined + " OR " + each;
+      } else if (each.includes("value_double") && !checkValues(each, resourceValueTypes)) {
+        return combined + " AND " + each;
+      } else {
+        return combined + " OR " + each;
+      }
+    });
+    console.log(result)
+    return result
+  }
+  else{
+   return SQLconditions.join(",");
+  }
+ 
 };

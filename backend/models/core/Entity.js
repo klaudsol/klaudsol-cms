@@ -204,7 +204,7 @@ class Entity {
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
                 `;
-
+    
     const dataRaw = await db.executeStatement(sqlData, [
       { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
     ]);
