@@ -2,6 +2,11 @@
 @import '@/styles/ksStyles/ks-mixins.scss';
 @import '@/styles/ksStyles/ks-dimensions.scss';
 
+/** General SCSS 
+ ** Normally used for general components
+ ** 
+**/
+
 .general {
   // Input Types (Textboxes & Textareas)
   &-input {
@@ -9,6 +14,26 @@
       @include font-semi-bold(12px);
       @include margin-tb-lr(5px);
       text-transform: capitalize;
+
+      &-slug {
+        @include font-semi-bold(12px);
+        @include padding-all();
+        @include margin-all();
+        text-transform: capitalize;
+        border: none;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+
+        &-icon {
+          @include font-regular(14px);
+          margin-left: 3px;
+          margin-top: -10px;
+        }
+
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
     }
 
     &-text {
@@ -70,6 +95,36 @@
 
     &-icon {
       margin-right: 5px;
+    }
+  }
+
+  // Tables 
+  &-table {
+    &-header {
+      &-slug {
+        @include font-regular(12px);
+        @include padding-all();
+        @include margin-tb-lr(5px);
+        text-transform: uppercase;
+        background-color: transparent !important;
+        border: none;
+
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
+
+  // Tooltips
+  &-tooltip {
+    &-button {
+      background-color: transparent !important
+    }
+    &-icon {
+      @include font-regular(14px);
+      margin-left: 3px;
+      margin-bottom: 2px;
     }
   }
 }
