@@ -183,41 +183,23 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
   return isNotCovertible ? combinedValues : `${combinedValues.join(" ")}`;
 };
 
-export const findCommonNumbers = (data) => {
-  console.log(data[0].records)
-  console.log(data[1].records)
-  console.log(data[2].records)
-  const numberCount = {};
-  const sameValueNumbers = [];
+export const findCommonNumbers = (rawIds) => {
 
-  data.forEach((item) => {
-    const recordValues = [];
-
-    item.records.forEach((record) => {
-      const number = record[0].longValue;
-      recordValues.push(number);
-
-      numberCount[number] = (numberCount[number] || 0) + 1;
-    });
-
-    recordValues.forEach((number) => {
-      if (numberCount[number] > 1 && !sameValueNumbers.includes(number)) {
-        const appearsInOtherItems = data.some((otherItem) => {
-          return otherItem !== item && otherItem.records.some((otherRecord) => {
-            return otherRecord[0].longValue === number;
-          });
-        });
-
-        if (appearsInOtherItems) {
-          sameValueNumbers.push(number);
-        }
-      }
-    });
+  const data = rawIds.map(obj => obj.records)
+  const firstVal = data.filter((arr,i) => i === 0).map(arr =>
+    arr.map(([{longValue: num}]) => num))
+    
+    const compareValue = data.filter((arr,i) => i !== 0).map(arr =>
+    arr.map(([{longValue: num}]) => num))
+  
+  const intersection = firstVal[0].filter((num1, index, arr1) => {
+    return compareValue.every(arr2 => {
+      return arr2.includes(num1);
+    }) && arr1.indexOf(num1) === index;
   });
        
-  const idsCondition = `(${sameValueNumbers.map(String).join(",")})`;
-  
-  return  sameValueNumbers.length !== 0 ? idsCondition : false
+  const idsCondition = `(${intersection.map(String).join(",")})`;
+  return  intersection.length !== 0 ? idsCondition : false
 }
 
 const transformConditions = (arr) => {

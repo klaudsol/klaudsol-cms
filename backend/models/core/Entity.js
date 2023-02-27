@@ -137,8 +137,6 @@ class Entity {
     let totalRows;
     let totalOrders;
    
-    console.log(condition)
-
     const totalRowsSQL = `SELECT COUNT(entities.id) 
                           from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
                           WHERE entity_types.slug = :entity_type_slug;
@@ -167,7 +165,8 @@ class Entity {
     let offset = page ? limit * page : 0;
 
     let ids;
-      if (condition.length) {
+    
+      if (condition?.length) {
 
         const requests = condition.map(params => {
           return db.executeStatement(
@@ -202,7 +201,7 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug  
-                 ${condition.length ? `AND entities.id IN ${ids ? ids:'(null)'}`:''} 
+                 ${condition?.length ? `AND entities.id IN ${ids ? ids:'(null)'}`:''} 
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
                 `;
