@@ -127,5 +127,11 @@
       margin-bottom: 2px;
     }
   }
+
+  // Header
+  &-header {
+    @include font-medium(30px);
+    text-transform: capitalize;
+  }
 }
   

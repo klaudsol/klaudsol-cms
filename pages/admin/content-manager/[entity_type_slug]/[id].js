@@ -169,12 +169,9 @@ export default function Type({ cache }) {
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
         <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
-            <AppBackButton
-              link={`/admin/content-manager/${entity_type_slug}`}
-            />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
               <div>
-                <h3> {entity_type_slug} </h3>
+                <div className="general-header"> {entity_type_slug} </div>
                 <a
                   href={`/api/${entity_type_slug}/${id}`}
                   target="_blank"
@@ -188,7 +185,7 @@ export default function Type({ cache }) {
                 <AppButtonLg
                 title={state.isDeleting ? "Deleting" : "Delete"}
                 icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon"/>}
-                onClick={onDelete} // Add confirmation modal before deleting the entry
+                onClick={!state.isSaving ? onDelete : null} // Add confirmation modal before deleting the entry
                 className="general-button-delete"
               />
               }
@@ -279,13 +276,13 @@ export default function Type({ cache }) {
             <div className="d-flex flex-row justify-content-center">
               <AppButtonLg
                 title="Cancel"
-                onClick={() => router.push(`/admin/content-manager/${entity_type_slug}`)}
+                onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
                 className="general-button-cancel"
               />
               <AppButtonLg
                 title={state.isSaving ? "Saving" : "Save"}
                 icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
-                onClick={onSubmit}
+                onClick={!state.isSaving ? onSubmit : null}
                 className="general-button-save"
               />
             </div>}
