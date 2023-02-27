@@ -64,7 +64,7 @@ async function handler(req, res) {
 async function get(req, res) {
   try {
     const { entity_type_slug, entry, page, sort:sortValue, ...queries } = req.query;
-    const rawData = await Entity.findByPageAndEntry(
+    const rawData = await Entity.where(
       { entity_type_slug, entry, page },
       queries
     );

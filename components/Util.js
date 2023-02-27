@@ -206,9 +206,9 @@ const transformConditions = (arr) => {
 const areAllIdentifiersEqual = (item) => {
   const identifiers = item.map(obj => obj.identifier); 
   return identifiers.every(id => id === identifiers[0]); 
-} // for future uses 
+} // for future uses of AND/OR filter condition
 
-const combineSQL = (conditionArray) => {
+const combineSQL = conditionArray => {
   const subqueries = conditionArray.map((condition, index) => {
     const tableAlias = `t${index + 1}`;
     return `(SELECT entities.id
@@ -250,7 +250,6 @@ export const generateSQL = (queries) => {
   //          {value:['pizza',potato'], operator:'$eq', identifier:'slug'},
   //          {value:['4000'], operator:'$lt', identifier:'price'},
   //         ]
-
   const SQLconditions = transformConditions(formattedQueries);
   let combinedSQL
   if(SQLconditions.length){
