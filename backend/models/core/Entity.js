@@ -1,5 +1,5 @@
 import DB from "@backend/data_access/DB";
-import { isNumber, transformQuery, findCommonNumbers } from "@/components/Util";
+import { isNumber, generateSQL } from "@/components/Util";
 
 class Entity {
   static async findBySlugOrId({ entity_type_slug, slug }) {
@@ -128,12 +128,12 @@ class Entity {
   static async findByPageAndEntry({ entity_type_slug, entry, page }, queries) {
     const db = new DB();
     
-    let condition;
+    let generatedSQL;
 
     if(Object.values(queries).length){
-      condition = transformQuery(queries);
+      generatedSQL = generateSQL(queries);      
     }
-
+    
     let totalRows;
     let totalOrders;
    
@@ -164,30 +164,6 @@ class Entity {
         : 10;
     let offset = page ? limit * page : 0;
 
-    let ids;
-    
-      if (condition?.length) {
-
-        const requests = condition.map(params => {
-          return db.executeStatement(
-          `SELECT entities.id                      
-          FROM entities
-          LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
-          LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
-          LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
-          WHERE 
-              entity_types.slug = :entity_type_slug  
-              ${condition ? `AND (${params})` : ""}
-          `, 
-          [
-            { name: "entity_type_slug", value: { stringValue: entity_type_slug } }
-          ]);
-        });
-        const rawIds =  await Promise.all(requests);
-        
-        ids = findCommonNumbers(rawIds);
-      }
-
     const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
                 attributes.name, attributes.type, attributes.\`order\`,
                 \`values\`.value_string, 
@@ -201,7 +177,7 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug  
-                 ${condition?.length ? `AND entities.id IN ${ids ? ids:'(null)'}`:''} 
+                    ${generatedSQL ? `AND entities.id IN (${generatedSQL})` : ''}
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
                 `;

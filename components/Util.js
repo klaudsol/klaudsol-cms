@@ -151,14 +151,6 @@ export const sortData = (data, sortValue) => {
   return sortedData;
 };
 
-const substringSearch = (item) => {
-  const values = item.match(/\((.*?)\)/)[1].split(", ");
-  const converted = values
-    .map((value) => `slug LIKE '%${value}%'`)
-    .join(" OR ");
-  return converted;
-};
-
 const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
   const valueTypes = ["value_string", "value_long_string", "value_double"];
   const isNotCovertible = isNumber(value);
@@ -183,25 +175,6 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
   return isNotCovertible ? combinedValues : `${combinedValues.join(" ")}`;
 };
 
-export const findCommonNumbers = (rawIds) => {
-
-  const data = rawIds.map(obj => obj.records)
-  const firstVal = data.filter((arr,i) => i === 0).map(arr =>
-    arr.map(([{longValue: num}]) => num))
-    
-    const compareValue = data.filter((arr,i) => i !== 0).map(arr =>
-    arr.map(([{longValue: num}]) => num))
-  
-  const intersection = firstVal[0].filter((num1, index, arr1) => {
-    return compareValue.every(arr2 => {
-      return arr2.includes(num1);
-    }) && arr1.indexOf(num1) === index;
-  });
-       
-  const idsCondition = `(${intersection.map(String).join(",")})`;
-  return  intersection.length !== 0 ? idsCondition : false
-}
-
 const transformConditions = (arr) => {
   const transformedConditions = arr.map((obj) => {
     switch (obj.operator) {
@@ -223,11 +196,29 @@ const transformConditions = (arr) => {
   return transformedConditions;
 };
 
-const checkValues =  (str, values) => (
-  values.every(value => str.includes(value))
-)
+const combineSQL = (conditionArray) => {
+  const subqueries = conditionArray.map((condition, index) => {
+    const tableAlias = `t${index + 1}`;
+    return `(SELECT entities.id
+              FROM entities
+              LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+              LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+              LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+              WHERE entity_types.slug = "menus" AND ${condition}) ${tableAlias}`;
+  });
 
-export const transformQuery = (queries) => {
+  const intersect = subqueries.map((_, index) => {
+    return `INNER JOIN ${subqueries[index]} ON e1.id = t${index + 1}.id`;
+  }).join('\n');
+
+  return `SELECT DISTINCT e1.id
+          FROM entities e1
+          ${intersect}`;
+}
+
+
+export const generateSQL = (queries) => {
+   
   const filteredQueries = filterQuery(queries);
 
   // Originally, values are only nested when it detects multiple values with the same operator type,
@@ -249,6 +240,9 @@ export const transformQuery = (queries) => {
   //         ]
 
   const SQLconditions = transformConditions(formattedQueries);
-
-  return SQLconditions;
+  let combinedSQL
+  if(SQLconditions.length){
+     combinedSQL = combineSQL(SQLconditions)
+  }
+  return SQLconditions.length ? combinedSQL : null
 };
