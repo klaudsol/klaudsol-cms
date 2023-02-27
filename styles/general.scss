@@ -2,7 +2,13 @@
 @import '@/styles/ksStyles/ks-mixins.scss';
 @import '@/styles/ksStyles/ks-dimensions.scss';
 
+/** General SCSS 
+ ** Normally used for general components
+ ** 
+**/
+
 .general {
+  // Input Types (Textboxes & Textareas)
   &-input {
     &-title {
       @include font-semi-bold(12px);
@@ -54,6 +60,45 @@
     }
   }
 
+  // Buttons 
+  &-button {
+    &-delete {
+      @include font-semi-bold(12px);
+      @include padding-tb-lr(10px, 15px);
+      width: max-content;
+      background-color: maroon;
+      border-radius: 5px;
+      border: none;
+      color: white;
+    }
+
+    &-save {
+      @include font-semi-bold(12px);
+      @include padding-tb-lr(10px, 10px);
+      @include flex(center, center, row);
+      width: 110px;
+      background-color: #467286;
+      border-radius: 5px;
+      border: 1px solid #467286;
+      color: white;
+    }
+
+    &-cancel {
+      @include font-semi-bold(12px);
+      @include padding-tb-lr(10px, 15px);
+      width: 100px;
+      background-color: transparent;
+      border: 1px solid #455a64;
+      border-radius: 5px;
+      color: #455a64;
+    }
+
+    &-icon {
+      margin-right: 5px;
+    }
+  }
+
+  // Tables 
   &-table {
     &-header {
       &-slug {
@@ -71,6 +116,7 @@
     }
   }
 
+  // Tooltips
   &-tooltip {
     &-button {
       background-color: transparent !important
@@ -80,6 +126,12 @@
       margin-left: 3px;
       margin-bottom: 2px;
     }
+  }
+
+  // Header
+  &-header {
+    @include font-medium(30px);
+    text-transform: capitalize;
   }
 }
   

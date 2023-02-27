@@ -41,7 +41,6 @@ export const entityReducer = (state, action) => {
       return {
         ...state,
         isSaving: true,
-        isLoading: true,
       };
 
     case DELETING:

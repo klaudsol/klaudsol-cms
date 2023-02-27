@@ -136,19 +136,11 @@ export default function CreateNewEntry({ cache }) {
       <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
-            <AppBackButton
-              link={`/admin/content-manager/${entity_type_slug}`}
-            />
             <div className="d-flex justify-content-between align-items-center mt-2 mx-0 px-0">
               <div>
-                <h3> Create an Entry </h3>
+                <div className="general-header"> Create an Entry </div>
                 <p> API ID : {entity_type_slug} </p>
               </div>
-              <AppButtonLg
-                title={state.isSaving ? "Saving" : "Save"}
-                icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
-                onClick={onSubmit}
-              />
             </div>
             <div className="row mt-4 mx-0 px-0">
               <div className="col-12 mx-0 px-0">
@@ -174,7 +166,7 @@ export default function CreateNewEntry({ cache }) {
                             icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
                             className="general-table-header-slug"
                             tooltipText={slugTooltipText}
-                            position="top"
+                            position="left"
                           /> 
                           </div>
                           <Field
@@ -224,6 +216,20 @@ export default function CreateNewEntry({ cache }) {
                     </Formik>
                   )}
                 </div>
+                {!state.isLoading &&
+                <div className="d-flex flex-row justify-content-center my-4">
+                  <AppButtonLg
+                    title="Cancel"
+                    onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
+                    className="general-button-cancel"
+                  />
+                  <AppButtonLg
+                    title={state.isSaving ? "Saving" : "Save"}
+                    icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
+                    onClick={!state.isSaving ? onSubmit : null}
+                    className="general-button-save"
+                  />
+                </div>}
               </div>
               {/* <div className="col-3 mx-0">
                 <div className="container_new_entry px-3 py-4">
