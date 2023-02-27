@@ -177,7 +177,6 @@ CREATE TABLE `people_groups` (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `group_capabilities` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` varchar(255) NOT NULL,
   `capabilities_id` varchar(255) NOT NULL,
   `params1` varchar(255) DEFAULT NULL,
