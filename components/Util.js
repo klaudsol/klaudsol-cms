@@ -144,7 +144,7 @@ export const sortData = (data, sortValue) => {
     return 0;
   });
 
-  if (order.toLowerCase() === "desc") {
+  if (order?.toLowerCase() === "desc") {
     sortedData = sortedData.reverse();
   }
 
@@ -182,6 +182,43 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
 
   return isNotCovertible ? combinedValues : `${combinedValues.join(" ")}`;
 };
+
+export const findCommonNumbers = (data) => {
+  console.log(data[0].records)
+  console.log(data[1].records)
+  console.log(data[2].records)
+  const numberCount = {};
+  const sameValueNumbers = [];
+
+  data.forEach((item) => {
+    const recordValues = [];
+
+    item.records.forEach((record) => {
+      const number = record[0].longValue;
+      recordValues.push(number);
+
+      numberCount[number] = (numberCount[number] || 0) + 1;
+    });
+
+    recordValues.forEach((number) => {
+      if (numberCount[number] > 1 && !sameValueNumbers.includes(number)) {
+        const appearsInOtherItems = data.some((otherItem) => {
+          return otherItem !== item && otherItem.records.some((otherRecord) => {
+            return otherRecord[0].longValue === number;
+          });
+        });
+
+        if (appearsInOtherItems) {
+          sameValueNumbers.push(number);
+        }
+      }
+    });
+  });
+       
+  const idsCondition = `(${sameValueNumbers.map(String).join(",")})`;
+  
+  return  sameValueNumbers.length !== 0 ? idsCondition : false
+}
 
 const transformConditions = (arr) => {
   const transformedConditions = arr.map((obj) => {
@@ -231,37 +268,5 @@ export const transformQuery = (queries) => {
 
   const SQLconditions = transformConditions(formattedQueries);
 
-  if (formattedQueries.length > 1) {
-    // let result = "";
-
-    // for (let i = 0; i < SQLconditions.length; i++) {
-    //   if (i === 0) {
-    //     result += SQLconditions[i];
-    //   } else if (checkValues(SQLconditions[i], resourceValueTypes)) {
-    //     result += " OR " + SQLconditions[i];
-    //   } else if (SQLconditions[i].includes("value_double") && !checkValues(SQLconditions[i], resourceValueTypes)) {
-    //     result += " AND " + SQLconditions[i];
-    //   } else {
-    //     result += " OR " + SQLconditions[i];
-    //   }
-    // }
-
-    let result = SQLconditions.reduce((combined, each, i) => {
-      if (i === 0) {
-        return each;
-      } else if (checkValues(each, resourceValueTypes)) {
-        return combined + " OR " + each;
-      } else if (each.includes("value_double") && !checkValues(each, resourceValueTypes)) {
-        return combined + " AND " + each;
-      } else {
-        return combined + " OR " + each;
-      }
-    });
-    console.log(result)
-    return result
-  }
-  else{
-   return SQLconditions.join(",");
-  }
- 
+  return SQLconditions;
 };

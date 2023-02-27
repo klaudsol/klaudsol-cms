@@ -1,5 +1,5 @@
 import DB from "@backend/data_access/DB";
-import { isNumber, transformQuery, replaceFields } from "@/components/Util";
+import { isNumber, transformQuery, findCommonNumbers } from "@/components/Util";
 
 class Entity {
   static async findBySlugOrId({ entity_type_slug, slug }) {
@@ -137,6 +137,8 @@ class Entity {
     let totalRows;
     let totalOrders;
    
+    console.log(condition)
+
     const totalRowsSQL = `SELECT COUNT(entities.id) 
                           from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
                           WHERE entity_types.slug = :entity_type_slug;
@@ -164,27 +166,27 @@ class Entity {
         : 10;
     let offset = page ? limit * page : 0;
 
-    let Ids;
-    let idsCondition;
-  
-      if (condition) {
-        const getId = `SELECT entities.id                      
-      FROM entities
-      LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
-      LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
-      LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
-      WHERE 
-          entity_types.slug = :entity_type_slug  
-          ${condition ? `AND (${condition})` : ""}
-      `;
-     
-        const rawIds = await db.executeStatement(getId, [
-          { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
-        ]);
-  
-        Ids = rawIds.records.map((innerArray) => innerArray[0].longValue).flat();
+    let ids;
+      if (condition.length) {
+
+        const requests = condition.map(params => {
+          return db.executeStatement(
+          `SELECT entities.id                      
+          FROM entities
+          LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+          LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+          LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+          WHERE 
+              entity_types.slug = :entity_type_slug  
+              ${condition ? `AND (${params})` : ""}
+          `, 
+          [
+            { name: "entity_type_slug", value: { stringValue: entity_type_slug } }
+          ]);
+        });
+        const rawIds =  await Promise.all(requests);
         
-        idsCondition = `(${Ids.map(String).join(",")})`;
+        ids = findCommonNumbers(rawIds);
       }
 
     const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
@@ -200,7 +202,7 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug  
-                 ${condition ? `AND entities.id IN ${Ids?.length ? idsCondition:'(null)'}`:''} 
+                 ${condition.length ? `AND entities.id IN ${ids ? ids:'(null)'}`:''} 
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
                 `;
