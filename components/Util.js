@@ -151,13 +151,13 @@ export const sortData = (data, sortValue) => {
   return sortedData;
 };
 
-const valueTypesIterator = (operator, value, isSubstringSearch = false) => {
+const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualOperator = false ) => {
   const valueTypes = ["value_string", "value_long_string", "value_double"];
   const isNotCovertible = isNumber(value);
 
   const convertedValue = isNotCovertible ? value : `"${value}"`;
-  const finalValue = isNotCovertible ? convertedValue : `(${convertedValue})`;
-
+  const finalValue = isNotCovertible && !isEqualOperator ? convertedValue : `(${convertedValue})`;
+ 
   let combinedValues;
   if (!isNotCovertible) {
     combinedValues = valueTypes.map((columnName, index) => {
@@ -185,6 +185,13 @@ const transformConditions = (arr) => {
           obj.value[0],
           true
         )})`;
+      case "$eq":
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0],
+          false,
+          true
+        )})`;
 
       default:
         return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
@@ -195,6 +202,11 @@ const transformConditions = (arr) => {
   });
   return transformedConditions;
 };
+
+const areAllIdentifiersEqual = (item) => {
+  const identifiers = item.map(obj => obj.identifier); 
+  return identifiers.every(id => id === identifiers[0]); 
+} // for future uses 
 
 const combineSQL = (conditionArray) => {
   const subqueries = conditionArray.map((condition, index) => {
@@ -242,7 +254,7 @@ export const generateSQL = (queries) => {
   const SQLconditions = transformConditions(formattedQueries);
   let combinedSQL
   if(SQLconditions.length){
-     combinedSQL = combineSQL(SQLconditions)
+     combinedSQL = combineSQL(SQLconditions);
   }
   return SQLconditions.length ? combinedSQL : null
 };
