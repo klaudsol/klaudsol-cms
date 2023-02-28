@@ -768,6 +768,10 @@ border-radius: 5px;
     max-width: 50px;
 }
 
+#table_general th {
+  color: black;
+}
+
 
 /**
 ===============================================
@@ -910,8 +914,13 @@ border-radius: 5px;
 }
 
 .img_login_logo {
-    width: 100%;
-    text-align: center;
+  width: 100%;
+  height: 120px;
+  position: relative;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form_login {

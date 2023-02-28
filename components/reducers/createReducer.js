@@ -32,7 +32,6 @@ export const createEntriesReducer = (state, action) => {
       return {
         ...state,
         isSaving: true,
-        isLoading: true,
       };
 
     case REFRESH:

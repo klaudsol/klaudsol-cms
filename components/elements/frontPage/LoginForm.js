@@ -63,14 +63,14 @@ const LoginForm = ({ className, logo }) => {
   return (
     <div className="container_login_form">
       {!state.isForceChangePassword && <>
-      <div className="img_login_logo img-responsive">
+      <div className="img_login_logo">
         <Image
           placeholder="blur"
           blurDataURL={logo?.link ?? '/logo-180x180.png'}
           src={logo?.link ?? '/logo-180x180.png'}
           alt="cms-logo"
-          width={200}
-          height={90}
+          layout='fill'
+          objectFit='contain'
         />
       </div>
 
