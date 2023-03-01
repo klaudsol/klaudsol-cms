@@ -30,9 +30,10 @@ import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { resolveValue } from '@/components/EntityAttributeValue';
 import { setCORSHeaders, parseFormData } from '@/lib/API';
 import { createHash } from '@/lib/Hash';
-import { assert } from '@/lib/Permissions';
+import { assert, assertUserCan } from '@/lib/Permissions';
 import { addFilesToBucket, generateEntries } from '@backend/data_access/S3'
 import { filterData } from '@/components/Util';
+import { readContents, writeContents } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -61,6 +62,9 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
+     
+      await assertUserCan(readContents, req);
+
       const queries = req.query;
       const { entity_type_slug, entry, page } = queries;
       const rawData = await Entity.findByPageAndEntry({ entity_type_slug, entry, page});
@@ -133,6 +137,9 @@ async function create(req, res) {
             loggedIn: true,
         }, req);
 
+        await assertUserCan(readContents, req) &&
+        await assertUserCan(writeContents, req);
+        
         const { files, body: bodyRaw } = req;
         const body = JSON.parse(JSON.stringify(bodyRaw));
 

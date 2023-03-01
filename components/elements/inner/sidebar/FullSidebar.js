@@ -1,15 +1,19 @@
 
 import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarNav} from '@coreui/react'
 import { FaChevronLeft } from 'react-icons/fa'
-import React from 'react';
+import React,{ useState } from 'react';
 import Link from 'next/link';
 import 'simplebar/dist/simplebar.min.css'
 import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
 import { BiBuildings } from 'react-icons/bi';
 import { BsFillGearFill } from 'react-icons/bs';
+import { MdKeyboardArrowUp } from 'react-icons/Md';
+
 import cx from 'classnames';
 
 const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
+  
+  const [isShowAdminSub, setIsShowAdminSub] = useState(false);
   
   return (
     <CSidebar
@@ -34,8 +38,10 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
       <CSidebarNav>
         <div className='sidebar_container'>
             <div>
-                {sidebarButtons.map((button, i) => (
-                  <div className='sidebar_button_category_container' key={i}>
+                {sidebarButtons.map((button, i) => {
+
+                 return !button.multiple ? 
+                 <div className='sidebar_button_category_container' key={i}>
                     <Link 
                         key={i} 
                         href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
@@ -45,7 +51,29 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                       {button.icon} {button.title}
                     </Link>
                   </div>
-              ))}
+                  :
+                  <div className='sidebar_button_category_container' key={i}>
+                    <div className='sidebar_buttons' onClick={()=>{setIsShowAdminSub(prev => !prev)}}>{button.icon} {button.title} {<MdKeyboardArrowUp width="2em" className={isShowAdminSub ? 'arrowbutton active' : 'arrowbutton'}/>}</div>                   
+                    {isShowAdminSub && button.subItems.map((item, i)=> (
+                        <Link 
+                        key={i} 
+                        href={item.subPath} 
+                        className={cx(router.asPath?.includes?.(item.subPath) ? 'sidebar_buttons_active sub_button' : 'sidebar_buttons sub_button')}
+                        passHref
+                    >
+                      {item.subIcon} {item.subTitle}
+                    </Link>
+                    ))}
+                    {/* <Link 
+                        key={i} 
+                        href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
+                        className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}
+                        passHref
+                    >
+                      {button.icon} {button.title}
+                    </Link> */}
+                  </div>
+             })}
             </div>
           </div>
       </CSidebarNav>
@@ -53,7 +81,7 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
       <CSidebarFooter className='sidebar_footer'>
         <div className='d-flex align-items-center justify-content-between'> 
        <div className='d-flex flex-row align-items-center'>
-      <SidebarFooterIcon title={`${firstName.charAt(0)}${lastName.charAt(0)}`} />
+      <SidebarFooterIcon title={`${firstName?.charAt(0) ?? ''}${lastName?.charAt(0) ?? ''}`} />
         <h6 className='sidebar_footer_name'> {firstName} {lastName} </h6>
        </div>
         <button className='sidebar_footer_collapse' onClick={() => setCollapse(true)}> <FaChevronLeft /> </button>

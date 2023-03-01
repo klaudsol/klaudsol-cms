@@ -24,22 +24,23 @@ async function handler(req, res) {
   }
 }
 
-async function login (req, res) {
-   
-  const {email=null, password=null} = req.body; 
-  
-  if (!email || !password) {
-    res.status(UNPROCESSABLE_ENTITY).json({message: "Please enter your username/password."});   
-    return
-    }
-  
+async function login (req, res) {   
   try {
-    const { session_token, user: {firstName, lastName, role, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
+
+    const {email=null, password=null} = req.body; 
+  
+    if (!email || !password) {
+      res.status(UNPROCESSABLE_ENTITY).json({message: "Please enter your username/password."});   
+      return
+      }
+
+    const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
     req.session.session_token = session_token;
     req.session.cache = {
       firstName,
       lastName,
-      role,
+      roles,
+      capabilities,
       defaultEntityType,
       homepage: '/admin',
       forcePasswordChange
@@ -47,7 +48,6 @@ async function login (req, res) {
 
     await req.session.save();    
     res.status(OK).json({ forcePasswordChange });
-    return;
   
   } catch (error) {
     if (error instanceof UnauthorizedError) {

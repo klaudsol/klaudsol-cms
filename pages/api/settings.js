@@ -13,6 +13,8 @@ import Setting from '@/backend/models/core/Setting';
 import { assert } from '@/lib/Permissions';
 import { resolveResource } from "@/components/Util";
 import { createHash } from "@/lib/Hash";
+import { readSettings, writeSettings } from '@/lib/Constants';
+import { assertUserCan } from 'lib/Permissions';
 
 export default withSession(handler);
 
@@ -48,6 +50,9 @@ async function create(req, res) {
     await assert({
         loggedIn: true,
     }, req);
+    
+    await assertUserCan(readSettings, req) &&
+    await assertUserCan(writeSettings, req);
 
     const { files, body } = req;
   

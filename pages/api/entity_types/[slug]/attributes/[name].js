@@ -25,9 +25,10 @@ SOFTWARE.
 
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { assert } from '@/lib/Permissions';
+import { assert, assertUserCan } from '@/lib/Permissions';
 import { OK } from '@/lib/HttpStatuses';
 import Attribute from '@backend/models/core/Attribute';
+import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -49,14 +50,17 @@ async function handler(req, res) {
 
 async function del(req, res) {
   try{
-
-    const { slug: typeSlug, name } = req.query;
-
+    
     await assert({
       loggedIn: true,
      }, req);
 
-     await Attribute.deleteWhere({type_slug: typeSlug, name});
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
+
+    const { slug: typeSlug, name } = req.query;
+
+    await Attribute.deleteWhere({type_slug: typeSlug, name});
 
     res.status(OK).json({message: 'Successfully deleted the attribute.'}) 
   }
@@ -67,13 +71,16 @@ async function del(req, res) {
 
 async function update(req, res) {
   try{
-
-    const { slug: typeSlug, name } = req.query;
-    const { attribute } = req.body;
     
     await assert({
       loggedIn: true,
      }, req);
+
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
+    
+    const { slug: typeSlug, name } = req.query;
+    const { attribute } = req.body;
 
     await Attribute.updateWhere({type_slug: typeSlug, name, attribute});
 

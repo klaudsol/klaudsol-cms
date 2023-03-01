@@ -67,18 +67,18 @@ const FileField = (props) => {
             {value?.name}
           </span>
         )}
-        <AppButtonLg
+        {!props.hideUpload && <AppButtonLg
           title={props.buttonPlaceholder ?? "Browse..."}
           className="btn_general_lg--invert_colors field_btn"
           onClick={openUploadMenu}
-          isDisabled={isFetching}
-        />
+          isDisabled={isFetching || props.disableAllButtons}
+        />}
         {props.showDeleteButton && (
           <button
             className={`new_entry_block_button_delete logo ${isFetching && `delete`}`}
             onClick={()=>{props.onDelete(setStaticLink)}}
             type="button"
-            disabled={isFetching}
+            disabled={isFetching || props.disableAllButtons}
           >
             <div>
               {props.isDeleting ? (

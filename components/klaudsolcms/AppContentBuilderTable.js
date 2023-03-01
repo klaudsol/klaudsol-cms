@@ -6,9 +6,12 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { loadEntityType } from '@/components/reducers/actions';
 import { slsFetch } from '@/components/Util';  
 import AddEditAnotherFieldModal, {EDIT_MODE} from '@/components/klaudsolcms/modals/AddEditAnotherFieldModal';
+import { useCapabilities } from '@/components/hooks';
+import { writeContentTypes } from "@/lib/Constants";
 
 const AppContentBuilderTable = ({typeSlug}) => {
 
+   const capabilities = useCapabilities();
    const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
    const [loading, setLoading] = useState(false);
    const [isModalVisible, setModalVisible] = useState(false);
@@ -126,13 +129,13 @@ const AppContentBuilderTable = ({typeSlug}) => {
                       <td>{attributeName}</td>
                       <td>{attribute.type}</td>
                       <td>{attribute.order}</td>
-                      <td>
+                      {capabilities.includes(writeContentTypes) &&<td>
                         <AppContentBuilderButtons 
                           isDisabled={false} 
                           onDelete={onDeleteAttributeConfirmation(attribute)} 
                           onEdit={onEditAttribute(attribute)}
                         />
-                      </td>
+                      </td>}
                     </tr>
                 ))}
                 </tbody>
