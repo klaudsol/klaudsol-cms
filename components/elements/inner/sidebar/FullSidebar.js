@@ -7,7 +7,7 @@ import 'simplebar/dist/simplebar.min.css'
 import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
 import { BiBuildings } from 'react-icons/bi';
 import { BsFillGearFill } from 'react-icons/bs';
-import { MdKeyboardArrowUp } from 'react-icons/Md';
+import { MdKeyboardArrowUp } from 'react-icons/md';
 
 import cx from 'classnames';
 

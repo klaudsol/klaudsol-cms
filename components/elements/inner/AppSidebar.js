@@ -1,5 +1,5 @@
 import { FaFeatherAlt, FaRegUser } from 'react-icons/fa';
-import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/Hi';
+import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
 import { BiBuildings } from 'react-icons/bi';
 import { BsFillGearFill } from 'react-icons/bs';
 import { RiSettings3Line, RiAdminLine } from 'react-icons/ri';
