@@ -55,7 +55,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `capabilities` WRITE;
 /*!40000 ALTER TABLE `values` DISABLE KEYS */;
-INSERT INTO `capabilities` VALUES (1,"read_contents","Read contents",1),(2,"write_contents","Add, Update, or Delete contents",1),(3,"read_content_types","Read Content types",1),(4,"write_content_types","Add, Update, or Delete content types",1),(5,"read_setttings","Get global setting values",1),(6,"write_settings","Modify global setting values",1),(7,"modify_logo","Change the logo on the front page, defaults to the KlaudSol logo",1);
+INSERT INTO `capabilities` VALUES (1,"read_contents","Read contents",1),(2,"write_contents","Add, Update, or Delete contents",1),(3,"read_content_types","Read Content types",1),(4,"write_content_types","Add, Update, or Delete content types",1),(5,"read_setttings","Get global setting values",1),(6,"write_settings","Modify global setting values",1),(7,"modify_logo","Change the logo on the front page, defaults to the KlaudSol logo",1),(8,"read_users","Read users' capabilities",1),(9,"write_users","Modify users' capabilities",1),(10,"read_groups","Read groups' capabilities",1),(11,"write_groups","Modify groups' capabilities",1);
 /*!40000 ALTER TABLE `values` ENABLE KEYS */;
 UNLOCK TABLES;
 
