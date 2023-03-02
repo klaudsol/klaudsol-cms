@@ -22,7 +22,6 @@ const AppSidebar = () => {
 
   const router = useRouter();
   const capabilities = useCapabilities();
-  console.log(capabilities)
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const cache = useContext(CacheContext);
