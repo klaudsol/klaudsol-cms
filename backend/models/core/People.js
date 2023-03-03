@@ -75,7 +75,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       
       //Query available permissions
       let defaultEntityType, defaultEntityTypeData;
-      const defaultEntityTypeSQL = `SELECT slug FROM entity_types ORDER BY id ASC LIMIT 1`;
+      const defaultEntityTypeSQL = `SELECT slug FROM entity_types LIMIT 1`;
       defaultEntityTypeData = await db.executeStatement(defaultEntityTypeSQL, []);
       [{stringValue: defaultEntityType}] = defaultEntityTypeData.records[0];
  
