@@ -35,9 +35,12 @@ import EditCollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/E
 
 import RootContext from "@/components/contexts/RootContext";
 import { loadEntityTypes, loadEntityType } from "@/components/reducers/actions";
+import {  writeContentTypes } from "@/lib/Constants";
 
 export default function ContentTypeBuilder({ cache }) {
   const router = useRouter();
+
+  const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
@@ -275,30 +278,30 @@ export default function ContentTypeBuilder({ cache }) {
               <div className="d-flex flex-row mb-2">
                 <h3 className="my-1"> {entity_type_slug}</h3>
                 <div className="mx-2" />
-                <AppButtonSm
+               {capabilities.includes(writeContentTypes) && <AppButtonSm
                   title="Edit"
                   icon={<MdModeEditOutline />}
                   isDisabled={false}
                   onClick={showEditContentTypeModal}
-                />
+                />}
               </div>
 
               <div className="d-flex justify-content-between align-items-start mt-0 mx-0 px-0">
-                <AppButtonLg
+              {capabilities.includes(writeContentTypes) && <AppButtonLg
                   title="Add another field"
                   icon={<FaPlus />}
                   className="btn_create_entry"
                   onClick={showAddAttributeModal}
-                />
+                />}
                 {/* What is this for?
                <AppButtonLg title='Save' icon={<FaCheck />} isDisabled/>
               */}
-                <AppButtonLg
+                {capabilities.includes(writeContentTypes) && <AppButtonLg
                   title="Delete"
                   icon={<FaTrash />}
                   className="button_delete"
                   onClick={showDeleteModal}
-                />
+                />}
               </div>
             </div>
 
@@ -312,13 +315,13 @@ export default function ContentTypeBuilder({ cache }) {
 
             <AppContentBuilderTable typeSlug={entity_type_slug} />
 
-            <button
+           {capabilities.includes(writeContentTypes) && <button
               className="btn_add_field"
               onClick={() => dispatch({ type: SET_SHOW, payload: true })}
             >
               <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another
               field collection type
-            </button>
+            </button>}
 
             <AddEditAnotherFieldModal
               mode={ADD_MODE}

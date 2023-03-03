@@ -31,6 +31,8 @@ import { createHash } from "@/lib/Hash";
 import { setCORSHeaders } from "@/lib/API";
 import { assert } from "@/lib/Permissions";
 import { setDefaultEntityType } from '@/lib/cacheModifier';
+import { assert, assertUserCan } from "@/lib/Permissions";
+import { writeContents, readContentTypes, writeContentTypes } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -53,6 +55,8 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
+    await assertUserCan([writeContents, readContentTypes], req);
+
     const { slug } = req.query;
 
     const entityTypes = await EntityType.all();
@@ -98,6 +102,9 @@ async function del(req, res) {
       req
     );
 
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
+    
    const { slug } = req.query;
    const defaultEntityType =  await EntityType.delete({ slug });
 
@@ -117,6 +124,9 @@ async function update(req, res) {
       },
       req
     );
+
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
 
     const { slug: oldSlug } = req.query;
     const { name, slug: newSlug } = req.body;

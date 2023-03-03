@@ -31,6 +31,8 @@ import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
 import { setCORSHeaders } from '@/lib/API';
 import { setDefaultEntityType } from '@/lib/cacheModifier';
+import { readContentTypes, writeContentTypes } from '@/lib/Constants';
+import { assert, assertUserCan } from "@/lib/Permissions";
 
 export default withSession(handler);
 
@@ -52,6 +54,9 @@ async function handler(req, res) {
 
   async function get(req, res) { 
     try{
+
+      await assertUserCan([readContentTypes, writeContentTypes], req);
+
       const entityTypes = await EntityType.all();
       const output = {
         data: entityTypes,
@@ -70,6 +75,14 @@ async function handler(req, res) {
 
   async function create(req, res) { 
     try{
+
+      await assert({
+        loggedIn: true,
+      }, req);
+
+      await assertUserCan(readContentTypes, req) &&
+      await assertUserCan(writeContentTypes, req);
+
       const { name, slug } = req.body;
       const defaultEntityType =  await EntityType.create({name, slug});
       const output = {

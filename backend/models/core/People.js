@@ -42,7 +42,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
     try {
       
       const db = new DB();
-      const sql = `SELECT id, salt, first_name, last_name, role, force_password_change FROM people 
+      const sql = `SELECT id, salt, first_name, last_name, force_password_change FROM people 
         WHERE email=:email AND encrypted_password = sha2(CONCAT(:password, salt), 256) AND login_enabled = 1 LIMIT 1;`;
       const data = await db.executeStatement(sql, [
         {name: 'email', value:{stringValue: email}},
@@ -59,10 +59,33 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
         {stringValue: userSalt},
         {stringValue: firstName},
         {stringValue: lastName},
-        {stringValue: role},
         {booleanValue: forcePasswordChange}
       ] = user;
+
+      const capabilitiesSQL = `SELECT DISTINCT capabilities.name from people_groups 
+      LEFT JOIN groups ON groups.id = people_groups.group_id
+      LEFT JOIN group_capabilities ON group_capabilities.group_id = groups.id
+      LEFT JOIN capabilities ON capabilities.id = group_capabilities.capabilities_id
+      WHERE people_groups.people_id = :people_id AND capabilities.name IS NOT NULL`;
+
+      const rolesSQL = `SELECT DISTINCT groups.name from people_groups 
+      LEFT JOIN groups ON groups.id = people_groups.group_id
+      LEFT JOIN group_capabilities ON group_capabilities.group_id = groups.id
+      LEFT JOIN capabilities ON capabilities.id = group_capabilities.capabilities_id
+      WHERE people_groups.people_id = :people_id AND capabilities.name IS NOT NULL`;
       
+      // separate SQL for capabilities and roles so we dont have to filter duplicated values.
+      const rawCapabilities = await db.executeStatement(capabilitiesSQL, [
+        {name: 'people_id', value:{longValue: userId}},
+      ]);
+
+      const rawRoles = await db.executeStatement(rolesSQL, [
+        {name: 'people_id', value:{longValue: userId}},
+      ]);
+
+      const capabilities = rawCapabilities.records.map(([{ stringValue: capability }])=> capability);
+      const roles = rawRoles.records.map(([{ stringValue: roles }])=> roles);
+     
       const session_token = sha256(`${userId}${userSalt}${Date.now()}`);
       
       const sessionSql = `INSERT INTO sessions (\`people_id\`, \`session\`, \`session_expiry\`)  
@@ -79,7 +102,7 @@ static async displayPeopleProfessional() { // returns array of Timesheet Table
       defaultEntityTypeData = await db.executeStatement(defaultEntityTypeSQL, []);
       [{stringValue: defaultEntityType}] = defaultEntityTypeData.records[0];
  
-      return { session_token, user: {firstName, lastName, role, defaultEntityType, forcePasswordChange } };
+      return { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange } };
       
     } catch (error) {
       log(error.stack);

@@ -8,7 +8,8 @@ const FloatRenderer = ({
   name, 
   type, 
   errors, 
-  touched }) => (
+  touched,
+  disabled }) => (
   <>
     <Field
       type="float"
@@ -16,6 +17,7 @@ const FloatRenderer = ({
       className={cx("general-input-text", 
       {"general-input-error" : errors[name] && touched[name]})}
       validate={(v) => TypesValidator(v, type)}
+      disabled={disabled}
     />
     <ErrorRenderer 
       name={name}
