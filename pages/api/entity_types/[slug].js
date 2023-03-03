@@ -35,6 +35,8 @@ import {
   deleteFilesFromBucket,
   generateS3ParamsForDeletion,
 } from "@/backend/data_access/S3";
+import { assert, assertUserCan } from "@/lib/Permissions";
+import { writeContents, readContentTypes, writeContentTypes } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -57,6 +59,8 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
+    await assertUserCan([writeContents, readContentTypes], req);
+
     const { slug } = req.query;
 
     const entityTypes = await EntityType.all();
@@ -102,6 +106,9 @@ async function del(req, res) {
       req
     );
 
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
+  
     const { slug } = req.query;
     const imageNames = await Entity.getAllImagesKeyBySlug({ slug })
     
@@ -124,6 +131,9 @@ async function update(req, res) {
       },
       req
     );
+
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
 
     const { slug: oldSlug } = req.query;
     const { name, slug: newSlug } = req.body;

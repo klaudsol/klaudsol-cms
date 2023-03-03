@@ -8,7 +8,7 @@ import {
   BAD_REQUEST,
 } from "@/lib/HttpStatuses";
 import Setting from "@/backend/models/core/Setting";
-import { assert } from "@/lib/Permissions";
+import { assert, assertUserCan } from "@/lib/Permissions";
 import { createHash } from "@/lib/Hash";
 import { resolveResource } from "@/components/Util";
 import { resourceValueTypes, imageTypes } from "@/components/cmsTypes";
@@ -21,6 +21,7 @@ import {
   addFileToBucket
 } from "@/backend/data_access/S3";
 import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
+import { readSettings, writeSettings } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -53,8 +54,11 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
-    const { slug } = req.query;
 
+    await assertUserCan(readSettings, req);
+
+    const { slug } = req.query;
+   
     const resourceData = await Setting.get({ slug });
   
     const resolvedResource = resolveResource(resourceData[0])
@@ -77,12 +81,16 @@ async function get(req, res) {
 
 async function del(req, res) {
   try {
+    
     await assert(
       {
         loggedIn: true,
       },
       req
     );
+
+    await assertUserCan(readSettings, req) &&
+    await assertUserCan(writeSettings, req);
 
     const { slug } = req.query;
     
@@ -104,13 +112,15 @@ async function del(req, res) {
   }
 }
 
-async function update (req,res) {
+async function update (req, res) {
   try {
     await assert({
         loggedIn: true,
     }, req);
 
-    const { slug } = req.query;
+    await assertUserCan(readSettings, req) &&
+    await assertUserCan(writeSettings, req);
+
     const { files, body: bodyRaw } = req;
     const  entriesRaw  = JSON.parse(
       JSON.stringify(bodyRaw)

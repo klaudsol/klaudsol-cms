@@ -24,6 +24,11 @@ $font-style: normal !default;
   font-weight: 400;
 }
 
+@mixin font-medium($font-size: $font-size, $font-family: $font-family, $font-style: $font-style) {
+  @include font-base($font-size, $font-family, $font-style);
+  font-weight: 500;
+}
+
 @mixin font-semi-bold($font-size: $font-size, $font-family: $font-family, $font-style: $font-style) {
   @include font-base($font-size, $font-family, $font-style);
   font-weight: 600;
