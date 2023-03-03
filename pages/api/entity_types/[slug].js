@@ -30,7 +30,6 @@ import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { createHash } from "@/lib/Hash";
 import { setCORSHeaders } from "@/lib/API";
-import { assert } from "@/lib/Permissions";
 import {
   deleteFilesFromBucket,
   generateS3ParamsForDeletion,
