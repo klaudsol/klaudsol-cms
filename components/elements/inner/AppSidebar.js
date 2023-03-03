@@ -48,22 +48,22 @@ const AppSidebar = () => {
       path: "/admin/settings",
       icon: <RiSettings3Line className='sidebar_button_icon'/>
     }:null),
-    (capabilities.includes(readUsers) || capabilities.includes(readGroups) ? {
-      multiple: true,
-      title: "Admin",
-      subItems:[capabilities.includes(readUsers) ?
-                {subTitle:"Users", 
-                 subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
-                 subPath:"/admin/users" 
-                }: null,
+    // (capabilities.includes(readUsers) || capabilities.includes(readGroups) ? {
+    //   multiple: true,
+    //   title: "Admin",
+    //   subItems:[capabilities.includes(readUsers) ?
+    //             {subTitle:"Users", 
+    //              subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
+    //              subPath:"/admin/users" 
+    //             }: null,
 
-                capabilities.includes(readGroups) ? 
-                {subTitle:"Groups",
-                 subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
-                 subPath:"/admin/groups"
-                } : null].filter(item => item),
-      icon: <AiOutlineLock className='sidebar_button_icon'/>
-    }:null)
+    //             capabilities.includes(readGroups) ? 
+    //             {subTitle:"Groups",
+    //              subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
+    //              subPath:"/admin/groups"
+    //             } : null].filter(item => item),
+    //   icon: <AiOutlineLock className='sidebar_button_icon'/>
+    // }:null)
   ].filter(item => item))
 
     /*** Entity Types List ***/

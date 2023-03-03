@@ -164,8 +164,6 @@ export default function Type({ cache }) {
       })();
     },
   };
-//{capabilities.includes(writeContents) ?
-//: <p className="errorMessage">forbidden.</p>}
 
   return (
     <CacheContext.Provider value={cache}>
