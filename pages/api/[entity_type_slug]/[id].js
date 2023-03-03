@@ -36,7 +36,8 @@ import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
 import { setCORSHeaders, parseFormData } from "@/lib/API";
 import { createHash } from "@/lib/Hash";
-import { assert } from "@/lib/Permissions";
+import { assert, assertUserCan } from "@/lib/Permissions";
+import { readContents, writeContents } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -69,8 +70,10 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
-    const { entity_type_slug, id: slug } = req.query;
+    await assertUserCan(readContents, req);
 
+    const { entity_type_slug, id: slug } = req.query;
+    
     const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
     const initialFormat = {
@@ -130,6 +133,9 @@ async function del(req, res) {
       req
     );
 
+    await assertUserCan(readContents, req) &&
+    await assertUserCan(writeContents, req);
+
     const { entity_type_slug, id: slug } = req.query;
     const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });
     const imageNames = entity.flatMap((item) =>
@@ -158,6 +164,9 @@ async function update(req, res) {
       },
       req
     );
+
+    await assertUserCan(readContents, req) &&
+    await assertUserCan(writeContents, req);
 
     const { files, body: bodyRaw } = req;
     const { entity_type_slug, entity_id, ...entriesRaw } = JSON.parse(

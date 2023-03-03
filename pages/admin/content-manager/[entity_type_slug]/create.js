@@ -1,33 +1,14 @@
 import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@/lib/Session";
-
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useRef } from "react";
 import { slsFetch, sortByOrderAsc } from "@/components/Util";
 import { Formik, Form, Field } from "formik";
-
-/** kladusol CMS components */
-import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
-import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
-import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
-import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
-
-/** react-icons */
-import { FaCheck } from "react-icons/fa";
-import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-
-import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import TypesValidator from "@/components/renderers/validation/RegexValidator";
-import classname from "classnames";
-
-import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
-
+import { slugTooltipText } from "constants";
 import {
   initialState,
   createEntriesReducer,
 } from "@/components/reducers/createReducer";
-
 import {
   LOADING,
   CLEANUP,
@@ -38,9 +19,23 @@ import {
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
 } from "@/lib/actions";
+import { FaCheck } from "react-icons/fa";
+import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+import classname from "classnames";
+import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
+import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
+import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
+import ContentManagerLayout from "components/layouts/ContentManagerLayout";
+import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import TypesValidator from "@/components/renderers/validation/RegexValidator";
+import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
+import { RiQuestionLine } from "react-icons/ri";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
+  const capabilities = cache?.capabilities;
 
   const { entity_type_slug } = router.query;
 
@@ -139,22 +134,14 @@ export default function CreateNewEntry({ cache }) {
 
   return (
     <CacheContext.Provider value={cache}>
-      <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
+      <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
-          <div className="py-4">
-            <AppBackButton
-              link={`/admin/content-manager/${entity_type_slug}`}
-            />
-            <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
+          {capabilities.includes(writeContents) ? <div className="py-4">
+            <div className="d-flex justify-content-between align-items-center mt-2 mx-0 px-0">
               <div>
-                <h3> Create an Entry </h3>
+                <div className="general-header"> Create an Entry </div>
                 <p> API ID : {entity_type_slug} </p>
               </div>
-              <AppButtonLg
-                title={state.isSaving ? "Saving" : "Save"}
-                icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
-                onClick={onSubmit}
-              />
             </div>
             <div className="row mt-4 mx-0 px-0">
               <div className="col-12 mx-0 px-0">
@@ -173,8 +160,16 @@ export default function CreateNewEntry({ cache }) {
                   {!state.isLoading && (
                     <Formik {...formikParams}>
                       {(props) => (
-                        <Form>
-                          <p className="general-input-title"> Slug </p>
+                        <Form>  
+                          <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
+                          <p className="general-input-title-slug"> Slug </p> 
+                          <GeneralHoverTooltip 
+                            icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
+                            className="general-table-header-slug"
+                            tooltipText={slugTooltipText}
+                            position="left"
+                          /> 
+                          </div>
                           <Field
                             name="slug"
                             validate={(e) => TypesValidator(e, "text")}
@@ -222,6 +217,20 @@ export default function CreateNewEntry({ cache }) {
                     </Formik>
                   )}
                 </div>
+                {!state.isLoading &&
+                <div className="d-flex flex-row justify-content-center my-4">
+                  <AppButtonLg
+                    title="Cancel"
+                    onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
+                    className="general-button-cancel"
+                  />
+                  <AppButtonLg
+                    title={state.isSaving ? "Saving" : "Save"}
+                    icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
+                    onClick={!state.isSaving ? onSubmit : null}
+                    className="general-button-save"
+                  />
+                </div>}
               </div>
               {/* <div className="col-3 mx-0">
                 <div className="container_new_entry px-3 py-4">
@@ -272,7 +281,7 @@ export default function CreateNewEntry({ cache }) {
                 </button>
               </div> */}
             </div>
-          </div>
+          </div> : <p className="errorMessage">forbidden.</p>}
           <AppInfoModal
             show={state.show}
             onClose={() =>
@@ -289,5 +298,6 @@ export default function CreateNewEntry({ cache }) {
     </CacheContext.Provider>
   );
 }
-
+//
+//  
 export const getServerSideProps = getSessionCache();

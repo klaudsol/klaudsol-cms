@@ -20,7 +20,7 @@ import { VscListSelection } from "react-icons/vsc";
 import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
 import { getAllFiles, convertToFormData, getS3Keys } from "lib/s3FormController";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
@@ -49,6 +49,7 @@ import {
 
 export default function Type({ cache }) {
   const router = useRouter();
+  const capabilities = cache?.capabilities;
 
   const { entity_type_slug, id } = router.query;
   const [state, dispatch] = useReducer(entityReducer, initialState);
@@ -167,18 +168,18 @@ export default function Type({ cache }) {
       })();
     },
   };
+//{capabilities.includes(writeContents) ?
+//: <p className="errorMessage">forbidden.</p>}
 
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
         <ContentManagerLayout currentTypeSlug={entity_type_slug}>
-          <div className="py-4">
-            <AppBackButton
-              link={`/admin/content-manager/${entity_type_slug}`}
-            />
-            <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
+            <div className="py-4">
+              <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
+            <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
               <div>
-                <h3> {entity_type_slug} </h3>
+                <div className="general-header"> {entity_type_slug} </div>
                 <a
                   href={`/api/${entity_type_slug}/${id}`}
                   target="_blank"
@@ -188,15 +189,18 @@ export default function Type({ cache }) {
                 </a>
                 <p> API ID : {id} </p>
               </div>
-              <AppButtonLg
-                title={state.isSaving ? "Saving" : "Save"}
-                icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
-                onClick={onSubmit}
+              {(!state.isLoading && capabilities.includes(writeContents)) && 
+                <AppButtonLg
+                title={state.isDeleting ? "Deleting" : "Delete"}
+                icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon"/>}
+                onClick={!state.isSaving ? onDelete : null} // Add confirmation modal before deleting the entry
+                className="general-button-delete"
               />
+              }
             </div>
-            <div className="row mt-4">
-              <div className="col-9">
-                <div className="container_new_entry py-4 px-4">
+            <div className="row mt-4 mx-0 px-0">
+              <div className="col-12 mx-0 px-0 mb-2">
+                <div className="py-0 px-0 mb-3">
                   {state.isLoading &&
                     Array.from(
                       { length: DEFAULT_SKELETON_ROW_COUNT },
@@ -218,14 +222,13 @@ export default function Type({ cache }) {
                             .map(([attributeName, attribute]) => {
                               return (
                                 <div key={attributeName}>
-                                  <p className="mt-1">
-                                    <b> {attributeName} </b>
-                                  </p>
+                                  <p className="general-input-title"> {attributeName.replaceAll('_', " ")}  </p>
                                   <AdminRenderer
                                     errors={props.errors}
                                     touched={props.touched}
                                     type={attribute.type}
                                     name={attributeName}
+                                    disabled={!capabilities.includes(writeContents)}
                                   />
                                 </div>
                               );
@@ -275,24 +278,25 @@ export default function Type({ cache }) {
                 </div> */}
                 {/* <button className="new_entry_block_button mt-2">  <MdModeEditOutline  className='icon_block_button' /> Edit the model </button>
             <button className="new_entry_block_button mt-2">  <VscListSelection  className='icon_block_button' /> Configure the view </button> */}
-                <button
-                  className="new_entry_block_button_delete mt-2"
-                  onClick={onDelete}
-                >
-                  {" "}
-                  {state.isDeleting ? (
-                    <>
-                      <AppButtonSpinner /> Deleting...{" "}
-                    </>
-                  ) : (
-                    <>
-                      <FaTrash className="icon_block_button" /> Delete the entry
-                    </>
-                  )}
-                </button>
+
               </div>
             </div>
-          </div>
+            {!state.isLoading && 
+            <div className="d-flex flex-row justify-content-center">
+              {capabilities.includes(writeContents) && <><AppButtonLg
+                title="Cancel"
+                onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
+                className="general-button-cancel"
+              />
+              <AppButtonLg
+                title={state.isSaving ? "Saving" : "Save"}
+                icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
+                onClick={!state.isSaving ? onSubmit : null}
+                className="general-button-save"
+              /></>}
+            </div>}
+            <div className="py-3"> </div>
+          </div> 
           <AppInfoModal
             show={state.show}
             onClose={() => (

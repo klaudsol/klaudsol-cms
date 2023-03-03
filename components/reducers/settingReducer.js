@@ -1,4 +1,4 @@
-import { SAVING, LOADING, CLEANUP, SET_VALUES, DELETING, SET_CHANGED } from "@/lib/actions" 
+import { SAVING, LOADING, CLEANUP, SET_VALUES, DELETING, SET_CHANGED, SET_ERROR } from "@/lib/actions" 
 
 export const initialState = {
   isLoading: true,
@@ -6,7 +6,8 @@ export const initialState = {
   isDeleting: false,
   isSaving: false,
   isChanged: false,
-  values: {}
+  values: {},
+  errorMessage:''
 };
 
 export const settingReducer = (state, action) => {
@@ -47,5 +48,13 @@ export const settingReducer = (state, action) => {
         ...state,
         isChanged: action.payload
       }
+    
+    case SET_ERROR:
+      return {
+        ...state,
+        errorMessage: action.payload
+      }
+
+    default: return state
   }
 };
