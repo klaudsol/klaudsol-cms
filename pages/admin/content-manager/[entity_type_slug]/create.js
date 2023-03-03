@@ -20,7 +20,7 @@ import {
   SET_ALL_INITIAL_VALUES,
 } from "@/lib/actions";
 import { FaCheck } from "react-icons/fa";
-import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import classname from "classnames";
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
@@ -35,6 +35,7 @@ import { RiQuestionLine } from "react-icons/ri";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
+  const capabilities = cache?.capabilities;
 
   const { entity_type_slug } = router.query;
 
@@ -135,7 +136,7 @@ export default function CreateNewEntry({ cache }) {
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
-          <div className="py-4">
+          {capabilities.includes(writeContents) ? <div className="py-4">
             <div className="d-flex justify-content-between align-items-center mt-2 mx-0 px-0">
               <div>
                 <div className="general-header"> Create an Entry </div>
@@ -280,7 +281,7 @@ export default function CreateNewEntry({ cache }) {
                 </button>
               </div> */}
             </div>
-          </div>
+          </div> : <p className="errorMessage">forbidden.</p>}
           <AppInfoModal
             show={state.show}
             onClose={() =>
@@ -297,5 +298,6 @@ export default function CreateNewEntry({ cache }) {
     </CacheContext.Provider>
   );
 }
-
+//
+//  
 export const getServerSideProps = getSessionCache();
