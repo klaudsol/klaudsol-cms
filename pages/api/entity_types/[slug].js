@@ -29,7 +29,6 @@ import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { createHash } from "@/lib/Hash";
 import { setCORSHeaders } from "@/lib/API";
-import { assert } from "@/lib/Permissions";
 import { setDefaultEntityType } from '@/lib/cacheModifier';
 import { assert, assertUserCan } from "@/lib/Permissions";
 import { writeContents, readContentTypes, writeContentTypes } from '@/lib/Constants';
