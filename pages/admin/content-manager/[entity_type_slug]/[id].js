@@ -20,7 +20,7 @@ import { VscListSelection } from "react-icons/vsc";
 import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
 import { getAllFiles, convertToFormData } from "lib/s3FormController";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
@@ -48,6 +48,7 @@ import {
 
 export default function Type({ cache }) {
   const router = useRouter();
+  const capabilities = cache?.capabilities;
 
   const { entity_type_slug, id } = router.query;
   const [state, dispatch] = useReducer(entityReducer, initialState);
@@ -163,12 +164,15 @@ export default function Type({ cache }) {
       })();
     },
   };
+//{capabilities.includes(writeContents) ?
+//: <p className="errorMessage">forbidden.</p>}
 
   return (
     <CacheContext.Provider value={cache}>
       <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
         <ContentManagerLayout currentTypeSlug={entity_type_slug}>
-          <div className="py-4">
+            <div className="py-4">
+              <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
               <div>
                 <div className="general-header"> {entity_type_slug} </div>
@@ -181,7 +185,7 @@ export default function Type({ cache }) {
                 </a>
                 <p> API ID : {id} </p>
               </div>
-              {!state.isLoading && 
+              {(!state.isLoading && capabilities.includes(writeContents)) && 
                 <AppButtonLg
                 title={state.isDeleting ? "Deleting" : "Delete"}
                 icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon"/>}
@@ -220,6 +224,7 @@ export default function Type({ cache }) {
                                     touched={props.touched}
                                     type={attribute.type}
                                     name={attributeName}
+                                    disabled={!capabilities.includes(writeContents)}
                                   />
                                 </div>
                               );
@@ -274,7 +279,7 @@ export default function Type({ cache }) {
             </div>
             {!state.isLoading && 
             <div className="d-flex flex-row justify-content-center">
-              <AppButtonLg
+              {capabilities.includes(writeContents) && <><AppButtonLg
                 title="Cancel"
                 onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
                 className="general-button-cancel"
@@ -284,10 +289,10 @@ export default function Type({ cache }) {
                 icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
                 onClick={!state.isSaving ? onSubmit : null}
                 className="general-button-save"
-              />
+              /></>}
             </div>}
             <div className="py-3"> </div>
-          </div>
+          </div> 
           <AppInfoModal
             show={state.show}
             onClose={() => (

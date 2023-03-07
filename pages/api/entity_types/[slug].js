@@ -29,7 +29,8 @@ import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { createHash } from "@/lib/Hash";
 import { setCORSHeaders } from "@/lib/API";
-import { assert } from "@/lib/Permissions";
+import { assert, assertUserCan } from "@/lib/Permissions";
+import { writeContents, readContentTypes, writeContentTypes } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -52,6 +53,8 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
+    await assertUserCan([writeContents, readContentTypes], req);
+
     const { slug } = req.query;
 
     const entityTypes = await EntityType.all();
@@ -97,6 +100,9 @@ async function del(req, res) {
       req
     );
 
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
+  
     const { slug } = req.query;
     await EntityType.delete({ slug });
     res.status(OK).json({ message: "Successfully delete the entity type" });
@@ -113,6 +119,9 @@ async function update(req, res) {
       },
       req
     );
+
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
 
     const { slug: oldSlug } = req.query;
     const { name, slug: newSlug } = req.body;

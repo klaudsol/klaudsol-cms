@@ -12,6 +12,7 @@ export const defaultLogo = {
   name: "defaultLogo",
   display: "(Default)",
 };
+export const mainlogo = 'mainlogo';
 
 export const operators = {
   $eq: "IN",

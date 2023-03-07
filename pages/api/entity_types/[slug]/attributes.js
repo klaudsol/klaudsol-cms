@@ -30,7 +30,8 @@ import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
 import { setCORSHeaders } from '@/lib/API';
-import { assert } from '@/lib/Permissions';
+import { assert, assertUserCan } from '@/lib/Permissions';
+import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -57,6 +58,9 @@ async function create(req, res) {
       loggedIn: true,
      }, req);
 
+    await assertUserCan(readContentTypes, req) &&
+    await assertUserCan(writeContentTypes, req);
+    
     const { attribute } = req.body;
     console.error(attribute);
     const entityType = await EntityType.findBySlug(slug);

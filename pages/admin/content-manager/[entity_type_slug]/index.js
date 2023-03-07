@@ -1,7 +1,6 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
-import { getSessionCache } from "@/lib/Session";
 
 import React, { useEffect, useReducer, useRef, useContext } from "react";
 import { slsFetch } from "@/components/Util";
@@ -38,10 +37,12 @@ import {
   PAGE_SETS_RENDERER,
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
-import { defaultPageRender, maximumNumberOfPage, EntryValues} from "lib/Constants"
+import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
+import { getSessionCache } from "@/lib/Session";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
+  const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
   const { state: {currentContentType:{ entity_type_name, entity_type_slug: headerSlug } } } = useContext(RootContext);
@@ -118,10 +119,10 @@ export default function ContentManager({ cache }) {
                 </a>
                 <p> {state.values.length} entries found </p>
               </div>
-              <AppCreatebutton
+             {capabilities.includes(writeContents) && <AppCreatebutton
                 link={`/admin/content-manager/${entity_type_slug}/create`}
                 title="Create new entry"
-              />
+              />}
             </div>
 
             <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3">
