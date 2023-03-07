@@ -8,8 +8,8 @@ const TextAreaRenderer = ({
   name, 
   type, 
   errors, 
-  touched
-}) => (
+  touched,
+  disabled }) => (
   <>
     <Field
       type="textarea"
@@ -21,6 +21,7 @@ const TextAreaRenderer = ({
           className={cx("general-input-textarea", 
           {"general-input-error": errors[name] && touched[name]})}
           {...field}
+          disabled={disabled}
         />
       )}
     </Field>

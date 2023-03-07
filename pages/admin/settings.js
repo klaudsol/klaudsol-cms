@@ -15,16 +15,17 @@ import {
   settingReducer,
   initialState,
 } from "@/components/reducers/settingReducer";
-import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES, SET_CHANGED } from "@/lib/actions";
+import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES, SET_CHANGED, SET_ERROR } from "@/lib/actions";
 import { defaultLogo } from "@/constants/index";
 import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
 import { validImageTypes } from "@/lib/Constants";
-
+import { readSettings, modifyLogo } from "@/lib/Constants";
 
 export default function Settings({ cache }) {
   const formRef = useRef();
   const [state, dispatch] = useReducer(settingReducer, initialState);
   const isValueExists = Object.keys(state.values).length !== 0 
+  const capabilities = cache?.capabilities;
 
   const setInitialValues = (data) => {
     const initialVal = Object.keys(data).length !== 0 
@@ -41,7 +42,8 @@ export default function Settings({ cache }) {
         const newData = setInitialValues(data);
 
         dispatch({ type: SET_VALUES, payload: newData });
-      } catch (err) {
+      } catch (error) {
+        dispatch({ type: SET_ERROR, payload: error.message });
       } finally {
         dispatch({ type: CLEANUP });
       }
@@ -124,18 +126,18 @@ export default function Settings({ cache }) {
       <InnerSingleLayout>
         <div>
           <div className="row">
-            <div className="col-12">
+            {capabilities.includes(readSettings) ? <div className="col-12">
               <div className="row mt-5">
                 <div className="col-12 col-md-10">
                   <h3>Settings</h3>
                 </div>
                 <div className="col-12 col-md-2 float-right">
-                  <AppButtonLg
+                 {capabilities.includes(modifyLogo) && <AppButtonLg
                     title={state.isSaving ? "Saving" : "Save"}
                     icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
                     onClick={onSubmit}
                     isDisabled={state.isLoading || state.isSaving || state.isDeleting || !state.isChanged}
-                  />
+                  />}
                 </div>
               </div>
               {!state.isLoading && (
@@ -156,14 +158,15 @@ export default function Settings({ cache }) {
                         offName={true}
                         resetOnNewData={true}
                         dispatch={dispatch}
-                        
+                        disableAllButtons={!capabilities.includes(modifyLogo)}
+                      
                       />
                     </Form>
                   )}
                 </Formik>
               )}
               {!isValueExists && !state.isLoading && "Logo is not set"}
-            </div>
+            </div> : <p className="errorMessage">{state.errorMessage}</p>}
           </div>
         </div>
       </InnerSingleLayout>
