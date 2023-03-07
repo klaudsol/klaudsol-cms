@@ -54,7 +54,7 @@ async function handler(req, res) {
   async function get(req, res) { 
     try{
 
-      await assertUserCan([readContentTypes, writeContentTypes], req);
+      await assertUserCan(readContentTypes, req);
 
       const entityTypes = await EntityType.all();
       const output = {

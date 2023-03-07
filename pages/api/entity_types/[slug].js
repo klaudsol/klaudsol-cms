@@ -53,7 +53,7 @@ async function handler(req, res) {
 
 async function get(req, res) {
   try {
-    await assertUserCan([writeContents, readContentTypes], req);
+    await assertUserCan(readContentTypes, req);
 
     const { slug } = req.query;
 
