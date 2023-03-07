@@ -78,6 +78,8 @@ class Entity {
       generatedSQL = generateSQL(queries, entity_type_slug);      
     }
     
+    console.log(generatedSQL)
+
     let totalRows;
     let totalOrders;
    
