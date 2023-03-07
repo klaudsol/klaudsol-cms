@@ -2,10 +2,7 @@ import DB from "@backend/data_access/DB";
 import InsufficientPermissionsError from "@/components/errors/InsufficientPermissionsError";
 
 export default class Capability {
-  static async getCapabilitiesByLoggedInUser(
-    requiredCapabilities,
-    session_token
-  ) {
+  static async getCapabilitiesByLoggedInUser(session_token) {
     const db = new DB();
 
     const sql = `SELECT DISTINCT capabilities.name from people_groups 
@@ -22,20 +19,10 @@ export default class Capability {
       ([{ stringValue: capability }]) => capability
     );
 
-    if (
-      !Array.isArray(requiredCapabilities)
-        ? !userCapabilities.includes(requiredCapabilities)
-        : !requiredCapabilities.some((capability) =>
-            userCapabilities.includes(capability)
-          )
-    ) {
-      throw new InsufficientPermissionsError();
-    }
-
-    return true;
+    return userCapabilities;
   }
 
-  static async getCapabilitiesByGuest(requiredCapabilities) {
+  static async getCapabilitiesByGuest() {
     const db = new DB();
 
     const sql = `SELECT DISTINCT capabilities.name FROM groups 
@@ -48,16 +35,6 @@ export default class Capability {
       ([{ stringValue: capability }]) => capability
     );
 
-    if (
-      !Array.isArray(requiredCapabilities)
-        ? !userCapabilities.includes(requiredCapabilities)
-        : !requiredCapabilities.some((capability) =>
-            userCapabilities.includes(capability)
-          )
-    ) {
-      throw new InsufficientPermissionsError();
-    }
-
-    return true;
+    return userCapabilities;
   }
 }
