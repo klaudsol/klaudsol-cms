@@ -14,4 +14,15 @@ export const defaultLogo = {
 };
 export const mainlogo = 'mainlogo';
 
+export const operators = {
+  $eq: "IN",
+  $lt: "<",
+  $lte: "<=",
+  $gt: ">",
+  $gte: ">=",
+  $contains: "LIKE",
+  $notContains: "NOT LIKE",
+};
+
 export const slugTooltipText = "Slugs are the URL-friendly names of your contents. You can access the contens in your API via their numerical ID (e.g. /api/articles/12) or their slug (e.g. /api/articles/my-first-blog-post)";
+

@@ -1,68 +1,65 @@
 //Consider moving this as @/lib/Util
 
-import { useEffect, useMemo } from 'react'; 
-import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from '@/lib/HttpStatuses';
-import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
+import { useEffect, useMemo } from "react";
+import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from "@/lib/HttpStatuses";
+import { TYPES_REGEX } from "@/components/renderers/validation/TypesRegex";
 import { promisify } from "es6-promisify";
 import crypto from "crypto";
+import { operators } from "@/constants/index";
+import { resourceValueTypes } from "@/components/cmsTypes";
 
 export const useFadeEffect = (ref, deps) => {
-    
   useEffect(() => {
-    
-    let timeout; 
-    if(deps.every((x) => !!x)) {
-      
-      ref.current.style.display = 'block';
-      timeout = setTimeout(() => ref.current.style.opacity = 1, 50);
-      
+    let timeout;
+    if (deps.every((x) => !!x)) {
+      ref.current.style.display = "block";
+      timeout = setTimeout(() => (ref.current.style.opacity = 1), 50);
     } else {
-      
       ref.current.style.opacity = 0;
-      timeout = setTimeout(() => ref.current.style.display = 'none', 50);
-      
+      timeout = setTimeout(() => (ref.current.style.display = "none"), 50);
     }
-    
+
     return () => {
-      if(timeout) {
-        clearTimeout(timeout);  
+      if (timeout) {
+        clearTimeout(timeout);
       }
     };
-  // eslint-disable-next-line   
+    // eslint-disable-next-line
   }, deps);
-  
-}
-
+};
 
 export const slsFetch = async (url, params, extra) => {
-  
-    const {retry = 0, unauthorized = null} = extra ?? {};
-    const response = await fetch(url, params);
-    if (response.status >= 200 && response.status <= 299) {
-      return response;
-    } else if (response.status === COMMUNICATION_LINKS_FAILURE) {
-      if (retry >= 20) {
-        throw new Error(`Exceeded retry limit: ${retry}`);  
-      } else {
-        console.error("Contacting server...");
-        return await new Promise((resolve, reject) => {
-          setTimeout(() => resolve(slsFetch(url, params, {retry: retry + 1, unauthorized})), 500 * (Math.pow(2, retry - 1)));  
-        });
-      }
-    } else if (response.status === UNAUTHORIZED) {  
-      if (unauthorized) unauthorized(); 
-      return null;
+  const { retry = 0, unauthorized = null } = extra ?? {};
+  const response = await fetch(url, params);
+  if (response.status >= 200 && response.status <= 299) {
+    return response;
+  } else if (response.status === COMMUNICATION_LINKS_FAILURE) {
+    if (retry >= 20) {
+      throw new Error(`Exceeded retry limit: ${retry}`);
     } else {
-      const responseJson = await response.json();
-
-      if(responseJson.message) {
-        //Frontend can parse response of backend
-        throw new Error(responseJson.message);
-      } else {
-        throw new Error(`Response status: ${response.status}`);
-      }
+      console.error("Contacting server...");
+      return await new Promise((resolve, reject) => {
+        setTimeout(
+          () =>
+            resolve(slsFetch(url, params, { retry: retry + 1, unauthorized })),
+          500 * Math.pow(2, retry - 1)
+        );
+      });
     }
-}  
+  } else if (response.status === UNAUTHORIZED) {
+    if (unauthorized) unauthorized();
+    return null;
+  } else {
+    const responseJson = await response.json();
+
+    if (responseJson.message) {
+      //Frontend can parse response of backend
+      throw new Error(responseJson.message);
+    } else {
+      throw new Error(`Response status: ${response.status}`);
+    }
+  }
+};
 
 export const generateRandVals = async (size) => {
   const randomBytes = promisify(crypto.randomBytes);
@@ -72,78 +69,169 @@ export const generateRandVals = async (size) => {
   return randVal;
 };
 
-export const useIndex = (array) => useMemo(() => (
-    Object.fromEntries(array.map((item) => [item.id, item]))
-  ),[array]);
+export const useIndex = (array) =>
+  useMemo(
+    () => Object.fromEntries(array.map((item) => [item.id, item])),
+    [array]
+  );
 
-export const sortByOrderAsc = (first, second) => first[1].order - second[1].order; 
+export const sortByOrderAsc = (first, second) =>
+  first[1].order - second[1].order;
 
 export const isNumber = (str) => {
   return !isNaN(str);
-}
+};
 
 export const resolveResource = (rsc) => {
-  if(!rsc) return [];
+  if (!rsc) return [];
 
- if(TYPES_REGEX.IMAGE.test(rsc.value)){
-   
-  const bucketBaseUrl = process.env.KS_S3_BASE_URL;
-  const imageURL = `${bucketBaseUrl}/${rsc.value}`;
+  if (TYPES_REGEX.IMAGE.test(rsc.value)) {
+    const bucketBaseUrl = process.env.KS_S3_BASE_URL;
+    const imageURL = `${bucketBaseUrl}/${rsc.value}`;
 
-  return {...rsc, link:imageURL} 
- }
- else{
-  return rsc
- }
-}
+    return { ...rsc, link: imageURL };
+  } else {
+    return rsc;
+  }
+};
 
-export const findContentTypeName = (arr,slugName) => (
-arr.find((obj)=> obj.entity_type_slug === slugName));
-  
-const filterQuery = (queries) => (
+export const findContentTypeName = (arr, slugName) =>
+  arr.find((obj) => obj.entity_type_slug === slugName);
+
+const filterQuery = (queries) =>
   Object.entries(queries)
-   .filter(([key, value]) => key.startsWith('filters'))
-   .reduce((obj, [key, value]) => {
-     const newKey = key.replace('filters','');
-    return {...obj, [newKey]: !Array.isArray(value) ? [isNumber(value) ? Number(value) : value] : 
-      convertToNumber(value).length ? convertToNumber(value) : value }
-     }
-     , {})
- )
+    .filter(([key, value]) => key.startsWith("filters"))
+    .reduce((obj, [key, value]) => {
+      const newKey = key.replace("filters", "");
+      return {
+        ...obj,
+        [newKey]: !Array.isArray(value)
+          ? [isNumber(value) ? Number(value) : value]
+          : convertToNumber(value).length
+          ? convertToNumber(value)
+          : value,
+      };
+    }, {});
 
- const formatQuery = (data) => (
+const formatQuery = (data) =>
   Object.entries(data).map(([key, value]) => {
-    const [, identifier, operator] = key.split('[').map(i => i.replace(']', ''));
+    const [, identifier, operator] = key
+      .split("[")
+      .map((i) => i.replace("]", ""));
     return {
       value,
       operator,
-      identifier
+      identifier,
     };
-  })
- )
-  
-const convertToNumber = items => {
-  const converted = items.map(item => Number(item));
-  return converted.includes(NaN) ? false : converted;
-}; 
+  });
 
-const isGreaterThan = (condition,value,orEqual=false) =>{
-  const final = condition.map((eachCon)=>{
-   return orEqual ? eachCon < value ? true : false : eachCon <= value ? true : false 
-})
-  return final.every(item => item === true);
+const convertToNumber = (items) => {
+  const converted = items.map((item) => Number(item));
+  return converted.includes(NaN) ? false : converted;
+};
+
+export const sortData = (data, sortValue) => {
+  const splitted = sortValue.split(":");
+  const [identifier, order] = splitted;
+
+  let sortedData = Object.values(data).sort((a, b) => {
+    if (a[identifier] < b[identifier]) {
+      return -1;
+    }
+    if (a[identifier] > b[identifier]) {
+      return 1;
+    }
+    return 0;
+  });
+
+  if (order?.toLowerCase() === "desc") {
+    sortedData = sortedData.reverse();
+  }
+
+  return sortedData;
+};
+
+const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualOperator = false ) => {
+  const valueTypes = ["value_string", "value_long_string", "value_double"];
+  const isNotCovertible = isNumber(value);
+
+  const convertedValue = isNotCovertible ? value : `"${value}"`;
+  const finalValue = isNotCovertible && !isEqualOperator ? convertedValue : `(${convertedValue})`;
+ 
+  let combinedValues;
+  if (!isNotCovertible) {
+    combinedValues = valueTypes.map((columnName, index) => {
+      return `${columnName} ${operator} ${
+        !isSubstringSearch ? `${finalValue}` : `"%${value}%"`
+      }${valueTypes.length != index + 1 ? " OR" : ""}`;
+    });
+  } else {
+    combinedValues = `value_double ${operator} ${
+      !isSubstringSearch ? `${finalValue}` : `"%${value}%"`
+    }`;
+    // only return long_double
+  }
+
+  return isNotCovertible ? combinedValues : `${combinedValues.join(" ")}`;
+};
+
+const transformConditions = (arr) => {
+  const transformedConditions = arr.map((obj) => {
+    switch (obj.operator) {
+      case "$contains":
+      case "$notContains":
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0],
+          true
+        )})`;
+      case "$eq":
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0],
+          false,
+          true
+        )})`;
+
+      default:
+        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+          operators[obj.operator],
+          obj.value[0]
+        )})`;
+    }
+  });
+  return transformedConditions;
+};
+
+const areAllIdentifiersEqual = (item) => {
+  const identifiers = item.map(obj => obj.identifier); 
+  return identifiers.every(id => id === identifiers[0]); 
+} // for future uses of AND/OR filter condition
+
+const combineSQL = conditionArray => {
+  const subqueries = conditionArray.map((condition, index) => {
+    const tableAlias = `t${index + 1}`;
+    return `(SELECT entities.id
+              FROM entities
+              LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+              LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+              LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+              WHERE entity_types.slug = "menus" AND ${condition}) ${tableAlias}`;
+  });
+
+  const intersect = subqueries.map((_, index) => {
+    return `INNER JOIN ${subqueries[index]} ON e1.id = t${index + 1}.id`;
+  }).join('\n');
+
+  return `SELECT DISTINCT e1.id
+          FROM entities e1
+          ${intersect}`;
 }
 
-export const filterData = (queries,Datas) => {
- 
-   const filteredQueries = filterQuery(queries);
 
-  // filterQuery 
-  // the function filters out the object and only return property that starts with 'filters'.
-  // check if the value is only containing numbers, convert to number if true. 
-  // NOTE: THIS IS TEMPORARY!! for now, we can only access the api through web URL 
-  // in which all values are expected to be string. and so this will allow you to test and filter numbers such as ids, prices etc.  
-  // frontend value is expected to be handled by JSQ library in the future
+export const generateSQL = (queries) => {
+   
+  const filteredQueries = filterQuery(queries);
 
   // Originally, values are only nested when it detects multiple values with the same operator type,
   // However, In our case, we are forcing all values to be nested in an array.
@@ -152,43 +240,20 @@ export const filterData = (queries,Datas) => {
   // input:  { 'filters[slug][$eq]': ['pizza','potato'],filters[price][$lt]:'4000', entity_type_slug: 'menus' }
   // output: { '[slug][$eq]': ['pizza','potato'], '[price][$lt]':[4000]}
 
-   const formattedQueries = formatQuery(filteredQueries);
-      
-   // formatQuery
-   // The function converts a single object containing all filtered values into an array of objects, 
-   // where the types of operators are divided into separate objects.
-   // input:  { '[slug][$eq]': ['pizza','potato'], '[price][$lt]':[4000]}
-   // output: [
-   //          {values:['pizza',potato'], operator:'$eq', identifier:'slug'},
-   //          {values:['4000'], operator:'$lt', identifier:'price'},
-   //         ]
-   
-    const filteredData = (item1, item2) => {
-      return item2.filter(item => {
-        return item1.every((obj,index) => {
-    
-          switch (obj.operator) {
-            case '$eq':
-                 return obj.value.includes(item[obj.identifier]);
-            case '$eqi':
-                 return obj.value.map((str)=>(str.toLowerCase())).includes(item[obj.identifier].toLowerCase());
-            case '$ne':
-                 return !obj.value.includes(item[obj.identifier]);
-            case '$lt':
-                 return !isGreaterThan(obj.value,item[obj.identifier]);
-            case '$lte':  
-                 return !isGreaterThan(obj.value,item[obj.identifier],true)
-            case '$gt': 
-                 return isGreaterThan(obj.value,item[obj.identifier]);
-            case '$gte': 
-                 return isGreaterThan(obj.value,item[obj.identifier],true);
-            default:
-              // incomplete 
-          }
-        });
-      });
-    };    
-    
-  return filteredData(formattedQueries,Datas)  
+  const formattedQueries = formatQuery(filteredQueries);
 
-}
+  // formatQuery
+  // The function converts a single object containing all filtered values into an array of objects,
+  // where the types of operators are divided into separate objects.
+  // input:  { '[slug][$eq]': ['pizza','potato'], '[price][$lt]':[4000]}
+  // output: [
+  //          {value:['pizza',potato'], operator:'$eq', identifier:'slug'},
+  //          {value:['4000'], operator:'$lt', identifier:'price'},
+  //         ]
+  const SQLconditions = transformConditions(formattedQueries);
+  let combinedSQL
+  if(SQLconditions.length){
+     combinedSQL = combineSQL(SQLconditions);
+  }
+  return SQLconditions.length ? combinedSQL : null
+};

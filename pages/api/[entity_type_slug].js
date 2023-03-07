@@ -22,36 +22,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 **/
-import Entity from '@backend/models/core/Entity';
-import EntityType from '@backend/models/core/EntityType';
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
-import { resolveValue } from '@/components/EntityAttributeValue';
-import { setCORSHeaders, parseFormData } from '@/lib/API';
-import { createHash } from '@/lib/Hash';
+
+import Entity from "@backend/models/core/Entity";
+import EntityType from "@backend/models/core/EntityType";
+import { withSession } from "@/lib/Session";
+import { defaultErrorHandler } from "@/lib/ErrorHandler";
+import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
+import { resolveValue } from "@/components/EntityAttributeValue";
+import { setCORSHeaders, parseFormData } from "@/lib/API";
+import { createHash } from "@/lib/Hash";
+import { addFilesToBucket, generateEntries } from "@backend/data_access/S3";
+import { transformQuery, sortData } from "@/components/Util";
 import { assert, assertUserCan } from '@/lib/Permissions';
-import { addFilesToBucket, generateEntries } from '@backend/data_access/S3'
 import { filterData } from '@/components/Util';
 import { readContents, writeContents } from '@/lib/Constants';
+
 
 export default withSession(handler);
 
 export const config = {
-    api: {
-        bodyParser: false,
-    },
-}
+  api: {
+    bodyParser: false,
+  },
+};
 
 async function handler(req, res) {
-  
   try {
-    switch(req.method) {
+    switch (req.method) {
       case "GET":
-        return get(req, res); 
+        return get(req, res);
       case "POST":
-        const { req: parsedReq, res: parsedRes } = await parseFormData(req, res);
-        return create(parsedReq, parsedRes); 
+        const { req: parsedReq, res: parsedRes } = await parseFormData(
+          req,
+          res
+        );
+        return create(parsedReq, parsedRes);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -60,76 +65,79 @@ async function handler(req, res) {
   }
 }
 
+
+
   async function get(req, res) { 
-    try{
-     
-      await assertUserCan(readContents, req);
-
-      const queries = req.query;
-      const { entity_type_slug, entry, page } = queries;
-      const rawData = await Entity.findByPageAndEntry({ entity_type_slug, entry, page});
-      const rawEntityType = await EntityType.find({slug: entity_type_slug});
-
-
+    try {
+      const { entity_type_slug, entry, page, sort:sortValue, ...queries } = req.query;
+      const rawData = await Entity.where(
+        { entity_type_slug, entry, page },
+        queries
+      );
+      const rawEntityType = await EntityType.find({ slug: entity_type_slug });
+  
       const initialFormat = {
-        indexedData: {}
-      };      
-
+        indexedData: {},
+      };
+  
       const dataTemp = rawData.data.reduce((collection, item) => {
         return {
           indexedData: {
             ...collection.indexedData,
-            [item.id] : {
-              ...collection.indexedData[item.id],  
-              ...!collection.indexedData[item.id]?.id && {id: item.id}, 
-              ...!collection.indexedData[item.id]?.slug && {slug: item.entities_slug},
-              ...!collection.indexedData[item.id]?.[item.attributes_name] && {[item.attributes_name]: resolveValue(item)},
-            }
+            [item.id]: {
+              ...collection.indexedData[item.id],
+              ...(!collection.indexedData[item.id]?.id && { id: item.id }),
+              ...(!collection.indexedData[item.id]?.slug && {
+                slug: item.entities_slug,
+              }),
+              ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
+                [item.attributes_name]: resolveValue(item),
+              }),
           },
-        }
-        
-      }, initialFormat);
-
-      const initialMetadata = {
-        attributes: {}
+        },
       };
+    }, initialFormat);
 
-      const metadata = rawEntityType.reduce((collection, item) => {
+    const initialMetadata = {
+      attributes: {},
+    };
 
-        return {
+    const metadata = rawEntityType.reduce((collection, item) => {
+      return {
+        attributes: {
+          ...collection.attributes,
+          ...(!collection.attributes[item.attribute_name] &&
+            item.attribute_name && {
+              [item.attribute_name]: {
+                type: item.attribute_type,
+                order: item.attribute_order,
+              },
+            }),
+        },
+        entity_type_id: item.entity_type_id,
+        total_rows: rawData.total_rows,
+      };
+    }, initialMetadata);
 
-          attributes: {
-            ...collection.attributes,
-            ...!collection.attributes[item.attribute_name] && item.attribute_name && {[item.attribute_name] : {
-              type: item.attribute_type,
-              order: item.attribute_order
-            }}
+    let data;
+    if (sortValue) data = sortData(dataTemp.indexedData, sortValue);
 
-          },
-          entity_type_id: item.entity_type_id,
-          total_rows: rawData.total_rows
-        };
+    const output = {
+      data: data ? { ...data } : dataTemp.indexedData,
+      metadata: metadata,
+    };
 
-      }, initialMetadata);
+    output.metadata.hash = createHash(output);
 
-      const filteredData = filterData(queries,Object.values(dataTemp.indexedData),)
-      
-      const output = {
-        data: filteredData, 
-        metadata: metadata
-      }; 
+    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
-      output.metadata.hash = createHash(output);
-
-      setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
-      
-      rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
-    }
-    catch (error) {
-      await defaultErrorHandler(error, req, res);
-    }
+    rawData
+      ? res.status(OK).json(output ?? [])
+      : res.status(NOT_FOUND).json({});
+  } catch (error) {
+    await defaultErrorHandler(error, req, res);
   }
-
+}
 
 async function create(req, res) { 
     try {
