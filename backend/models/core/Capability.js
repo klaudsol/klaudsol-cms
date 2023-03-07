@@ -15,9 +15,27 @@ export default class Capability {
       { name: "session_token", value: { stringValue: session_token } },
     ]);
 
-    return rawCapabilites.records.map(
-      ([{ stringValue: capability }]) => capability
-    );
+
+    if(!rawCapabilites.records.length){
+      
+      // if an account is newly created and it has no capabilities given, 
+      // the new user would fall back to the capabilities of guest
+      
+      const guestSQL = `SELECT DISTINCT capabilities.name FROM groups 
+      LEFT JOIN group_capabilities ON group_capabilities.group_id = groups.id
+      LEFT JOIN capabilities ON capabilities.id = group_capabilities.capabilities_id WHERE groups.name = "Guests"`;
+  
+       const guestCapabilities = await db.executeStatement(guestSQL, []);
+
+       return guestCapabilities.records.map(
+        ([{ stringValue: capability }]) => capability
+      );
+    }
+    else {
+      return rawCapabilites.records.map(
+        ([{ stringValue: capability }]) => capability
+      );
+    }
   }
 
   static async getCapabilitiesByGuest() {

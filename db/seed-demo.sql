@@ -69,6 +69,27 @@ INSERT INTO `groups` VALUES (1,"Super Administrators","Lorem ipsum",1),(2,"Admin
 /*!40000 ALTER TABLE `values` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Dumping data for table `people_groups`
+--
+
+LOCK TABLES `people_groups` WRITE;
+/*!40000 ALTER TABLE `values` DISABLE KEYS */;
+INSERT INTO `people_groups` VALUES (1,1),VALUES (1,2),VALUES (1,3),VALUES (1,4);
+/*!40000 ALTER TABLE `values` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `group_capabilities`
+--
+
+LOCK TABLES `group_capabilities` WRITE;
+/*!40000 ALTER TABLE `values` DISABLE KEYS */;
+INSERT INTO `group_capabilities` VALUES (1,1,NULL,NULL,NULL),VALUES (1,2,NULL,NULL,NULL),VALUES (1,3,NULL,NULL,NULL),VALUES (1,4,NULL,NULL,NULL),VALUES (1,5,NULL,NULL,NULL),VALUES (1,6,NULL,NULL,NULL),VALUES (1,7,NULL,NULL,NULL),VALUES (1,8,NULL,NULL,NULL),VALUES (1,9,NULL,NULL,NULL),VALUES (1,10,NULL,NULL,NULL),VALUES (1,11,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `values` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 
 
 
