@@ -182,13 +182,13 @@ const transformConditions = (arr) => {
     switch (obj.operator) {
       case "$contains":
       case "$notContains":
-        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+        return `(attributes.name = "${obj.identifier}") AND (${valueTypesIterator(
           operators[obj.operator],
           obj.value[0],
           true
         )})`;
       case "$eq":
-        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+        return `(attributes.name = "${obj.identifier}") AND (${valueTypesIterator(
           operators[obj.operator],
           obj.value[0],
           false,
@@ -196,7 +196,7 @@ const transformConditions = (arr) => {
         )})`;
 
       default:
-        return `(attributes.name = "${obj.identifier}" AND ${valueTypesIterator(
+        return `(attributes.name = "${obj.identifier}") AND (${valueTypesIterator(
           operators[obj.operator],
           obj.value[0]
         )})`;
