@@ -75,7 +75,7 @@ class Entity {
     let generatedSQL;
 
     if(Object.values(queries).length){
-      generatedSQL = generateSQL(queries);      
+      generatedSQL = generateSQL(queries, entity_type_slug);      
     }
     
     let totalRows;

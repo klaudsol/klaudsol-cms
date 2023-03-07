@@ -131,6 +131,8 @@ const convertToNumber = (items) => {
 };
 
 export const sortData = (data, sortValue) => {
+  console.log(data);
+  
   const splitted = sortValue.split(":");
   const [identifier, order] = splitted;
 
@@ -208,7 +210,8 @@ const areAllIdentifiersEqual = (item) => {
   return identifiers.every(id => id === identifiers[0]); 
 } // for future uses of AND/OR filter condition
 
-const combineSQL = conditionArray => {
+const combineSQL = (conditionArray, entity_type_slug) => {
+
   const subqueries = conditionArray.map((condition, index) => {
     const tableAlias = `t${index + 1}`;
     return `(SELECT entities.id
@@ -216,7 +219,7 @@ const combineSQL = conditionArray => {
               LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
               LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
               LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
-              WHERE entity_types.slug = "menus" AND ${condition}) ${tableAlias}`;
+              WHERE entity_types.slug = "${entity_type_slug}" AND ${condition}) ${tableAlias}`;
   });
 
   const intersect = subqueries.map((_, index) => {
@@ -229,10 +232,10 @@ const combineSQL = conditionArray => {
 }
 
 
-export const generateSQL = (queries) => {
+export const generateSQL = (queries, entity_type_slug) => {
    
   const filteredQueries = filterQuery(queries);
-
+  
   // Originally, values are only nested when it detects multiple values with the same operator type,
   // However, In our case, we are forcing all values to be nested in an array.
   // also, remove the filters keyword from the property name when returned
@@ -253,7 +256,7 @@ export const generateSQL = (queries) => {
   const SQLconditions = transformConditions(formattedQueries);
   let combinedSQL
   if(SQLconditions.length){
-     combinedSQL = combineSQL(SQLconditions);
+     combinedSQL = combineSQL(SQLconditions, entity_type_slug);
   }
   return SQLconditions.length ? combinedSQL : null
 };
