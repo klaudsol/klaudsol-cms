@@ -11,7 +11,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
   // If entry is an object, chances are its a file uploaded to S3.
   // Files uploaded to S3 should have an originalname property
   const checkEntryIfObject = (entry, accessor) => {
-    if (typeof entry[accessor] === "object") return entry[accessor].name;
+    if (typeof entry[accessor] === "object") return entry[accessor]?.name;
     return entry[accessor];
   };
 
