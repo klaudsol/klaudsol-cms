@@ -189,6 +189,7 @@ const transformConditions = (arr) => {
           true
         )})`;
       case "$eq":
+
         return `${typeFinder} AND (${valueTypesIterator(
           operators[obj.operator],
           obj.value[0],
