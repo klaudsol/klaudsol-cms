@@ -2,12 +2,14 @@ import DB from "@backend/data_access/DB";
 import { isNumber, generateSQL } from "@/components/Util";
 
 class Entity {
-  static async findBySlugOrId({ entity_type_slug, slug }) {
+  static async findBySlugOrId({ entity_type_slug, slug, valueSearch, attributeSearch }) {
     const db = new DB();
 
     // slug can be id # (number) or slugname (string)
     // check the slug weather it consists numbers only in which return true, otherwise it will return false
 
+    console.log(valueSearch)
+    console.log(attributeSearch)
     const propertyType = isNumber(slug) ? "longValue" : "stringValue";
     const conditionType = isNumber(slug) ? "entities.id" : "entities.slug";
 
