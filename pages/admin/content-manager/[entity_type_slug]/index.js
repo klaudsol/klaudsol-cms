@@ -35,8 +35,8 @@ import {
   SET_FIRST_FETCH,
   SET_PAGE,
   PAGE_SETS_RENDERER,
-  SET_SEARCH_VALUE,
-  SET_ATTRIBUTES
+  SET_ATTRIBUTES,
+  SET_SEARCH_ATTRIBUTE
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
 import SearchBar from "components/klaudsolcms/pagination/SearchBar";
@@ -65,7 +65,7 @@ export default function ContentManager({ cache }) {
        // Assign a new AbortController for the latest fetch to our useRef variable
 
         const valuesRaw = await slsFetch(
-          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}&valueSearch=${state.searchValue}&attributeSearch${state.searchAttribute}`,
+          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}&filters?[${state.searchAttribute}][$contains]=${state.searchValue}`,
           { signal: controllerRef.current?.signal }
         );
           
@@ -77,7 +77,7 @@ export default function ContentManager({ cache }) {
         let entries = [];
         let attributes = [];
  
-        attributes = Object.keys(values.metadata.attributes).unshift('slug');
+        attributes = Object.keys(values.metadata.attributes)
         entries = Object.values(values.data);
         columns = Object.keys(values.metadata.attributes).map((col) => {
           return {
@@ -85,11 +85,13 @@ export default function ContentManager({ cache }) {
             displayName: col.toUpperCase(),
           };
         });
-
+ 
         columns.unshift({ accessor: "slug", displayName: "SLUG" });
         columns.unshift({ accessor: "id", displayName: "ID" });
+        
         dispatch({ type: SET_COLUMNS, payload: columns });
         dispatch({ type: SET_VALUES, payload: entries });
+        dispatch({ type: SET_SEARCH_ATTRIBUTE, payload: attributes[0] })
         dispatch({ type: SET_ATTRIBUTES, payload: attributes })
         controllerRef.current = null;
       } catch (ex) {
@@ -99,7 +101,7 @@ export default function ContentManager({ cache }) {
         !controllerRef.current && dispatch({ type: SET_FIRST_FETCH, payload: false });       
       }
     })();
-  }, [entity_type_slug, state.page, state.entry, state.setsRenderer]);
+  }, [entity_type_slug, state.page, state.entry, state.setsRenderer, state.searchValue, state.searchAttribute]);
 
 
   useEffect(() => {

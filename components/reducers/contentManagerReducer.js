@@ -13,7 +13,7 @@ import {
   SET_FIRST_FETCH,
   SET_SEARCH_VALUE,
   SET_ATTRIBUTES,
-  SET_SEARCH_ATTRIBUTE    
+  SET_SEARCH_ATTRIBUTE,
 } from "@/lib/actions";
 
 export const initialState = {
@@ -25,14 +25,13 @@ export const initialState = {
   isRefresh: true,
   entry: 10,
   page: 0,
-  rows:null,
-  setsRenderer:0,
+  rows: null,
+  setsRenderer: 0,
   firstFetch: true,
-  searchAttribute: null,
-  searchValue: null,
-  attributes: []
+  searchAttribute: '',
+  searchValue: '',
+  attributes: [],
 };
-
 
 export const contentManagerReducer = (state, action) => {
   switch (action.type) {
@@ -103,22 +102,22 @@ export const contentManagerReducer = (state, action) => {
         firstFetch: action.payload,
       };
 
-      case SET_SEARCH_VALUE:
-        return {
-          ...state,
-          searchValue: action.payload,
-        };
-        case SET_SEARCH_ATTRIBUTE:
-          return {
-            ...state,
-            searchAttribute: action.payload
-          }
-      case SET_ATTRIBUTES:
-        return {
-          ...state,
-          attributes: action.payload
-        }
-  
-        default: return state
-    }  
+    case SET_SEARCH_VALUE:
+      return {
+        ...state,
+        searchValue: action.payload,
+      };
+    case SET_SEARCH_ATTRIBUTE:
+      return {
+        ...state,
+        searchAttribute: action.payload,
+      };
+    case SET_ATTRIBUTES:
+      return {
+        ...state,
+        attributes: action.payload,
+      };
+
+    default: return state;
+  }
 };

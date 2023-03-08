@@ -1,28 +1,31 @@
 import React from "react";
 import { BiSearch } from "react-icons/bi";
-import {
-  LOADING,
-  SET_ENTITY_TYPE_NAME,
-  SET_COLUMNS,
-  SET_VALUES,
-  CLEANUP,
-  SET_ROWS,
-  SET_FIRST_FETCH,
-  SET_PAGE,
-  PAGE_SETS_RENDERER,
-  SET_SEARCH_VALUE,
-  SET_SEARCH_ATTRIBUTE,
-  ATTRIBUTES_SELECTION,
-} from "@/lib/actions";
+import { SET_SEARCH_VALUE, SET_SEARCH_ATTRIBUTE, SET_PAGE, PAGE_SETS_RENDERER } from "@/lib/actions";
+import { minPage, minPageEntry } from "lib/Constants"
 
 const SearchBar = ({ dispatch, attributes }) => {
-
   const onChangeInput = (e) => {
     dispatch({ type: SET_SEARCH_VALUE, payload: e.target?.value });
-  }
+    dispatch({
+      type: SET_PAGE,
+      payload: minPageEntry,
+    });
+    dispatch({
+      type: PAGE_SETS_RENDERER,
+      payload: minPage,
+    });
+  };
 
   const onChangeEntry = (e) => {
     dispatch({ type: SET_SEARCH_ATTRIBUTE, payload: e.target?.value });
+    dispatch({
+      type: SET_PAGE,
+      payload: minPageEntry,
+    });
+    dispatch({
+      type: PAGE_SETS_RENDERER,
+      payload: minPage,
+    });
   };
 
   return (
@@ -44,11 +47,12 @@ const SearchBar = ({ dispatch, attributes }) => {
         className="selection-bar"
         onChange={onChangeEntry}
       >
-        {attributes.length && attributes.map((val, i) => (
-          <option key={i} value={val}>
-            {val}
-          </option>
-        ))}
+        {attributes.length &&
+          attributes.map((val, i) => (
+            <option key={i} value={val}>
+              {val}
+            </option>
+          ))}
       </select>
     </div>
   );

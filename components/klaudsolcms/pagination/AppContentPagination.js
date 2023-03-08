@@ -2,7 +2,7 @@ import React from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
-
+import { minPage, minPageEntry } from "lib/Constants"
 import {
   SET_ENTRIES,
   SET_PAGE,
@@ -26,8 +26,6 @@ const AppContentPagination = ({
   const setRendererIsZero = setsRenderer === 0;
   const rightButtonStatus = setsRenderer === Math.floor(rows / maximumNumberOfPage);
 
-  const minPage = 0;
-  const minPageEntry = 0;
   // left double arrow
   const prevPageEntry = (setsRenderer - 1) * maximumNumberOfPage;
   const prevPage = setsRenderer - 1;

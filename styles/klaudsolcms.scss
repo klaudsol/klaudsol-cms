@@ -247,6 +247,65 @@
     padding: 0px 40px 0px 40px;
 }
 
+.tool-bar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  
+      .search-bar{
+          display: flex;
+          flex-direction: row;
+          
+          .search-icon-container{
+              height: 30px;
+              width: 30px;
+              border: 1px solid #8296a0;
+              border-right: none;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-top-left-radius: 3px;
+              border-bottom-left-radius: 3px;
+              
+              .search-icon{
+                  width: 1.5em;
+                  height: 1.5em;
+                  color:  #60747e;
+              }
+          }
+               
+           .search-input{
+              height: 30px;
+              border: 1px solid #8296a0;
+              border-top-right-radius: 3px;
+              border-bottom-right-radius: 3px;
+              outline: none;
+              padding: 2px 5px;
+           }
+      
+      } 
+      
+      .selection-bar{
+      
+              width: 100px;
+              height: 28px;
+              border: 1px solid #8296a0;
+              outline: none;
+              margin-right: 6px;
+              padding: 0px 5px 0px 5px;
+              border-radius: 3px;
+              color: #516169;
+            
+          
+              .selection-bar::after{
+               transform: rotate(180deg);
+            }
+      }
+         
+  }
+  
 .pagination-general{
   display: flex;
   flex-direction: row;
