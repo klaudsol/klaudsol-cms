@@ -760,6 +760,15 @@ border-radius: 5px;
     width: 100%;
 }
 
+.cell-column{
+    max-height: 3em;
+    max-width: 400px;
+    overflow-y: hidden;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 #table_general td,
 #table_general th,
 #table_skeleton th, #table_skeleton td {
