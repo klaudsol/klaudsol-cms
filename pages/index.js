@@ -38,7 +38,7 @@ export const getServerSideProps = withIronSessionSsr(
     } 
     else {
       return {
-        props: { logo: rawData?.length ? data : {} },
+        props: { logo: (process.env.KS_S3_BASE_URL && rawData?.length) ? data : {} },
       };
     }
   },
