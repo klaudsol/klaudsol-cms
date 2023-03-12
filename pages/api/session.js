@@ -1,6 +1,7 @@
 import People from '@backend/models/core/People';
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
+import { generateToken } from '@/lib/JWT';
 import { OK, UNPROCESSABLE_ENTITY } from '@/lib/HttpStatuses';
 import UnauthorizedError from '@/components/errors/UnauthorizedError';
 import Session from '@backend/models/core/Session';
@@ -35,6 +36,10 @@ async function login (req, res) {
       }
 
     const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
+
+    // JWTToken so that it will not be consued with session token
+    const JWTToken = generateToken({ firstName, lastName });
+
     req.session.session_token = session_token;
     req.session.cache = {
       firstName,
@@ -43,7 +48,8 @@ async function login (req, res) {
       capabilities,
       defaultEntityType,
       homepage: '/admin',
-      forcePasswordChange
+      forcePasswordChange,
+      JWTToken
     };
 
     await req.session.save();    
