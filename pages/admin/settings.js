@@ -55,9 +55,10 @@ export default function Settings({ cache }) {
       try {
         dispatch({ type: DELETING, payload: true });
         const response = await slsFetch(`/api/settings/mainlogo`, {
-          method: "DELETE",
+          method: "DELETE", 
           headers: {
             "Content-type": "application/json",
+            Authorization: `Bearer ${cache.JWTToken}`,
           },
         });
         dispatch({ type: SET_VALUES, payload: {} });
@@ -104,6 +105,9 @@ export default function Settings({ cache }) {
               
           const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
             method: `${isCreateMode ? "POST" : "PUT"}`,
+            headers: {
+                Authorization: `Bearer ${cache.JWTToken}`
+            },
             body: formattedEntries,
           });
           const { data } = await response.json()

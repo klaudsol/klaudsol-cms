@@ -33,7 +33,8 @@ export default function Settings({cache}) {
           const responseRaw = await slsFetch('/api/me/password', {
             method: 'PUT',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+               Authorization: `Bearer ${cache.JWTToken}`
             },
             body: JSON.stringify(values)
           });

@@ -203,6 +203,10 @@ export default function ContentTypeBuilder({ cache }) {
         dispatch({ type: LOADING, payload: true });
         await slsFetch(`/api/entity_types/${typeSlug}`, {
           method: "DELETE",
+          headers: {
+            'Content-Type': 'application/json',
+             Authorization: `Bearer ${cache.JWTToken}`
+          },
         });
         loadEntityTypes({ rootState, rootDispatch });
           
@@ -242,6 +246,7 @@ export default function ContentTypeBuilder({ cache }) {
               method: "POST",
               headers: {
                 "Content-type": "application/json",
+                Authorization: `Bearer ${cache.JWTToken}`
               },
               body: JSON.stringify({
                 attribute: {
