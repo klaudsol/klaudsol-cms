@@ -23,43 +23,40 @@ SOFTWARE.
 
 **/
 
-import EntityType from '@backend/models/core/EntityType';
-import Attribute from '@backend/models/core/Attribute';
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
-import { createHash } from '@/lib/Hash';
-import { setCORSHeaders, handleRequests } from '@/lib/API';
-import { assert, assertUserCan } from '@/lib/Permissions';
-import { readContentTypes, writeContentTypes } from '@/lib/Constants';
+import EntityType from "@backend/models/core/EntityType";
+import Attribute from "@backend/models/core/Attribute";
+import { withSession } from "@/lib/Session";
+import { defaultErrorHandler } from "@/lib/ErrorHandler";
+import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
+import { createHash } from "@/lib/Hash";
+import { setCORSHeaders, handleRequests } from "@/lib/API";
+import { assert, assertUserCan } from "@/lib/Permissions";
+import { readContentTypes, writeContentTypes } from "@/lib/Constants";
 
 export default withSession(handleRequests({ post }));
 
-async function post(req, res) { 
-  try{
+async function post(req, res) {
+  const { slug } = req.query;
 
-    const { slug } = req.query;
-
-    await assert({
+  await assert(
+    {
       loggedIn: true,
-     }, req);
+    },
+    req
+  );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
-    
-    const { attribute } = req.body;
-    console.error(attribute);
-    const entityType = await EntityType.findBySlug(slug);
-    console.error(entityType);
-    await Attribute.create({
-      entity_type_id: entityType.entity_type_id,
-      name: attribute.name,
-      type: attribute.type,
-      order: attribute.order
-    }); 
-    res.status(OK).json({message: 'Successfully created a new attribute.'}) 
-  }
-  catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  (await assertUserCan(readContentTypes, req)) &&
+    (await assertUserCan(writeContentTypes, req));
+
+  const { attribute } = req.body;
+  console.error(attribute);
+  const entityType = await EntityType.findBySlug(slug);
+  console.error(entityType);
+  await Attribute.create({
+    entity_type_id: entityType.entity_type_id,
+    name: attribute.name,
+    type: attribute.type,
+    order: attribute.order,
+  });
+  res.status(OK).json({ message: "Successfully created a new attribute." });
 }

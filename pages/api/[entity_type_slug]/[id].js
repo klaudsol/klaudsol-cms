@@ -48,122 +48,108 @@ export const config = {
 };
 
 async function get(req, res) {
-  try {
-    await assertUserCan(readContents, req);
+  await assertUserCan(readContents, req);
 
-    const { entity_type_slug, id: slug } = req.query;
+  const { entity_type_slug, id: slug } = req.query;
 
-    const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
+  const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
-    const initialFormat = {
-      data: {},
+  const initialFormat = {
+    data: {},
+    metadata: {
+      attributes: {},
+    },
+  };
+
+  //Priority is the first entry in the collection, to make the
+  //system more stable. Suceeding entries that are inconsistent are discarded.
+  const output = rawData.reduce((collection, item) => {
+    return {
+      data: {
+        ...collection.data,
+        ...(!collection.data.id && { id: item.id }),
+        ...(!collection.data.slug && { slug: item.entities_slug }),
+        ...(!collection.data[item.attributes_name] && {
+          [item.attributes_name]: resolveValue(item),
+        }),
+      },
       metadata: {
-        attributes: {},
+        ...collection.metadata,
+        ...(!collection.metadata.type && { type: item.entity_type_slug }),
+        ...(!collection.metadata.id && {
+          entity_type_id: item.entity_type_id,
+        }),
+        attributes: {
+          ...collection.metadata.attributes,
+          ...(!collection.metadata.attributes[item.attributes_name] && {
+            [item.attributes_name]: {
+              type: item.attributes_type,
+              order: item.attributes_order,
+            },
+          }),
+        },
       },
     };
+  }, initialFormat);
 
-    //Priority is the first entry in the collection, to make the
-    //system more stable. Suceeding entries that are inconsistent are discarded.
-    const output = rawData.reduce((collection, item) => {
-      return {
-        data: {
-          ...collection.data,
-          ...(!collection.data.id && { id: item.id }),
-          ...(!collection.data.slug && { slug: item.entities_slug }),
-          ...(!collection.data[item.attributes_name] && {
-            [item.attributes_name]: resolveValue(item),
-          }),
-        },
-        metadata: {
-          ...collection.metadata,
-          ...(!collection.metadata.type && { type: item.entity_type_slug }),
-          ...(!collection.metadata.id && {
-            entity_type_id: item.entity_type_id,
-          }),
-          attributes: {
-            ...collection.metadata.attributes,
-            ...(!collection.metadata.attributes[item.attributes_name] && {
-              [item.attributes_name]: {
-                type: item.attributes_type,
-                order: item.attributes_order,
-              },
-            }),
-          },
-        },
-      };
-    }, initialFormat);
-
-    output.metadata.hash = createHash(output);
-    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
-    rawData
-      ? res.status(OK).json(output ?? [])
-      : res.status(NOT_FOUND).json({});
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  output.metadata.hash = createHash(output);
+  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+  rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
 async function del(req, res) {
-  try {
-    await assert(
-      {
-        loggedIn: true,
-      },
-      req
-    );
+  await assert(
+    {
+      loggedIn: true,
+    },
+    req
+  );
 
-    (await assertUserCan(readContents, req)) &&
-      (await assertUserCan(writeContents, req));
+  (await assertUserCan(readContents, req)) &&
+    (await assertUserCan(writeContents, req));
 
-    const { entity_type_slug, id: slug } = req.query;
-    const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });
-    const imageNames = entity.flatMap((item) =>
-      item.attributes_type === "image" ? item.value_string : []
-    );
+  const { entity_type_slug, id: slug } = req.query;
+  const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });
+  const imageNames = entity.flatMap((item) =>
+    item.attributes_type === "image" ? item.value_string : []
+  );
 
-    if (imageNames.length > 0) {
-      const params = generateS3ParamsForDeletion(imageNames);
-      await deleteFilesFromBucket(params);
-    }
-
-    await Entity.delete({ id: slug });
-
-    res.status(OK).json({ message: "Successfully delete the entry" });
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
+  if (imageNames.length > 0) {
+    const params = generateS3ParamsForDeletion(imageNames);
+    await deleteFilesFromBucket(params);
   }
+
+  await Entity.delete({ id: slug });
+
+  res.status(OK).json({ message: "Successfully delete the entry" });
 }
 
 async function put(req, res) {
-  try {
-    await assert(
-      {
-        loggedIn: true,
-      },
-      req
-    );
+  await assert(
+    {
+      loggedIn: true,
+    },
+    req
+  );
 
-    (await assertUserCan(readContents, req)) &&
-      (await assertUserCan(writeContents, req));
+  (await assertUserCan(readContents, req)) &&
+    (await assertUserCan(writeContents, req));
 
-    const { files, body: bodyRaw } = req;
-    const { entity_type_slug, entity_id, ...entriesRaw } = JSON.parse(
-      JSON.stringify(bodyRaw)
-    );
-    const { toDeleteRaw, ...body } = entriesRaw;
-    const toDelete = toDeleteRaw ? toDeleteRaw.split(",") : [];
+  const { files, body: bodyRaw } = req;
+  const { entity_type_slug, entity_id, ...entriesRaw } = JSON.parse(
+    JSON.stringify(bodyRaw)
+  );
+  const { toDeleteRaw, ...body } = entriesRaw;
+  const toDelete = toDeleteRaw ? toDeleteRaw.split(",") : [];
 
-    if (files.length > 0) {
-      const resFromS3 = await updateFilesFromBucket(files, body, toDelete);
-      const entries = generateEntries(resFromS3, files, body);
+  if (files.length > 0) {
+    const resFromS3 = await updateFilesFromBucket(files, body, toDelete);
+    const entries = generateEntries(resFromS3, files, body);
 
-      await Entity.update({ entries, entity_type_slug, entity_id });
-    } else {
-      await Entity.update({ entries: body, entity_type_slug, entity_id });
-    }
-
-    res.status(OK).json({ message: "Successfully created a new entry" });
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
+    await Entity.update({ entries, entity_type_slug, entity_id });
+  } else {
+    await Entity.update({ entries: body, entity_type_slug, entity_id });
   }
+
+  res.status(OK).json({ message: "Successfully created a new entry" });
 }

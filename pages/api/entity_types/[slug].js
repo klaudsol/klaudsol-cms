@@ -30,98 +30,90 @@ import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { createHash } from "@/lib/Hash";
 import { setCORSHeaders, handleRequests } from "@/lib/API";
 import { assert, assertUserCan } from "@/lib/Permissions";
-import { writeContents, readContentTypes, writeContentTypes } from '@/lib/Constants';
+import {
+  writeContents,
+  readContentTypes,
+  writeContentTypes,
+} from "@/lib/Constants";
 
-export default withSession(handleRequests({{ get, del, put}}));
+export default withSession(handleRequests({ get, del, put }));
 
 async function get(req, res) {
-  try {
-    await assertUserCan(readContentTypes, req);
+  await assertUserCan(readContentTypes, req);
 
-    const { slug } = req.query;
+  const { slug } = req.query;
 
-    const entityTypes = await EntityType.all();
-    const rawEntityType = await EntityType.whereSlug({ slug });
+  const entityTypes = await EntityType.all();
+  const rawEntityType = await EntityType.whereSlug({ slug });
 
-    const data = rawEntityType.reduce((collection, item) => {
-      return {
-        ...collection,
-        ...(!collection[item.attribute_name] &&
-          item.attribute_name && {
-            [item.attribute_name]: {
-              name: item.attribute_name,
-              type: item.attribute_type,
-              order: item.attribute_order,
-              attribute_id: item.attribute_id,
-            },
-          }),
-      };
-    }, {});
-
-    const output = {
-      data,
-      metadata: {},
+  const data = rawEntityType.reduce((collection, item) => {
+    return {
+      ...collection,
+      ...(!collection[item.attribute_name] &&
+        item.attribute_name && {
+          [item.attribute_name]: {
+            name: item.attribute_name,
+            type: item.attribute_type,
+            order: item.attribute_order,
+            attribute_id: item.attribute_id,
+          },
+        }),
     };
+  }, {});
 
-    output.metadata.hash = createHash(output);
+  const output = {
+    data,
+    metadata: {},
+  };
 
-    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
-    entityTypes
-      ? res.status(OK).json(output ?? [])
-      : res.status(NOT_FOUND).json({});
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  output.metadata.hash = createHash(output);
+
+  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+  entityTypes
+    ? res.status(OK).json(output ?? [])
+    : res.status(NOT_FOUND).json({});
 }
 
 async function del(req, res) {
-  try {
-    await assert(
-      {
-        loggedIn: true,
-      },
-      req
-    );
+  await assert(
+    {
+      loggedIn: true,
+    },
+    req
+  );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
-  
-    const { slug } = req.query;
-    await EntityType.delete({ slug });
-    res.status(OK).json({ message: "Successfully delete the entity type" });
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  (await assertUserCan(readContentTypes, req)) &&
+    (await assertUserCan(writeContentTypes, req));
+
+  const { slug } = req.query;
+  await EntityType.delete({ slug });
+  res.status(OK).json({ message: "Successfully delete the entity type" });
 }
 
 async function put(req, res) {
-  try {
-    await assert(
-      {
-        loggedIn: true,
-      },
-      req
-    );
+  await assert(
+    {
+      loggedIn: true,
+    },
+    req
+  );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
+  (await assertUserCan(readContentTypes, req)) &&
+    (await assertUserCan(writeContentTypes, req));
 
-    const { slug: oldSlug } = req.query;
-    const { name, slug: newSlug } = req.body;
+  const { slug: oldSlug } = req.query;
+  const { name, slug: newSlug } = req.body;
 
-    await EntityType.update({ name, newSlug, oldSlug });
+  await EntityType.update({ name, newSlug, oldSlug });
 
-    const output = {
-      data: { name, newSlug },
-      metadata: {},
-    };
+  const output = {
+    data: { name, newSlug },
+    metadata: {},
+  };
 
-    output.metadata.hash = createHash(output);
+  output.metadata.hash = createHash(output);
 
-    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
-    res.status(OK).json(output ?? []);
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  res.status(OK).json(output ?? []);
 }

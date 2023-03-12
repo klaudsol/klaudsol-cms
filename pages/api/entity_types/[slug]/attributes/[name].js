@@ -23,55 +23,49 @@ SOFTWARE.
 
 **/
 
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { assert, assertUserCan } from '@/lib/Permissions';
-import { createAPIHandler } from '@/lib/API';
-import { OK } from '@/lib/HttpStatuses';
-import Attribute from '@backend/models/core/Attribute';
-import { readContentTypes, writeContentTypes } from '@/lib/Constants';
+import { withSession } from "@/lib/Session";
+import { defaultErrorHandler } from "@/lib/ErrorHandler";
+import { assert, assertUserCan } from "@/lib/Permissions";
+import { createAPIHandler } from "@/lib/API";
+import { OK } from "@/lib/HttpStatuses";
+import Attribute from "@backend/models/core/Attribute";
+import { readContentTypes, writeContentTypes } from "@/lib/Constants";
 
 export default withSession(handleRequests({ del, put }));
 
 async function del(req, res) {
-  try{
-    
-    await assert({
+  await assert(
+    {
       loggedIn: true,
-     }, req);
+    },
+    req
+  );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
+  (await assertUserCan(readContentTypes, req)) &&
+    (await assertUserCan(writeContentTypes, req));
 
-    const { slug: typeSlug, name } = req.query;
+  const { slug: typeSlug, name } = req.query;
 
-    await Attribute.deleteWhere({type_slug: typeSlug, name});
+  await Attribute.deleteWhere({ type_slug: typeSlug, name });
 
-    res.status(OK).json({message: 'Successfully deleted the attribute.'}) 
-  }
-  catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  res.status(OK).json({ message: "Successfully deleted the attribute." });
 }
 
 async function put(req, res) {
-  try{
-    
-    await assert({
+  await assert(
+    {
       loggedIn: true,
-     }, req);
+    },
+    req
+  );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
-    
-    const { slug: typeSlug, name } = req.query;
-    const { attribute } = req.body;
+  (await assertUserCan(readContentTypes, req)) &&
+    (await assertUserCan(writeContentTypes, req));
 
-    await Attribute.updateWhere({type_slug: typeSlug, name, attribute});
+  const { slug: typeSlug, name } = req.query;
+  const { attribute } = req.body;
 
-    res.status(OK).json({message: 'Successfully updated the attribute.'}) 
-  }
-  catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }  
+  await Attribute.updateWhere({ type_slug: typeSlug, name, attribute });
+
+  res.status(OK).json({ message: "Successfully updated the attribute." });
 }
