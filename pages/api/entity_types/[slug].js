@@ -28,28 +28,11 @@ import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { createHash } from "@/lib/Hash";
-import { setCORSHeaders } from "@/lib/API";
+import { setCORSHeaders, handleRequests } from "@/lib/API";
 import { assert, assertUserCan } from "@/lib/Permissions";
 import { writeContents, readContentTypes, writeContentTypes } from '@/lib/Constants';
 
-export default withSession(handler);
-
-async function handler(req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        return get(req, res);
-      case "DELETE":
-        return del(req, res);
-      case "PUT":
-        return update(req, res);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
+export default withSession(handleRequests({{ get, del, put}}));
 
 async function get(req, res) {
   try {
@@ -111,7 +94,7 @@ async function del(req, res) {
   }
 }
 
-async function update(req, res) {
+async function put(req, res) {
   try {
     await assert(
       {

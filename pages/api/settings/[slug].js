@@ -1,6 +1,6 @@
 import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
-import { setCORSHeaders, parseFormData } from "@/lib/API";
+import { setCORSHeaders, handleRequests } from "@/lib/API";
 import {
   OK,
   NOT_FOUND,
@@ -23,34 +23,13 @@ import {
 import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
 import { readSettings, writeSettings } from '@/lib/Constants';
 
-export default withSession(handler);
+export default withSession(handleRequests({ get, put, del }));
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-async function handler(req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        return get(req, res);
-      case "PUT":
-        const { req: parsedReq, res: parsedRes } = await parseFormData(
-          req,
-          res
-        );
-        return update(parsedReq, parsedRes);
-      case "DELETE":
-        return del(req, res);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
 
 async function get(req, res) {
   try {
@@ -112,7 +91,7 @@ async function del(req, res) {
   }
 }
 
-async function update (req, res) {
+async function put(req, res) {
   try {
     await assert({
         loggedIn: true,

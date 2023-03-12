@@ -26,27 +26,12 @@ SOFTWARE.
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { assert, assertUserCan } from '@/lib/Permissions';
+import { createAPIHandler } from '@/lib/API';
 import { OK } from '@/lib/HttpStatuses';
 import Attribute from '@backend/models/core/Attribute';
 import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
-export default withSession(handler);
-
-async function handler(req, res) {
-  
-  try {
-    switch(req.method) {
-      case "DELETE":
-        return del(req, res);
-      case "PUT":
-        return update(req, res);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
+export default withSession(handleRequests({ del, put }));
 
 async function del(req, res) {
   try{
@@ -69,7 +54,7 @@ async function del(req, res) {
   }
 }
 
-async function update(req, res) {
+async function put(req, res) {
   try{
     
     await assert({

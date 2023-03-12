@@ -120,6 +120,9 @@ export default function CreateNewEntry({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
             body: formattedEntries,
+            headers: {
+                Authorization: `Bearer ${cache.JWTToken}`
+            }
           });
           const { message, homepage } = await response.json();
           dispatch({ type: SET_SHOW, payload: true });

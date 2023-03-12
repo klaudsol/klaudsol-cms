@@ -25,28 +25,15 @@ SOFTWARE.
 import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { assert } from '@/lib/Permissions';
+import { handleRequests } from '@/lib/API';
 import { OK, UNPROCESSABLE_ENTITY } from '@/lib/HttpStatuses';
 import Session from '@/backend/models/core/Session';
 import People from '@/backend/models/core/People';
 import RecordNotFound from 'components/errors/RecordNotFound';
 
-export default withSession(handler);
+export default withSession(handleRequests({ put }));
 
-async function handler(req, res) {
-  
-  try {
-    switch(req.method) {
-      case "PUT":
-        return update(req, res); 
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
-
-async function update(req, res) { 
+async function put(req, res) { 
   try{
 
     await assert({

@@ -29,27 +29,13 @@ import { withSession } from '@/lib/Session';
 import { defaultErrorHandler } from '@/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
-import { setCORSHeaders } from '@/lib/API';
+import { setCORSHeaders, handleRequests } from '@/lib/API';
 import { assert, assertUserCan } from '@/lib/Permissions';
 import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
-export default withSession(handler);
+export default withSession(handleRequests({ post }));
 
-async function handler(req, res) {
-  
-  try {
-    switch(req.method) {
-      case "POST":
-        return create(req, res); 
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
-
-async function create(req, res) { 
+async function post(req, res) { 
   try{
 
     const { slug } = req.query;

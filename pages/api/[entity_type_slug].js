@@ -29,16 +29,15 @@ import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders, parseFormData } from "@/lib/API";
+import { setCORSHeaders, handleRequests } from "@/lib/API";
 import { createHash } from "@/lib/Hash";
 import { addFilesToBucket, generateEntries } from "@backend/data_access/S3";
 import { transformQuery, sortData } from "@/components/Util";
-import { assert, assertUserCan } from '@/lib/Permissions';
-import { filterData } from '@/components/Util';
-import { readContents, writeContents } from '@/lib/Constants';
+import { assert, assertUserCan } from "@/lib/Permissions";
+import { filterData } from "@/components/Util";
+import { readContents, writeContents } from "@/lib/Constants";
 
-
-export default withSession(handler);
+export default withSession(handleRequests({ get, post }));
 
 export const config = {
   api: {
@@ -46,122 +45,101 @@ export const config = {
   },
 };
 
-async function handler(req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        return get(req, res);
-      case "POST":
-        const { req: parsedReq, res: parsedRes } = await parseFormData(
-          req,
-          res
-        );
-        return create(parsedReq, parsedRes);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+async function get(req, res) {
+  const {
+    entity_type_slug,
+    entry,
+    page,
+    sort: sortValue,
+    ...queries
+  } = req.query;
+
+  const rawData = await Entity.where(
+    { entity_type_slug, entry, page },
+    queries
+  );
+  const rawEntityType = await EntityType.find({ slug: entity_type_slug });
+
+  const initialFormat = {
+    indexedData: {},
+  };
+
+  const dataTemp = rawData.data.reduce((collection, item) => {
+    return {
+      indexedData: {
+        ...collection.indexedData,
+        [item.id]: {
+          ...collection.indexedData[item.id],
+          ...(!collection.indexedData[item.id]?.id && { id: item.id }),
+          ...(!collection.indexedData[item.id]?.slug && {
+            slug: item.entities_slug,
+          }),
+          ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
+            [item.attributes_name]: resolveValue(item),
+          }),
+        },
+      },
+    };
+  }, initialFormat);
+
+  const initialMetadata = {
+    attributes: {},
+  };
+
+  const metadata = rawEntityType.reduce((collection, item) => {
+    return {
+      attributes: {
+        ...collection.attributes,
+        ...(!collection.attributes[item.attribute_name] &&
+          item.attribute_name && {
+            [item.attribute_name]: {
+              type: item.attribute_type,
+              order: item.attribute_order,
+            },
+          }),
+      },
+      entity_type_id: item.entity_type_id,
+      total_rows: rawData.total_rows,
+    };
+  }, initialMetadata);
+
+  let data;
+  if (sortValue) data = sortData(dataTemp.indexedData, sortValue);
+
+  const output = {
+    data: data ? { ...data } : dataTemp.indexedData,
+    metadata: metadata,
+  };
+
+  output.metadata.hash = createHash(output);
+
+  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
+  rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
+async function post(req, res) {
+  await assert(
+    {
+      loggedIn: true,
+    },
+    req
+  );
 
+  (await assertUserCan(readContents, req)) &&
+    (await assertUserCan(writeContents, req));
 
-  async function get(req, res) { 
-    try {
-      const { entity_type_slug, entry, page, sort:sortValue, ...queries } = req.query;
-      const rawData = await Entity.where(
-        { entity_type_slug, entry, page },
-        queries
-      );
-      const rawEntityType = await EntityType.find({ slug: entity_type_slug });
-  
-      const initialFormat = {
-        indexedData: {},
-      };
-  
-      const dataTemp = rawData.data.reduce((collection, item) => {
-        return {
-          indexedData: {
-            ...collection.indexedData,
-            [item.id]: {
-              ...collection.indexedData[item.id],
-              ...(!collection.indexedData[item.id]?.id && { id: item.id }),
-              ...(!collection.indexedData[item.id]?.slug && {
-                slug: item.entities_slug,
-              }),
-              ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
-                [item.attributes_name]: resolveValue(item),
-              }),
-          },
-        },
-      };
-    }, initialFormat);
+  const { files, body: bodyRaw } = req;
+  const body = JSON.parse(JSON.stringify(bodyRaw));
 
-    const initialMetadata = {
-      attributes: {},
-    };
+  if (files.length > 0) {
+    const resFromS3 = await addFilesToBucket(files, body);
+    const entries = generateEntries(resFromS3, files, body);
 
-    const metadata = rawEntityType.reduce((collection, item) => {
-      return {
-        attributes: {
-          ...collection.attributes,
-          ...(!collection.attributes[item.attribute_name] &&
-            item.attribute_name && {
-              [item.attribute_name]: {
-                type: item.attribute_type,
-                order: item.attribute_order,
-              },
-            }),
-        },
-        entity_type_id: item.entity_type_id,
-        total_rows: rawData.total_rows,
-      };
-    }, initialMetadata);
-
-    let data;
-    if (sortValue) data = sortData(dataTemp.indexedData, sortValue);
-
-    const output = {
-      data: data ? { ...data } : dataTemp.indexedData,
-      metadata: metadata,
-    };
-
-    output.metadata.hash = createHash(output);
-
-    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
-
-    rawData
-      ? res.status(OK).json(output ?? [])
-      : res.status(NOT_FOUND).json({});
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
+    await Entity.create(entries);
+  } else {
+    await Entity.create(body);
   }
-}
 
-async function create(req, res) { 
-    try {
-        await assert({
-            loggedIn: true,
-        }, req);
-
-        await assertUserCan(readContents, req) &&
-        await assertUserCan(writeContents, req);
-        
-        const { files, body: bodyRaw } = req;
-        const body = JSON.parse(JSON.stringify(bodyRaw));
-
-        if (files.length > 0) {
-          const resFromS3 = await addFilesToBucket(files, body);
-          const entries = generateEntries(resFromS3, files, body);
-
-          await Entity.create(entries);
-        } else {
-          await Entity.create(body);
-        }
-
-        res.status(OK).json({message: 'Successfully created a new entry'}) 
-    } catch (error) {
-      await defaultErrorHandler(error, req, res);
-    }
+  res.status(OK).json({ message: "Successfully created a new entry" });
 }

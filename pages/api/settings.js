@@ -7,7 +7,7 @@ import {
 } 
 from "@/backend/data_access/S3";
 import { resourceValueTypes } from "@/components/cmsTypes";
-import { setCORSHeaders, parseFormData } from '@/lib/API';
+import { setCORSHeaders, handleRequests } from '@/lib/API';
 import { OK, NOT_FOUND, BAD_REQUEST } from "@/lib/HttpStatuses";
 import Setting from '@/backend/models/core/Setting';
 import { assert } from '@/lib/Permissions';
@@ -16,7 +16,7 @@ import { createHash } from "@/lib/Hash";
 import { readSettings, writeSettings } from '@/lib/Constants';
 import { assertUserCan } from 'lib/Permissions';
 
-export default withSession(handler);
+export default withSession(handleRequests({ get, post }));
 
 export const config = {
   api: {
@@ -24,28 +24,11 @@ export const config = {
   },
 }
 
-async function handler(req, res) {
-  
-  try {
-    switch(req.method) {
-      case "GET":
-        return get(req, res); 
-      case "POST":
-        const { req: parsedReq, res: parsedRes } = await parseFormData(req, res);
-        return create(parsedReq, parsedRes);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
-
 async function get(req, res) { 
   
 }
 
-async function create(req, res) { 
+async function post(req, res) { 
   try {
     await assert({
         loggedIn: true,
