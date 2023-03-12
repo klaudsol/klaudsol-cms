@@ -1,11 +1,14 @@
 import { useState, useContext, useEffect } from "react";
 import { Formik, Form, Field, useFormikContext, useField } from "formik";
 import { loadEntityTypes } from "@/components/reducers/actions";
+import { slsFetch } from "@/components/Util";
 import RootContext from "@/components/contexts/RootContext";
+import CacheContext from "@/components/contexts/CacheContext";
 import DependentField from "@/components/fields/DependentField";
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const { JWTToken } = useContext(CacheContext);
 
   const formikParams = {
     initialValues: {},
@@ -14,11 +17,12 @@ export default function CollectionTypeBody({ formRef }) {
       (async () => {
         try {
           //refactor to reducers/actions
-          await fetch(`/api/entity_types`, {
+          await slsFetch(`/api/entity_types`, {
             method: "POST",
             body: JSON.stringify(values),
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${JWTToken}`,
             },
           });
         } catch (error) {

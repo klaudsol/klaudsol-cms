@@ -1,4 +1,5 @@
 import RootContext from '@/components/contexts/RootContext';
+import CacheContext from "@/components/contexts/CacheContext";
 import { useContext, useEffect, useState, useRef } from 'react';
 import SkeletonContentBuilder from "@/components/klaudsolcms/skeleton/SkeletonContentBuilder";
 import AppContentBuilderButtons from "@/components/klaudsolcms/buttons/AppContentBuilderButtons";
@@ -9,10 +10,11 @@ import AddEditAnotherFieldModal, {EDIT_MODE} from '@/components/klaudsolcms/moda
 import { useCapabilities } from '@/components/hooks';
 import { writeContentTypes } from "@/lib/Constants";
 
-const AppContentBuilderTable = ({typeSlug}) => {
+const AppContentBuilderTable = ({ typeSlug }) => {
 
    const capabilities = useCapabilities();
    const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+   const { JWTToken } = useContext(CacheContext);
    const [loading, setLoading] = useState(false);
    const [isModalVisible, setModalVisible] = useState(false);
    const [isEditModalVisible, setEditModalVisible] = useState(false);
@@ -41,7 +43,10 @@ const AppContentBuilderTable = ({typeSlug}) => {
       (async () => {
         try {
           const valuesRaw = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${JWTToken}`
+            }
           });  
           const values = await valuesRaw.json();
   
@@ -84,7 +89,8 @@ const AppContentBuilderTable = ({typeSlug}) => {
             const response = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
               method: 'PUT',
               headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${JWTToken}`
               },
               body: JSON.stringify({
                 attribute: {

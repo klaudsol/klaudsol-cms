@@ -129,8 +129,7 @@ async function post(req, res) {
   (await assertUserCan(readContents, req)) &&
     (await assertUserCan(writeContents, req));
 
-  const { files, body: bodyRaw } = req;
-  const body = JSON.parse(JSON.stringify(bodyRaw));
+  const { files, body } = req;
 
   if (files.length > 0) {
     const resFromS3 = await addFilesToBucket(files, body);

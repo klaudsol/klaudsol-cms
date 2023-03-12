@@ -3,10 +3,12 @@ import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
+import CacheContext from "@/components/contexts/CacheContext";
 import { redirectToBuilderTypeSlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
 export default function EditCollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const { JWTToken } = useContext(CacheContext);
   const router = useRouter();
   const slug = router.query.entity_type_slug;
 
@@ -29,10 +31,11 @@ export default function EditCollectionTypeBody({ formRef }) {
           //refactor to reducers/actions
           await fetch(`/api/entity_types/${slug}`, {
             method: "PUT",
-            body: JSON.stringify(values),
             headers: {
               "Content-Type": "application/json",
+               Authorization: `Bearer ${JWTToken}`
             },
+            body: JSON.stringify(values),
           });
 
           redirectToBuilderTypeSlug(router,values.slug);

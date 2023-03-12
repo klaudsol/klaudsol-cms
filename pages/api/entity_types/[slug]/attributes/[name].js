@@ -26,7 +26,7 @@ SOFTWARE.
 import { withSession } from "@/lib/Session";
 import { defaultErrorHandler } from "@/lib/ErrorHandler";
 import { assert, assertUserCan } from "@/lib/Permissions";
-import { createAPIHandler } from "@/lib/API";
+import { handleRequests } from "@/lib/API";
 import { OK } from "@/lib/HttpStatuses";
 import Attribute from "@backend/models/core/Attribute";
 import { readContentTypes, writeContentTypes } from "@/lib/Constants";

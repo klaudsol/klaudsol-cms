@@ -149,7 +149,6 @@ export default function Type({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "PUT",
             headers: {
-              "Content-type": "application/json",
                Authorization: `Bearer ${cache.JWTToken}`
             },
             body: formattedEntries,
