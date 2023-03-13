@@ -332,7 +332,7 @@
 
 "@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git":
   version "1.0.0"
-  resolved "https://github.com/klaudsol/klaudsol-commons.git#072f62df33da1938d3d358084954e30b31155a76"
+  resolved "https://github.com/klaudsol/klaudsol-commons.git#88123316758287471a2c16d9e558e5e95df412a5"
   dependencies:
     aws-sdk "^2.1333.0"
     es6-promisify "^7.0.0"
