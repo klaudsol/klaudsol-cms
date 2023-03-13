@@ -7,7 +7,7 @@ import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
 import { FaCheck } from "react-icons/fa";
 import { useRef, useState } from 'react';
 import { slsFetch } from "@klaudsol/commons/lib/Client";
-import { useClientErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+import { useClientErrorHandler } from "@/components/hooks";
 import AppModal from '@/components/klaudsolcms/AppModal';
 import { useRouter } from "next/router";
 

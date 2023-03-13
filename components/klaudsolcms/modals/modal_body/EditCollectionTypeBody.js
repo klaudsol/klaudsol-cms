@@ -5,9 +5,11 @@ import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 import CacheContext from "@/components/contexts/CacheContext";
 import { redirectToBuilderTypeSlug } from "@/components/klaudsolcms/routers/routersRedirect";
+import { useClientErrorHandler } from "@/components/hooks";
 
 export default function EditCollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const errorHandler = useClientErrorHandler();
   const { JWTToken } = useContext(CacheContext);
   const router = useRouter();
   const slug = router.query.entity_type_slug;
@@ -33,14 +35,16 @@ export default function EditCollectionTypeBody({ formRef }) {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-               Authorization: `Bearer ${JWTToken}`
+              Authorization: `Bearer ${JWTToken}`,
             },
             body: JSON.stringify(values),
           });
 
-          redirectToBuilderTypeSlug(router,values.slug);
+          redirectToBuilderTypeSlug(router, values.slug);
         } catch (error) {
+          errorHandler(error);
         } finally {
+          console.log({ rootState });
           await loadEntityTypes({ rootState, rootDispatch });
         }
       })();
@@ -62,19 +66,11 @@ export default function EditCollectionTypeBody({ formRef }) {
             <div className="row">
               <div className="col">
                 <p className="mt-2"> Display Name </p>
-                <Field 
-                    type="text" 
-                    className="input_text"
-                    name="name" 
-                />
+                <Field type="text" className="input_text" name="name" />
               </div>
               <div className="col">
                 <p className="mt-2"> API ID &#40;Slug&#41; </p>
-                <Field 
-                    type="text" 
-                    className="input_text"
-                    name="slug" 
-                />
+                <Field type="text" className="input_text" name="slug" />
                 <p className="mt-1" style={{ fontSize: "10px" }}>
                   The UID is used to generate the API routes and databases
                   tables/collections

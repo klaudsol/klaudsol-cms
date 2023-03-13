@@ -339,15 +339,6 @@
     jsonwebtoken "^9.0.0"
     multer "^1.4.5-lts.1"
 
-"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git":
-  version "1.0.0"
-  resolved "https://github.com/klaudsol/klaudsol-commons.git#88123316758287471a2c16d9e558e5e95df412a5"
-  dependencies:
-    aws-sdk "^2.1333.0"
-    es6-promisify "^7.0.0"
-    iron-session "^6.3.1"
-    multer "^1.4.5-lts.1"
-
 "@next/env@13.2.4":
   version "13.2.4"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-13.2.4.tgz#8b763700262b2445140a44a8c8d088cef676dbae"

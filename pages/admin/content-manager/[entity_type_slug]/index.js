@@ -40,7 +40,7 @@ import AppContentPagination from "components/klaudsolcms/pagination/AppContentPa
 import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
-import { useClientErrorHandler } from "@/commons/lib/ErrorHandler";
+import { useClientErrorHandler } from "@/components/hooks"
 
 export default function ContentManager({ cache }) {
   const router = useRouter();

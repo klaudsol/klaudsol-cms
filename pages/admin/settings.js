@@ -22,7 +22,7 @@ import { defaultLogo } from "@/constants/index";
 import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
 import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
-import { useClientErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+import { useClientErrorHandler } from "@/components/hooks"
 
 export default function Settings({ cache }) {
   const formRef = useRef();

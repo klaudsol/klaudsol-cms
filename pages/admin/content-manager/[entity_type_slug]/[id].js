@@ -3,7 +3,7 @@ import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
-import { useClientErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+import { useClientErrorHandler } from "@/components/hooks";
 
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useCallback, useRef } from "react";

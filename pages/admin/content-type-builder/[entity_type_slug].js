@@ -3,7 +3,7 @@ import CacheContext from "@/components/contexts/CacheContext";
 import ContentBuilderSubMenu from "@/components/elements/inner/ContentBuilderSubMenu";
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
-import { useClientErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+import { useClientErrorHandler } from "@/components/hooks"
 
 import { FaTrash } from "react-icons/fa";
 
