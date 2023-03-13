@@ -23,10 +23,10 @@ SOFTWARE.
 
 **/
 
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { assert, assertUserCan } from '@/lib/Permissions';
-import { OK } from '@/lib/HttpStatuses';
+import { withSession } from '@klaudsol/commons/lib/Session';
+import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
+import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
+import { OK } from '@klaudsol/commons/lib/HttpStatuses';
 import Attribute from '@backend/models/core/Attribute';
 import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 

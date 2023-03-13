@@ -25,12 +25,12 @@ SOFTWARE.
 
 import EntityType from '@backend/models/core/EntityType';
 import Attribute from '@backend/models/core/Attribute';
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { OK, NOT_FOUND } from '@/lib/HttpStatuses';
+import { withSession } from '@klaudsol/commons/lib/Session';
+import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
+import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
-import { setCORSHeaders } from '@/lib/API';
-import { assert, assertUserCan } from '@/lib/Permissions';
+import { setCORSHeaders } from '@klaudsol/commons/lib/API';
+import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
 export default withSession(handler);

@@ -1,6 +1,6 @@
 import { useReducer, useEffect, useState, useContext, useRef } from "react";
 import { FaPlus, FaSearch } from "react-icons/fa";
-import { slsFetch } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import Link from "next/link";
 import AppIconButton from "@/components/klaudsolcms/buttons/AppIconButton";
 import AppModal from "@/components/klaudsolcms/AppModal";

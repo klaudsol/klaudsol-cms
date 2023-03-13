@@ -2,7 +2,8 @@
  * Actions are functions that contain one or more dispatch statements.
  */
 
-import { slsFetch, findContentTypeName } from "@/components/Util";
+import { findContentTypeName } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { SET_ENTITY_TYPES,SET_CURRENT_ENTITY_TYPE } from "@/lib/actions"
 
 export async function loadEntityTypes({
