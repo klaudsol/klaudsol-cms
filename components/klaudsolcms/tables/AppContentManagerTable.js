@@ -47,11 +47,15 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
                   passHref
                   legacyBehavior
                   key={index}
-                  disabled={!capabilities.includes(readContents)}
+                  disabled={!capabilities.includes(readContents)}                  
                 >
-                  <td key={index}>{checkEntryIfObject(entry, col.accessor)}</td>
+                  <td key={index}>
+                    <div className="cell-column">
+                     {checkEntryIfObject(entry, col.accessor)}
+                    </div>
+                    </td>
                 </Link>
-              ))}
+              ))}         
             </tr>
           ))}
         </tbody>
