@@ -1,9 +1,12 @@
 import CacheContext from "@/components/contexts/CacheContext";
-import { getSessionCache } from "@/lib/Session";
-import { useClientErrorHandler } from "@/lib/ErrorHandler";
+
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
+import { useClientErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useRef } from "react";
-import { slsFetch, sortByOrderAsc } from "@/components/Util";
+import { sortByOrderAsc } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { Formik, Form, Field } from "formik";
 import { slugTooltipText } from "constants";
 import {

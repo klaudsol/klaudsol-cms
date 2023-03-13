@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import FrontPageLayout from "@/components/layouts/FrontPageLayout";
 import { withIronSessionSsr } from "iron-session/next";
-import { sessionOptions } from "@/lib/Session";
+import { sessionOptions } from "@klaudsol/commons/lib/Session";
 import { slsFetch } from "@/components/Util";
-import { serverSideLogout } from "@/lib/Session";
+import { serverSideLogout } from "@klaudsol/commons/lib/Session";
 import Setting from "@/backend/models/core/Setting";
 import { mainlogo } from "@/constants/index";
 

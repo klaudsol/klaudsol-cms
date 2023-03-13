@@ -1,14 +1,14 @@
 import InnerSingleLayout from "@/components/layouts/InnerSingleLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import { getSessionCache } from "@/lib/Session";
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { Formik, Form, Field } from 'formik';
 import AppButtonLg from '@/components/klaudsolcms/buttons/AppButtonLg';
 import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
 import { FaCheck } from "react-icons/fa";
 import { useRef, useState } from 'react';
-import { slsFetch } from '@/components/Util'; 
+import { slsFetch } from "@klaudsol/commons/lib/Client";
+import { useClientErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
 import AppModal from '@/components/klaudsolcms/AppModal';
-import { useClientErrorHandler } from "@/lib/ErrorHandler";
 import { useRouter } from "next/router";
 
 export default function Settings({cache}) {

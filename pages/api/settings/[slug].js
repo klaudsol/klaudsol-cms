@@ -1,14 +1,14 @@
-import { withSession } from "@/lib/Session";
-import { defaultErrorHandler } from "@/lib/ErrorHandler";
-import { setCORSHeaders, handleRequests } from "@/lib/API";
+import { withSession } from "@klaudsol/commons/lib/Session";
+import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import {
   OK,
   NOT_FOUND,
   NO_CONTENT_FOUND,
   BAD_REQUEST,
-} from "@/lib/HttpStatuses";
+} from "@klaudsol/commons/lib/HttpStatuses";
 import Setting from "@/backend/models/core/Setting";
-import { assert, assertUserCan } from "@/lib/Permissions";
+import { assert, assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { createHash } from "@/lib/Hash";
 import { resolveResource } from "@/components/Util";
 import { resourceValueTypes, imageTypes } from "@/components/cmsTypes";

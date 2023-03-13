@@ -23,13 +23,13 @@ SOFTWARE.
 
 **/
 
-import EntityType from "@backend/models/core/EntityType";
-import { withSession } from "@/lib/Session";
-import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
-import { createHash } from "@/lib/Hash";
-import { setCORSHeaders, handleRequests } from "@/lib/API";
-import { readContentTypes, writeContentTypes } from "@/lib/Constants";
-import { assert, assertUserCan } from "@/lib/Permissions";
+import EntityType from '@backend/models/core/EntityType';
+import { withSession } from '@klaudsol/commons/lib/Session';
+import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
+import { createHash } from '@/lib/Hash';
+import { setCORSHeaders, handleRequests } from '@klaudsol/commons/lib/API';
+import { readContentTypes, writeContentTypes } from '@/lib/Constants';
+import { assert, assertUserCan } from "@klaudsol/commons/lib/Permissions";
 
 export default withSession(handleRequests({ get, post }));
 

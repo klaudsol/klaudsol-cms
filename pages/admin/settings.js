@@ -1,13 +1,14 @@
 import InnerSingleLayout from "@/components/layouts/InnerSingleLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import { getSessionCache } from "@/lib/Session";
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { Formik, Form } from "formik";
 import { useRef, useReducer, useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
-import { slsFetch, sortByOrderAsc } from "@/components/Util";
+import { sortByOrderAsc } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 /** react-icons */
 import { FaCheck, FaImage, FaTrash } from "react-icons/fa";
@@ -21,7 +22,7 @@ import { defaultLogo } from "@/constants/index";
 import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
 import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
-import { useClientErrorHandler } from "@/lib/ErrorHandler";
+import { useClientErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
 
 export default function Settings({ cache }) {
   const formRef = useRef();

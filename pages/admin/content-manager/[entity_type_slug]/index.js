@@ -3,7 +3,7 @@ import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 
 import React, { useEffect, useReducer, useRef, useContext } from "react";
-import { slsFetch } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { useRouter } from "next/router";
 import RootContext from '@/components/contexts/RootContext';
 
@@ -38,8 +38,9 @@ import {
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
 import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
-import { getSessionCache } from "@/lib/Session";
-import { useClientErrorHandler } from "@/lib/ErrorHandler";
+
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
+import { useClientErrorHandler } from "@/commons/lib/ErrorHandler";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();

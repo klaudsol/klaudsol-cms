@@ -48,7 +48,7 @@ const AppSidebar = () => {
       path: "/admin/settings",
       icon: <RiSettings3Line className='sidebar_button_icon'/>
     }:null),
-    (capabilities.includes(readUsers) || capabilities.includes(readGroups) ? {
+    (false ? {
       multiple: true,
       title: "Admin",
       subItems:[capabilities.includes(readUsers) ?

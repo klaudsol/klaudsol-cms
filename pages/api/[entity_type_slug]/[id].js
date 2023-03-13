@@ -30,14 +30,15 @@ import {
   generateS3ParamsForDeletion,
   generateEntries,
 } from "@/backend/data_access/S3";
-import { withSession } from "@/lib/Session";
-import { defaultErrorHandler } from "@/lib/ErrorHandler";
-import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
+import { withSession } from "@klaudsol/commons/lib/Session";
+import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders, handleRequests } from "@/lib/API";
+
+import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
-import { assert, assertUserCan } from "@/lib/Permissions";
-import { readContents, writeContents } from "@/lib/Constants";
+import { assert, assertUserCan } from "@klaudsol/commons/lib/Permissions";
+import { readContents, writeContents } from '@/lib/Constants';
 
 export default withSession(handleRequests({ get, del, put }));
 

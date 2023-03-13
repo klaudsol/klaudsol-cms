@@ -25,17 +25,17 @@ SOFTWARE.
 
 import Entity from "@backend/models/core/Entity";
 import EntityType from "@backend/models/core/EntityType";
-import { withSession } from "@/lib/Session";
-import { defaultErrorHandler } from "@/lib/ErrorHandler";
-import { OK, NOT_FOUND } from "@/lib/HttpStatuses";
+import { withSession } from "@klaudsol/commons/lib/Session";
+import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
+import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders, handleRequests } from "@/lib/API";
+import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
 import { addFilesToBucket, generateEntries } from "@backend/data_access/S3";
 import { transformQuery, sortData } from "@/components/Util";
-import { assert, assertUserCan } from "@/lib/Permissions";
-import { filterData } from "@/components/Util";
-import { readContents, writeContents } from "@/lib/Constants";
+import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
+import { filterData } from '@/components/Util';
+import { readContents, writeContents } from '@/lib/Constants';
 
 export default withSession(handleRequests({ get, post }));
 

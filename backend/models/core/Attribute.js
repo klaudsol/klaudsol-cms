@@ -1,4 +1,4 @@
-import DB from '@backend/data_access/DB';
+import DB from '@klaudsol/commons/lib/DB';
 import EntityType from '@backend/models/core/EntityType';
 
 

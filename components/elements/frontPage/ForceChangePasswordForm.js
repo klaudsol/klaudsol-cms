@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useReducer, useEffect } from "react";
-import { useFadeEffect, slsFetch } from "@/components/Util";
+import { useFadeEffect } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
