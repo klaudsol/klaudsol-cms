@@ -314,15 +314,7 @@ export default function ContentTypeBuilder({ cache }) {
           */}
 
             <AppContentBuilderTable typeSlug={entity_type_slug} />
-
-           {capabilities.includes(writeContentTypes) && <button
-              className="btn_add_field"
-              onClick={() => dispatch({ type: SET_SHOW, payload: true })}
-            >
-              <FaPlusCircle className="btn_add_field_icon mr-2" /> Add another
-              field collection type
-            </button>}
-
+            
             <AddEditAnotherFieldModal
               mode={ADD_MODE}
               formParams={formikParams}
