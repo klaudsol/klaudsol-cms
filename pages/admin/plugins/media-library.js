@@ -1,6 +1,6 @@
 import BasicLayout from "@/components/layouts/BasicLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import { getSessionCache } from "@/lib/Session";
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
 
 import { useState, useEffect } from "react";
 

@@ -1,10 +1,10 @@
-import People from '@backend/models/core/People';
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { OK, UNPROCESSABLE_ENTITY } from '@/lib/HttpStatuses';
-import UnauthorizedError from '@/components/errors/UnauthorizedError';
-import Session from '@backend/models/core/Session';
-import { assertUserIsLoggedIn } from '@/lib/Permissions';
+import People from '@klaudsol/commons/models/People';
+import { withSession } from '@klaudsol/commons/lib/Session';
+import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
+import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
+import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
+import Session from '@klaudsol/commons/models/Session';
+import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
 
 export default withSession(handler);
 

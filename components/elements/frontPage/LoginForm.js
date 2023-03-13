@@ -3,7 +3,8 @@ import {
   useLoginMode,
   LOGIN_MODE_SIGNUP,
 } from "@/components/contexts/LoginModeContext";
-import { useFadeEffect, slsFetch } from "@/components/Util";
+import { useFadeEffect } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { useRouter } from "next/router";
 import styles from "@/styles/FrontPageLayout.module.scss";
 import Link from "next/link";

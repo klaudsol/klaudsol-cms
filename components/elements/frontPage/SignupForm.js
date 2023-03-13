@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'; 
 import "cross-fetch/polyfill";
 import cx from 'classnames';
-import { backendPath } from '@/components/GlobalConstants';
+import { backendPath } from '@klaudsol/commons/lib/GlobalConstants';
 import { useLoginMode, LOGIN_MODE_LOGIN } from '@/components/contexts/LoginModeContext';
 import styles from '@/styles/FrontPageLayout.module.scss';
 

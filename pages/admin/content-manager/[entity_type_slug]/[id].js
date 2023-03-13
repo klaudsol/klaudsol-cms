@@ -1,11 +1,12 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
-import { getSessionCache } from "@/lib/Session";
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
 
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useCallback, useRef } from "react";
-import { slsFetch, sortByOrderAsc } from "@/components/Util";
+import { sortByOrderAsc } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 /** kladusol CMS components */
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";

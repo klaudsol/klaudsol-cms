@@ -1,6 +1,6 @@
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { assertUserIsLoggedIn } from '@/lib/Permissions';
+import { withSession } from '@klaudsol/commons/lib/Session';
+import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
+import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
 
 export default withSession(handler);
 

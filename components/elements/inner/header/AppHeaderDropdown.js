@@ -15,7 +15,7 @@ import { useRouter} from 'next/router';
 import RootContext from '@/components/contexts/RootContext';
 
 import avatar8 from '@/public/assets/images/avatars/patrick-square.png'
-import { slsFetch } from '@/components/Util';
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 import Link from 'next/link';
 
