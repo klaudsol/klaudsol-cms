@@ -1,20 +1,19 @@
 
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
+import { withSession } from '@klaudsol/commons/lib/Session';
+import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
 import {
   generateResource,
   addFileToBucket
 } 
 from "@/backend/data_access/S3";
 import { resourceValueTypes } from "@/components/cmsTypes";
-import { setCORSHeaders, parseFormData } from '@/lib/API';
-import { OK, NOT_FOUND, BAD_REQUEST } from "@/lib/HttpStatuses";
+import { setCORSHeaders, parseFormData } from '@klaudsol/commons/lib/API';
+import { OK, NOT_FOUND, BAD_REQUEST } from "@klaudsol/commons/lib/HttpStatuses";
 import Setting from '@/backend/models/core/Setting';
-import { assert } from '@/lib/Permissions';
+import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { resolveResource } from "@/components/Util";
 import { createHash } from "@/lib/Hash";
 import { readSettings, writeSettings } from '@/lib/Constants';
-import { assertUserCan } from 'lib/Permissions';
 
 export default withSession(handler);
 

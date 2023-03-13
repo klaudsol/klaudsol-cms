@@ -4,7 +4,7 @@ import SkeletonContentBuilder from "@/components/klaudsolcms/skeleton/SkeletonCo
 import AppContentBuilderButtons from "@/components/klaudsolcms/buttons/AppContentBuilderButtons";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { loadEntityType } from '@/components/reducers/actions';
-import { slsFetch } from '@/components/Util';  
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import AddEditAnotherFieldModal, {EDIT_MODE} from '@/components/klaudsolcms/modals/AddEditAnotherFieldModal';
 import { useCapabilities } from '@/components/hooks';
 import { writeContentTypes } from "@/lib/Constants";

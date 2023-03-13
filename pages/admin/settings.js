@@ -1,12 +1,13 @@
 import InnerSingleLayout from "@/components/layouts/InnerSingleLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import { getSessionCache } from "@/lib/Session";
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { Formik, Form } from "formik";
 import { useRef, useReducer, useEffect, useState, useCallback } from "react";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
-import { slsFetch, sortByOrderAsc } from "@/components/Util";
+import { sortByOrderAsc } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 /** react-icons */
 import { FaCheck, FaImage, FaTrash } from "react-icons/fa";

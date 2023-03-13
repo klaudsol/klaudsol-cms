@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useContext } from 'react';
 import { useRouter } from 'next/router'; 
 import RootContext from '@/components/contexts/RootContext';
-import { slsFetch } from '@/components/Util';
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { RESET_CLIENT_SESSION } from '@/lib/actions';
 
 const SidebarFooterIcon = ({title}) => {

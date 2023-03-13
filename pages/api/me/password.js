@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 **/
 
-import { withSession } from '@/lib/Session';
-import { defaultErrorHandler } from '@/lib/ErrorHandler';
-import { assert } from '@/lib/Permissions';
-import { OK, UNPROCESSABLE_ENTITY } from '@/lib/HttpStatuses';
-import Session from '@/backend/models/core/Session';
-import People from '@/backend/models/core/People';
-import RecordNotFound from 'components/errors/RecordNotFound';
+import { withSession } from '@klaudsol/commons/lib/Session';
+import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
+import { assert } from '@klaudsol/commons/lib/Permissions';
+import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
+import Session from '@klaudsol/commons/models/Session';
+import People from '@klaudsol/commons/models/People';
+import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 
 export default withSession(handler);
 

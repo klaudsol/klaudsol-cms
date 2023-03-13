@@ -1,4 +1,4 @@
-import DB from "@backend/data_access/DB";
+import DB from '@klaudsol/commons/lib/DB';
 
 class EntityTypes {
   /** get all entity types (for submenu list) */

@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import { generateRandVals } from '@/components/Util'
+import { generateRandVals } from '@klaudsol/commons/lib/Math';
 
 const S3_ACCESS_KEY_ID =
   process.env.KS_S3_ACCESS_KEY_ID ??
