@@ -8,8 +8,12 @@ import { FaCheck } from "react-icons/fa";
 import { useRef, useState } from 'react';
 import { slsFetch } from '@/components/Util'; 
 import AppModal from '@/components/klaudsolcms/AppModal';
+import { useClientErrorHandler } from "@/lib/ErrorHandler";
+import { useRouter } from "next/router";
 
 export default function Settings({cache}) {
+  const router = useRouter();
+  const errorHandler = useClientErrorHandler();
 
   const [isSaving, setSaving] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -44,6 +48,7 @@ export default function Settings({cache}) {
         } catch (error) {
           setModalMessage(error.message);
           setModalTitle("Error");
+          errorHandler(error);
         } finally {
           setSaving(false);
           setModalVisible(true);

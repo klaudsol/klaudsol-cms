@@ -2,6 +2,7 @@ import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 import { getSessionCache } from "@/lib/Session";
+import { useClientErrorHandler } from "@/lib/ErrorHandler";
 
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useCallback, useRef } from "react";
@@ -48,6 +49,7 @@ import {
 
 export default function Type({ cache }) {
   const router = useRouter();
+  const errorHandler = useClientErrorHandler();
   const capabilities = cache?.capabilities;
 
   const { entity_type_slug, id } = router.query;
@@ -59,7 +61,11 @@ export default function Type({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${cache.JWTToken}`
+                }
+            });
         const values = await valuesRaw.json();
 
         const entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
@@ -72,7 +78,7 @@ export default function Type({ cache }) {
         dispatch({ type: SET_VALUES, payload: entries });
         dispatch({ type: SET_ENTITY_TYPE_ID, payload: entity_type_id });
       } catch (ex) {
-        console.error(ex.stack);
+        errorHandler(ex);
       } finally {
         dispatch({ type: CLEANUP });
       }
@@ -105,7 +111,7 @@ export default function Type({ cache }) {
           });
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
-          console.error(ex);
+          errorHandler(ex);
         } finally {
           dispatch({ type: CLEANUP });
         }
@@ -161,7 +167,7 @@ export default function Type({ cache }) {
           });
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
-          console.error(ex);
+          errorHandler(ex);
         } finally {
           dispatch({ type: CLEANUP });
         }

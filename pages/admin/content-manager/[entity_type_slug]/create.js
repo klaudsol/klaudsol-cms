@@ -1,5 +1,6 @@
 import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@/lib/Session";
+import { useClientErrorHandler } from "@/lib/ErrorHandler";
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useRef } from "react";
 import { slsFetch, sortByOrderAsc } from "@/components/Util";
@@ -35,6 +36,7 @@ import { RiQuestionLine } from "react-icons/ri";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
+  const errorHandler = useClientErrorHandler();
   const capabilities = cache?.capabilities;
 
   const { entity_type_slug } = router.query;
@@ -49,7 +51,11 @@ export default function CreateNewEntry({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`, {
+                headers: {
+                    Authorization: `Bearer ${cache.JWTToken}`
+                }
+            });
         const values = await valuesRaw.json();
 
         const validateValues = metaDataHandler(
@@ -72,7 +78,7 @@ export default function CreateNewEntry({ cache }) {
           payload: values.metadata.entity_type_id,
         });
       } catch (ex) {
-        console.error(ex.stack);
+        errorHandler(ex);
       } finally {
         dispatch({ type: CLEANUP });
       }
@@ -127,7 +133,7 @@ export default function CreateNewEntry({ cache }) {
           const { message, homepage } = await response.json();
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
-          console.error(ex);
+          errorHandler(ex);
         } finally {
           dispatch({ type: CLEANUP });
         }
