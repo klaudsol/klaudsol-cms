@@ -52,6 +52,9 @@ export default function MyApp({ Component, pageProps }) {
       </Head>
       <RootContext.Provider value={{ state, dispatch }}>
         <div className={poppins.className}>
+        {/* When we have a reusable layout that can be used for all of the pages */}
+        {/* after logging in, transfer this modal and its dependencies */}
+        {/* to the file of that layout. */}
          <AppModal 
             show={state.isTokenExpired} 
             onClose={logout}
