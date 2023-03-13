@@ -332,10 +332,12 @@
 
 "@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git":
   version "1.0.0"
-  resolved "https://github.com/klaudsol/klaudsol-commons.git#6a8face757f48e84c101c29f46c89ae732efdee6"
+  resolved "https://github.com/klaudsol/klaudsol-commons.git#7ebba70118c931412b0822695ecdb1b9d2b0064a"
   dependencies:
     aws-sdk "^2.1333.0"
     es6-promisify "^7.0.0"
+    iron-session "^6.3.1"
+    multer "^1.4.5-lts.1"
 
 "@next/env@13.2.4":
   version "13.2.4"
@@ -2544,7 +2546,7 @@ invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-iron-session@^6.1.2:
+iron-session@^6.1.2, iron-session@^6.3.1:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/iron-session/-/iron-session-6.3.1.tgz#9c8b331acc0f9561dd0f942b089e8197576a03de"
   integrity sha512-3UJ7y2vk/WomAtEySmPgM6qtYF1cZ3tXuWX5GsVX4PJXAcs5y/sV9HuSfpjKS6HkTL/OhZcTDWJNLZ7w+Erx3A==
