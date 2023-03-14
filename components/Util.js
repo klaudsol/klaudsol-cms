@@ -41,7 +41,7 @@ export const sortByOrderAsc = (first, second) =>
   first[1].order - second[1].order;
 
 export const isNumber = (str) => {
-  return !isNaN(str);
+  return !isNaN(str) && str !== '';
 };
 
 export const resolveResource = (rsc) => {
@@ -141,16 +141,18 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualO
 
 const transformConditions = (arr) => {
   const transformedConditions = arr.map((obj) => {
+    const typeFinder = `(attributes.name = "${obj.identifier}")`;
     switch (obj.operator) {
       case "$contains":
       case "$notContains":
-        return `(attributes.name = "${obj.identifier}") AND (${valueTypesIterator(
+        return `${typeFinder} AND (${valueTypesIterator(
           operators[obj.operator],
           obj.value[0],
           true
         )})`;
       case "$eq":
-        return `(attributes.name = "${obj.identifier}") AND (${valueTypesIterator(
+
+        return `${typeFinder} AND (${valueTypesIterator(
           operators[obj.operator],
           obj.value[0],
           false,
@@ -158,7 +160,7 @@ const transformConditions = (arr) => {
         )})`;
 
       default:
-        return `(attributes.name = "${obj.identifier}") AND (${valueTypesIterator(
+        return `${typeFinder} AND (${valueTypesIterator(
           operators[obj.operator],
           obj.value[0]
         )})`;

@@ -69,44 +69,41 @@ class Entity {
     );
   }
 
-  static async where({ entity_type_slug, entry, page }, queries) {
+  static async where(
+    { entity_type_slug, entry = undefined, page = undefined },
+    queries
+  ) {
     const db = new DB();
-    
+
     let generatedSQL;
 
-    if(Object.values(queries).length){
-      generatedSQL = generateSQL(queries, entity_type_slug);      
+    if (Object.values(queries).length) {
+      generatedSQL = generateSQL(queries, entity_type_slug);
     }
-    
-    let totalRows;
-    let totalOrders;
-   
-    const totalRowsSQL = `SELECT COUNT(entities.id) 
-                          from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
-                          WHERE entity_types.slug = :entity_type_slug;
-                           `;
 
-    const totalRowsData = await db.executeStatement(totalRowsSQL, [
-      { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
-    ]);
+    let limit;
+    let offset;
+    let filterQuery;
+    let limitAndOffsetQuery;
 
-    [{ longValue: totalRows }] = totalRowsData.records[0];
-
-    const totalOrdersSQL = `SELECT COUNT(attributes.order)
-    from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
+    const totalTypesSQL = `
+    SELECT COUNT(entity_types.id)
+    from entity_types 
     LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
     WHERE entity_types.slug = :entity_type_slug`;
 
-    const totalOrdersData = await db.executeStatement(totalOrdersSQL, [
+    const totalTypesData = await db.executeStatement(totalTypesSQL, [
       { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
     ]);
-    [{ longValue: totalOrders }] = totalOrdersData.records[0];
+    const [{ longValue: totalTypes }] = totalTypesData.records[0];
 
-    let limit =
-      entry && totalOrders !== 0 && totalRows !== 0
-        ? (totalOrders / totalRows) * entry
-        : 10;
-    let offset = page ? limit * page : 0;
+    limit = entry && totalTypes !== 0 ? totalTypes * entry : 10;
+    offset = page ? limit * page : 0;
+
+    limitAndOffsetQuery =
+      entry && page ? `LIMIT ${limit} OFFSET ${offset}` : "";
+
+    filterQuery = generatedSQL ? `AND entities.id IN (${generatedSQL})` : "";
 
     const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
                 attributes.name, attributes.type, attributes.\`order\`,
@@ -121,11 +118,11 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug  
-                    ${generatedSQL ? `AND entities.id IN (${generatedSQL})` : ''}
+                    ${filterQuery}
                 ORDER BY entities.id, attributes.\`order\` ASC
-                ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
+                    ${limitAndOffsetQuery}
                 `;
-    
+
     const dataRaw = await db.executeStatement(sqlData, [
       { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
     ]);
@@ -162,7 +159,21 @@ class Entity {
       })
     );
 
-    return { total_rows: totalRows, data };
+    const sqlRowData = `SELECT COUNT(*)
+    FROM (SELECT DISTINCT entities.slug FROM entities
+                LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
+                LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
+                LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
+                WHERE entity_types.slug = :entity_type_slug ${filterQuery}
+                ) AS subquery`;
+
+    const dataRow = await db.executeStatement(sqlRowData, [
+      { name: "entity_type_slug", value: { stringValue: entity_type_slug } },
+    ]);
+
+    const [{ longValue: totalRow }] = dataRow.records[0];
+    
+    return { total_rows: totalRow, data };
   }
 
   //Work in progress
