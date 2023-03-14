@@ -8,6 +8,7 @@ import "bootstrap/dist/css/bootstrap-reboot.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@/styles/globals.scss";
 import "@/styles/klaudsolcms.scss";
+import "@/styles/general.scss";
 
 import { useEffect } from "react";
 import { useRouter } from "next/router";

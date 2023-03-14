@@ -1,0 +1,137 @@
+@import '@/styles/ksStyles/ks-colors.scss';
+@import '@/styles/ksStyles/ks-mixins.scss';
+@import '@/styles/ksStyles/ks-dimensions.scss';
+
+/** General SCSS 
+ ** Normally used for general components
+ ** 
+**/
+
+.general {
+  // Input Types (Textboxes & Textareas)
+  &-input {
+    &-title {
+      @include font-semi-bold(12px);
+      @include margin-tb-lr(5px);
+      text-transform: capitalize;
+
+      &-slug {
+        @include font-semi-bold(12px);
+        @include padding-all();
+        @include margin-all();
+        text-transform: capitalize;
+        border: none;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+
+        &-icon {
+          @include font-regular(14px);
+          margin-left: 3px;
+          margin-top: -10px;
+        }
+
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
+    }
+
+    &-text {
+      @include general-text-input(12px);
+    }
+
+    &-textarea {
+      @include general-text-input(12px);
+      @include width-height(100%, 15vh);
+      max-height: 500px;
+      line-height: 1.5;
+      resize: none;
+    } 
+
+    &-error {
+      border: 1px solid red;
+      outline: none;
+
+      &-text {
+        @include font-regular(11px);
+        color: red;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  // Buttons 
+  &-button {
+    &-delete {
+      @include font-semi-bold(12px);
+      @include padding-tb-lr(10px, 15px);
+      width: max-content;
+      background-color: maroon;
+      border-radius: 5px;
+      border: none;
+      color: white;
+    }
+
+    &-save {
+      @include font-semi-bold(12px);
+      @include padding-tb-lr(10px, 10px);
+      @include flex(center, center, row);
+      width: 110px;
+      background-color: #467286;
+      border-radius: 5px;
+      border: 1px solid #467286;
+      color: white;
+    }
+
+    &-cancel {
+      @include font-semi-bold(12px);
+      @include padding-tb-lr(10px, 15px);
+      width: 100px;
+      background-color: transparent;
+      border: 1px solid #455a64;
+      border-radius: 5px;
+      color: #455a64;
+    }
+
+    &-icon {
+      margin-right: 5px;
+    }
+  }
+
+  // Tables 
+  &-table {
+    &-header {
+      &-slug {
+        @include font-regular(12px);
+        @include padding-all();
+        @include margin-tb-lr(5px);
+        text-transform: uppercase;
+        background-color: transparent !important;
+        border: none;
+
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
+
+  // Tooltips
+  &-tooltip {
+    &-button {
+      background-color: transparent !important
+    }
+    &-icon {
+      @include font-regular(14px);
+      margin-left: 3px;
+      margin-bottom: 2px;
+    }
+  }
+
+  // Header
+  &-header {
+    @include font-medium(30px);
+    text-transform: capitalize;
+  }
+}
+  

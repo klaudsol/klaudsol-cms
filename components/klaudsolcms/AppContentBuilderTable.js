@@ -61,6 +61,10 @@ const AppContentBuilderTable = ({typeSlug}) => {
      if(formRef.current) formRef.current.handleSubmit();
     };
 
+    const onEditClose = () => {
+      setEditModalVisible(false)
+    }
+
     const updateFormParamsFromAttribute = attribute => ({
       innerRef: formRef,
       initialValues: {
@@ -73,7 +77,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
  
         (async () => {
           try {
-
+            setLoading(true)
             const response = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
               method: 'PUT',
               headers: {
@@ -91,6 +95,7 @@ const AppContentBuilderTable = ({typeSlug}) => {
           } finally {
             await loadEntityType({rootState, rootDispatch, typeSlug});
             setEditModalVisible(false);
+            setLoading(false)
           }
         })();
       }
@@ -151,8 +156,9 @@ const AppContentBuilderTable = ({typeSlug}) => {
             mode={EDIT_MODE}
             show={isEditModalVisible}
             formParams={formParams}
-            onClose={() => setEditModalVisible(false)}
+            onClose={onEditClose}
             onClick={onUpdateField}
+            isLoading={loading}
           />
         </> 
     );

@@ -3,20 +3,21 @@ import FileField from "@/components/fields/FileField";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import ErrorRenderer from "./ErrorRenderer";
 
-const UploadRenderer = ({ className, name, type, errors, touched, accept }) => (
+const UploadRenderer = ({ className, name, type, errors, touched, isErrorDisabled, accept, ...params }) => (
   <>
     <FileField
       accept={accept}
       name={name}
       className={cx("input_text mb-2", className)}
       validate={(v) => TypesValidator(v, type)}
-      style={
+      style={ !isErrorDisabled &&
         errors[name] && touched[name]
           ? { borderColor: "red", outlineColor: "red" }
           : {}
       }
+      {...params}
     />
-    <ErrorRenderer name={name} errors={errors} touched={touched} />
+    {!isErrorDisabled && <ErrorRenderer name={name} errors={errors} touched={touched} />}
   </>
 );
 

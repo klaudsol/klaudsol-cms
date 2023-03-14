@@ -4,7 +4,7 @@ import { TYPES_REGEX } from "@/components/renderers/validation/TypesRegex";
 const TypesValidator = (value, type) => {
   let errorMessage;
   if (!value || TYPES_REGEX.WHITESPACE.test(value))
-    return (errorMessage = "Required"); // If value is undefined or if it only contains spaces, then return error
+    return (errorMessage = "This field is required"); // If value is undefined or if it only contains spaces, then return error
 
   switch (type) {
     case CMS_TYPES.FLOAT:
