@@ -11,10 +11,12 @@ import {
   SET_COLUMNS,
   SET_ENTITY_TYPE_NAME,
   SET_ENTITY_TYPE_ID,
-  SET_VALIDATE_ALL
+  SET_VALIDATE_ALL,
+  SET_S3_TO_DELETE
 } from "@/lib/actions";
 
 export const initialState = {
+  imageToDelete: [],
   values: [],
   attributes: [],
   columns: [],
@@ -26,7 +28,7 @@ export const initialState = {
   show: false,
   entityTypeId: null,
   modalContent: null,
-  allValidates: null
+  allValidates: null,
 };
 
 export const entityReducer = (state, action) => {
@@ -109,6 +111,15 @@ export const entityReducer = (state, action) => {
       return {
         ...state,
         allValidates: action.payload
+      }
+    case SET_S3_TO_DELETE:
+      return {
+        ...state,
+        imageToDelete: action.payload
+      }
+    default:
+      return {
+        ...state
       }
   }
 };
