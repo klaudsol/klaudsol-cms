@@ -1,49 +1,37 @@
-import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 import { getSessionCache } from "@/lib/Session";
-
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useRef } from "react";
 import { slsFetch, sortByOrderAsc } from "@/components/Util";
 import { Formik, Form, Field } from "formik";
-
-/** kladusol CMS components */
-import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
-import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
-import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
-import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
-
-/** react-icons */
-import { FaCheck, FaImage } from "react-icons/fa";
-import { MdModeEditOutline } from "react-icons/md";
-import { VscListSelection } from "react-icons/vsc";
-
-import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
-import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-
-import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import TypesValidator from "@/components/renderers/validation/RegexValidator";
-
-import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
-
+import { slugTooltipText } from "constants";
 import {
   initialState,
   createEntriesReducer,
 } from "@/components/reducers/createReducer";
-
 import {
   LOADING,
-  REFRESH,
   CLEANUP,
   SAVING,
   SET_ATTRIBUTES,
-  SET_ENTRIES,
   SET_SHOW,
   SET_ENTITY_TYPE_ID,
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
 } from "@/lib/actions";
+import { FaCheck } from "react-icons/fa";
+import { DEFAULT_SKELETON_ROW_COUNT } from "lib/Constants";
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+import classname from "classnames";
+import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
+import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
+import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
+import ContentManagerLayout from "components/layouts/ContentManagerLayout";
+import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import TypesValidator from "@/components/renderers/validation/RegexValidator";
+import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
+import { RiQuestionLine } from "react-icons/ri";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
@@ -97,10 +85,6 @@ export default function CreateNewEntry({ cache }) {
       formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
 
-  const createSlug = (slug) => {
-    return slug.replaceAll(" ", "-").toLowerCase();
-  };
-
   const formatSlug = (slug) => {
     return slug.toLowerCase().replace(/\s+/g, "-");
   };
@@ -128,9 +112,8 @@ export default function CreateNewEntry({ cache }) {
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
-
+        
         const formattedEntries = convertToFormData(entry);
-
         try {
           dispatch({ type: SAVING });
           const response = await slsFetch(`/api/${entity_type_slug}`, {
@@ -150,26 +133,18 @@ export default function CreateNewEntry({ cache }) {
 
   return (
     <CacheContext.Provider value={cache}>
-      <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
-        <ContentManagerLayout>
+      <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
+       <ContentManagerLayout currentTypeSlug={entity_type_slug}>
           <div className="py-4">
-            <AppBackButton
-              link={`/admin/content-manager/${entity_type_slug}`}
-            />
-            <div className="d-flex justify-content-between align-items-center mt-0 mx-3 px-0">
+            <div className="d-flex justify-content-between align-items-center mt-2 mx-0 px-0">
               <div>
-                <h3> Create an Entry </h3>
+                <div className="general-header"> Create an Entry </div>
                 <p> API ID : {entity_type_slug} </p>
               </div>
-              <AppButtonLg
-                title={state.isSaving ? "Saving" : "Save"}
-                icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
-                onClick={onSubmit}
-              />
             </div>
-            <div className="row mt-4">
-              <div className="col-9">
-                <div className="container_new_entry py-4 px-4">
+            <div className="row mt-4 mx-0 px-0">
+              <div className="col-12 mx-0 px-0">
+                <div className=" py-0 px-0 mx-0">
                   {state.isLoading &&
                     Array.from(
                       { length: DEFAULT_SKELETON_ROW_COUNT },
@@ -181,15 +156,19 @@ export default function CreateNewEntry({ cache }) {
                         </div>
                       )
                     )}
-
                   {!state.isLoading && (
                     <Formik {...formikParams}>
                       {(props) => (
-                        <Form>
-                          <p className="mt-1">
-                            {" "}
-                            <b> slug </b>
-                          </p>
+                        <Form>  
+                          <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
+                          <p className="general-input-title-slug"> Slug </p> 
+                          <GeneralHoverTooltip 
+                            icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
+                            className="general-table-header-slug"
+                            tooltipText={slugTooltipText}
+                            position="left"
+                          /> 
+                          </div>
                           <Field
                             name="slug"
                             validate={(e) => TypesValidator(e, "text")}
@@ -199,7 +178,7 @@ export default function CreateNewEntry({ cache }) {
                                 <input
                                   type="text"
                                   {...field}
-                                  className="input_text mb-2"
+                                  className={classname("general-input-text", {"general-input-error" : meta.touched && meta.error})}
                                   style={
                                     meta.touched && meta.error
                                       ? {
@@ -210,7 +189,7 @@ export default function CreateNewEntry({ cache }) {
                                   }
                                 />
                                 {meta.touched && meta.error && (
-                                  <div style={{ color: "red" }}>
+                                  <div className="general-input-error-text">
                                     {meta.error}
                                   </div>
                                 )}
@@ -222,10 +201,7 @@ export default function CreateNewEntry({ cache }) {
                             .map(([attributeName, attribute]) => {
                               return (
                                 <div key={attributeName}>
-                                  <p className="mt-1">
-                                    {" "}
-                                    <b> {attributeName} </b>
-                                  </p>
+                                  <p className="general-input-title"> {attributeName.replaceAll('_', " ")}  </p>
                                   <AdminRenderer
                                     errors={props.errors}
                                     touched={props.touched}
@@ -240,8 +216,22 @@ export default function CreateNewEntry({ cache }) {
                     </Formik>
                   )}
                 </div>
+                {!state.isLoading &&
+                <div className="d-flex flex-row justify-content-center my-4">
+                  <AppButtonLg
+                    title="Cancel"
+                    onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
+                    className="general-button-cancel"
+                  />
+                  <AppButtonLg
+                    title={state.isSaving ? "Saving" : "Save"}
+                    icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
+                    onClick={!state.isSaving ? onSubmit : null}
+                    className="general-button-save"
+                  />
+                </div>}
               </div>
-              <div className="col-3 mx-0">
+              {/* <div className="col-3 mx-0">
                 <div className="container_new_entry px-3 py-4">
                   <p style={{ fontSize: "11px" }}> INFORMATION </p>
                   <div className="block_bar"></div>
@@ -288,7 +278,7 @@ export default function CreateNewEntry({ cache }) {
                   <VscListSelection className="icon_block_button" /> Configure
                   the view{" "}
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
           <AppInfoModal

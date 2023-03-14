@@ -3,30 +3,33 @@ import { Field } from "formik";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import ErrorRenderer from "./ErrorRenderer";
 
-const TextRenderer = ({ 
+const TextAreaRenderer = ({ 
   className, 
   name, 
   type, 
   errors, 
-  touched }) => (
+  touched
+}) => (
   <>
     <Field
       type="textarea"
       name={name}
-      className={cx("input_textarea", className)}
       validate={(v) => TypesValidator(v, type)}
-      style={
-        errors[name] && touched[name]
-          ? { borderColor: "red", outline: "none" }
-          : {}
-      }
-    />
+    >
+      {({ field }) => (
+        <textarea
+          className={cx("general-input-textarea", 
+          {"general-input-error": errors[name] && touched[name]})}
+          {...field}
+        />
+      )}
+    </Field>
     <ErrorRenderer 
       name={name} 
       errors={errors} 
       touched={touched} 
-      />
+    />
   </>
 );
 
-export default TextRenderer;
+export default TextAreaRenderer;

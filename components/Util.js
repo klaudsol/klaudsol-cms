@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo } from 'react'; 
 import { COMMUNICATION_LINKS_FAILURE, UNAUTHORIZED } from '@/lib/HttpStatuses';
+import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
+import { promisify } from "es6-promisify";
+import crypto from "crypto";
 
 export const useFadeEffect = (ref, deps) => {
     
@@ -61,6 +64,13 @@ export const slsFetch = async (url, params, extra) => {
     }
 }  
 
+export const generateRandVals = async (size) => {
+  const randomBytes = promisify(crypto.randomBytes);
+  const rawBytes = await randomBytes(size);
+  const randVal = rawBytes.toString("hex");
+
+  return randVal;
+};
 
 export const useIndex = (array) => useMemo(() => (
     Object.fromEntries(array.map((item) => [item.id, item]))
@@ -71,9 +81,25 @@ export const sortByOrderAsc = (first, second) => first[1].order - second[1].orde
 export const isNumber = (str) => {
   return !isNaN(str);
 }
+
+export const resolveResource = (rsc) => {
+  if(!rsc) return [];
+
+ if(TYPES_REGEX.IMAGE.test(rsc.value)){
+   
+  const bucketBaseUrl = process.env.KS_S3_BASE_URL;
+  const imageURL = `${bucketBaseUrl}/${rsc.value}`;
+
+  return {...rsc, link:imageURL} 
+ }
+ else{
+  return rsc
+ }
+}
+
+export const findContentTypeName = (arr,slugName) => (
+arr.find((obj)=> obj.entity_type_slug === slugName));
   
-
-
 const filterQuery = (queries) => (
   Object.entries(queries)
    .filter(([key, value]) => key.startsWith('filters'))
@@ -120,7 +146,7 @@ export const filterData = (queries,Datas) => {
   // frontend value is expected to be handled by JSQ library in the future
 
   // Originally, values are only nested when it detects multiple values with the same operator type,
-  // eg: However, In our case, we are forcing all values to be nested in an array.
+  // However, In our case, we are forcing all values to be nested in an array.
   // also, remove the filters keyword from the property name when returned
 
   // input:  { 'filters[slug][$eq]': ['pizza','potato'],filters[price][$lt]:'4000', entity_type_slug: 'menus' }

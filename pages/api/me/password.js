@@ -54,26 +54,29 @@ async function update(req, res) {
     }, req);
 
     const { session_token } = req.session;
-    const { current_password, password, confirmation_password } = req.body; 
+    const { currentPassword, newPassword, confirmNewPassword } = req.body; 
 
     //these should be captured by the front-end validator, but the backend should detect
     //it as well.
-    if (!password) {
+    if (!newPassword) {
       res.status(UNPROCESSABLE_ENTITY).json({message: 'A password is required.'}); 
       return;
     }
 
-    if (password !== confirmation_password) {
+    if (newPassword !== confirmNewPassword) {
       res.status(UNPROCESSABLE_ENTITY).json({message: 'The password does not match the confirmation password.'});
       return;
     } 
 
-
-
-
     const session = await Session.getSession(session_token);
-    await People.updatePassword({id: session.people_id, oldPassword: current_password, newPassword: password});
-
+    const forcePasswordChange = await People.updatePassword({id: session.people_id, oldPassword: currentPassword, newPassword});
+  
+    req.session.cache = {
+      ...req.session.cache,
+      forcePasswordChange,
+    };
+    await req.session.save();
+    
     res.status(OK).json({message: 'Successfully changed your password.'}); 
   }
   catch (error) {

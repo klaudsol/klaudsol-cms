@@ -125,19 +125,23 @@ class Entity {
   static async findByPageAndEntry({entity_type_slug , entry, page }) {
     const db = new DB();
      
+
     let totalRows;
     let totalOrders;
     
+
     const totalRowsSQL = `SELECT COUNT(entities.id) 
                           from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
                           WHERE entity_types.slug = :entity_type_slug;
-                          `;
+                           `;
 
     const totalRowsData = await db.executeStatement(totalRowsSQL,[
       {name: 'entity_type_slug', value:{stringValue: entity_type_slug}},
     ]);
+    
 
     [{longValue:totalRows}] = totalRowsData.records[0]
+
 
     const totalOrdersSQL = `SELECT COUNT(attributes.order)
     from entity_types LEFT JOIN entities ON entities.entity_type_id = entity_types.id 
@@ -149,7 +153,9 @@ class Entity {
     ]);
     [{longValue:totalOrders}] = totalOrdersData.records[0]
     
-    let limit = entry ? (( totalOrders / totalRows ) * entry ) : 10;
+    let limit = entry && totalOrders !== 0 && totalRows !== 0 ? 
+    (( totalOrders / totalRows ) * entry)  : 10;
+  
     let offset = page ? limit * page : 0
 
     const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
@@ -166,7 +172,7 @@ class Entity {
                 WHERE 
                     entity_types.slug = :entity_type_slug  
                 ORDER BY entities.id, attributes.\`order\` ASC
-                LIMIT ${limit} OFFSET ${offset}
+                ${entry && page ? `LIMIT ${limit} OFFSET ${offset}`:' '}
                 `;
               
     const dataRaw = await db.executeStatement(sql, [
@@ -274,13 +280,14 @@ class Entity {
   
 
   static async delete({id}) {
+    console.log(id)
     const db = new DB();
     const deleteEntitiesSQL = 'DELETE from entities where id = :id'
     const deleteAttributesSQL = 'DELETE from attributes where entity_type_id = :id'
     const deleteValuesSQL = 'DELETE from \`values\` where entity_id = :id'
 
     let executeStatementParam = [
-      {name: 'id', value:{stringValue: id}}
+      {name: 'id', value:{longValue: id}}
     ]
     await db.executeStatement(deleteEntitiesSQL, executeStatementParam);
     await db.executeStatement(deleteAttributesSQL, executeStatementParam);
