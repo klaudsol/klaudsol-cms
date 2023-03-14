@@ -1,41 +1,37 @@
 @import './ks-colors.scss';
 @import './ks-dimensions.scss';
 
-@import url("https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i");
-
-$font-family: 'Poppins', sans-serif !default;
 $font-size: 12px !default;
 $font-style: normal !default;
 
-@mixin font-base($font-size, $font-family, $font-style) {
+@mixin font-base($font-size, $font-style) {
   font-size: $font-size;
-  font-family: $font-family;
   font-style: $font-style;
   letter-spacing: 0.025em;
 }
 
-@mixin font-light($font-size: $font-size, $font-family: $font-family, $font-style: $font-style) {
-  @include font-base($font-size, $font-family, $font-style);
+@mixin font-light($font-size: $font-size, $font-style: $font-style) {
+  @include font-base($font-size, $font-style);
   font-weight: 300;
 }
 
-@mixin font-regular($font-size: $font-size, $font-family: $font-family, $font-style: $font-style) {
-  @include font-base($font-size, $font-family, $font-style);
+@mixin font-regular($font-size: $font-size, $font-style: $font-style) {
+  @include font-base($font-size, $font-style);
   font-weight: 400;
 }
 
-@mixin font-medium($font-size: $font-size, $font-family: $font-family, $font-style: $font-style) {
-  @include font-base($font-size, $font-family, $font-style);
+@mixin font-medium($font-size: $font-size, $font-style: $font-style) {
+  @include font-base($font-size, $font-style);
   font-weight: 500;
 }
 
-@mixin font-semi-bold($font-size: $font-size, $font-family: $font-family, $font-style: $font-style) {
-  @include font-base($font-size, $font-family, $font-style);
+@mixin font-semi-bold($font-size: $font-size, $font-style: $font-style) {
+  @include font-base($font-size, $font-style);
   font-weight: 600;
 }
 
-@mixin font-bold($font-size: $font-size, $font-family: $font-family, $font-style: $font-style) {
-  @include font-base($font-size, $font-family, $font-style);
+@mixin font-bold($font-size: $font-size, $font-style: $font-style) {
+  @include font-base($font-size, $font-style);
   font-weight: 700;
 }
 

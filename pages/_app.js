@@ -12,7 +12,13 @@ import "@/styles/general.scss";
 
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { Poppins } from '@next/font/google';
 import * as gtag from "@/lib/gtag";
+
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+})
 
 export default function MyApp({ Component, pageProps }) {
   const [state, dispatch] = useReducer(rootReducer, rootInitialState);
@@ -36,7 +42,7 @@ export default function MyApp({ Component, pageProps }) {
         </title>
       </Head>
       <RootContext.Provider value={{ state, dispatch }}>
-        <div>
+        <div className={poppins.className}>
          <Component {...pageProps} />
         </div>
       </RootContext.Provider>
