@@ -91,7 +91,7 @@ export default function ContentManager({ cache }) {
         
         dispatch({ type: SET_COLUMNS, payload: columns });
         dispatch({ type: SET_VALUES, payload: entries });
-        dispatch({ type: SET_SEARCH_ATTRIBUTE, payload: attributes[0] })
+        !state.searchAttribute && dispatch({ type: SET_SEARCH_ATTRIBUTE, payload: attributes[0] })
         dispatch({ type: SET_ATTRIBUTES, payload: attributes })
         controllerRef.current = null;
       } catch (ex) {
