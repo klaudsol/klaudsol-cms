@@ -330,9 +330,9 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git":
+"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git#v1.0.1":
   version "1.0.0"
-  resolved "https://github.com/klaudsol/klaudsol-commons.git#88123316758287471a2c16d9e558e5e95df412a5"
+  resolved "https://github.com/klaudsol/klaudsol-commons.git#f94c7dcfde5569d0ef14c01e14ed33ea114171be"
   dependencies:
     aws-sdk "^2.1333.0"
     es6-promisify "^7.0.0"
