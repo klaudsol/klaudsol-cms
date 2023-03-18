@@ -119,13 +119,12 @@ async function handler(req, res) {
       };
     }, initialMetadata);
 
-    let data;
-    if (sortValue) data = sortData(dataTemp.indexedData, sortValue);
+    const data = Object.values(dataTemp.indexedData);
 
-    const output = {
-      data: data ? { ...data } : dataTemp.indexedData,
-      metadata: metadata,
-    };
+    const output = { 
+      data,
+      metadata,
+    }
 
     output.metadata.hash = createHash(output);
 
