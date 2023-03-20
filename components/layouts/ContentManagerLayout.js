@@ -6,7 +6,7 @@ const ContentManagerLayout = ({children,currentTypeSlug}) => {
     <ClientSessionHandler>
         <AppSidebar />
         <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
-          <ContentManagerSubMenu title='Content' currentTypeSlug={currentTypeSlug}/>
+          {/* <ContentManagerSubMenu title='Content' currentTypeSlug={currentTypeSlug}/> */}
             <div className="body flex-grow-1 px-3 main-container">
               <AppContent>
                     {children}

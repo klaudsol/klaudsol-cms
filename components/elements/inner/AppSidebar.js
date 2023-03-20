@@ -73,7 +73,23 @@ const AppSidebar = () => {
   
   return (
     <>
-     {rootState.collapse ? <CollapsedSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> : <FullSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />}
+     {rootState.collapse ? 
+        <CollapsedSidebar 
+            sidebarButtons={sidebarButtons} 
+            firstName={firstName} 
+            lastName={lastName} 
+            defaultEntityType={defaultEntityType} 
+            router={router} 
+            setCollapse={(e) => rootDispatch({type: SET_COLLAPSE, payload: e})}
+        /> : 
+        <FullSidebar 
+            sidebarButtons={sidebarButtons} 
+            firstName={firstName} 
+            lastName={lastName} 
+            defaultEntityType={defaultEntityType} 
+            router={router}
+            setCollapse={(e) => rootDispatch({type: SET_COLLAPSE, payload: e})} 
+        />}
     </>
   )
 }

@@ -25,6 +25,7 @@ import {
   contentManagerReducer,
   initialState,
 } from "@/components/reducers/contentManagerReducer";
+import { loadEntityTypes } from '@/components/reducers/actions';
 import {
   LOADING,
   SET_ENTITY_TYPE_NAME,
@@ -45,11 +46,22 @@ export default function ContentManager({ cache }) {
   const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
-  const { state: {currentContentType:{ entity_type_name, entity_type_slug: headerSlug } } } = useContext(RootContext);
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const { currentContentType: { entity_type_name, entity_type_slug: headerSlug } } = rootState;
 
- const [state, dispatch] = useReducer(contentManagerReducer, initialState);
+  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
   /*** Entity Types List ***/
+  useEffect(() => { 
+    (async () => {
+      await loadEntityTypes({
+        rootState, 
+        rootDispatch, 
+        currentTypeSlug: entity_type_slug
+      });
+    })();
+  }, [rootState, entity_type_slug]);
+
   useEffect(() => {
     (async () => {
       try {
