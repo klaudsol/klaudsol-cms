@@ -132,7 +132,7 @@ export default function ContentTypeBuilder({ cache }) {
         currentTypeSlug: entity_type_slug
       });
     })();
-  }, [rootState, entity_type_slug]);
+  }, [entity_type_slug]);
 
   useEffect(() => {
     (async () => {

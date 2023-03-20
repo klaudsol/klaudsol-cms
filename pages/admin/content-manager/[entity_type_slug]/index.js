@@ -66,7 +66,7 @@ export default function ContentManager({ cache }) {
         currentTypeSlug: entity_type_slug
       });
     })();
-  }, [rootState, entity_type_slug]);
+  }, [entity_type_slug]);
 
   useEffect(() => {
     (async () => {
