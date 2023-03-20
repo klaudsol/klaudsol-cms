@@ -5,7 +5,7 @@ import React,{ useState } from 'react';
 import Link from 'next/link';
 import 'simplebar/dist/simplebar.min.css'
 import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
-import AppEntityTypeList from '@/components/klaudsolcms/AppEntityTypeList';
+import AppContentLink from '@/components/klaudsolcms/routers/AppContentLink';
 import { BiBuildings } from 'react-icons/bi';
 import { BsFillGearFill } from 'react-icons/bs';
 import { MdKeyboardArrowUp } from 'react-icons/md';
@@ -43,17 +43,17 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
 
                  return !button.multiple ? 
                  <div className='sidebar_button_category_container' key={i}>
-                    <Link 
+                    {(button.title === 'Content Manager' || 
+                      button.title === 'Content-Type Builder') ? 
+                      <AppContentLink button={button}/> :
+                      <Link 
                         key={i} 
-                        href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
+                        href={button.path} 
                         className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}
                         passHref
-                    >
-                      {button.icon} {button.title}
-                    </Link>
-                    {(button.title === 'Content Manager' || 
-                      button.title === 'Content-Type Builder') && 
-                      <AppEntityTypeList baseUrl={button.path}/>}
+                      >
+                        {button.icon} {button.title}
+                      </Link>}
                   </div>
                   :
                   <div className='sidebar_button_category_container' key={i}>

@@ -51,12 +51,23 @@ export default function ContentManager({ cache }) {
 
   const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
+  /* const onStartLoad = () => { */
+  /*   //only display on first load */
+  /*   if(!rootState.entityTypesHash) { */
+  /*     dispatch({type: LOADING, payload: true}); */
+  /*   } */
+  /* }; */
+  /**/
+  /* const onEndLoad = () => dispatch({type: LOADING, payload: false}); */
+
   /*** Entity Types List ***/
   useEffect(() => { 
     (async () => {
       await loadEntityTypes({
         rootState, 
         rootDispatch, 
+        /* onStartLoad, */
+        /* onEndLoad, */
         currentTypeSlug: entity_type_slug
       });
     })();
