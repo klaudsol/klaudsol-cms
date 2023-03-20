@@ -1126,3 +1126,29 @@ border-radius: 5px;
     }
 }
 
+/** 
+======================================================
+            ENTITY TYPES LIST
+======================================================
+**/
+
+.entity_types_list {
+    margin-top: 10px;
+    list-style-type: '> ';
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    &__link {
+        text-decoration: none;
+        color: #000;
+
+        &:hover, &--active {
+            color: #455a64;
+        }
+    }
+}
+
+
+
