@@ -118,6 +118,22 @@ export default function ContentTypeBuilder({ cache }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   /*** Entity Types List ***/
+  // Everytime we press either the 'Content Manager' or 'Content-type Builder'
+  // link, it always fetches the entity types from the server. We need some way
+  // wherein everytime we log in, the entity types are fetched immediately and
+  // are set to state so that we don't have to fetch the entity types everytime 
+  // we press the links. This is difficult to pull off in the current state of 
+  // the program, so we need to do some heavy refactoring.
+  useEffect(() => { 
+    (async () => {
+      await loadEntityTypes({
+        rootState, 
+        rootDispatch, 
+        currentTypeSlug: entity_type_slug
+      });
+    })();
+  }, [rootState, entity_type_slug]);
+
   useEffect(() => {
     (async () => {
       try {
