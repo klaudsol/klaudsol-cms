@@ -116,47 +116,18 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
 
           <CSidebarNav className="sidebar_nav">
             <div className='sidebar_container'>
-                <div>
-                    {sidebarButtons.map((button, i) => {
-
-                     return !button.multiple ? 
-                     <div className='sidebar_button_category_container' key={i}>
-                        {(button.title === 'Content Manager' || button.title === 'Content-Type Builder')
-                          ? <AppContentLink button={button} /> 
-                          : <Link 
-                              key={i} 
-                              href={button.path} 
-                              className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}
-                              passHref
-                            >
-                              {button.icon} {button.title}
-                            </Link>}
-                      </div>
-                      :
-                      <div className='sidebar_button_category_container' key={i}>
-                        <div className='sidebar_buttons' onClick={()=>{setIsShowAdminSub(prev => !prev)}}>{button.icon} {button.title} {<MdKeyboardArrowUp width="2em" className={isShowAdminSub ? 'arrowbutton active' : 'arrowbutton'}/>}</div>                   
-                        {isShowAdminSub && button.subItems.map((item, i)=> (
-                            <Link 
-                            key={i} 
-                            href={item.subPath} 
-                            className={cx(router.asPath?.includes?.(item.subPath) ? 'sidebar_buttons_active sub_button' : 'sidebar_buttons sub_button')}
-                            passHref
-                        >
-                          {item.subIcon} {item.subTitle}
-                        </Link>
-                        ))}
-                        {/* <Link 
-                            key={i} 
-                            href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
+                {sidebarButtons.map((button) => (
+                    <div className='sidebar_button_category_container' key={button.entity_type_slug}>
+                        <Link 
+                            href={button.path} 
                             className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}
                             passHref
                         >
-                          {button.icon} {button.title}
-                        </Link> */}
-                      </div>
-                 })}
-                </div>
-              </div>
+                            <div>{button.icon}</div>{button.title}
+                        </Link>
+                    </div>
+                ))}
+            </div>
           </CSidebarNav>
 
             {pathname.includes('content-type-builder') && 

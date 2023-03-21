@@ -57,6 +57,7 @@ const AppSidebar = () => {
                   '/admin/content-manager';
 
   const sidebarButtons = rootState.entityTypes.map(({ entity_type_name, entity_type_slug }) => ({
+        slug: entity_type_slug, // Used for .map in JSX
         title: entity_type_name,
         path: `${baseUrl}/${entity_type_slug}`,
         icon: <FaChevronRight className='sidebar_button_icon'/>
