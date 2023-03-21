@@ -213,6 +213,11 @@
     font-size: 14px;
     font-weight: 400;
     color: #455a64;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px
 }
 
 .sidebar_footer_item:hover {

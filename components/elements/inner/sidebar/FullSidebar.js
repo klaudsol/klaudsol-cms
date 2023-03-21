@@ -9,8 +9,15 @@ import {
     CDropdownMenu,
     CDropdownItem,
     CDropdownItemPlain,
+    CDropdownDivider
 } from '@coreui/react'
-import { FaChevronLeft, FaChevronUp, FaChevronDown } from 'react-icons/fa'
+import { 
+    FaChevronLeft, 
+    FaChevronUp, 
+    FaChevronDown,
+    FaFeatherAlt,
+    FaBuilding
+} from 'react-icons/fa'
 import React,{ useState } from 'react';
 import Link from 'next/link';
 import 'simplebar/dist/simplebar.min.css'
@@ -53,22 +60,24 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                 caret={false} 
                 split
             >
-                {pathname.includes('content-type-builder') && 'Content-type Builder'}
+                {pathname.includes('content-type-builder') && 
+                 <> <FaBuilding /> Content-type Builder </>}
                 {(!pathname.includes('content') || 
-                 pathname.includes('content-manager'))
-                  && 'Content Manager'}
+                 pathname.includes('content-manager')) && 
+                 <> <FaFeatherAlt /> Content Manager </>}
                 {headerDropdown && <FaChevronUp />}
                 {!headerDropdown && <FaChevronDown />}
             </CDropdownToggle>
             <CDropdownMenu className="sidebar_header--menu">
                 <CDropdownItemPlain className="sidebar_header--item">
                     <Link href={`/admin/content-manager/${defaultEntityType}`}>
-                       Content Manager
+                       <FaFeatherAlt /> Content Manager
                     </Link>
                 </CDropdownItemPlain>
+                <CDropdownDivider />
                 <CDropdownItemPlain className="sidebar_header--item">
                     <Link href={`/admin/content-type-builder/${defaultEntityType}`}>
-                       Content-type Builder
+                        <FaBuilding /> Content-type Builder
                     </Link>
                 </CDropdownItemPlain>
             </CDropdownMenu>

@@ -36,12 +36,13 @@ const AppSidebar = () => {
   // everytime we tap on a separate link. Specifically a page that the user can
   // see after logging in. This is difficult to pull off in the current state of
   // the program.
+
   useEffect(() => { 
     (async () => {
       await loadEntityTypes({
         rootState, 
         rootDispatch, 
-        currentTypeSlug: cache.defaultEntityType
+        currentTypeSlug: entity_type_slug ?? cache.defaultEntityType
       });
     })();
   }, []);
@@ -66,8 +67,6 @@ const AppSidebar = () => {
         path: `${baseUrl}/${entity_type_slug}`,
         icon: <FaFeatherAlt className='sidebar_button_icon'/>
     }))
-
-  console.log(rootState)
 
     useEffect(() => { 
      rootState.collapse === null ? rootDispatch({type: SET_COLLAPSE, payload: true}) : null
