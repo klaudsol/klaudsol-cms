@@ -85,6 +85,10 @@
     text-align: left;
     align-items: flex-start;
     padding-left: 25px;
+
+    &_header--menu {
+        width: 230px;
+    }
 }
 
 .sidebar_button_container {

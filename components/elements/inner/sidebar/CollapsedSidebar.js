@@ -1,17 +1,45 @@
-
-import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarNav} from '@coreui/react'
-
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-
-import React from 'react';
-
+import React,{ useState, useRef, useContext } from 'react';
+import { 
+    CSidebar, 
+    CSidebarBrand, 
+    CSidebarFooter, 
+    CSidebarNav,
+    CDropdown,
+    CDropdownToggle,
+    CDropdownMenu,
+    CDropdownItem,
+    CDropdownItemPlain,
+    CDropdownDivider
+} from '@coreui/react'
+import { 
+    FaFeatherAlt,
+    FaBuilding,
+    FaPlus,
+    FaChevronRight,
+    FaChevronLeft
+} from 'react-icons/fa'
 import Link from 'next/link';
-
 import 'simplebar/dist/simplebar.min.css'
-
 import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
+import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
+import RootContext from '@/components/contexts/RootContext';
+import { useRouter } from 'next/router'
 
 const CollapsedSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  // Transform to reducer
+  const [isShowAdminSub, setIsShowAdminSub] = useState(false);
+  const [headerDropdown, setHeaderDropdown] = useState(false);
+  const [addContentTypeModal, showAddContentTypeModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const formRef = useRef();
+  const { pathname } = useRouter();
+
+  const onSubmit = () => {
+    if (!formRef.current) return;
+
+    formRef.current.handleSubmit();
+  }
   
   return (
     <CSidebar
@@ -27,11 +55,45 @@ const CollapsedSidebar = ({sidebarButtons, firstName, lastName, defaultEntityTyp
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-         <Link href='/admin' className='sidebar_header' passHref>
-            <b>  CMS  </b>
-         </Link>
-          
-        
+        <CDropdown 
+          className="sidebar_header--dropdown"
+          direction="dropend"
+          onShow={() => setHeaderDropdown(true)}
+          onHide={() => setHeaderDropdown(false)}
+        >
+          <CDropdownToggle 
+              className="sidebar_header--toggle" 
+              variant="ghost" 
+              caret={false} 
+              size="lg"
+              split
+          >
+              {headerDropdown && <FaChevronRight />}
+              {rootState.entityTypes.length !== 0 && 
+                  pathname.includes('content-type-builder') &&
+                  !headerDropdown &&
+                  <FaBuilding /> }
+              {rootState.entityTypes.length !== 0 && 
+                  (!pathname.includes('content') ||
+                  pathname.includes('content-manager')) &&
+                  !headerDropdown &&
+                  <FaFeatherAlt /> }
+              {rootState.entityTypes.length === 0 && <AppButtonSpinner /> }
+          </CDropdownToggle>
+          <CDropdownMenu className="sidebar_collapse_header--menu">
+              <CDropdownItemPlain className="sidebar_header--item">
+                  <Link href={`/admin/content-manager/${defaultEntityType}`}>
+                     <FaFeatherAlt /> Content Manager
+                  </Link>
+              </CDropdownItemPlain>
+              <CDropdownDivider />
+              <CDropdownItemPlain className="sidebar_header--item">
+                  <Link href={`/admin/content-type-builder/${defaultEntityType}`}>
+                      <FaBuilding /> Content-type Builder
+                  </Link>
+              </CDropdownItemPlain>
+          </CDropdownMenu>
+         </CDropdown>
       </CSidebarBrand>
 
       <CSidebarNav className="sidebar_nav">

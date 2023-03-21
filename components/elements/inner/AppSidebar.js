@@ -1,4 +1,4 @@
-import { FaFeatherAlt, FaRegUser } from 'react-icons/fa';
+import { FaFeatherAlt, FaRegUser, FaChevronRight } from 'react-icons/fa';
 import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
 import { BiBuildings } from 'react-icons/bi';
 import { BsFillGearFill } from 'react-icons/bs';
@@ -59,7 +59,7 @@ const AppSidebar = () => {
   const sidebarButtons = rootState.entityTypes.map(({ entity_type_name, entity_type_slug }) => ({
         title: entity_type_name,
         path: `${baseUrl}/${entity_type_slug}`,
-        icon: <FaFeatherAlt className='sidebar_button_icon'/>
+        icon: <FaChevronRight className='sidebar_button_icon'/>
     }))
 
     useEffect(() => { 
