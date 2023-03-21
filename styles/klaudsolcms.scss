@@ -180,12 +180,17 @@
 .sidebar_buttons_active:hover {
     background-color: #455a64;
     color: #eceff1;
+    
+    svg {
+        color: #eceff1;
+    }
 }
 
 .sidebar_button_icon {
     margin-bottom: 3px;
     margin-right: 10px;
     margin-top: 2px;
+    color: #455a64;
 }
 
 .sub_button{
