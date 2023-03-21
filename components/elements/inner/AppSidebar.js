@@ -32,11 +32,6 @@ const AppSidebar = () => {
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
 
   /*** Entity Types List ***/
-  // This should be on a 'layout' page or something, so that it will not fire
-  // everytime we tap on a separate link. Specifically a page that the user can
-  // see after logging in. This is difficult to pull off in the current state of
-  // the program.
-
   useEffect(() => { 
     (async () => {
       await loadEntityTypes({
@@ -47,7 +42,6 @@ const AppSidebar = () => {
     })();
   }, []);
 
-  // This should also be on a page
   useEffect(() => {
     if(!entity_type_slug || rootState.entityTypes.length === 0) return;
 

@@ -19,11 +19,13 @@ import {
     FaBuilding,
     FaPlus
 } from 'react-icons/fa'
-import React,{ useState, useRef } from 'react';
+import React,{ useState, useRef, useContext } from 'react';
+import RootContext from '@/components/contexts/RootContext';
 import Link from 'next/link';
 import 'simplebar/dist/simplebar.min.css'
 import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
 import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
+import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
 import AppContentLink from '@/components/klaudsolcms/routers/AppContentLink';
 import AppModal from "@/components/klaudsolcms/AppModal";
 import { BiBuildings } from 'react-icons/bi';
@@ -34,9 +36,12 @@ import { useRouter } from 'next/router'
 import cx from 'classnames';
 
 const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  // Transform to reducer
   const [isShowAdminSub, setIsShowAdminSub] = useState(false);
   const [headerDropdown, setHeaderDropdown] = useState(false);
   const [addContentTypeModal, showAddContentTypeModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const formRef = useRef();
   const { pathname } = useRouter();
 
@@ -44,7 +49,6 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
     if (!formRef.current) return;
 
     formRef.current.handleSubmit();
-    showAddContentTypeModal(false)
   }
 
   return (
@@ -73,11 +77,24 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                     caret={false} 
                     split
                 >
+                    {/* Status Icon */}
+                    {rootState.entityTypes.length !== 0 && 
+                        pathname.includes('content-type-builder') &&
+                        <FaBuilding /> }
+                    {rootState.entityTypes.length !== 0 && 
+                        (!pathname.includes('content') ||
+                        pathname.includes('content-manager')) &&
+                        <FaFeatherAlt /> }
+                    {rootState.entityTypes.length === 0 && <AppButtonSpinner /> }
+
+                    {/* Header */}
                     {pathname.includes('content-type-builder') && 
-                     <> <FaBuilding /> Content-type Builder </>}
+                        'Content-type Builder'}
                     {(!pathname.includes('content') || 
                      pathname.includes('content-manager')) && 
-                     <> <FaFeatherAlt /> Content Manager </>}
+                        'Content Manager'}
+
+                    {/* Dropdown icon */}
                     {headerDropdown && <FaChevronUp />}
                     {!headerDropdown && <FaChevronDown />}
                 </CDropdownToggle>
@@ -162,8 +179,13 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
             onClick={onSubmit}
             modalTitle="Create a collection type"
             buttonTitle="Continue"
+            isLoading={isLoading}
         >
-            <CollectionTypeBody formRef={formRef} />
+            <CollectionTypeBody 
+                formRef={formRef} 
+                setModal={(value) => showAddContentTypeModal(value)} 
+                setLoading={(value) => setIsLoading(value)} 
+            />
         </AppModal>
     </>
   )

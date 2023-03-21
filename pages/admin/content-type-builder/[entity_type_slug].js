@@ -203,13 +203,16 @@ export default function ContentTypeBuilder({ cache }) {
         await slsFetch(`/api/entity_types/${typeSlug}`, {
           method: "DELETE",
         });
-        loadEntityTypes({ rootState, rootDispatch });
-          
-        router.push(`/admin`) 
+
       } catch (err) {
       } finally {
+        loadEntityTypes({ rootState, rootDispatch });
+
         dispatch({ type: HIDE_DELETE_CONFIRMATION_MODAL })
         dispatch({ type: LOADING, payload: false });   
+
+        if(rootState.entityTypes.length === 1) router.push('/admin'); 
+        else router.push(`/admin/content-type-builder/${cache.defaultEntityType}`);
       }
     })();
   };

@@ -34,7 +34,7 @@ const CollapsedSidebar = ({sidebarButtons, firstName, lastName, defaultEntityTyp
         
       </CSidebarBrand>
 
-      <CSidebarNav>
+      <CSidebarNav className="sidebar_nav">
         <div className='collapsed-sidebar-items'>
             <div>
                 {sidebarButtons.map((button, i) => (
