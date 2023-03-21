@@ -32,25 +32,27 @@ const AppSidebar = () => {
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
 
   /*** Entity Types List ***/
-  // This should be on a page or something. Specifically a page that the user can
-  // see after logging in.
+  // This should be on a 'layout' page or something, so that it will not fire
+  // everytime we tap on a separate link. Specifically a page that the user can
+  // see after logging in. This is difficult to pull off in the current state of
+  // the program.
   useEffect(() => { 
     (async () => {
       await loadEntityTypes({
         rootState, 
         rootDispatch, 
-        currentTypeSlug: entity_type_slug
+        currentTypeSlug: cache.defaultEntityType
       });
     })();
   }, []);
 
   // This should also be on a page
   useEffect(() => {
-    if(rootState.entityTypes.length === 0) return;
+    if(!entity_type_slug || rootState.entityTypes.length === 0) return;
 
     const currentEntityType = findContentTypeName(rootState.entityTypes, entity_type_slug)
 
-    rootDispatch({type: SET_CURRENT_ENTITY_TYPE, payload: currentEntityType})
+    rootDispatch({ type: SET_CURRENT_ENTITY_TYPE, payload: currentEntityType })
   }, [entity_type_slug])
 
   // We can't get the baseUrl directly from next router, and if we are on the
@@ -64,6 +66,8 @@ const AppSidebar = () => {
         path: `${baseUrl}/${entity_type_slug}`,
         icon: <FaFeatherAlt className='sidebar_button_icon'/>
     }))
+
+  console.log(rootState)
 
     useEffect(() => { 
      rootState.collapse === null ? rootDispatch({type: SET_COLLAPSE, payload: true}) : null

@@ -17,7 +17,6 @@ export async function loadEntityTypes({
     onStartLoad();
     const entityTypesRaw = await slsFetch("/api/entity_types");
     const entityTypes = await entityTypesRaw.json();
-    console.log(entityTypes.data);
 
     rootState.currentContentType.entity_type_slug !== currentTypeSlug &&
       rootDispatch({
