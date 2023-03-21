@@ -98,6 +98,25 @@
     font-size: 11px;
 }
 
+.sidebar_nav {
+    &::-webkit-scrollbar-track
+    {
+        background-color: #fff;
+    }
+
+    &::-webkit-scrollbar
+    {
+        width: 5px;
+        background-color: #fff;
+    }
+
+    &::-webkit-scrollbar-thumb
+    {
+        background-color: lightgray;
+        border-radius: 10px
+    }
+}
+
 .sidebar_button_category_container {
     background-color: #eceff1;
     width: 100%;
@@ -476,6 +495,17 @@ $onFocus: #323C4E;
     padding: 12px;
     padding-left: 18px;
     width: 100%;
+
+    &--non_submenu {
+        all: unset;
+        padding: 10px 0;
+        text-align: center;
+        border-top: 1px solid lightgray;
+
+        &:hover {
+            background-color: #fff;
+        }
+    }
 }
 
 .content_create_button:hover {
