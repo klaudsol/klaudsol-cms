@@ -1,6 +1,16 @@
 
-import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarNav} from '@coreui/react'
-import { FaChevronLeft } from 'react-icons/fa'
+import { 
+    CSidebar, 
+    CSidebarBrand, 
+    CSidebarFooter, 
+    CSidebarNav,
+    CDropdown,
+    CDropdownToggle,
+    CDropdownMenu,
+    CDropdownItem,
+    CDropdownItemPlain,
+} from '@coreui/react'
+import { FaChevronLeft, FaChevronUp, FaChevronDown } from 'react-icons/fa'
 import React,{ useState } from 'react';
 import Link from 'next/link';
 import 'simplebar/dist/simplebar.min.css'
@@ -15,6 +25,8 @@ import cx from 'classnames';
 
 const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
   const [isShowAdminSub, setIsShowAdminSub] = useState(false);
+  const [headerDropdown, setHeaderDropdown] = useState(false);
+  const { pathname } = useRouter();
 
   return (
     <CSidebar
@@ -25,15 +37,42 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
         //dispatch({ type: 'set', sidebarShow: visible })
       }}
     >
-      <CSidebarBrand to="/admin" className='sidebar_brand'>
+      <CSidebarBrand className='sidebar_brand'>
         {/*<CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
         */}
-         <Link href='/admin' className='sidebar_header' passHref>
-            <b>Dashboard</b>
-          </Link>
-          
-        
+          <CDropdown 
+            className="sidebar_header--dropdown"
+            direction="center"
+            onShow={() => setHeaderDropdown(true)}
+            onHide={() => setHeaderDropdown(false)}
+          >
+            <CDropdownToggle 
+                className="sidebar_header--toggle" 
+                variant="ghost" 
+                caret={false} 
+                split
+            >
+                {pathname.includes('content-type-builder') && 'Content-type Builder'}
+                {(!pathname.includes('content') || 
+                 pathname.includes('content-manager'))
+                  && 'Content Manager'}
+                {headerDropdown && <FaChevronUp />}
+                {!headerDropdown && <FaChevronDown />}
+            </CDropdownToggle>
+            <CDropdownMenu className="sidebar_header--menu">
+                <CDropdownItemPlain className="sidebar_header--item">
+                    <Link href={`/admin/content-manager/${defaultEntityType}`}>
+                       Content Manager
+                    </Link>
+                </CDropdownItemPlain>
+                <CDropdownItemPlain className="sidebar_header--item">
+                    <Link href={`/admin/content-type-builder/${defaultEntityType}`}>
+                       Content-type Builder
+                    </Link>
+                </CDropdownItemPlain>
+            </CDropdownMenu>
+          </CDropdown>
       </CSidebarBrand>
 
       <CSidebarNav>

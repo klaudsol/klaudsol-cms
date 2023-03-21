@@ -9,6 +9,9 @@ import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
 
 import { useRouter } from 'next/router'
+import { loadEntityTypes } from '@/components/reducers/actions';
+import { findContentTypeName } from "@/components/Util";
+import { SET_CURRENT_ENTITY_TYPE } from "@/lib/actions"
 
 // sidebar nav config
 import FullSidebar from './sidebar/FullSidebar';
@@ -21,52 +24,47 @@ import { writeSettings, readUsers,  readGroups } from "@/lib/Constants";
 const AppSidebar = () => {
 
   const router = useRouter();
+  const { pathname, query: { entity_type_slug } } = router;
   const capabilities = useCapabilities();
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
-  
-  const [sidebarButtons, setSidebarButtons] = useState([
-    {
-      title: "Content Manager",
-      path: `/admin/content-manager/`,
-      icon: <FaFeatherAlt className='sidebar_button_icon'/>
-    },
-    {
-      title: "Content-Type Builder",
-      path: `/admin/content-type-builder/`,
-      icon: <BiBuildings className='sidebar_button_icon'/>
-    },
-    {
-      title: "Profile",
-      path: "/admin/me",
-      icon: <FaRegUser className='sidebar_button_icon'/>
-    },
-    (capabilities.includes(writeSettings) ? {
-      title: "Settings",
-      path: "/admin/settings",
-      icon: <RiSettings3Line className='sidebar_button_icon'/>
-    }:null),
-    (false ? {
-      multiple: true,
-      title: "Admin",
-      subItems:[capabilities.includes(readUsers) ?
-                {subTitle:"Users", 
-                 subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
-                 subPath:"/admin/users" 
-                }: null,
 
-                capabilities.includes(readGroups) ? 
-                {subTitle:"Groups",
-                 subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
-                 subPath:"/admin/groups"
-                } : null].filter(item => item),
-      icon: <AiOutlineLock className='sidebar_button_icon'/>
-    }:null)
-  ].filter(item => item))
+  /*** Entity Types List ***/
+  // This should be on a page or something. Specifically a page that the user can
+  // see after logging in.
+  useEffect(() => { 
+    (async () => {
+      await loadEntityTypes({
+        rootState, 
+        rootDispatch, 
+        currentTypeSlug: entity_type_slug
+      });
+    })();
+  }, []);
 
-    /*** Entity Types List ***/
+  // This should also be on a page
+  useEffect(() => {
+    if(rootState.entityTypes.length === 0) return;
+
+    const currentEntityType = findContentTypeName(rootState.entityTypes, entity_type_slug)
+
+    rootDispatch({type: SET_CURRENT_ENTITY_TYPE, payload: currentEntityType})
+  }, [entity_type_slug])
+
+  // We can't get the baseUrl directly from next router, and if we are on the
+  // settings page, profile page etc., we want it to default to the content manager
+  const baseUrl = router.pathname.startsWith('/admin/content-type-builder') ?
+                  '/admin/content-type-builder' :
+                  '/admin/content-manager';
+
+  const sidebarButtons = rootState.entityTypes.map(({ entity_type_name, entity_type_slug }) => ({
+        title: entity_type_name,
+        path: `${baseUrl}/${entity_type_slug}`,
+        icon: <FaFeatherAlt className='sidebar_button_icon'/>
+    }))
+
     useEffect(() => { 
      rootState.collapse === null ? rootDispatch({type: SET_COLLAPSE, payload: true}) : null
     }, [rootState.collapse]);

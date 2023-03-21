@@ -45,6 +45,33 @@
 .sidebar_header {
     color: #455a64 !important;
     text-decoration: none;
+
+    &--dropdown {
+        width: 100%;
+    }
+
+    &--toggle {
+        border: 0;
+        color: #455a64;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    &--item a {
+        text-decoration: none;
+        color: #000;
+    }
+
+    &--item:hover {
+        background-color: #455a64;
+
+        a {
+            color: #fff;
+        }
+    }
 }
 
 .sidebar_collapse {
@@ -173,21 +200,22 @@
     font-weight: 400;
 }
 
-.sidebar_footer_profile:hover {
-    color: #455a64;
-}
-
 .sidebar_footer_items:active {
     background-color: #b0bec5 !important;
 }
 
-.sidebar_footer_logout {
+.sidebar_footer_item {
+    text-decoration: none;
     background-color: transparent;
     border: transparent;
     margin: 0px;
     padding: 0px;
     font-size: 14px;
     font-weight: 400;
+    color: #455a64;
+}
+
+.sidebar_footer_item:hover {
     color: #455a64;
 }
 
