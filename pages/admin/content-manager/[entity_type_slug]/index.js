@@ -20,6 +20,7 @@ import { IoFilter } from "react-icons/io5";
 import { BsGearFill } from "react-icons/bs";
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
+import SkeletonContentManagerHeader from "components/klaudsolcms/skeleton/SkeletonContentManagerHeader";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import {
   contentManagerReducer,
@@ -109,17 +110,28 @@ export default function ContentManager({ cache }) {
           <div className="py-4">
             <AppBackButton link="/admin" />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
-              <div>
-                <div className="general-header"> {entity_type_name} </div>
-                <a
-                  href={`/api/${entity_type_slug}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  api/{headerSlug}
-                </a>
-                <p> {state.values.length} entries found </p>
-              </div>
+              {/* The header will go crazy if we went from settings/profile/admin etc. to */}
+              {/* content manager. This will fix it */}
+              {(state.firstFetch) && 
+                <SkeletonContentManagerHeader 
+                    entity_type_name={entity_type_name}
+                    entity_type_slug={entity_type_slug}
+                    headerSlug={headerSlug}
+                    entries={state.values.length}
+                />}
+              
+              {(!state.firstFetch) && 
+                <div>
+                  <div className="general-header"> {entity_type_name} </div>
+                  <a
+                    href={`/api/${entity_type_slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    api/{headerSlug}
+                  </a>
+                  <p> {state.values.length} entries found </p>
+                </div>}
              {capabilities.includes(writeContents) && <AppCreatebutton
                 link={`/admin/content-manager/${entity_type_slug}/create`}
                 title="Create new entry"
