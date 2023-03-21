@@ -200,6 +200,7 @@ export default function ContentTypeBuilder({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING, payload: true });
+
         await slsFetch(`/api/entity_types/${typeSlug}`, {
           method: "DELETE",
         });
@@ -211,8 +212,17 @@ export default function ContentTypeBuilder({ cache }) {
         dispatch({ type: HIDE_DELETE_CONFIRMATION_MODAL })
         dispatch({ type: LOADING, payload: false });   
 
-        if(rootState.entityTypes.length === 1) router.push('/admin'); 
-        else router.push(`/admin/content-type-builder/${cache.defaultEntityType}`);
+        if (rootState.entityTypes.length === 1) {
+            router.push('/admin'); 
+        } else if (typeSlug === cache.defaultEntityType) {
+            // The default type is most likely the first item, so in this case,
+            // we need the second item,
+            const { entity_type_slug: first_entity_type } = rootState.entityTypes[1];
+
+            router.push(`/admin/content-type-builder/${first_entity_type}`)
+        } else {
+            router.push(`/admin/content-type-builder/${cache.defaultEntityType}`);
+        }
       }
     })();
   };

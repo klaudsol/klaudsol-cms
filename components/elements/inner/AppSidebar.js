@@ -30,6 +30,9 @@ const AppSidebar = () => {
 
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
+    
+    console.log(rootState)
+    console.log(cache)
 
   /*** Entity Types List ***/
   useEffect(() => { 
