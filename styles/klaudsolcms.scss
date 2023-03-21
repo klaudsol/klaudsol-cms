@@ -507,7 +507,8 @@ $onFocus: #323C4E;
     padding-left: 18px;
     width: 100%;
 
-    &--non_submenu {
+    &--non_submenu,
+    &__collapsed--non_submenu {
         all: unset;
         padding: 10px 0;
         text-align: center;
@@ -516,6 +517,11 @@ $onFocus: #323C4E;
         &:hover {
             background-color: #fff;
         }
+    }
+
+    &__collapsed--non_submenu {
+        border-bottom: 1px solid lightgray;
+        margin-bottom: 15px;
     }
 }
 

@@ -19,10 +19,16 @@ import {
     FaBuilding,
     FaPlus
 } from 'react-icons/fa'
+import {
+  LOADING,
+  SET_ADD_CONTENT_TYPE_MODAL,
+  SET_HEADER_DROPDOWN,
+} from "@/lib/actions";
 import React,{ useState, useRef, useContext } from 'react';
 import RootContext from '@/components/contexts/RootContext';
 import Link from 'next/link';
 import 'simplebar/dist/simplebar.min.css'
+import useSidebarReducer from "@/components/reducers/sidebarReducer";
 import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
 import SidebarFooterIcon from '@/components/klaudsolcms/dropdown/SidebarFooterIcon';
 import AppButtonSpinner from '@/components/klaudsolcms/AppButtonSpinner';
@@ -37,11 +43,8 @@ import cx from 'classnames';
 
 const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
-  // Transform to reducer
-  const [isShowAdminSub, setIsShowAdminSub] = useState(false);
-  const [headerDropdown, setHeaderDropdown] = useState(false);
-  const [addContentTypeModal, showAddContentTypeModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [state, setState] = useSidebarReducer();
+
   const formRef = useRef();
   const { pathname } = useRouter();
 
@@ -68,8 +71,8 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
               <CDropdown 
                 className="sidebar_header--dropdown"
                 direction="center"
-                onShow={() => setHeaderDropdown(true)}
-                onHide={() => setHeaderDropdown(false)}
+                onShow={() => setState(SET_HEADER_DROPDOWN, true)}
+                onHide={() => setState(SET_HEADER_DROPDOWN, false)}
               >
                 <CDropdownToggle 
                     className="sidebar_header--toggle" 
@@ -95,8 +98,8 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                         'Content Manager'}
 
                     {/* Dropdown icon */}
-                    {headerDropdown && <FaChevronUp />}
-                    {!headerDropdown && <FaChevronDown />}
+                    {state.showHeaderDropdown && <FaChevronUp />}
+                    {!state.showHeaderDropdown && <FaChevronDown />}
                 </CDropdownToggle>
                 <CDropdownMenu className="sidebar_header--menu">
                     <CDropdownItemPlain className="sidebar_header--item">
@@ -131,8 +134,15 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
           </CSidebarNav>
 
             {pathname.includes('content-type-builder') && 
-             <button className="content_create_button--non_submenu" onClick={() => showAddContentTypeModal(true)}><FaPlus className="content_create_icon"/> Create new collection type</button>
+             <button 
+                className="content_create_button--non_submenu" 
+                onClick={() => setState(SET_ADD_CONTENT_TYPE_MODAL, true)}
+              >
+                <FaPlus className="content_create_icon"/> 
+                Create new collection type
+              </button>
             }
+
             <CSidebarFooter className='sidebar_footer'>
                 <div className='d-flex align-items-center justify-content-between'> 
                     <div className='d-flex flex-row align-items-center'>
@@ -145,17 +155,17 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
         </CSidebar>
 
         <AppModal
-            show={addContentTypeModal}
-            onClose={() => showAddContentTypeModal(false)}
+            show={state.showAddContentTypeModal}
+            onClose={() => setState(SET_ADD_CONTENT_TYPE_MODAL, false)}
             onClick={onSubmit}
             modalTitle="Create a collection type"
             buttonTitle="Continue"
-            isLoading={isLoading}
+            isLoading={state.isLoading}
         >
             <CollectionTypeBody 
                 formRef={formRef} 
-                setModal={(value) => showAddContentTypeModal(value)} 
-                setLoading={(value) => setIsLoading(value)} 
+                setModal={(value) => setState(SET_ADD_CONTENT_TYPE_MODAL, value)} 
+                setLoading={(value) => setState(LOADING, value)} 
             />
         </AppModal>
     </>
