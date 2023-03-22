@@ -827,13 +827,13 @@ $onFocus: #323C4E;
 
     &__container {
         display: grid;
+        padding: 25px;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         grid-auto-rows: 320px;
         gap: 10px;
 
         width: 100%;
-        height: 100%;
-        overflow: scroll;
+        min-height: 100%;
 
         &::-webkit-scrollbar-track
         {
