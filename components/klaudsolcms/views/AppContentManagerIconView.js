@@ -14,7 +14,7 @@ const AppContentManagerIconView = ({ columns, entries, entity_type_slug }) => {
 
     const imageLink = entry[image]?.link;
 
-    return imageLink;
+    return imageLink ?? defaultImage;
   };
 
   const getTitle = (entry) => {
@@ -37,7 +37,7 @@ const AppContentManagerIconView = ({ columns, entries, entity_type_slug }) => {
           >
             <div className="card__image-container">
               <NextImage
-                src={findImage(entry) ?? defaultImage}
+                src={findImage(entry)}
                 alt={entry.slug}
                 className="card__image"
                 sizes={290}
