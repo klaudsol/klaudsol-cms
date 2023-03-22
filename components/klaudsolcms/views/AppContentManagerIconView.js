@@ -22,7 +22,7 @@ const AppContentManagerIconView = ({ columns, entries, entity_type_slug }) => {
       (item) => item !== "slug" && typeof entry[item] === "string"
     );
 
-    return entry[key];
+    return entry[key] ?? entry.slug;
   };
 
   return (
