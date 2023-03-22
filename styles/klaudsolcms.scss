@@ -798,6 +798,47 @@ border-radius: 5px;
   color: black;
 }
 
+/**
+===============================================
+            CARD VIEW STYLES
+===============================================
+
+**/
+
+.card {
+
+    &__container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-auto-rows: 320px;
+        gap: 10px;
+
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+    }
+
+    &__item {
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        border-radius: 5px;
+    }
+
+    &__image {
+        object-fit: cover;
+        overflow: hidden;
+        border-radius: 5px;
+        border-bottom: 1px solid lightgray;
+    }
+
+    &__image-container {
+        position: relative;
+        height: 250px;
+    }
+
+    &__data {
+        padding-left: 10px;
+    }
+}
 
 /**
 ===============================================

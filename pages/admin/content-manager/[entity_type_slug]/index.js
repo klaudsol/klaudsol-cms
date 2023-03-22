@@ -24,6 +24,7 @@ import { FaChevronLeft,
 import { IoFilter } from "react-icons/io5";
 import { BsGearFill } from "react-icons/bs";
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
+import AppContentManagerTableIconView from "@/components/klaudsolcms/views/AppContentManagerIconView";
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import {
@@ -159,6 +160,13 @@ export default function ContentManager({ cache }) {
             {(state.isLoading && state.firstFetch) && <SkeletonTable />}
             {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'list' && (
               <AppContentManagerTable
+                columns={state.columns}
+                entries={state.values}
+                entity_type_slug={entity_type_slug}
+              />
+            )}
+            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'icon' && (
+              <AppContentManagerTableIconView
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}
