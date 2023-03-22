@@ -824,6 +824,25 @@ $onFocus: #323C4E;
 **/
 
 .card {
+    &__container, &__data {
+        &::-webkit-scrollbar-track
+        {
+            background-color: #fff;
+        }
+
+        &::-webkit-scrollbar
+        {
+            width: 5px;
+            height: 5px;
+            background-color: #fff;
+        }
+
+        &::-webkit-scrollbar-thumb
+        {
+            background-color: lightgray;
+            border-radius: 10px
+        }
+    }
 
     &__container {
         display: grid;
@@ -834,23 +853,6 @@ $onFocus: #323C4E;
 
         width: 100%;
         min-height: 100%;
-
-        &::-webkit-scrollbar-track
-        {
-            background-color: #fff;
-        }
-
-        &::-webkit-scrollbar
-        {
-            width: 5px;
-            background-color: #fff;
-        }
-
-        &::-webkit-scrollbar-thumb
-        {
-            background-color: lightgray;
-            border-radius: 10px
-        }
     }
 
     &__item {
@@ -868,10 +870,13 @@ $onFocus: #323C4E;
     &__image-container {
         position: relative;
         height: 250px;
+        cursor: pointer;
     }
 
     &__data {
         padding-left: 10px;
+        height: 70px; // grid-auto-rows - image-container height
+        overflow: scroll;
     }
 }
 

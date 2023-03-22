@@ -30,22 +30,19 @@ const AppContentManagerIconView = ({ columns, entries, entity_type_slug }) => {
               legacyBehavior
               disabled={!capabilities.includes(readContents)}
             >
-              {/* Need this extra div for Link to work */}
-              <div>
-                <div className="card__image-container">
-                  <Image
-                    src={imageLink ? imageLink : defaultImage}
-                    alt={entry.slug}
-                    className="card__image"
-                    fill
-                  />
-                </div>
-                <div className="card__data">
-                  <div>{entry.id}</div>
-                  <div>{entry.slug}</div>
-                </div>
+              <div className="card__image-container">
+                <Image
+                  src={imageLink ?? defaultImage}
+                  alt={entry.slug}
+                  className="card__image"
+                  fill
+                />
               </div>
             </Link>
+            <div className="card__data">
+              <div>{entry.id}</div>
+              <div>{entry.slug}</div>
+            </div>
           </div>
         );
       })}
