@@ -6,12 +6,16 @@ import { useRouter } from 'next/router';
 import RootContext from '@/components/contexts/RootContext';
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { RESET_CLIENT_SESSION } from '@/lib/actions';
+import { useCapabilities } from '@/components/hooks';
+import { writeSettings } from "@/lib/Constants";
+import { FaCog, FaRegUser, FaSignOutAlt } from 'react-icons/fa';
 
 const SidebarFooterIcon = ({title}) => {
-    const router = useRouter();
+  const router = useRouter();
+  const capabilities = useCapabilities();
   
   const { state, dispatch } = useContext(RootContext);
-    const onLogout = (evt) => {
+  const onLogout = (evt) => {
         evt.preventDefault();   
         const callback = async () => {
           await slsFetch('/api/session',{
@@ -22,10 +26,14 @@ const SidebarFooterIcon = ({title}) => {
         };
         callback();
       };
+
     return ( 
          <DropdownButton drop='up' id='sidebar_footer_icon' title={title}>
-            <Dropdown.Item className='sidebar_footer_items'><Link href='/admin/me' className='sidebar_footer_profile'>Profile</Link></Dropdown.Item>
-            <Dropdown.Item className='sidebar_footer_items'><button className='sidebar_footer_logout' onClick={onLogout}> Log out </button></Dropdown.Item>
+            <Dropdown.Item className='sidebar_footer_items'><Link href='/admin/me' className='sidebar_footer_item'><FaRegUser /> Profile</Link></Dropdown.Item>
+            {capabilities.includes(writeSettings) && 
+                <Dropdown.Item className='sidebar_footer_items'><Link href='/admin/settings' className='sidebar_footer_item'><FaCog /> Settings</Link></Dropdown.Item>
+            }
+            <Dropdown.Item className='sidebar_footer_items'><button className='sidebar_footer_item' onClick={onLogout}> <FaSignOutAlt /> Log out </button></Dropdown.Item>
         </DropdownButton>
      );
 }

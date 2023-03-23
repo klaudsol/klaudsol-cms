@@ -4,25 +4,38 @@
 
 import { findContentTypeName } from "@/components/Util";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
-import { SET_ENTITY_TYPES,SET_CURRENT_ENTITY_TYPE } from "@/lib/actions"
+import { SET_ENTITY_TYPES, SET_CURRENT_ENTITY_TYPE } from "@/lib/actions";
 
 export async function loadEntityTypes({
   rootState,
   rootDispatch,
   onStartLoad = () => {},
   onEndLoad = () => {},
-  currentTypeSlug
-  }) {
+  currentTypeSlug,
+}) {
   try {
     onStartLoad();
     const entityTypesRaw = await slsFetch("/api/entity_types");
     const entityTypes = await entityTypesRaw.json();
-  
-    rootState.currentContentType.entity_type_slug !== currentTypeSlug &&
-    rootDispatch({
-      type: SET_CURRENT_ENTITY_TYPE,
-      payload: findContentTypeName(entityTypes.data,currentTypeSlug)
-    });       
+
+    if(!currentTypeSlug) {
+        const emptyContentType = {
+            entity_type_id: 0,
+            entity_type_name: '',
+            entity_type_slug: ''
+        }
+
+        rootDispatch({
+          type: SET_CURRENT_ENTITY_TYPE,
+          payload: emptyContentType
+        });
+    } else if (rootState.currentContentType.entity_type_slug !== currentTypeSlug) {
+        rootDispatch({
+          type: SET_CURRENT_ENTITY_TYPE,
+          payload: findContentTypeName(entityTypes.data, currentTypeSlug),
+        });
+    }
+
     //reload entity types list only if there is a change.
     if (rootState.entityTypesHash !== entityTypes.metadata.hash) {
       rootDispatch({
@@ -30,9 +43,12 @@ export async function loadEntityTypes({
         payload: {
           entityTypes: entityTypes.data,
           entityTypesHash: entityTypes.metadata.hash,
-          currentContentType:findContentTypeName(entityTypes.data,currentTypeSlug)
-      }});       
-
+          currentContentType: findContentTypeName(
+            entityTypes.data,
+            currentTypeSlug
+          ),
+        },
+      });
     }
   } catch (ex) {
     console.error(ex.stack);

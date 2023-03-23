@@ -45,6 +45,33 @@
 .sidebar_header {
     color: #455a64 !important;
     text-decoration: none;
+
+    &--dropdown {
+        width: 100%;
+    }
+
+    &--toggle {
+        border: 0;
+        color: #455a64;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    &--item a {
+        text-decoration: none;
+        color: #000;
+    }
+
+    &--item:hover {
+        background-color: #455a64;
+
+        a {
+            color: #fff;
+        }
+    }
 }
 
 .sidebar_collapse {
@@ -58,6 +85,10 @@
     text-align: left;
     align-items: flex-start;
     padding-left: 25px;
+
+    &_header--menu {
+        width: 230px;
+    }
 }
 
 .sidebar_button_container {
@@ -69,6 +100,25 @@
 .sidebar_category_title {
     padding-left: 20px;
     font-size: 11px;
+}
+
+.sidebar_nav {
+    &::-webkit-scrollbar-track
+    {
+        background-color: #fff;
+    }
+
+    &::-webkit-scrollbar
+    {
+        width: 5px;
+        background-color: #fff;
+    }
+
+    &::-webkit-scrollbar-thumb
+    {
+        background-color: lightgray;
+        border-radius: 10px
+    }
 }
 
 .sidebar_button_category_container {
@@ -94,6 +144,8 @@
     text-decoration: none;
     color: #000;
     cursor: pointer;
+
+    display: flex;
     
     .arrowbutton{
       position: absolute;
@@ -128,12 +180,17 @@
 .sidebar_buttons_active:hover {
     background-color: #455a64;
     color: #eceff1;
+    
+    svg {
+        color: #eceff1;
+    }
 }
 
 .sidebar_button_icon {
     margin-bottom: 3px;
     margin-right: 10px;
     margin-top: 2px;
+    color: #455a64;
 }
 
 .sub_button{
@@ -173,21 +230,27 @@
     font-weight: 400;
 }
 
-.sidebar_footer_profile:hover {
-    color: #455a64;
-}
-
 .sidebar_footer_items:active {
     background-color: #b0bec5 !important;
 }
 
-.sidebar_footer_logout {
+.sidebar_footer_item {
+    text-decoration: none;
     background-color: transparent;
     border: transparent;
     margin: 0px;
     padding: 0px;
     font-size: 14px;
     font-weight: 400;
+    color: #455a64;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px
+}
+
+.sidebar_footer_item:hover {
     color: #455a64;
 }
 
@@ -443,6 +506,23 @@ $onFocus: #323C4E;
     padding: 12px;
     padding-left: 18px;
     width: 100%;
+
+    &--non_submenu,
+    &__collapsed--non_submenu {
+        all: unset;
+        padding: 10px 0;
+        text-align: center;
+        border-top: 1px solid lightgray;
+
+        &:hover {
+            background-color: #fff;
+        }
+    }
+
+    &__collapsed--non_submenu {
+        border-bottom: 1px solid lightgray;
+        margin-bottom: 15px;
+    }
 }
 
 .content_create_button:hover {
@@ -1224,4 +1304,30 @@ $onFocus: #323C4E;
         width: 150px;
     }
 }
+
+/** 
+======================================================
+            ENTITY TYPES LIST
+======================================================
+**/
+
+.entity_types_list {
+    margin-top: 10px;
+    list-style-type: '> ';
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    &__link {
+        text-decoration: none;
+        color: #000;
+
+        &:hover, &--active {
+            color: #455a64;
+        }
+    }
+}
+
+
 

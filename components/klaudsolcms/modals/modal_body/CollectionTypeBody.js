@@ -4,8 +4,9 @@ import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 import DependentField from "@/components/fields/DependentField";
 
-export default function CollectionTypeBody({ formRef }) {
+export default function CollectionTypeBody({ formRef, setModal, setLoading }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const formikParams = {
     initialValues: {},
@@ -13,6 +14,7 @@ export default function CollectionTypeBody({ formRef }) {
     onSubmit: (values) => {
       (async () => {
         try {
+          setLoading(true);
           //refactor to reducers/actions
           await fetch(`/api/entity_types`, {
             method: "POST",
@@ -23,7 +25,11 @@ export default function CollectionTypeBody({ formRef }) {
           });
         } catch (error) {
         } finally {
-          await loadEntityTypes({ rootState, rootDispatch });
+          const { entity_type_slug: currentTypeSlug } = rootState.currentContentType;
+          await loadEntityTypes({ rootState, rootDispatch, currentTypeSlug });
+
+          setModal(false);
+          setLoading(false);
         }
       })();
     },

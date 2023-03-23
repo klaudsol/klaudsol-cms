@@ -163,6 +163,25 @@ class EntityTypes {
     //TODO: return something valuable here
     return true;
   }
+
+  static async getFirst() {
+    const db = new DB();
+    const sql = `SELECT * FROM entity_types ORDER BY id ASC LIMIT 1`;
+
+    const data = await db.executeStatement(sql);
+
+    return data.records.map(
+      ([
+        { longValue: id },
+        { stringValue: name },
+        { stringValue: slug },
+      ]) => ({
+        id,
+        name,
+        slug,
+      })
+    );
+  }
 }
 
 export default EntityTypes;

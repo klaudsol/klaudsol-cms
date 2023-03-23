@@ -26,11 +26,13 @@ import { BsGearFill } from "react-icons/bs";
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
 import AppContentManagerTableIconView from "@/components/klaudsolcms/views/AppContentManagerIconView";
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
+import SkeletonContentManagerHeader from "components/klaudsolcms/skeleton/SkeletonContentManagerHeader";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import {
   contentManagerReducer,
   initialState,
 } from "@/components/reducers/contentManagerReducer";
+import { loadEntityTypes } from '@/components/reducers/actions';
 import {
   LOADING,
   SET_ENTITY_TYPE_NAME,
@@ -52,11 +54,11 @@ export default function ContentManager({ cache }) {
   const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
-  const { state: {currentContentType:{ entity_type_name, entity_type_slug: headerSlug } } } = useContext(RootContext);
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const { currentContentType: { entity_type_name, entity_type_slug: headerSlug } } = rootState;
 
- const [state, dispatch] = useReducer(contentManagerReducer, initialState);
+  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
-  /*** Entity Types List ***/
   useEffect(() => {
     (async () => {
       try {
@@ -119,17 +121,28 @@ export default function ContentManager({ cache }) {
           <div className="py-4">
             <AppBackButton link="/admin" />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
-              <div>
-                <div className="general-header"> {entity_type_name} </div>
-                <a
-                  href={`/api/${entity_type_slug}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  api/{headerSlug}
-                </a>
-                <p> {state.values.length} entries found </p>
-              </div>
+              {/* The header will go crazy if we went from settings/profile/admin etc. to */}
+              {/* content manager. This will fix it */}
+              {(state.firstFetch) && 
+                <SkeletonContentManagerHeader 
+                    entity_type_name={entity_type_name}
+                    entity_type_slug={entity_type_slug}
+                    headerSlug={headerSlug}
+                    entries={state.values.length}
+                />}
+              
+              {(!state.firstFetch) && 
+                <div>
+                  <div className="general-header"> {entity_type_name} </div>
+                  <a
+                    href={`/api/${entity_type_slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    api/{headerSlug}
+                  </a>
+                  <p> {state.values.length} entries found </p>
+                </div>}
              {capabilities.includes(writeContents) && <AppCreatebutton
                 link={`/admin/content-manager/${entity_type_slug}/create`}
                 title="Create new entry"

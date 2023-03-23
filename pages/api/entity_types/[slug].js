@@ -104,7 +104,20 @@ async function del(req, res) {
     await assertUserCan(writeContentTypes, req);
   
     const { slug } = req.query;
+
     await EntityType.delete({ slug });
+
+    const { defaultEntityType } = req.session.cache;
+    if(defaultEntityType === slug) {
+        const newDefaultType = await EntityType.getFirst();
+
+        req.session.cache = {
+            ...req.session.cache,
+            defaultEntityType: newDefaultType[0].slug,
+        }
+        await req.session.save();
+    }
+
     res.status(OK).json({ message: "Successfully delete the entity type" });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
