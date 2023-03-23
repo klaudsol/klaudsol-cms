@@ -51,15 +51,15 @@ async function handler(req, res) {
   try {
     switch (req.method) {
       case "GET":
-        return get(req, res);
+        return await get(req, res);
       case "PUT":
         const { req: parsedReq, res: parsedRes } = await parseFormData(
           req,
           res
         );
-        return update(parsedReq, parsedRes);
+        return await update(parsedReq, parsedRes);
       case "DELETE":
-        return del(req, res);
+        return await del(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
