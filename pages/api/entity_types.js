@@ -40,9 +40,9 @@ async function handler(req, res) {
   try {
     switch(req.method) {
       case "GET":
-        return get(req, res); 
+        return await get(req, res); 
       case "POST":
-        return create(req, res);
+        return await create(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }

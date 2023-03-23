@@ -13,9 +13,9 @@ async function handler(req, res) {
   try {
     switch(req.method) {
       case "POST":
-        return login(req, res);
+        return await login(req, res);
       case "DELETE":
-        return logout(req, res); 
+        return await logout(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
