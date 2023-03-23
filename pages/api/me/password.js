@@ -37,7 +37,7 @@ async function handler(req, res) {
   try {
     switch(req.method) {
       case "PUT":
-        return update(req, res); 
+        return await update(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
