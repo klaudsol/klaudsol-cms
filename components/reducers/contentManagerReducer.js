@@ -10,7 +10,8 @@ import {
   SET_PAGE,
   ROWS_SET,
   PAGE_SETS_RENDERER,
-  SET_FIRST_FETCH
+  SET_FIRST_FETCH,
+  TOGGLE_VIEW
 } from "@/lib/actions";
 
 export const initialState = {
@@ -25,6 +26,7 @@ export const initialState = {
   rows:null,
   setsRenderer:0,
   firstFetch: true,
+  view: 'list'
 };
 
 
@@ -95,6 +97,11 @@ export const contentManagerReducer = (state, action) => {
       return {
         ...state,
         firstFetch: action.payload,
+      };
+    case TOGGLE_VIEW:
+      return {
+        ...state,
+        view: state.view === 'list' ? 'icon' : 'list'
       };
   }
 };
