@@ -1,6 +1,6 @@
 import { FaFeatherAlt, FaRegUser } from 'react-icons/fa';
 import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
-import { BiBuildings } from 'react-icons/bi';
+import { BiBuildings, BiNotepad, BiPen } from 'react-icons/bi';
 import { BsFillGearFill } from 'react-icons/bs';
 import { RiSettings3Line, RiAdminLine } from 'react-icons/ri';
 import { AiOutlineLock } from 'react-icons/ai';
@@ -25,14 +25,17 @@ const AppSidebar = () => {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const cache = useContext(CacheContext);
-  const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
+  const { firstName = null, lastName = null, defaultEntityType = null, entityTypes = [] } = cache ?? {};
+
+  const [entityTypeLinks, setEntityTypeLinks] = useState([
+  ]);
   
   const [sidebarButtons, setSidebarButtons] = useState([
-    {
-      title: "Content Manager",
-      path: `/admin/content-manager/`,
-      icon: <FaFeatherAlt className='sidebar_button_icon'/>
-    },
+    ...entityTypes.map(type => ({
+      title: type.entity_type_name,
+      path: `/admin/content-manager/${type.entity_type_slug}`,
+      icon: <BiPen className='sidebar_button_icon'/>
+    })),
     {
       title: "Content-Type Builder",
       path: `/admin/content-type-builder/`,
@@ -73,7 +76,7 @@ const AppSidebar = () => {
   
   return (
     <>
-     {rootState.collapse ? <CollapsedSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> : <FullSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />}
+     {rootState.collapse ? <CollapsedSidebar entityTypeLinks={entityTypeLinks} sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> : <FullSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />}
     </>
   )
 }
