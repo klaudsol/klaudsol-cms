@@ -22,6 +22,7 @@ import {
 } from "@/lib/actions";
 import { FaCheck } from "react-icons/fa";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
+import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import classname from "classnames";
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
@@ -108,26 +109,31 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
+        const { files, nonFiles } = getBody(values)
 
         const entry = {
-          ...values,
+          ...nonFiles,
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
         
-        const formattedEntries = convertToFormData(entry);
         try {
           dispatch({ type: SAVING });
+
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
-            body: formattedEntries,
+            body: JSON.stringify(entry),
+            headers: {
+              'Content-type': 'application/json'
+            },
           });
+
           const { message, homepage } = await response.json();
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           console.error(ex);
         } finally {
-          dispatch({ type: CLEANUP });
+          /* dispatch({ type: CLEANUP }); */
         }
       })();
     },
