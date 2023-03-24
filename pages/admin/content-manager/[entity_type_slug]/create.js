@@ -109,7 +109,8 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
-        const { files, nonFiles } = getBody(values)
+        const { files, nonFiles } = await getBody(values)
+        console.log(files, nonFiles)
 
         const entry = {
           ...nonFiles,
@@ -120,15 +121,15 @@ export default function CreateNewEntry({ cache }) {
         try {
           dispatch({ type: SAVING });
 
-          const response = await slsFetch(`/api/${entity_type_slug}`, {
-            method: "POST",
-            body: JSON.stringify(entry),
-            headers: {
-              'Content-type': 'application/json'
-            },
-          });
-
-          const { message, homepage } = await response.json();
+          /* const response = await slsFetch(`/api/${entity_type_slug}`, { */
+          /*   method: "POST", */
+          /*   body: JSON.stringify(entry), */
+          /*   headers: { */
+          /*     'Content-type': 'application/json' */
+          /*   }, */
+          /* }); */
+          /**/
+          /* const { message, homepage } = await response.json(); */
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           console.error(ex);
