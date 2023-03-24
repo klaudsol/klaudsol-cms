@@ -23,6 +23,7 @@ import {
 import { FaCheck } from "react-icons/fa";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
 import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
+import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import classname from "classnames";
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
@@ -128,29 +129,8 @@ export default function CreateNewEntry({ cache }) {
             body: JSON.stringify(entry),
           });
           const { message, presignedUrls } = await response.json();
-          console.log(presignedUrls)
-          console.log(files)
             
-          if (files.length > 0) {
-
-              const uploadFile = async (file, url) => {
-                const uploadParams = {
-                      method: "PUT",
-                      headers: {
-                          'Content-Type': 'multipart/form-data'
-                      },
-                      body: file
-                }
-                await slsFetch(url, uploadParams);
-              }
-
-              const promises = await presignedUrls.map(async (item) => {
-                const file = files.find((file) => file.name === item.originalName);
-                await uploadFile(file, item.url);
-              })
-
-              await Promise.all(promises);
-          }
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
           /* dispatch({ type: SET_SHOW, payload: true }); */
         } catch (ex) {

@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
 import { generateRandVals } from "@klaudsol/commons/lib/Math";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 const S3_ACCESS_KEY_ID =
   process.env.KS_S3_ACCESS_KEY_ID ??
@@ -53,6 +54,27 @@ export const generatePresignedUrl = (file) => {
   const url = s3.getSignedUrl("putObject", params);
 
   return { url, originalName: file.originalName };
+};
+
+export const uploadFileToUrl = async (file, url) => {
+  const uploadParams = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    body: file,
+  };
+
+  await slsFetch(url, uploadParams);
+};
+
+export const uploadFilesToUrl = async (files, urls) => {
+  const promises = await urls.map(async (item) => {
+    const file = files.find((file) => file.name === item.originalName);
+    await uploadFileToUrl(file, item.url);
+  });
+
+  await Promise.all(promises);
 };
 
 export const generatePresignedUrls = async (fileNames) => {
