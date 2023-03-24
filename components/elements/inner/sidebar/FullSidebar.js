@@ -54,7 +54,7 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                   </div>
                   :
                   <div className='sidebar_button_category_container' key={i}>
-                    <div className='sidebar_buttons' onClick={()=>{setIsShowAdminSub(prev => !prev)}}>{button.icon} {button.title} {<MdKeyboardArrowUp width="2em" className={isShowAdminSub ? 'arrowbutton active' : 'arrowbutton'}/>}</div>                   
+                    <div className='sidebar_buttons' onClick={()=>{setIsShowAdminSub(prev => !prev)}}>{button.icon} {button.title} {<MdKeyboardArrowUp width="2em" className={isShowAdminSub ? 'arrowbutton' : 'arrowbutton active'}/>}</div>                   
                     {isShowAdminSub && button.subItems.map((item, i)=> (
                         <Link 
                         key={i} 

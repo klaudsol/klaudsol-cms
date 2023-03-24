@@ -10,27 +10,20 @@ export async function loadEntityTypes({
   rootState,
   rootDispatch,
   onStartLoad = () => {},
-  onEndLoad = () => {},
-  currentTypeSlug
+  onEndLoad = () => {}
   }) {
   try {
     onStartLoad();
     const entityTypesRaw = await slsFetch("/api/entity_types");
     const entityTypes = await entityTypesRaw.json();
   
-    rootState.currentContentType.entity_type_slug !== currentTypeSlug &&
-    rootDispatch({
-      type: SET_CURRENT_ENTITY_TYPE,
-      payload: findContentTypeName(entityTypes.data,currentTypeSlug)
-    });       
     //reload entity types list only if there is a change.
     if (rootState.entityTypesHash !== entityTypes.metadata.hash) {
       rootDispatch({
         type: SET_ENTITY_TYPES,
         payload: {
           entityTypes: entityTypes.data,
-          entityTypesHash: entityTypes.metadata.hash,
-          currentContentType:findContentTypeName(entityTypes.data,currentTypeSlug)
+          entityTypesHash: entityTypes.metadata.hash
       }});       
 
     }
