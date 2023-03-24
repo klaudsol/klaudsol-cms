@@ -16,7 +16,7 @@ import CollapsedSidebar from './sidebar/CollapsedSidebar';
 import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
-import { writeSettings, readUsers,  readGroups } from "@/lib/Constants";
+import { writeSettings, writeContentTypes, readUsers,  readGroups } from "@/lib/Constants";
 
 const AppSidebar = () => {
 
@@ -45,7 +45,7 @@ const AppSidebar = () => {
       path: `/admin/content-manager/${type.entity_type_slug}`,
       icon: <BiPen className='sidebar_button_icon'/>
     })),
-    {
+    (capabilities.includes(writeContentTypes) && {
       multiple: true,
       title: "Content Type Editor",
       path: `/admin/content-type-builder/`,
@@ -63,7 +63,7 @@ const AppSidebar = () => {
         highlight: false
       }
     ]
-    },
+    }),
     {
       title: "Profile",
       path: "/admin/me",

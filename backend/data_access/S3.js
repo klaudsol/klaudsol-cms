@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
-import { generateRandVals } from '@klaudsol/commons/lib/Math';
+import { generateRandVals } from "@klaudsol/commons/lib/Math";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 const S3_ACCESS_KEY_ID =
   process.env.KS_S3_ACCESS_KEY_ID ??
@@ -20,6 +21,7 @@ const s3Config = {
   accessKeyId: S3_ACCESS_KEY_ID,
   secretAccessKey: S3_SECRET_ACCESS_KEY,
   region: REGION,
+  signatureVersion: "v4",
 };
 
 export const initializeS3 = () => {
@@ -36,6 +38,49 @@ export const getS3Param = (file) => {
     ContentType: file.mimetype,
     ACL: "public-read",
   };
+};
+
+export const generatePresignedUrl = (file) => {
+  const s3 = initializeS3();
+
+  const params = {
+    Bucket: S3_BUCKET,
+    Key: file.key,
+    Expires: 60,
+    ContentType: file.type,
+    ACL: "public-read",
+  };
+
+  const url = s3.getSignedUrl("putObject", params);
+
+  return { url, originalName: file.originalName };
+};
+
+export const generatePresignedUrls = async (fileNames) => {
+  const presignedUrls = fileNames.map(generatePresignedUrl);
+
+  return presignedUrls;
+};
+
+export const uploadFileToUrl = async (file, url) => {
+  const uploadParams = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    body: file,
+  };
+
+  await slsFetch(url, uploadParams);
+};
+
+export const uploadFilesToUrl = async (files, urls) => {
+  const promises = await urls.map(async (item) => {
+    const file = files.find((file) => file.name === item.originalName);
+    await uploadFileToUrl(file, item.url);
+  });
+
+  await Promise.all(promises);
 };
 
 export const generateUniqueKey = async (key) => {
@@ -55,19 +100,19 @@ export const formatS3Param = async (param) => {
 export const generateEntries = (resFromS3, files, body) => {
   const newBody = { ...body };
   files.forEach((file, i) => (newBody[file.fieldname] = resFromS3[i].Key));
-  
+
   return newBody;
 };
 
 export const generateEntry = (resFromS3, file) => {
-const newBody = { [file.fieldname]: resFromS3.key }
-return newBody;
-}
+  const newBody = { [file.fieldname]: resFromS3.key };
+  return newBody;
+};
 
 export const generateResource = (resFromS3, file) => {
-  const newBody = { key: file.fieldname, value: resFromS3.key }
-  return newBody
-}
+  const newBody = { key: file.fieldname, value: resFromS3.key };
+  return newBody;
+};
 
 export const uploadFileToBucket = async (param) => {
   const s3 = initializeS3();
@@ -95,27 +140,32 @@ export const generateS3ParamsForDeletion = (keysRaw) => {
 };
 
 export const generateS3ParamForDeletion = (keyRaw) => {
-  const { Key } = generateS3KeyForDeletion(keyRaw)
+  const { Key } = generateS3KeyForDeletion(keyRaw);
   const params = {
     Bucket: S3_BUCKET,
-    Key 
+    Key,
   };
 
   return params;
 };
 
-export const deleteFilesFromBucket = async (params) => {
+export const deleteObjectsFromBucket = async (params) => {
   const s3 = initializeS3();
   const res = await s3.deleteObjects(params).promise();
 
   return res;
 };
 
-export const deleteFileFromBucket = async (params) => {
+export const deleteObjectFromBucket = async (params) => {
   const s3 = initializeS3();
   const res = await s3.deleteObject(params).promise();
 
   return res;
+};
+
+export const deleteFilesFromBucket = async (toDelete) => {
+  const paramsForDeletion = generateS3ParamsForDeletion(toDelete);
+  await deleteObjectsFromBucket(paramsForDeletion);
 };
 
 export const addFileToBucket = async (file) => {
@@ -140,11 +190,11 @@ export const addFilesToBucket = async (files) => {
 // We also need a function to update one file. This function updates
 // multiple files
 export const updateFilesFromBucket = async (file, body, toDelete) => {
-  if(toDelete?.length){
+  if (toDelete?.length) {
     const paramsForDeletion = generateS3ParamsForDeletion(toDelete);
-    await deleteFilesFromBucket(paramsForDeletion);
+    await deleteObjectsFromBucket(paramsForDeletion);
   }
   const uploadedFile = await addFilesToBucket(file, body);
-  
+
   return uploadedFile;
 };
