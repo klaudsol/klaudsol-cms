@@ -5,6 +5,7 @@ import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
+import EntityType from '@/backend/models/core/EntityType';
 
 export default withSession(handler);
 
@@ -34,6 +35,8 @@ async function login (req, res) {
       return
       }
 
+    const entityTypes = await EntityType.all();
+
     const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
     req.session.session_token = session_token;
     req.session.cache = {
@@ -43,7 +46,8 @@ async function login (req, res) {
       capabilities,
       defaultEntityType,
       homepage: '/admin',
-      forcePasswordChange
+      forcePasswordChange,
+      entityTypes
     };
 
     await req.session.save();    
