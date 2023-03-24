@@ -3,10 +3,11 @@ import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
 import { BiPen } from 'react-icons/bi';
 import { RiSettings3Line } from 'react-icons/ri';
 import { AiOutlineLock } from 'react-icons/ai';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
-
+import AppModal from "@/components/klaudsolcms/AppModal";
+import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
 import { useRouter } from 'next/router'
 
 // sidebar nav config
@@ -21,13 +22,22 @@ const AppSidebar = () => {
 
   const router = useRouter();
   const capabilities = useCapabilities();
+  const formRef = useRef();
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null, entityTypes = [] } = cache ?? {};
+  const [isCollectionTypeBodyVisible, setCollectionTypeBodyVisible] = useState(false);
 
   const [entityTypeLinks, setEntityTypeLinks] = useState([
   ]);
+
+  const onModalSubmit = () => {
+    if (formRef.current) {
+      formRef.current.handleSubmit();
+      setCollectionTypeBodyVisible(false);
+    }
+  };
   
   const [sidebarButtons, setSidebarButtons] = useState([
     ...entityTypes.map(type => ({
@@ -48,7 +58,9 @@ const AppSidebar = () => {
       {
         subTitle: 'New Type',
         subPath: '#',
-        subIcon:  <FaPlus className="content_create_icon" />
+        subIcon:  <FaPlus className="content_create_icon" />,
+        onClick: () => {setCollectionTypeBodyVisible(true)},
+        highlight: false
       }
     ]
     },
@@ -88,6 +100,15 @@ const AppSidebar = () => {
   return (
     <>
      {rootState.collapse ? <CollapsedSidebar entityTypeLinks={entityTypeLinks} sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> : <FullSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />}
+      <AppModal
+        show={isCollectionTypeBodyVisible}
+        onClose={() => setCollectionTypeBodyVisible(false)}
+        onClick={onModalSubmit}
+        modalTitle="Create a collection type"
+        buttonTitle="Continue"
+      >
+        <CollectionTypeBody formRef={formRef} />
+      </AppModal>
     </>
   )
 }

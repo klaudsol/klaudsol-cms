@@ -1,6 +1,5 @@
 import { AppContent, AppSidebar } from '@/components/elements/inner/index';
 import ClientSessionHandler from '@/components/ClientSessionHandler';
-import ContentBuilderSubMenu from 'components/elements/inner/ContentBuilderSubMenu';
 const ContentTypeBuilderLayout = ({children, currentTypeSlug}) => {
   return (
     <ClientSessionHandler>
