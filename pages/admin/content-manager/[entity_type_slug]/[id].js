@@ -133,7 +133,7 @@ export default function Type({ cache }) {
     onSubmit: (values) => {
       (async () => {
         try {
-          /* dispatch({ type: SAVING }); */
+          dispatch({ type: SAVING });
 
           const { files, data, fileNames } = await getBody(values);
           const toDelete = getFilesToDelete(values);

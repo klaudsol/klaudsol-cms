@@ -133,11 +133,7 @@ async function del(req, res) {
       item.attributes_type === "image" ? item.value_string : []
     );
 
-    if (imageNames.length > 0) {
-      const params = generateS3ParamsForDeletion(imageNames);
-      await deleteFilesFromBucket(params);
-    }
-
+    if (imageNames.length > 0) await deleteFilesFromBucket(imageNames);
     await Entity.delete({ id: slug });
 
     res.status(OK).json({ message: "Successfully delete the entry" });
