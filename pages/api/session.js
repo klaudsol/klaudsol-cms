@@ -35,8 +35,6 @@ async function login (req, res) {
       return
       }
 
-    const entityTypes = await EntityType.all();
-
     const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
     req.session.session_token = session_token;
     req.session.cache = {
@@ -47,7 +45,6 @@ async function login (req, res) {
       defaultEntityType,
       homepage: '/admin',
       forcePasswordChange,
-      entityTypes
     };
 
     await req.session.save();    
