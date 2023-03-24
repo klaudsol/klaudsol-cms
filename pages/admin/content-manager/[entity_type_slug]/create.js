@@ -121,6 +121,7 @@ export default function CreateNewEntry({ cache }) {
 
         try {
           dispatch({ type: SAVING });
+
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
             headers: {

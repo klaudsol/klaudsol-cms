@@ -28,24 +28,19 @@ import {
   deleteFilesFromBucket,
   updateFilesFromBucket,
   generateS3ParamsForDeletion,
+  generatePresignedUrls,
   generateEntries,
 } from "@/backend/data_access/S3";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders, parseFormData } from "@klaudsol/commons/lib/API";
+import { setCORSHeaders } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert, assertUserCan } from "@klaudsol/commons/lib/Permissions";
-import { readContents, writeContents } from '@/lib/Constants';
+import { readContents, writeContents } from "@/lib/Constants";
 
 export default withSession(handler);
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 async function handler(req, res) {
   try {
@@ -53,11 +48,7 @@ async function handler(req, res) {
       case "GET":
         return await get(req, res);
       case "PUT":
-        const { req: parsedReq, res: parsedRes } = await parseFormData(
-          req,
-          res
-        );
-        return await update(parsedReq, parsedRes);
+        return await update(req, res);
       case "DELETE":
         return await del(req, res);
       default:
@@ -73,7 +64,7 @@ async function get(req, res) {
     await assertUserCan(readContents, req);
 
     const { entity_type_slug, id: slug } = req.query;
-    
+
     const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
     const initialFormat = {
@@ -133,8 +124,8 @@ async function del(req, res) {
       req
     );
 
-    await assertUserCan(readContents, req) &&
-    await assertUserCan(writeContents, req);
+    (await assertUserCan(readContents, req)) &&
+      (await assertUserCan(writeContents, req));
 
     const { entity_type_slug, id: slug } = req.query;
     const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });
@@ -164,27 +155,17 @@ async function update(req, res) {
       req
     );
 
-    await assertUserCan(readContents, req) &&
-    await assertUserCan(writeContents, req);
+    (await assertUserCan(readContents, req)) &&
+      (await assertUserCan(writeContents, req));
 
-    const { files, body: bodyRaw } = req;
-    const { entity_type_slug, entity_id, ...entriesRaw } = JSON.parse(
-      JSON.stringify(bodyRaw)
-    );
-    const { toDeleteRaw, ...body } = entriesRaw;
-    const toDelete = toDeleteRaw ? toDeleteRaw.split(",") : []
+    const { fileNames, toDelete, ...body } = req.body;
+    const { entity_id, entity_type_slug, ...entries } = body
+    await Entity.update({ entries, entity_type_slug, entity_id });
 
-    if (files.length > 0) {
-      const resFromS3 = await updateFilesFromBucket(files, body, toDelete);
-      const entries = generateEntries(resFromS3, files, body);
+    if (toDelete.length > 0) deleteFilesFromBucket(toDelete);
+    const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
-      await Entity.update({ entries, entity_type_slug, entity_id });
-      
-    } else {
-      await Entity.update({ entries: body, entity_type_slug, entity_id });
-    }
-
-    res.status(OK).json({ message: "Successfully created a new entry" });
+    res.status(OK).json({ message: "Successfully created a new entry", presignedUrls });
   } catch (error) {
     await defaultErrorHandler(error, req, res);
   }
