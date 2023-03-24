@@ -104,11 +104,24 @@ const AppSidebar = () => {
   return (
     <>
      {rootState.collapse && 
-      <CollapsedSidebar entityTypeLinks={entityTypeLinks} sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> 
+      <CollapsedSidebar 
+        entityTypeLinks={entityTypeLinks} 
+        sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+        firstName={firstName} 
+        lastName={lastName} 
+        defaultEntityType={defaultEntityType} 
+        router={router} 
+        setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> 
      }  
      
      {!rootState.collapse && 
-        <FullSidebar sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />
+        <FullSidebar 
+          sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+          firstName={firstName} 
+          lastName={lastName} 
+          defaultEntityType={defaultEntityType} 
+          router={router} 
+          setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />
      }
       <AppModal
         show={isCollectionTypeBodyVisible}
