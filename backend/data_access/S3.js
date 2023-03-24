@@ -56,6 +56,12 @@ export const generatePresignedUrl = (file) => {
   return { url, originalName: file.originalName };
 };
 
+export const generatePresignedUrls = async (fileNames) => {
+  const presignedUrls = fileNames.map(generatePresignedUrl);
+
+  return presignedUrls;
+};
+
 export const uploadFileToUrl = async (file, url) => {
   const uploadParams = {
     method: "PUT",
@@ -75,12 +81,6 @@ export const uploadFilesToUrl = async (files, urls) => {
   });
 
   await Promise.all(promises);
-};
-
-export const generatePresignedUrls = async (fileNames) => {
-  const presignedUrls = fileNames.map(generatePresignedUrl);
-
-  return presignedUrls;
 };
 
 export const generateUniqueKey = async (key) => {
@@ -164,9 +164,9 @@ export const deleteObjectFromBucket = async (params) => {
 };
 
 export const deleteFilesFromBucket = async (toDelete) => {
-    const paramsForDeletion = generateS3ParamsForDeletion(toDelete);
-    await deleteObjectsFromBucket(paramsForDeletion);
-}
+  const paramsForDeletion = generateS3ParamsForDeletion(toDelete);
+  await deleteObjectsFromBucket(paramsForDeletion);
+};
 
 export const addFileToBucket = async (file) => {
   const paramsRaw = getS3Param(file);
