@@ -16,7 +16,7 @@ export default function Admin({cache}) {
       <div>
           <div className="row px-0 mx-0">
             <div className="col-5 d-flex align-items-center d-flex align-items-center justify-content-center">
-              <h3 className="text_welcome"> Hello, {firstName}.<br></br>Welcome to KlaudSol CMS!</h3>
+              <h3 className="text_welcome"> Hello, {firstName}.<br></br>Welcome!</h3>
             </div>
             <div className="col-7">
               <div className='bg_svg'>

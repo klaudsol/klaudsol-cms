@@ -28,10 +28,10 @@ async function handler(req, res) {
   try {
     switch(req.method) {
       case "GET":
-        return get(req, res); 
+        return await get(req, res); 
       case "POST":
         const { req: parsedReq, res: parsedRes } = await parseFormData(req, res);
-        return create(parsedReq, parsedRes);
+        return await create(parsedReq, parsedRes);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }

@@ -31,7 +31,7 @@ import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
 import { setCORSHeaders, parseFormData } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
-import { addFilesToBucket, generateEntries } from "@backend/data_access/S3";
+import { addFilesToBucket, generateEntries, generatePresignedUrls } from "@backend/data_access/S3";
 import { transformQuery, sortData } from "@/components/Util";
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { filterData } from '@/components/Util';
@@ -40,23 +40,13 @@ import { readContents, writeContents } from '@/lib/Constants';
 
 export default withSession(handler);
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 async function handler(req, res) {
   try {
     switch (req.method) {
       case "GET":
-        return get(req, res);
+        return await get(req, res);
       case "POST":
-        const { req: parsedReq, res: parsedRes } = await parseFormData(
-          req,
-          res
-        );
-        return create(parsedReq, parsedRes);
+        return await create(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -147,19 +137,12 @@ async function create(req, res) {
         await assertUserCan(readContents, req) &&
         await assertUserCan(writeContents, req);
         
-        const { files, body: bodyRaw } = req;
-        const body = JSON.parse(JSON.stringify(bodyRaw));
+        const { fileNames, ...entry } = req.body;
+        await Entity.create(entry);
 
-        if (files.length > 0) {
-          const resFromS3 = await addFilesToBucket(files, body);
-          const entries = generateEntries(resFromS3, files, body);
+        const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
-          await Entity.create(entries);
-        } else {
-          await Entity.create(body);
-        }
-
-        res.status(OK).json({message: 'Successfully created a new entry'}) 
+        res.status(OK).json({ message: 'Successfully created a new entry', presignedUrls }) 
     } catch (error) {
       await defaultErrorHandler(error, req, res);
     }

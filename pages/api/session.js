@@ -5,6 +5,7 @@ import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
+import EntityType from '@/backend/models/core/EntityType';
 
 export default withSession(handler);
 
@@ -13,9 +14,9 @@ async function handler(req, res) {
   try {
     switch(req.method) {
       case "POST":
-        return login(req, res);
+        return await login(req, res);
       case "DELETE":
-        return logout(req, res); 
+        return await logout(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -43,7 +44,7 @@ async function login (req, res) {
       capabilities,
       defaultEntityType,
       homepage: '/admin',
-      forcePasswordChange
+      forcePasswordChange,
     };
 
     await req.session.save();    
