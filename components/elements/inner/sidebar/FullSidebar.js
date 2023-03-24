@@ -14,6 +14,7 @@ import cx from 'classnames';
 const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
   
   const [isShowAdminSub, setIsShowAdminSub] = useState(false);
+  const noop = () => {};
   
   return (
     <CSidebar
@@ -58,20 +59,13 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                         <Link 
                         key={i} 
                         href={item.subPath} 
-                        className={cx(router.asPath?.includes?.(item.subPath) ? 'sidebar_buttons_active sub_button' : 'sidebar_buttons sub_button')}
+                        onClick={item.onClick ?? noop}
+                        className={cx((router.asPath?.includes?.(item.subPath) && item.highlight !== false) ? 'sidebar_buttons_active sub_button' : 'sidebar_buttons sub_button')}
                         passHref
                     >
                       {item.subIcon} {item.subTitle}
                     </Link>
                     ))}
-                    {/* <Link 
-                        key={i} 
-                        href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
-                        className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}
-                        passHref
-                    >
-                      {button.icon} {button.title}
-                    </Link> */}
                   </div>
              })}
             </div>

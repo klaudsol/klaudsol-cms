@@ -1,6 +1,5 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import ContentBuilderSubMenu from "@/components/elements/inner/ContentBuilderSubMenu";
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { FaTrash } from "react-icons/fa";
 
