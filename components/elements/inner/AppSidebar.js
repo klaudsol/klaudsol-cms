@@ -1,8 +1,7 @@
-import { FaFeatherAlt, FaRegUser } from 'react-icons/fa';
+import { FaFeatherAlt, FaRegUser, FaPlus } from 'react-icons/fa';
 import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
-import { BiBuildings, BiNotepad, BiPen } from 'react-icons/bi';
-import { BsFillGearFill } from 'react-icons/bs';
-import { RiSettings3Line, RiAdminLine } from 'react-icons/ri';
+import { BiPen } from 'react-icons/bi';
+import { RiSettings3Line } from 'react-icons/ri';
 import { AiOutlineLock } from 'react-icons/ai';
 import React, { useState, useContext, useEffect } from 'react';
 import 'simplebar/dist/simplebar.min.css'
@@ -37,9 +36,21 @@ const AppSidebar = () => {
       icon: <BiPen className='sidebar_button_icon'/>
     })),
     {
-      title: "Content-Type Builder",
+      multiple: true,
+      title: "Content Type Editor",
       path: `/admin/content-type-builder/`,
-      icon: <BiBuildings className='sidebar_button_icon'/>
+      icon: <FaFeatherAlt className='sidebar_button_icon'/>,
+      subItems: [
+        ...entityTypes.map(type => ({
+        subTitle: `${type.entity_type_name} Type`,
+        subPath: `/admin/content-type-builder/${type.entity_type_slug}`
+      })),
+      {
+        subTitle: 'New Type',
+        subPath: '#',
+        subIcon:  <FaPlus className="content_create_icon" />
+      }
+    ]
     },
     {
       title: "Profile",
