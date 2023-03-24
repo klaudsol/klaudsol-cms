@@ -109,28 +109,40 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
-        const { files, nonFiles } = await getBody(values)
-        console.log(files, nonFiles)
+        const { files, data, fileNames } = await getBody(values);
 
         const entry = {
-          ...nonFiles,
+          ...data,
+          fileNames,
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
+
+                console.log(files)
+                console.log(fileNames)
         
         try {
-          dispatch({ type: SAVING });
+          /* dispatch({ type: SAVING }); */
+          const response = await slsFetch(`/api/${entity_type_slug}`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(entry),
+          });
+          const { message, presignedUrls } = await response.json();
 
-          /* const response = await slsFetch(`/api/${entity_type_slug}`, { */
-          /*   method: "POST", */
-          /*   body: JSON.stringify(entry), */
-          /*   headers: { */
-          /*     'Content-type': 'application/json' */
-          /*   }, */
-          /* }); */
-          /**/
-          /* const { message, homepage } = await response.json(); */
-          dispatch({ type: SET_SHOW, payload: true });
+
+          /* const uploadParams = { */
+          /*       method: "PUT", */
+          /*       headers: { */
+          /*           'Content-Type': 'multipart/form-data' */
+          /*       }, */
+          /*       body: files['image-1'] */
+          /* } */
+          /* await slsFetch(presignedUrl, uploadParams); */
+
+          /* dispatch({ type: SET_SHOW, payload: true }); */
         } catch (ex) {
           console.error(ex);
         } finally {
