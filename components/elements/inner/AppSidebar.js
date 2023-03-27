@@ -48,7 +48,7 @@ const AppSidebar = () => {
       return {
         title: type.entity_type_name,
         path: `/admin/content-manager/${type.entity_type_slug}`,
-        icon: <Icon onClick={() => setIconSlug(type.entity_type_slug)} className='sidebar_button_icon'/>
+        icon: <Icon onClick={() => !rootState.collapse && setIconSlug(type.entity_type_slug)} className='sidebar_button_icon'/>
       }
   });
 
