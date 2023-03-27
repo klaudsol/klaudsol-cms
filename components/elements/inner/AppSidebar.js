@@ -155,6 +155,7 @@ const AppSidebar = () => {
         <IconsListModalBody 
             iconData={iconData} 
             setIconData={setIconData} 
+            isLoading={isLoading}
             setIsLoading={setIsLoading}
         />
       </AppModal>

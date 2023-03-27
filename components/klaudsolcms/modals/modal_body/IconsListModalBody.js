@@ -1,17 +1,26 @@
 import * as BiIcons from "react-icons/bi";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import RootContext from "@/components/contexts/RootContext";
 import { SET_ENTITY_TYPE } from "@/lib/actions";
 
-const IconsListModalBody = ({ iconData, setIconData, setIsLoading }) => {
+const IconsListModalBody = ({
+  iconData,
+  setIconData,
+  isLoading,
+  setIsLoading,
+}) => {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const [highlighted, setHighlighted] = useState(iconData.icon);
 
   const onClick = async (e) => {
+    if (isLoading) return;
+
     try {
       setIsLoading(true);
 
       const icon = e.currentTarget.value;
+      setHighlighted(icon);
 
       const url = `/api/entity_types/${iconData.slug}/icon_change`;
       const params = {
@@ -48,7 +57,7 @@ const IconsListModalBody = ({ iconData, setIconData, setIsLoading }) => {
         return (
           <button
             className={`icon_list__button ${
-              iconData.icon === icon && "icon_list__button--current"
+              highlighted === icon && "icon_list__button--current"
             }`}
             onClick={onClick}
             key={icon}
