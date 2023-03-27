@@ -30,7 +30,7 @@ const IconsListModalBody = ({ iconSlug, setIconSlug, setIsLoading }) => {
 
       rootDispatch({
         type: SET_ENTITY_TYPE,
-        payload: { slug: iconSlug, entityType: itemToUpdate },
+        payload: { slug: iconSlug, entityType: updatedItem },
       });
     } catch (err) {
       console.error(err);
