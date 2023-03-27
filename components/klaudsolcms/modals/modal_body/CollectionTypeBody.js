@@ -3,9 +3,14 @@ import { Formik, Form, Field, useFormikContext, useField } from "formik";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 import DependentField from "@/components/fields/DependentField";
+import useCollectionTypeBodyReducer from "@/components/reducers/collectionTypeBodyReducer";
+import { BiPen } from "react-icons/bi";
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const [state, setState] = useCollectionTypeBodyReducer();
+
+    console.log(state)
 
   const formikParams = {
     initialValues: {},
