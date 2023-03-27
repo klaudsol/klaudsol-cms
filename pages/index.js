@@ -13,33 +13,35 @@ export default function Index(props) {
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req, res }) {
-
     try {
-      var rawData = await Setting.get({ slug: mainlogo });    
-      var data = { ...rawData[0], link:`${process.env.KS_S3_BASE_URL}/${rawData[0].value}` };
-  // To ensure maximum efficiency and avoid any unnecessary involvement with the assertUserCan() function, 
-  // it is recommended to directly fetch our logo from the core setting. 
-    } catch (err) {}
+      const rawData = await Setting.getLogo();
+      const data = rawData[0];
 
-  try{
-    if(req.session?.cache?.forcePasswordChange){     
-      await serverSideLogout(req)
-    }
-  } catch(err){}
+      if (req.session?.cache?.forcePasswordChange) {
+        await serverSideLogout(req);
+      }
 
-    let homepage = req.session?.cache?.homepage;
-    if ((homepage && !req.session?.cache?.forcePasswordChange)) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: `/${homepage}`,
-        },
-      };
-    } 
-    else {
-      return {
-        props: { logo: (process.env.KS_S3_BASE_URL && rawData?.length) ? data : {} },
-      };
+      const homepage = req.session?.cache?.homepage;
+      if (homepage && !req.session?.cache?.forcePasswordChange) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: `/${homepage}`,
+          },
+        };
+      } else {
+        const logoLink = `${process.env.KS_S3_BASE_URL}/${data.value}`;
+
+        return {
+          props: {
+            logo: data.value !== "default" ? logoLink : "/logo-180x180.png",
+          },
+        };
+      }
+    } catch (err) {
+      console.error(err);
+
+      return { props: {} };
     }
   },
   sessionOptions

@@ -1,21 +1,44 @@
-import DB from '@klaudsol/commons/lib/DB';
+import DB from "@klaudsol/commons/lib/DB";
 
 class Resource {
-  static async get({ slug }) {
+  static async get() {
     const db = new DB();
-    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key`;
+    const sql = `SELECT * FROM \`settings\``;
 
-    const resource = await db.executeStatement(getSettingSQL, [
-      { name: "key", value: { stringValue: slug } },
-    ]);
-
-    return resource.records.map(
-      ([{ longValue: id }, { stringValue: key }, { stringValue: value }]) => ({
+    const data = await db.executeStatement(sql);
+    const output = data.records.map(
+      ([
+        { longValue: id },
+        { stringValue: setting },
+        { stringValue: value },
+      ]) => ({
         id,
-        key,
+        setting,
         value,
       })
     );
+
+    return output;
+  }
+
+  static async getLogo() {
+    const db = new DB();
+    const sql = `SELECT * FROM settings WHERE setting = "mainlogo"`;
+
+    const data = await db.executeStatement(sql);
+    const output = data.records.map(
+      ([
+        { longValue: id },
+        { stringValue: setting },
+        { stringValue: value },
+      ]) => ({
+        id,
+        setting,
+        value,
+      })
+    );
+
+    return output;
   }
 
   static async create({ key, value }) {
