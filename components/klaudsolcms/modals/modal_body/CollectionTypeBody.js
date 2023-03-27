@@ -2,7 +2,6 @@ import { useState, useContext, useEffect } from "react";
 import { Formik, Form, Field, useFormikContext, useField } from "formik";
 import { TOGGLE_ICONS_LIST, SET_CURRENT_ICON } from "@/lib/actions";
 import { loadEntityTypes } from "@/components/reducers/actions";
-import useCollectionTypeBodyReducer from "@/components/reducers/collectionTypeBodyReducer";
 import RootContext from "@/components/contexts/RootContext";
 import DependentField from "@/components/fields/DependentField";
 
