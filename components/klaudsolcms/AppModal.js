@@ -10,6 +10,7 @@ const AppModal = ({
   children,
   buttonTitle,
   isLoading,
+  noSubmit,
   size = "lg"
 }) => (
   <Modal 
@@ -27,9 +28,10 @@ const AppModal = ({
     <Modal.Body>{children}</Modal.Body>
     <Modal.Footer className="modal_header">
       {isLoading && <AppButtonSpinner />}
-      <Button disabled={isLoading} className="btn_modal" onClick={onClick}>
-        {buttonTitle}
-      </Button>
+      {!noSubmit && 
+        <Button disabled={isLoading} className="btn_modal" onClick={onClick}>
+            {buttonTitle}
+         </Button>}
     </Modal.Footer>
   </Modal>
 );
