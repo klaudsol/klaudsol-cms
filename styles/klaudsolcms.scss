@@ -150,6 +150,7 @@
 
 .sub_button{
     padding-left: 40px;
+    text-decoration: none;
 }
 
 .sidebar_footer {
@@ -887,7 +888,7 @@ $onFocus: #323C4E;
         padding: 12px;
         border-radius: 5px;
 
-        &:hover {
+        &:hover, &--current {
             color: #fff;
             background-color: #455a64;
         }

@@ -4,7 +4,7 @@ import { slsFetch } from "@klaudsol/commons/lib/Client";
 import RootContext from "@/components/contexts/RootContext";
 import { SET_ENTITY_TYPE } from "@/lib/actions";
 
-const IconsListModalBody = ({ iconSlug, setIconSlug, setIsLoading }) => {
+const IconsListModalBody = ({ iconData, setIconData, setIsLoading }) => {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const onClick = async (e) => {
@@ -13,7 +13,7 @@ const IconsListModalBody = ({ iconSlug, setIconSlug, setIsLoading }) => {
 
       const icon = e.currentTarget.value;
 
-      const url = `/api/entity_types/${iconSlug}/icon_change`;
+      const url = `/api/entity_types/${iconData.slug}/icon_change`;
       const params = {
         method: "PUT",
         "Content-Type": "application/json",
@@ -23,19 +23,19 @@ const IconsListModalBody = ({ iconSlug, setIconSlug, setIsLoading }) => {
       await slsFetch(url, params);
 
       const itemToUpdate = rootState.entityTypes.find(
-        ({ entity_type_slug }) => entity_type_slug === iconSlug
+        ({ entity_type_slug }) => entity_type_slug === iconData.slug
       );
 
       const updatedItem = { ...itemToUpdate, entity_type_icon: icon };
 
       rootDispatch({
         type: SET_ENTITY_TYPE,
-        payload: { slug: iconSlug, entityType: updatedItem },
+        payload: { slug: iconData.slug, entityType: updatedItem },
       });
     } catch (err) {
       console.error(err);
     } finally {
-      setIconSlug("");
+      setIconData("");
       setIsLoading(false);
     }
   };
@@ -47,7 +47,9 @@ const IconsListModalBody = ({ iconSlug, setIconSlug, setIsLoading }) => {
 
         return (
           <button
-            className="icon_list__button"
+            className={`icon_list__button ${
+              iconData.icon === icon && "icon_list__button--current"
+            }`}
             onClick={onClick}
             key={icon}
             value={icon}

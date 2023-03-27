@@ -30,7 +30,7 @@ const AppSidebar = () => {
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
   const [isCollectionTypeBodyVisible, setCollectionTypeBodyVisible] = useState(false);
-  const [iconSlug, setIconSlug] = useState(false);
+  const [iconData, setIconData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const onModalSubmit = () => {
@@ -39,16 +39,17 @@ const AppSidebar = () => {
     }
 
     if (isCollectionTypeBodyVisible) setCollectionTypeBodyVisible(false);
-    else if (iconSlug) setIconSlug('');
+    else if (iconData) setIconData(false);
   };
 
   const entityTypeLinks = rootState.entityTypes.map(type => {
       const Icon = BiIcons[type.entity_type_icon];
+      const iconData = { slug: type.entity_type_slug, icon: type.entity_type_icon}
 
       return {
         title: type.entity_type_name,
         path: `/admin/content-manager/${type.entity_type_slug}`,
-        icon: <Icon onClick={() => !rootState.collapse && setIconSlug(type.entity_type_slug)} className='sidebar_button_icon'/>
+        icon: <Icon onClick={() => !rootState.collapse && setIconData(iconData)} className='sidebar_button_icon'/>
       }
   });
 
@@ -142,9 +143,9 @@ const AppSidebar = () => {
         <CollectionTypeBody formRef={formRef} />
       </AppModal>
       <AppModal
-        show={iconSlug}
+        show={iconData}
         isLoading={isLoading}
-        onClose={() => setIconSlug(false)}
+        onClose={() => setIconData(false)}
         onClick={onModalSubmit}
         modalTitle="Choose an icon"
         size="default"
@@ -152,8 +153,8 @@ const AppSidebar = () => {
         noSubmit
       >
         <IconsListModalBody 
-            iconSlug={iconSlug} 
-            setIconSlug={setIconSlug} 
+            iconData={iconData} 
+            setIconData={setIconData} 
             setIsLoading={setIsLoading}
         />
       </AppModal>
