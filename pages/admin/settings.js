@@ -1,8 +1,16 @@
 import InnerSingleLayout from "@/components/layouts/InnerSingleLayout";
 import CacheContext from "@/components/contexts/CacheContext";
+import RootContext from "@/components/contexts/RootContext";
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
-import { Formik, Form } from "formik";
-import { useRef, useReducer, useEffect, useState, useCallback } from "react";
+import { Formik, Form, Field } from "formik";
+import {
+  useRef,
+  useReducer,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
@@ -16,103 +24,73 @@ import {
   settingReducer,
   initialState,
 } from "@/components/reducers/settingReducer";
-import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES, SET_CHANGED, SET_ERROR } from "@/lib/actions";
+import {
+  SAVING,
+  LOADING,
+  DELETING,
+  CLEANUP,
+  SET_VALUES,
+  SET_CHANGED,
+  SET_ERROR,
+} from "@/lib/actions";
 import { defaultLogo } from "@/constants/index";
-import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
+import { getFilesToDelete, getBody } from "@/lib/s3FormController";
+import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
 
 export default function Settings({ cache }) {
   const formRef = useRef();
   const [state, dispatch] = useReducer(settingReducer, initialState);
-  const isValueExists = Object.keys(state.values).length !== 0 
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const isValueExists = Object.keys(state.values).length !== 0;
   const capabilities = cache?.capabilities;
-
-  const setInitialValues = (data) => {
-    const initialVal = Object.keys(data).length !== 0 
-      ? { mainlogo: { name: data.key, link: data.link, key: data.value } }
-      : {};
-      return initialVal;
-  };
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await slsFetch("/api/settings/mainlogo");
-        const { data } = await response.json();
-        const newData = setInitialValues(data);
-
-        dispatch({ type: SET_VALUES, payload: newData });
-      } catch (error) {
-        dispatch({ type: SET_ERROR, payload: error.message });
-      } finally {
-        dispatch({ type: CLEANUP });
-      }
-    })();
-  }, []);
-
-  const onDelete = useCallback((setStaticLink) => {
-    (async () => {
-      try {
-        dispatch({ type: DELETING, payload: true });
-        const response = await slsFetch(`/api/settings/mainlogo`, {
-          method: "DELETE",
-          headers: {
-            "Content-type": "application/json",
-          },
-        });
-        dispatch({ type: SET_VALUES, payload: {} });
-        formRef.current.resetForm({ values: {} });
-        setStaticLink('');
-        dispatch({ type: SET_CHANGED, payload:false })
-      } catch (ex) {
-        console.error(ex);
-      } finally {
-        dispatch({ type: DELETING, payload: false });
-      }
-    })();
-  }, []);
 
   const onSubmit = (evt) => {
     evt.preventDefault();
     formRef.current.handleSubmit();
   };
 
-  const getS3Keys = (files) => {
-    if(!files) return
+  const getFilesToDelete = (values) => {
+    const files = Object.keys(values).filter(
+      (value) => values[value] instanceof File
+    );
+    const keys = files.map((file) => state.values[file].key);
 
-    const fileKeys = Object.keys(files);
-    const s3Keys = fileKeys.map((file) => state.values[file].key);
-    
-    return s3Keys;
+    return keys;
   };
 
   const formikParams = {
     innerRef: formRef,
-    initialValues: state.values,
+    initialValues: rootState.settings,
+    enableReinitialize: true,
     onSubmit: (values) => {
       (async () => {
         try {
           dispatch({ type: SAVING });
-          const isFile = Object.entries(values)[0][1] instanceof File;
-          const isCreateMode = !isValueExists && isFile;
-       
-          const filesToUpload = !isCreateMode && getAllFiles(values);
-          const s3Keys = getS3Keys(filesToUpload);   
-          const newValues = isCreateMode ? values : {...values, toDeleteRaw: s3Keys}
+          const { files, data, fileNames } = await getBody(values);
+          const toDelete = getFilesToDelete(values);
 
-          const formattedEntries = convertToFormData(newValues);
-              
-          const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
-            method: `${isCreateMode ? "POST" : "PUT"}`,
-            body: formattedEntries,
-          });
-          const { data } = await response.json()
+          const entry = {
+            ...data,
+            fileNames,
+            toDelete,
+          };
 
-          const newData = setInitialValues(data);
-          dispatch({ type: SET_VALUES, payload: newData });
-          formRef.current.resetForm({ values: newData });
-          dispatch({ type: SET_CHANGED, payload:false })
+          const url = `/api/settings`;
+          const params = {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(entry),
+          };
+
+          const response = await slsFetch(url, params);
+
+          const { presignedUrls } = await response.json();
+
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
         } catch (ex) {
           console.error(ex);
         } finally {
@@ -127,47 +105,43 @@ export default function Settings({ cache }) {
       <InnerSingleLayout>
         <div>
           <div className="row">
-            {capabilities.includes(readSettings) ? <div className="col-12">
-              <div className="row mt-5">
-                <div className="col-12 col-md-10">
-                  <h3>Settings</h3>
-                </div>
-                <div className="col-12 col-md-2 float-right">
-                 {capabilities.includes(modifyLogo) && <AppButtonLg
-                    title={state.isSaving ? "Saving" : "Save"}
-                    icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
-                    onClick={onSubmit}
-                    isDisabled={state.isLoading || state.isSaving || state.isDeleting || !state.isChanged}
-                  />}
-                </div>
+            <div className="col-12">
+              <div className="mt-5 mb-3 d-flex justify-content-between">
+                <h3>Settings</h3>
+                <AppButtonLg
+                  title={state.isSaving ? "Saving" : "Save"}
+                  icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck />}
+                  onClick={onSubmit}
+                />
               </div>
-              {!state.isLoading && (
-                <Formik {...formikParams}>
-                  {() => (
-                    <Form>
-                      <UploadRenderer
-                        accept={validImageTypes}
-                        name="mainlogo"                     
-                        buttonPlaceholder={
-                          !isValueExists ? "Upload logo" : "Change logo"
-                        }
-                        showDeleteButton={isValueExists}
-                        isDeleting={state.isDeleting}
-                        isSaving={state.isSaving}
-                        onDelete={onDelete}
-                        isErrorDisabled={true}
-                        offName={true}
-                        resetOnNewData={true}
-                        dispatch={dispatch}
-                        disableAllButtons={!capabilities.includes(modifyLogo)}
-                      
-                      />
-                    </Form>
-                  )}
-                </Formik>
-              )}
-              {!isValueExists && !state.isLoading && "Logo is not set"}
-            </div> : <p className="errorMessage">{state.errorMessage}</p>}
+              <Formik {...formikParams}>
+                <Form>
+                  <div className="d-flex gap-3 mb-2 w-50">
+                    <div className="flex-grow-1">
+                      <p className="general-input-title-slug mb-2">CMS Name</p>
+                      <Field className="general-input-text" name="cms_name" />
+                    </div>
+                    <div className="flex-grow-1">
+                      <p className="general-input-title-slug mb-2">
+                        Default view
+                      </p>
+                      <Field
+                        as="select"
+                        className="general-input-text"
+                        name="default_view"
+                      >
+                        <option value="icon">icon</option>
+                        <option value="list">list</option>
+                      </Field>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="general-input-title-slug mb-2">Logo</p>
+                    <UploadRenderer name="main_logo" isErrorDisabled />
+                  </div>
+                </Form>
+              </Formik>
+            </div>
           </div>
         </div>
       </InnerSingleLayout>

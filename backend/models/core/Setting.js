@@ -1,21 +1,44 @@
-import DB from '@klaudsol/commons/lib/DB';
+import DB from "@klaudsol/commons/lib/DB";
 
 class Resource {
-  static async get({ slug }) {
+  static async get() {
     const db = new DB();
-    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key`;
+    const sql = `SELECT * FROM \`settings\``;
 
-    const resource = await db.executeStatement(getSettingSQL, [
-      { name: "key", value: { stringValue: slug } },
-    ]);
-
-    return resource.records.map(
-      ([{ longValue: id }, { stringValue: key }, { stringValue: value }]) => ({
+    const data = await db.executeStatement(sql);
+    const output = data.records.map(
+      ([
+        { longValue: id },
+        { stringValue: setting },
+        { stringValue: value },
+      ]) => ({
         id,
-        key,
+        setting,
         value,
       })
     );
+
+    return output;
+  }
+
+  static async getLogo() {
+    const db = new DB();
+    const sql = `SELECT * FROM settings WHERE setting = "main_logo"`;
+
+    const data = await db.executeStatement(sql);
+    const output = data.records.map(
+      ([
+        { longValue: id },
+        { stringValue: setting },
+        { stringValue: value },
+      ]) => ({
+        id,
+        setting,
+        value,
+      })
+    );
+
+    return output;
   }
 
   static async create({ key, value }) {
@@ -57,32 +80,22 @@ class Resource {
     }
   }
 
-  static async update({ key, value }) {
+  static async update(entry) {
     const db = new DB();
 
-    const updateValuesBatchSQL = `UPDATE settings SET 
-    value = :value 
-    WHERE \`key\` = :key
+    const sql = `
+        UPDATE settings SET value = :value 
+        WHERE \`setting\` = :setting
     `;
 
-    const valueParams = [
-      { name: "key", value: { stringValue: key } },
-      { name: "value", value: { stringValue: value } },
-    ];
-    await db.executeStatement(updateValuesBatchSQL, valueParams);
-
-    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key`;
-    const updatedResource = await db.executeStatement(getSettingSQL, [
-      { name: "key", value: { stringValue: key } },
+    const valueParams = Object.keys(entry).map((e) => [
+      { name: "setting", value: { stringValue: e } },
+      { name: "value", value: { stringValue: entry[e] } },
     ]);
 
-    return updatedResource.records.map(
-      ([{ longValue: id }, { stringValue: key }, { stringValue: value }]) => ({
-        id,
-        key,
-        value,
-      })
-    );
+    await db.batchExecuteStatement(sql, valueParams);
+
+    return true;
   }
 
   static async delete({ slug }) {

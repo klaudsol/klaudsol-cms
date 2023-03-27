@@ -3,6 +3,7 @@ import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
 import {
   generateResource,
+  generatePresignedUrls,
   addFileToBucket
 } 
 from "@/backend/data_access/S3";
@@ -17,12 +18,6 @@ import { readSettings, writeSettings } from '@/lib/Constants';
 
 export default withSession(handler);
 
-export const config = {
-  api: {
-      bodyParser: false,
-  },
-}
-
 async function handler(req, res) {
   
   try {
@@ -32,6 +27,8 @@ async function handler(req, res) {
       case "POST":
         const { req: parsedReq, res: parsedRes } = await parseFormData(req, res);
         return await create(parsedReq, parsedRes);
+      case "PUT":
+        return update(req, res);
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -41,9 +38,33 @@ async function handler(req, res) {
 }
 
 async function get(req, res) { 
-  
+    await assertUserCan(readSettings, req);
+
+    const settings = await Setting.get();
+
+    // Formats the values for the `main_logo` property since its an image from S3
+    const mainLogoIndex = settings.findIndex((item) => item.setting === 'main_logo');
+    const mainLogo = settings[mainLogoIndex];
+    const mainLogoValue = mainLogo.value;
+    mainLogo.value = {
+        name: mainLogoValue.substring(mainLogoValue.indexOf('_') + 1),
+        key: mainLogoValue,
+        link: `${process.env.KS_S3_BASE_URL}/${mainLogoValue}` 
+    }
+    settings[mainLogoIndex] = mainLogo;
+
+    const output = {
+      data: settings,
+      metadata: {}
+    }
+    
+    output.metadata.hash = createHash(output);
+    
+    setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
+    settings ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
 }
 
+// deprecated
 async function create(req, res) { 
   try {
     await assert({
@@ -97,3 +118,19 @@ async function create(req, res) {
 }
   
 }
+
+async function update(req, res) {
+    await assert({
+        loggedIn: true,
+    }, req);
+
+    await assertUserCan(writeSettings, req);
+
+    const { fileNames, toDelete, ...entry } = req.body;
+    await Setting.update(entry);
+
+    const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
+
+    res.status(OK).json({ message: 'Successfully updated the settings', presignedUrls }) 
+}
+

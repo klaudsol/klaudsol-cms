@@ -6,6 +6,7 @@ import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { FaTrash } from "react-icons/fa";
 import { useEffect } from "react";
 import {  SET_CHANGED } from "@/lib/actions" 
+import defaultImage from "@/public/default-image.svg";
 
 const FileField = (props) => {
   const { setFieldValue, setTouched, touched } = useFormikContext();
@@ -46,6 +47,12 @@ const FileField = (props) => {
     document.body.onfocus = checkIfUnfocused;
   };
 
+  const getImageSrc = () => {
+    if(value?.name === 'default') return "/logo-180x180.png";
+
+    return value?.link ?? staticLink ?? defaultImage;
+  }
+
   return (
     <div>
       <div className="field_base">
@@ -64,7 +71,7 @@ const FileField = (props) => {
             value={value?.name || ""}
             onClick={openUploadMenu}
           >
-            {value?.name}
+            {value?.name === 'default' ? 'Default Logo' : value.name}
           </span>
         )}
         {!props.hideUpload && <AppButtonLg
@@ -93,8 +100,8 @@ const FileField = (props) => {
       </div>
       {(value || staticLink) && (
         <Image
-          src={value?.link ?? staticLink}
-          alt={value?.name}
+          src={getImageSrc()}
+          alt={value?.name ?? 'Loading image...'}
           width={800}
           height={300}
           loading="lazy"

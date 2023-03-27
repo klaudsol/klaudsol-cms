@@ -11,7 +11,8 @@ import {
   ROWS_SET,
   PAGE_SETS_RENDERER,
   SET_FIRST_FETCH,
-  TOGGLE_VIEW
+  TOGGLE_VIEW,
+  SET_VIEW
 } from "@/lib/actions";
 
 export const initialState = {
@@ -102,6 +103,11 @@ export const contentManagerReducer = (state, action) => {
       return {
         ...state,
         view: state.view === 'list' ? 'icon' : 'list'
+      };
+    case SET_VIEW:
+      return {
+        ...state,
+        view: action.payload
       };
   }
 };

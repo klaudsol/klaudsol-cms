@@ -67,8 +67,8 @@ const LoginForm = ({ className, logo }) => {
       <div className="img_login_logo">
         <Image
           placeholder="blur"
-          blurDataURL={logo?.link ?? '/logo-180x180.png'}
-          src={logo?.link ?? '/logo-180x180.png'}
+          blurDataURL={logo}
+          src={logo}
           alt="cms-logo"
           layout='fill'
           objectFit='contain'

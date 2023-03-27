@@ -17,7 +17,7 @@ import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
 import { writeSettings, writeContentTypes, readUsers,  readGroups } from "@/lib/Constants";
-import { loadEntityTypes } from '@/components/reducers/actions';
+import { loadEntityTypes, loadSettings } from '@/components/reducers/actions';
 
 const AppSidebar = () => {
 
@@ -100,6 +100,16 @@ const AppSidebar = () => {
         await loadEntityTypes({rootState, rootDispatch});
       })();
     }, [rootState]);
+
+    useEffect(() => {
+      (async () => {
+          // We need the settings at rootState because it's used in multiple
+          // parts of the program. I decided to load the settings in the
+          // sidebar because this is the only 'common denominator' among all pages. 
+          // We need to have a layout component that covers all pages.
+          await loadSettings({ rootState, rootDispatch });
+      })()
+    }, [])
   
   return (
     <>
