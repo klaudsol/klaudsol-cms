@@ -82,8 +82,8 @@ async function handler(req, res) {
       await assertUserCan(readContentTypes, req) &&
       await assertUserCan(writeContentTypes, req);
 
-      const { name, slug, icon } = req.body;
-      await EntityType.create({ name, slug, icon });
+      const { name, slug } = req.body;
+      await EntityType.create({ name, slug });
       const output = {
         data: { name, slug, icon },
         metadata: {}

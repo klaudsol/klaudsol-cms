@@ -5,18 +5,14 @@ import { loadEntityTypes } from "@/components/reducers/actions";
 import useCollectionTypeBodyReducer from "@/components/reducers/collectionTypeBodyReducer";
 import RootContext from "@/components/contexts/RootContext";
 import DependentField from "@/components/fields/DependentField";
-import IconsListModal from "@/components/klaudsolcms/modals/IconsListModal";
-import * as BiIcons from "react-icons/bi";
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
-  const [state, setState] = useCollectionTypeBodyReducer();
 
   const formikParams = {
     initialValues: {
       name: "",
       slug: "",
-      icon: "BiPen",
     },
     innerRef: formRef,
     onSubmit: (values) => {
@@ -53,10 +49,6 @@ export default function CollectionTypeBody({ formRef }) {
     return lowerCasedVal;
   };
 
-  const toggleIconsListModal = () => setState(TOGGLE_ICONS_LIST);
-
-  const CurrentIcon = BiIcons[state.currentIcon];
-
   return (
     <>
       <Formik {...formikParams}>
@@ -70,15 +62,6 @@ export default function CollectionTypeBody({ formRef }) {
             </div>
             <div className="block_bar" />
             <div className="row">
-              <div className="col">
-                <button
-                  type="button"
-                  className="mt-2"
-                  onClick={toggleIconsListModal}
-                >
-                  {<CurrentIcon />}
-                </button>
-              </div>
               <div className="col">
                 <p className="mt-2"> Display Name </p>
                 <Field type="text" className="input_text" name="name" />
@@ -99,12 +82,6 @@ export default function CollectionTypeBody({ formRef }) {
               </div>
             </div>
           </div>
-          <IconsListModal
-            show={state.showIconsList}
-            onClose={toggleIconsListModal}
-            setState={setState}
-            name="icon"
-          />
         </Form>
       </Formik>
     </>

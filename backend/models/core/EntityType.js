@@ -117,15 +117,14 @@ class EntityTypes {
     return this.find({ slug });
   }
 
-  static async create({ name, slug, icon }) {
+  static async create({ name, slug }) {
     const db = new DB();
 
-    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name, icon) VALUES (:slug, :name, :icon)";
+    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name, icon) VALUES (:slug, :name, 'BiPen')";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "slug", value: { stringValue: slug } },
       { name: "name", value: { stringValue: name } },
-      { name: "icon", value: { stringValue: icon } },
     ]);
 
     //TODO: return something valuable here
@@ -152,6 +151,21 @@ class EntityTypes {
       { name: "name", value: { stringValue: name } },
       { name: "newSlug", value: { stringValue: newSlug } },
       { name: "oldSlug", value: { stringValue: oldSlug } },
+    ];
+
+    await db.executeStatement(updateEntityTypesSQL, executeStatementParam);
+
+    //TODO: return something valuable here
+    return true;
+  }
+
+  static async updateIcon({ slug, icon }) {
+    const db = new DB();
+
+    const updateEntityTypesSQL = "UPDATE entity_types SET icon = :icon WHERE slug = :slug";
+    const executeStatementParam = [
+      { name: "icon", value: { stringValue: icon } },
+      { name: "slug", value: { stringValue: slug } },
     ];
 
     await db.executeStatement(updateEntityTypesSQL, executeStatementParam);

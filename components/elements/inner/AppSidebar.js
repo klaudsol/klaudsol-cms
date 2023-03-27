@@ -7,6 +7,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
 import AppModal from "@/components/klaudsolcms/AppModal";
+import IconsListModalBody from "@/components/klaudsolcms/modals/modal_body/IconsListModalBody";
 import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
 import { useRouter } from 'next/router'
 
@@ -29,12 +30,16 @@ const AppSidebar = () => {
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
   const [isCollectionTypeBodyVisible, setCollectionTypeBodyVisible] = useState(false);
+  const [iconSlug, setIconSlug] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onModalSubmit = () => {
     if (formRef.current) {
       formRef.current.handleSubmit();
-      setCollectionTypeBodyVisible(false);
     }
+
+    if (isCollectionTypeBodyVisible) setCollectionTypeBodyVisible(false);
+    else if (iconSlug) setIconSlug('');
   };
 
   const entityTypeLinks = rootState.entityTypes.map(type => {
@@ -43,10 +48,10 @@ const AppSidebar = () => {
       return {
         title: type.entity_type_name,
         path: `/admin/content-manager/${type.entity_type_slug}`,
-        icon: <Icon className='sidebar_button_icon'/>
+        icon: <Icon onClick={() => setIconSlug(type.entity_type_slug)} className='sidebar_button_icon'/>
       }
   });
-  
+
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
       multiple: true,
@@ -135,6 +140,22 @@ const AppSidebar = () => {
         buttonTitle="Continue"
       >
         <CollectionTypeBody formRef={formRef} />
+      </AppModal>
+      <AppModal
+        show={iconSlug}
+        isLoading={isLoading}
+        onClose={() => setIconSlug(false)}
+        onClick={onModalSubmit}
+        modalTitle="Choose an icon"
+        size="default"
+        loadingAlt
+        noSubmit
+      >
+        <IconsListModalBody 
+            iconSlug={iconSlug} 
+            setIconSlug={setIconSlug} 
+            setIsLoading={setIsLoading}
+        />
       </AppModal>
     </>
   )

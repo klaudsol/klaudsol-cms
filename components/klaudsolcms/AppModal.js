@@ -11,6 +11,7 @@ const AppModal = ({
   buttonTitle,
   isLoading,
   noSubmit,
+  loadingAlt,
   size = "lg"
 }) => (
   <Modal 
@@ -19,7 +20,7 @@ const AppModal = ({
    centered size={size}
    >
     <Modal.Header className="modal_header">
-      <Modal.Title>{modalTitle}</Modal.Title>
+      <Modal.Title>{modalTitle} {isLoading && loadingAlt && <AppButtonSpinner />}</Modal.Title>
       <button disabled={isLoading} className="icon_modal_close" onClick={onClose}>
         {" "}
         <FaTimes/>{" "}
@@ -27,7 +28,7 @@ const AppModal = ({
     </Modal.Header>
     <Modal.Body>{children}</Modal.Body>
     <Modal.Footer className="modal_header">
-      {isLoading && <AppButtonSpinner />}
+      {isLoading && !loadingAlt && <AppButtonSpinner />}
       {!noSubmit && 
         <Button disabled={isLoading} className="btn_modal" onClick={onClick}>
             {buttonTitle}
