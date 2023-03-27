@@ -47,6 +47,12 @@ const FileField = (props) => {
     document.body.onfocus = checkIfUnfocused;
   };
 
+  const getImageSrc = () => {
+    if(value?.name === 'default') return "/logo-180x180.png";
+
+    return value?.link ?? staticLink ?? defaultImage;
+  }
+
   return (
     <div>
       <div className="field_base">
@@ -65,7 +71,7 @@ const FileField = (props) => {
             value={value?.name || ""}
             onClick={openUploadMenu}
           >
-            {value?.name}
+            {value?.name === 'default' ? 'Default Logo' : value.name}
           </span>
         )}
         {!props.hideUpload && <AppButtonLg
@@ -94,7 +100,7 @@ const FileField = (props) => {
       </div>
       {(value || staticLink) && (
         <Image
-          src={value?.link ?? staticLink ?? defaultImage}
+          src={getImageSrc()}
           alt={value?.name ?? 'Loading image...'}
           width={800}
           height={300}
