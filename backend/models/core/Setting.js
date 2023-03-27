@@ -23,7 +23,7 @@ class Resource {
 
   static async getLogo() {
     const db = new DB();
-    const sql = `SELECT * FROM settings WHERE setting = "mainlogo"`;
+    const sql = `SELECT * FROM settings WHERE setting = "main_logo"`;
 
     const data = await db.executeStatement(sql);
     const output = data.records.map(
@@ -89,9 +89,9 @@ class Resource {
     `;
 
     const valueParams = Object.keys(entry).map((e) => [
-        { name: 'setting', value: { stringValue: e }},
-        { name: 'value', value: { stringValue: entry[e] }}
-    ])
+      { name: "setting", value: { stringValue: e } },
+      { name: "value", value: { stringValue: entry[e] } },
+    ]);
 
     await db.batchExecuteStatement(sql, valueParams);
 

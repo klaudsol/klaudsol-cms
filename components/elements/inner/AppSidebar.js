@@ -98,9 +98,18 @@ const AppSidebar = () => {
     useEffect(() => { 
       (async () => {
         await loadEntityTypes({rootState, rootDispatch});
-        await loadSettings({ rootState, rootDispatch });
       })();
     }, [rootState]);
+
+    useEffect(() => {
+      (async () => {
+          // We need the settings at rootState because it's used in multiple
+          // parts of the program. I decided to load the settings in the
+          // sidebar because this is the only 'common denominator' among all pages. 
+          // We need to have a layout component that covers all pages.
+          await loadSettings({ rootState, rootDispatch });
+      })()
+    }, [])
   
   return (
     <>

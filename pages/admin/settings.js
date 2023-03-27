@@ -119,7 +119,7 @@ export default function Settings({ cache }) {
                   <div>
                     Default view
                     <Field as="select" name="default_view">
-                      <option value="grid">grid</option>
+                      <option value="icon">icon</option>
                       <option value="list">list</option>
                     </Field>
                   </div>

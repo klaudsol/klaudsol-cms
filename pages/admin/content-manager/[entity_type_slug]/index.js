@@ -41,7 +41,8 @@ import {
   SET_FIRST_FETCH,
   SET_PAGE,
   PAGE_SETS_RENDERER,
-  TOGGLE_VIEW
+  TOGGLE_VIEW,
+  SET_VIEW
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
 import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
@@ -52,7 +53,7 @@ export default function ContentManager({ cache }) {
   const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
-  const { state: {currentContentType} } = useContext(RootContext);
+  const { state: {settings, currentContentType} } = useContext(RootContext);
 
  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
@@ -102,11 +103,14 @@ export default function ContentManager({ cache }) {
     })();
   }, [entity_type_slug, state.page, state.entry, state.setsRenderer]);
 
-
   useEffect(() => {
     dispatch({type: SET_PAGE,payload: defaultPageRender});
     dispatch({type: PAGE_SETS_RENDERER,payload: defaultPageRender});
   }, [entity_type_slug]);
+
+  useEffect(() => {
+    dispatch({ type: SET_VIEW, payload: settings.default_view });
+  }, [state.firstFetch])
 
   const handleView = () => {
     dispatch({ type: TOGGLE_VIEW })
