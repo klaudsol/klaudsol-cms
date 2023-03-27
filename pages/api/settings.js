@@ -41,7 +41,30 @@ async function handler(req, res) {
 }
 
 async function get(req, res) { 
-  
+    await assertUserCan(readSettings, req);
+
+    const settings = await Setting.get();
+
+    // Formats the values for the `main_logo` property since its an image from S3
+    const mainLogoIndex = settings.findIndex((item) => item.setting === 'main_logo');
+    const mainLogo = settings[mainLogoIndex];
+    const mainLogoValue = mainLogo.value;
+    mainLogo.value = {
+        name: mainLogoValue.substring(mainLogoValue.indexOf('_') + 1),
+        key: mainLogoValue,
+        link: `${process.env.KS_S3_BASE_URL}/${mainLogoValue}` 
+    }
+    settings[mainLogoIndex] = mainLogo;
+
+    const output = {
+      data: settings,
+      metadata: {}
+    }
+    
+    output.metadata.hash = createHash(output);
+    
+    setCORSHeaders({response: res, url: process.env.FRONTEND_URL});
+    settings ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({})
 }
 
 async function create(req, res) { 

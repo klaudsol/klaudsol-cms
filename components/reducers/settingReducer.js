@@ -6,7 +6,11 @@ export const initialState = {
   isDeleting: false,
   isSaving: false,
   isChanged: false,
-  values: {},
+  values: {
+    default_view: '',
+    cms_name: '',
+    main_logo: {},
+  },
   errorMessage:''
 };
 

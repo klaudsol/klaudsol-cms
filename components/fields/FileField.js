@@ -13,7 +13,7 @@ const FileField = (props) => {
 
   const { onChange, value, ...formattedField } = field;
 
-  const [staticLink,setStaticLink] = useState('');
+  const [staticLink,setStaticLink] = useState('/');
   const inputRef = useRef();
   const isFetching = props.isSaving || props.isDeleting; 
 
@@ -94,7 +94,7 @@ const FileField = (props) => {
       {(value || staticLink) && (
         <Image
           src={value?.link ?? staticLink}
-          alt={value?.name}
+          alt={value?.name ?? 'Loading image...'}
           width={800}
           height={300}
           loading="lazy"

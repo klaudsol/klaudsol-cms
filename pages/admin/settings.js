@@ -36,68 +36,34 @@ export default function Settings({ cache }) {
   const isValueExists = Object.keys(state.values).length !== 0;
   const capabilities = cache?.capabilities;
 
-  /* const setInitialValues = (data) => { */
-  /*   const initialVal = Object.keys(data).length !== 0  */
-  /*     ? { mainlogo: { name: data.key, link: data.link, key: data.value } } */
-  /*     : {}; */
-  /*     return initialVal; */
-  /* }; */
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await slsFetch("/api/settings/");
+        const { data: dataRaw } = await response.json();
 
-  /* useEffect(() => { */
-  /*   (async () => { */
-  /*     try { */
-  /*       const response = await slsFetch("/api/settings/mainlogo"); */
-  /*       const { data } = await response.json(); */
-  /*       const newData = setInitialValues(data); */
-  /**/
-  /*       dispatch({ type: SET_VALUES, payload: newData }); */
-  /*     } catch (error) { */
-  /*       dispatch({ type: SET_ERROR, payload: error.message }); */
-  /*     } finally { */
-  /*       dispatch({ type: CLEANUP }); */
-  /*     } */
-  /*   })(); */
-  /* }, []); */
+        const data = dataRaw.reduce((acc, curr) => {
+          return { ...acc, [curr.setting]: curr.value };
+        }, {});
 
-  /* const onDelete = useCallback((setStaticLink) => { */
-  /*   (async () => { */
-  /*     try { */
-  /*       dispatch({ type: DELETING, payload: true }); */
-  /*       const response = await slsFetch(`/api/settings/mainlogo`, { */
-  /*         method: "DELETE", */
-  /*         headers: { */
-  /*           "Content-type": "application/json", */
-  /*         }, */
-  /*       }); */
-  /*       dispatch({ type: SET_VALUES, payload: {} }); */
-  /*       formRef.current.resetForm({ values: {} }); */
-  /*       setStaticLink(''); */
-  /*       dispatch({ type: SET_CHANGED, payload:false }) */
-  /*     } catch (ex) { */
-  /*       console.error(ex); */
-  /*     } finally { */
-  /*       dispatch({ type: DELETING, payload: false }); */
-  /*     } */
-  /*   })(); */
-  /* }, []); */
+        dispatch({ type: SET_VALUES, payload: data });
+      } catch (error) {
+        dispatch({ type: SET_ERROR, payload: error.message });
+      } finally {
+        dispatch({ type: CLEANUP });
+      }
+    })();
+  }, []);
 
   const onSubmit = (evt) => {
     evt.preventDefault();
     formRef.current.handleSubmit();
   };
 
-  /* const getS3Keys = (files) => { */
-  /*   if(!files) return */
-  /**/
-  /*   const fileKeys = Object.keys(files); */
-  /*   const s3Keys = fileKeys.map((file) => state.values[file].key); */
-  /*    */
-  /*   return s3Keys; */
-  /* }; */
-
   const formikParams = {
     innerRef: formRef,
     initialValues: state.values,
+    enableReinitialize: true,
     onSubmit: (values) => {
       (async () => {
         try {
@@ -130,18 +96,18 @@ export default function Settings({ cache }) {
                 <Form>
                   <div>
                     Default view
-                    <Field as="select" name="defaultView">
+                    <Field as="select" name="default_view">
                       <option value="grid">grid</option>
                       <option value="list">list</option>
                     </Field>
                   </div>
                   <div>
                     CMS Name
-                    <Field name="name" />
+                    <Field name="cms_name" />
                   </div>
                   <div>
                     Logo
-                    <UploadRenderer name="logo" isErrorDisabled />
+                    <UploadRenderer name="main_logo" isErrorDisabled />
                   </div>
                 </Form>
               </Formik>
