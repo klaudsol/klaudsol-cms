@@ -55,7 +55,7 @@ export default function CollectionTypeBody({ formRef }) {
 
   const toggleIconsListModal = () => setState(TOGGLE_ICONS_LIST);
 
-  const CurrentIcon = BiIcons[formRef.current?.values.icon ?? "BiPen"];
+  const CurrentIcon = BiIcons[state.currentIcon];
 
   return (
     <>
@@ -102,6 +102,7 @@ export default function CollectionTypeBody({ formRef }) {
           <IconsListModal
             show={state.showIconsList}
             onClose={toggleIconsListModal}
+            setState={setState}
             name="icon"
           />
         </Form>

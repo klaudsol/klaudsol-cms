@@ -1,12 +1,20 @@
 import AppModal from "@/components/klaudsolcms/AppModal";
 import { useFormikContext } from "formik";
+import { SET_CURRENT_ICON } from "@/lib/actions";
 import * as BiIcons from "react-icons/bi";
 
-const IconsListModal = ({ show, onClose, onClick, name }) => {
+const IconsListModal = ({ show, onClose, onClick, name, setState }) => {
   const { setFieldValue } = useFormikContext();
 
   const onTap = (e) => {
-    setFieldValue(name, e.currentTarget.value);
+    const icon = e.currentTarget.value;
+
+        console.log(icon)
+    setFieldValue(name, icon);
+    // I have to set to state so that the current icon will be displayed.
+    // For some reason, using the values within formik to display the icon
+    // will cause a delay.
+    setState(SET_CURRENT_ICON, icon);
     onClose();
   };
 

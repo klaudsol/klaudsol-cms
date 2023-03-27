@@ -117,28 +117,15 @@ class EntityTypes {
     return this.find({ slug });
   }
 
-  static async create({ name, slug }) {
+  static async create({ name, slug, icon }) {
     const db = new DB();
 
-    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name) VALUES (:slug, :name)";
+    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name, icon) VALUES (:slug, :name, :icon)";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "slug", value: { stringValue: slug } },
       { name: "name", value: { stringValue: name } },
-    ]);
-
-    //TODO: return something valuable here
-    return true;
-  }
-
-  static async create({ name, slug }) {
-    const db = new DB();
-
-    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name) VALUES (:slug, :name)";
-
-    await db.executeStatement(insertEntitiesSQL, [
-      { name: "slug", value: { stringValue: slug } },
-      { name: "name", value: { stringValue: name } },
+      { name: "icon", value: { stringValue: icon } },
     ]);
 
     //TODO: return something valuable here
