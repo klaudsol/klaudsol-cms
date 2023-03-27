@@ -9,7 +9,6 @@ const IconsListModal = ({ show, onClose, onClick, name, setState }) => {
   const onTap = (e) => {
     const icon = e.currentTarget.value;
 
-        console.log(icon)
     setFieldValue(name, icon);
     // I have to set to state so that the current icon will be displayed.
     // For some reason, using the values within formik to display the icon
@@ -27,15 +26,17 @@ const IconsListModal = ({ show, onClose, onClick, name, setState }) => {
       size="default"
       noSubmit
     >
-      {Object.keys(BiIcons).map((icon) => {
-        const CurrentIcon = BiIcons[icon];
+      <div className="icon_list__container">
+        {Object.keys(BiIcons).map((icon) => {
+          const CurrentIcon = BiIcons[icon];
 
-        return (
-          <button onClick={onTap} key={icon} value={icon}>
-            <CurrentIcon />
-          </button>
-        );
-      })}
+          return (
+            <button className="icon_list__button" onClick={onTap} key={icon} value={icon}>
+              <CurrentIcon className="icon_list__item"/>
+            </button>
+          );
+        })}
+      </div>
     </AppModal>
   );
 };
