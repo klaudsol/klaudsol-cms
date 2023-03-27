@@ -10,11 +10,12 @@ const AppModal = ({
   children,
   buttonTitle,
   isLoading,
+  size = "lg"
 }) => (
   <Modal 
    show={show} 
    onHide={!isLoading ? onClose : null} 
-   centered size="lg"
+   centered size={size}
    >
     <Modal.Header className="modal_header">
       <Modal.Title>{modalTitle}</Modal.Title>

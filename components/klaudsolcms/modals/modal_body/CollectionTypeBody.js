@@ -1,11 +1,12 @@
 import { useState, useContext, useEffect } from "react";
 import { Formik, Form, Field, useFormikContext, useField } from "formik";
+import { TOGGLE_ICONS_LIST, SET_CURRENT_ICON } from "@/lib/actions";
 import { loadEntityTypes } from "@/components/reducers/actions";
+import useCollectionTypeBodyReducer from "@/components/reducers/collectionTypeBodyReducer";
 import RootContext from "@/components/contexts/RootContext";
 import DependentField from "@/components/fields/DependentField";
-import useCollectionTypeBodyReducer from "@/components/reducers/collectionTypeBodyReducer";
+import IconsListModal from "@/components/klaudsolcms/modals/IconsListModal";
 import * as BiIcons from "react-icons/bi";
-import { TOGGLE_ICONS_LIST, SET_CURRENT_ICON } from "@/lib/actions";
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
@@ -52,7 +53,7 @@ export default function CollectionTypeBody({ formRef }) {
     return lowerCasedVal;
   };
 
-  const openIconListModal = () => setState(TOGGLE_ICONS_LIST);
+  const toggleIconsListModal = () => setState(TOGGLE_ICONS_LIST);
 
   const CurrentIcon = BiIcons[formRef.current?.values.icon ?? "BiPen"];
 
@@ -73,7 +74,7 @@ export default function CollectionTypeBody({ formRef }) {
                 <button
                   type="button"
                   className="mt-2"
-                  onClick={openIconListModal}
+                  onClick={toggleIconsListModal}
                 >
                   {<CurrentIcon />}
                 </button>
@@ -100,6 +101,10 @@ export default function CollectionTypeBody({ formRef }) {
           </div>
         </Form>
       </Formik>
+      <IconsListModal
+        show={state.showIconsList}
+        onClose={toggleIconsListModal}
+      />
     </>
   );
 }

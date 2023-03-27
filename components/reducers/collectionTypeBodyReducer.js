@@ -13,7 +13,7 @@ const reducer = (state, action) => {
         ...state,
         showIconsList: !state.showIconsList,
       };
-    case SET_CURRENT_ICON:
+    case SET_CURRENT_ICON: // Currently unused
       return {
         ...state,
         currentIcon: action.payload,
