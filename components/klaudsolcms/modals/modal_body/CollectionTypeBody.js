@@ -99,12 +99,13 @@ export default function CollectionTypeBody({ formRef }) {
               </div>
             </div>
           </div>
+          <IconsListModal
+            show={state.showIconsList}
+            onClose={toggleIconsListModal}
+            name="icon"
+          />
         </Form>
       </Formik>
-      <IconsListModal
-        show={state.showIconsList}
-        onClose={toggleIconsListModal}
-      />
     </>
   );
 }
