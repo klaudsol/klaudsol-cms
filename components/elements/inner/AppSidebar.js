@@ -17,7 +17,7 @@ import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
 import { writeSettings, writeContentTypes, readUsers,  readGroups } from "@/lib/Constants";
-import { loadEntityTypes } from '@/components/reducers/actions';
+import { loadEntityTypes, loadSettings } from '@/components/reducers/actions';
 
 const AppSidebar = () => {
 
@@ -98,6 +98,7 @@ const AppSidebar = () => {
     useEffect(() => { 
       (async () => {
         await loadEntityTypes({rootState, rootDispatch});
+        await loadSettings({ rootState, rootDispatch });
       })();
     }, [rootState]);
   

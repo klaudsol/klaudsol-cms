@@ -3,10 +3,16 @@ import {
   RESET_CLIENT_SESSION,
   SET_ENTITY_TYPES,
   SET_COLLAPSE,
-  SET_CURRENT_ENTITY_TYPE
+  SET_CURRENT_ENTITY_TYPE,
+  SET_SETTINGS
 } from '@/lib/actions';
 
 export const rootInitialState = {
+  settings: {
+    default_view: '',
+    cms_name: '',
+    main_logo: ''
+  },
   entityTypes: [],
   entityType: {},
   currentContentType:{}
@@ -55,6 +61,12 @@ export const rootReducer = (state, action) => {
         return {
           ...state,
           currentContentType: action.payload
+        }
+
+      case SET_SETTINGS:
+        return {
+          ...state,
+          settings: action.payload
         }
         
       default:

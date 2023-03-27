@@ -6,6 +6,7 @@ import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { FaTrash } from "react-icons/fa";
 import { useEffect } from "react";
 import {  SET_CHANGED } from "@/lib/actions" 
+import defaultImage from "@/public/default-image.svg";
 
 const FileField = (props) => {
   const { setFieldValue, setTouched, touched } = useFormikContext();
@@ -13,7 +14,7 @@ const FileField = (props) => {
 
   const { onChange, value, ...formattedField } = field;
 
-  const [staticLink,setStaticLink] = useState('/');
+  const [staticLink,setStaticLink] = useState('');
   const inputRef = useRef();
   const isFetching = props.isSaving || props.isDeleting; 
 
@@ -93,7 +94,7 @@ const FileField = (props) => {
       </div>
       {(value || staticLink) && (
         <Image
-          src={value?.link ?? staticLink}
+          src={value?.link ?? staticLink ?? defaultImage}
           alt={value?.name ?? 'Loading image...'}
           width={800}
           height={300}

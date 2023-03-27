@@ -4,7 +4,7 @@
 
 import { findContentTypeName } from "@/components/Util";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
-import { SET_ENTITY_TYPES,SET_CURRENT_ENTITY_TYPE } from "@/lib/actions"
+import { SET_ENTITY_TYPES,SET_CURRENT_ENTITY_TYPE, SET_SETTINGS } from "@/lib/actions"
 
 export async function loadEntityTypes({
   rootState,
@@ -31,6 +31,24 @@ export async function loadEntityTypes({
     console.error(ex.stack);
   } finally {
     onEndLoad();
+  }
+}
+
+export async function loadSettings({ rootState, rootDispatch }) {
+  try {
+    const response  = await slsFetch("/api/settings");
+    const { data: dataRaw } = await response.json();
+
+    const data = dataRaw.reduce((acc, curr) => {
+      return { ...acc, [curr.setting]: curr.value };
+    }, {});
+  
+    rootDispatch({
+      type: SET_SETTINGS,
+      payload: data
+    });
+  } catch (ex) {
+    console.error(ex.stack);
   }
 }
 

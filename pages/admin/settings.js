@@ -1,47 +1,50 @@
 import InnerSingleLayout from "@/components/layouts/InnerSingleLayout";
 import CacheContext from "@/components/contexts/CacheContext";
+import RootContext from "@/components/contexts/RootContext";
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { Formik, Form, Field } from "formik";
-import { useRef, useReducer, useEffect, useState, useCallback } from "react";
+import {
+  useRef,
+  useReducer,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import { sortByOrderAsc } from "@/components/Util";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 /** react-icons */
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaImage, FaTrash } from "react-icons/fa";
 import UploadRenderer from "@/components/renderers/admin/UploadRenderer";
 import {
   settingReducer,
   initialState,
 } from "@/components/reducers/settingReducer";
-import { SAVING, CLEANUP, SET_VALUES, SET_ERROR } from "@/lib/actions";
+import {
+  SAVING,
+  LOADING,
+  DELETING,
+  CLEANUP,
+  SET_VALUES,
+  SET_CHANGED,
+  SET_ERROR,
+} from "@/lib/actions";
+import { defaultLogo } from "@/constants/index";
+import { getFilesToDelete, getBody } from "@/lib/s3FormController";
+import { uploadFilesToUrl } from "@/backend/data_access/S3";
+import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
 
 export default function Settings({ cache }) {
   const formRef = useRef();
   const [state, dispatch] = useReducer(settingReducer, initialState);
+  const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const isValueExists = Object.keys(state.values).length !== 0;
   const capabilities = cache?.capabilities;
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await slsFetch("/api/settings/");
-        const { data: dataRaw } = await response.json();
-
-        const data = dataRaw.reduce((acc, curr) => {
-          return { ...acc, [curr.setting]: curr.value };
-        }, {});
-
-        dispatch({ type: SET_VALUES, payload: data });
-      } catch (error) {
-        dispatch({ type: SET_ERROR, payload: error.message });
-      } finally {
-        dispatch({ type: CLEANUP });
-      }
-    })();
-  }, []);
 
   const onSubmit = (evt) => {
     evt.preventDefault();
@@ -59,7 +62,7 @@ export default function Settings({ cache }) {
 
   const formikParams = {
     innerRef: formRef,
-    initialValues: state.values,
+    initialValues: rootState.settings,
     enableReinitialize: true,
     onSubmit: (values) => {
       (async () => {
