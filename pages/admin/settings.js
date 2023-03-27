@@ -116,19 +116,27 @@ export default function Settings({ cache }) {
               </div>
               <Formik {...formikParams}>
                 <Form>
-                  <div>
-                    Default view
-                    <Field as="select" name="default_view">
-                      <option value="icon">icon</option>
-                      <option value="list">list</option>
-                    </Field>
+                  <div className="d-flex gap-3 mb-2 w-50">
+                    <div className="flex-grow-1">
+                      <p className="general-input-title-slug mb-2">CMS Name</p>
+                      <Field className="general-input-text" name="cms_name" />
+                    </div>
+                    <div className="flex-grow-1">
+                      <p className="general-input-title-slug mb-2">
+                        Default view
+                      </p>
+                      <Field
+                        as="select"
+                        className="general-input-text"
+                        name="default_view"
+                      >
+                        <option value="icon">icon</option>
+                        <option value="list">list</option>
+                      </Field>
+                    </div>
                   </div>
                   <div>
-                    CMS Name
-                    <Field name="cms_name" />
-                  </div>
-                  <div>
-                    Logo
+                    <p className="general-input-title-slug mb-2">Logo</p>
                     <UploadRenderer name="main_logo" isErrorDisabled />
                   </div>
                 </Form>
