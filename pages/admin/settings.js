@@ -106,7 +106,7 @@ export default function Settings({ cache }) {
         <div>
           <div className="row">
             <div className="col-12">
-              <div className="mt-5 d-flex justify-content-between">
+              <div className="mt-5 mb-3 d-flex justify-content-between">
                 <h3>Settings</h3>
                 <AppButtonLg
                   title={state.isSaving ? "Saving" : "Save"}
