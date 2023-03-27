@@ -4,16 +4,19 @@ import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 import DependentField from "@/components/fields/DependentField";
 import useCollectionTypeBodyReducer from "@/components/reducers/collectionTypeBodyReducer";
-import { BiPen } from "react-icons/bi";
+import * as BiIcons from "react-icons/bi";
+import { TOGGLE_ICONS_LIST, SET_CURRENT_ICON } from "@/lib/actions";
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const [state, setState] = useCollectionTypeBodyReducer();
 
-    console.log(state)
-
   const formikParams = {
-    initialValues: {},
+    initialValues: {
+      name: "",
+      slug: "",
+      icon: "BiPen",
+    },
     innerRef: formRef,
     onSubmit: (values) => {
       (async () => {
@@ -49,6 +52,10 @@ export default function CollectionTypeBody({ formRef }) {
     return lowerCasedVal;
   };
 
+  const openIconListModal = () => setState(TOGGLE_ICONS_LIST);
+
+  const CurrentIcon = BiIcons[formRef.current?.values.icon ?? "BiPen"];
+
   return (
     <>
       <Formik {...formikParams}>
@@ -62,6 +69,15 @@ export default function CollectionTypeBody({ formRef }) {
             </div>
             <div className="block_bar" />
             <div className="row">
+              <div className="col">
+                <button
+                  type="button"
+                  className="mt-2"
+                  onClick={openIconListModal}
+                >
+                  {<CurrentIcon />}
+                </button>
+              </div>
               <div className="col">
                 <p className="mt-2"> Display Name </p>
                 <Field type="text" className="input_text" name="name" />
