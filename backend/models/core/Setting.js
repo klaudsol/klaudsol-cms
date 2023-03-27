@@ -80,32 +80,22 @@ class Resource {
     }
   }
 
-  static async update({ key, value }) {
+  static async update(entry) {
     const db = new DB();
 
-    const updateValuesBatchSQL = `UPDATE settings SET 
-    value = :value 
-    WHERE \`key\` = :key
+    const sql = `
+        UPDATE settings SET value = :value 
+        WHERE \`setting\` = :setting
     `;
 
-    const valueParams = [
-      { name: "key", value: { stringValue: key } },
-      { name: "value", value: { stringValue: value } },
-    ];
-    await db.executeStatement(updateValuesBatchSQL, valueParams);
+    const valueParams = Object.keys(entry).map((e) => [
+        { name: 'setting', value: { stringValue: e }},
+        { name: 'value', value: { stringValue: entry[e] }}
+    ])
 
-    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key`;
-    const updatedResource = await db.executeStatement(getSettingSQL, [
-      { name: "key", value: { stringValue: key } },
-    ]);
+    await db.batchExecuteStatement(sql, valueParams);
 
-    return updatedResource.records.map(
-      ([{ longValue: id }, { stringValue: key }, { stringValue: value }]) => ({
-        id,
-        key,
-        value,
-      })
-    );
+    return true;
   }
 
   static async delete({ slug }) {

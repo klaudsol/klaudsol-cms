@@ -154,7 +154,7 @@ export default function Type({ cache }) {
             body: JSON.stringify(entry),
           });
 
-          const { message, presignedUrls } = await response.json();
+          const { presignedUrls } = await response.json();
 
           if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 

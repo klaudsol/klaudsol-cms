@@ -6,28 +6,16 @@ import { useRef, useReducer, useEffect, useState, useCallback } from "react";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
-import { sortByOrderAsc } from "@/components/Util";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 /** react-icons */
-import { FaCheck, FaImage, FaTrash } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import UploadRenderer from "@/components/renderers/admin/UploadRenderer";
 import {
   settingReducer,
   initialState,
 } from "@/components/reducers/settingReducer";
-import {
-  SAVING,
-  LOADING,
-  DELETING,
-  CLEANUP,
-  SET_VALUES,
-  SET_CHANGED,
-  SET_ERROR,
-} from "@/lib/actions";
-import { defaultLogo } from "@/constants/index";
-import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
-import { validImageTypes } from "@/lib/Constants";
+import { SAVING, CLEANUP, SET_VALUES, SET_ERROR } from "@/lib/actions";
 import { readSettings, modifyLogo } from "@/lib/Constants";
 
 export default function Settings({ cache }) {
@@ -60,6 +48,15 @@ export default function Settings({ cache }) {
     formRef.current.handleSubmit();
   };
 
+  const getFilesToDelete = (values) => {
+    const files = Object.keys(values).filter(
+      (value) => values[value] instanceof File
+    );
+    const keys = files.map((file) => state.values[file].key);
+
+    return keys;
+  };
+
   const formikParams = {
     innerRef: formRef,
     initialValues: state.values,
@@ -68,7 +65,29 @@ export default function Settings({ cache }) {
       (async () => {
         try {
           dispatch({ type: SAVING });
-          console.log(values);
+          const { files, data, fileNames } = await getBody(values);
+          const toDelete = getFilesToDelete(values);
+
+          const entry = {
+            ...data,
+            fileNames,
+            toDelete,
+          };
+
+          const url = `/api/settings`;
+          const params = {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(entry),
+          };
+
+          const response = await slsFetch(url, params);
+
+          const { presignedUrls } = await response.json();
+
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
         } catch (ex) {
           console.error(ex);
         } finally {
