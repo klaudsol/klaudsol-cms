@@ -9,7 +9,8 @@ class EntityTypes {
         SELECT 
           entity_types.id, 
           entity_types.name, 
-          entity_types.slug 
+          entity_types.slug,
+          entity_types.icon
         FROM entity_types
           `;
 
@@ -20,10 +21,12 @@ class EntityTypes {
         { longValue: entity_type_id },
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
+        { stringValue: entity_type_icon }
       ]) => ({
         entity_type_id,
         entity_type_name,
         entity_type_slug,
+        entity_type_icon
       })
     );
   }
@@ -36,7 +39,8 @@ class EntityTypes {
         SELECT 
           entity_types.id, 
           entity_types.name, 
-          entity_types.slug 
+          entity_types.slug,
+          entity_types.icon
         FROM entity_types 
         WHERE entity_types.slug = :slug LIMIT 1
           `;
@@ -50,10 +54,12 @@ class EntityTypes {
         { longValue: entity_type_id },
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
+        { stringValue: entity_type_icon }
       ]) => ({
         entity_type_id,
         entity_type_name,
         entity_type_slug,
+        entity_type_icon
       })
     )[0];
   }
@@ -70,6 +76,7 @@ class EntityTypes {
           entity_types.id,
           entity_types.name,
           entity_types.slug,
+          entity_types.icon,
           attributes.name,
           attributes.type,
           attributes.order,
@@ -88,6 +95,7 @@ class EntityTypes {
         { longValue: entity_type_id },
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
+        { stringValue: entity_type_icon },
         { stringValue: attribute_name },
         { stringValue: attribute_type },
         { longValue: attribute_order },
@@ -96,6 +104,7 @@ class EntityTypes {
         entity_type_id,
         entity_type_name,
         entity_type_slug,
+        entity_type_icon,
         attribute_name,
         attribute_type,
         attribute_order,

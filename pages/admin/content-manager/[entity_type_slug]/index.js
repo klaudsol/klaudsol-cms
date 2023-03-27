@@ -151,8 +151,7 @@ export default function ContentManager({ cache }) {
                   id="dropdown_general"
                   isCheckbox={true}
                 />
-                {state.view === 'icon' && <AppIconButton icon={<FaList/>} onClick={handleView}/> }
-                {state.view === 'list' && <AppIconButton icon={<FaTh/>} onClick={handleView} /> }
+                <AppIconButton icon={state.view === 'icon' ? <FaList/> : <FaTh />} onClick={handleView}/>
                 {/* <AppIconButton icon={<BsGearFill/>} />  */}
               </div>
             </div>
