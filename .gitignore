@@ -42,3 +42,6 @@ yarn-error.log*
 # we only use yarn.lock
 package-lock.json
 
+# klaudsol plugins
+menus.json
+
