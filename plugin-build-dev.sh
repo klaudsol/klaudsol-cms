@@ -12,9 +12,8 @@ for plugin_directory in plugins/*/ ; do
     PLUGIN="${plugin_directory}plugin.json"
     PLUGIN_ARRAY="$PLUGIN_ARRAY $PLUGIN"
 
-    #link over the page files to the plugin directories
-    #ln -sf "../../${plugin_directory}/pages" pages/plugins/${PLUGIN_NAME} 
-
+ #Ideally this is a soft link, but it doesn't feel the change if it's just a link.
+ #We copy it then.
     rm -Rf pages/plugins/${PLUGIN_NAME}
     cp -r ${plugin_directory}/pages pages/plugins/${PLUGIN_NAME}
 done
