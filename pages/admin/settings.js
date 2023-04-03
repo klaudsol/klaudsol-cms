@@ -42,11 +42,7 @@ export default function Settings({ cache }) {
   useEffect(() => {
     (async () => {
       try {
-        const response = await slsFetch("/api/settings/mainlogo", {
-                headers: {
-                    Authorization: `Bearer ${cache.JWTToken}`
-                }
-            });
+        const response = await slsFetch("/api/settings/mainlogo");
         const { data } = await response.json();
         const newData = setInitialValues(data);
 
@@ -68,7 +64,6 @@ export default function Settings({ cache }) {
           method: "DELETE", 
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${cache.JWTToken}`,
           },
         });
         dispatch({ type: SET_VALUES, payload: {} });
@@ -115,9 +110,6 @@ export default function Settings({ cache }) {
               
           const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
             method: `${isCreateMode ? "POST" : "PUT"}`,
-            headers: {
-                Authorization: `Bearer ${cache.JWTToken}`
-            },
             body: formattedEntries,
           });
           const { data } = await response.json()

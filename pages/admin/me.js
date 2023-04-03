@@ -38,7 +38,6 @@ export default function Settings({cache}) {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-               Authorization: `Bearer ${cache.JWTToken}`
             },
             body: JSON.stringify(values)
           });

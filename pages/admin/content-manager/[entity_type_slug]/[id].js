@@ -64,11 +64,7 @@ export default function Type({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${cache.JWTToken}`
-                }
-            });
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);
         const values = await valuesRaw.json();
 
         const entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
@@ -104,7 +100,6 @@ export default function Type({ cache }) {
             method: "DELETE",
             headers: {
               "Content-type": "application/json",
-               Authorization: `Bearer ${cache.JWTToken}`
             },
           });
           const { message, homepage } = await response.json();
@@ -157,7 +152,6 @@ export default function Type({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "PUT",
             headers: {
-               Authorization: `Bearer ${cache.JWTToken}`,
                "Content-type": "application/json",
             },
             body: JSON.stringify(entry),

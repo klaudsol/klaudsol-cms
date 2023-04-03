@@ -56,11 +56,7 @@ export default function CreateNewEntry({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`, {
-                headers: {
-                    Authorization: `Bearer ${cache.JWTToken}`
-                }
-            });
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
         const values = await valuesRaw.json();
 
         const validateValues = metaDataHandler(
@@ -133,7 +129,6 @@ export default function CreateNewEntry({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${cache.JWTToken}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(entry),

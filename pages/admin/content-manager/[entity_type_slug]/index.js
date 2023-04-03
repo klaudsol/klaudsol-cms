@@ -75,9 +75,6 @@ export default function ContentManager({ cache }) {
           `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`,
           { 
             signal: controllerRef.current?.signal,
-            headers: {
-                Authorization: `Bearer ${cache.JWTToken}`,
-            },
           }
         );
           

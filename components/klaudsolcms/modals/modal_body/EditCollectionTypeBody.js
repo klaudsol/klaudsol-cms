@@ -10,7 +10,6 @@ import { useClientErrorHandler } from "@/components/hooks";
 export default function EditCollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const errorHandler = useClientErrorHandler();
-  const { JWTToken } = useContext(CacheContext);
   const router = useRouter();
   const slug = router.query.entity_type_slug;
 
@@ -35,7 +34,6 @@ export default function EditCollectionTypeBody({ formRef }) {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${JWTToken}`,
             },
             body: JSON.stringify(values),
           });
