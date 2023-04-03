@@ -24,7 +24,8 @@ import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
-import { getAllFiles, convertToFormData } from "lib/s3FormController";
+import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
+import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 
@@ -127,11 +128,11 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
-  const getS3Keys = (files) => {
-    const fileKeys = Object.keys(files);
-    const s3Keys = fileKeys.filter(file => state.values[file].key);
+  const getFilesToDelete = (values) => {
+    const files = Object.keys(values).filter((value) => values[value] instanceof File);
+    const keys = files.map((file) => state.values[file].key);
     
-    return s3Keys;
+    return keys;
   };
 
   const formikParams = {
@@ -142,27 +143,30 @@ export default function Type({ cache }) {
         try {
           dispatch({ type: SAVING });
 
-          const filesToUpload = getAllFiles(values);
-          const s3Keys = getS3Keys(filesToUpload);
+          const { files, data, fileNames } = await getBody(values);
+          const toDelete = getFilesToDelete(values);
 
           const entry = {
-            ...values,
-            toDeleteRaw: s3Keys,
+            ...data,
+            fileNames,
+            toDelete,
             entity_type_slug,
             entity_id: id,
           };
 
-          const formattedEntries = convertToFormData(entry);
-
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "PUT",
             headers: {
-               Authorization: `Bearer ${cache.JWTToken}`
+               Authorization: `Bearer ${cache.JWTToken}`,
+               "Content-type": "application/json",
             },
-            body: formattedEntries,
+            body: JSON.stringify(entry),
           });
-          
-          const { message, homepage } = await response.json();
+
+          const { message, presignedUrls } = await response.json();
+
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+
           dispatch({
             type: SET_MODAL_CONTENT,
             payload: "You have successfully edited the entry.",

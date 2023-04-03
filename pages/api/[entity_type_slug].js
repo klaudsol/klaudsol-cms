@@ -31,19 +31,13 @@ import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
 import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
-import { addFilesToBucket, generateEntries } from "@backend/data_access/S3";
+import { addFilesToBucket, generateEntries, generatePresignedUrls } from "@backend/data_access/S3";
 import { transformQuery, sortData } from "@/components/Util";
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { filterData } from '@/components/Util';
 import { readContents, writeContents } from '@/lib/Constants';
 
 export default withSession(handleRequests({ get, post }));
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 async function get(req, res) {
   const {
@@ -118,27 +112,22 @@ async function get(req, res) {
   rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
-async function post(req, res) {
-  await assert(
-    {
-      loggedIn: true,
-    },
-    req
-  );
+async function post(req, res) { 
+    try {
+        await assert({
+            loggedIn: true,
+        }, req);
 
-  (await assertUserCan(readContents, req)) &&
-    (await assertUserCan(writeContents, req));
+        await assertUserCan(readContents, req) &&
+        await assertUserCan(writeContents, req);
+        
+        const { fileNames, ...entry } = req.body;
+        await Entity.create(entry);
 
-  const { files, body } = req;
+        const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
-  if (files.length > 0) {
-    const resFromS3 = await addFilesToBucket(files, body);
-    const entries = generateEntries(resFromS3, files, body);
-
-    await Entity.create(entries);
-  } else {
-    await Entity.create(body);
-  }
-
-  res.status(OK).json({ message: "Successfully created a new entry" });
+        res.status(OK).json({ message: 'Successfully created a new entry', presignedUrls }) 
+    } catch (error) {
+      await defaultErrorHandler(error, req, res);
+    }
 }

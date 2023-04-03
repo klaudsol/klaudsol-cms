@@ -25,6 +25,8 @@ import {
 } from "@/lib/actions";
 import { FaCheck } from "react-icons/fa";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
+import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
+import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import classname from "classnames";
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
@@ -116,24 +118,30 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
+        const { files, data, fileNames } = await getBody(values);
 
         const entry = {
-          ...values,
+          ...data,
+          fileNames,
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
         };
-        
-        const formattedEntries = convertToFormData(entry);
+
         try {
           dispatch({ type: SAVING });
+
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
-            body: formattedEntries,
             headers: {
-                Authorization: `Bearer ${cache.JWTToken}`
-            }
+                Authorization: `Bearer ${cache.JWTToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(entry),
           });
-          const { message, homepage } = await response.json();
+          const { message, presignedUrls } = await response.json();
+            
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           errorHandler(ex);

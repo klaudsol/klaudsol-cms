@@ -25,12 +25,6 @@ import { readSettings, writeSettings } from "@/lib/Constants";
 
 export default withSession(handleRequests({ get, put, del }));
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 async function get(req, res) {
   await assertUserCan(readSettings, req);
 

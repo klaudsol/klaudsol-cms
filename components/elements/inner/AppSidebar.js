@@ -1,13 +1,13 @@
-import { FaFeatherAlt, FaRegUser } from 'react-icons/fa';
+import { FaFeatherAlt, FaRegUser, FaPlus } from 'react-icons/fa';
 import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
-import { BiBuildings } from 'react-icons/bi';
-import { BsFillGearFill } from 'react-icons/bs';
-import { RiSettings3Line, RiAdminLine } from 'react-icons/ri';
+import { BiPen } from 'react-icons/bi';
+import { RiSettings3Line } from 'react-icons/ri';
 import { AiOutlineLock } from 'react-icons/ai';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
-
+import AppModal from "@/components/klaudsolcms/AppModal";
+import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
 import { useRouter } from 'next/router'
 
 // sidebar nav config
@@ -16,28 +16,53 @@ import CollapsedSidebar from './sidebar/CollapsedSidebar';
 import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
-import { writeSettings, readUsers,  readGroups } from "@/lib/Constants";
+import { writeSettings, writeContentTypes, readUsers,  readGroups } from "@/lib/Constants";
+import { loadEntityTypes } from '@/components/reducers/actions';
 
 const AppSidebar = () => {
 
   const router = useRouter();
   const capabilities = useCapabilities();
+  const formRef = useRef();
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
+  const [isCollectionTypeBodyVisible, setCollectionTypeBodyVisible] = useState(false);
+
+  const onModalSubmit = () => {
+    if (formRef.current) {
+      formRef.current.handleSubmit();
+      setCollectionTypeBodyVisible(false);
+    }
+  };
+
+  const entityTypeLinks = rootState.entityTypes.map(type => ({
+      title: type.entity_type_name,
+      path: `/admin/content-manager/${type.entity_type_slug}`,
+      icon: <BiPen className='sidebar_button_icon'/>
+    }));
   
-  const [sidebarButtons, setSidebarButtons] = useState([
-    {
-      title: "Content Manager",
-      path: `/admin/content-manager/`,
-      icon: <FaFeatherAlt className='sidebar_button_icon'/>
-    },
-    {
-      title: "Content-Type Builder",
+  const sidebarButtons = [
+    (capabilities.includes(writeContentTypes) && {
+      multiple: true,
+      title: "Content Type Editor",
       path: `/admin/content-type-builder/`,
-      icon: <BiBuildings className='sidebar_button_icon'/>
-    },
+      icon: <FaFeatherAlt className='sidebar_button_icon'/>,
+      subItems: [
+        ...rootState.entityTypes.map(type => ({
+        subTitle: `${type.entity_type_name} Type`,
+        subPath: `/admin/content-type-builder/${type.entity_type_slug}`
+      })),
+      {
+        subTitle: 'New Type',
+        subPath: '#',
+        subIcon:  <FaPlus className="content_create_icon" />,
+        onClick: () => {setCollectionTypeBodyVisible(true)},
+        highlight: false
+      }
+    ]
+    }),
     {
       title: "Profile",
       path: "/admin/me",
@@ -64,16 +89,49 @@ const AppSidebar = () => {
                 } : null].filter(item => item),
       icon: <AiOutlineLock className='sidebar_button_icon'/>
     }:null)
-  ].filter(item => item))
+  ].filter(item => item);
 
-    /*** Entity Types List ***/
     useEffect(() => { 
      rootState.collapse === null ? rootDispatch({type: SET_COLLAPSE, payload: true}) : null
     }, [rootState.collapse]);
+
+    useEffect(() => { 
+      (async () => {
+        await loadEntityTypes({rootState, rootDispatch});
+      })();
+    }, [rootState]);
   
   return (
     <>
-     {rootState.collapse ? <CollapsedSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> : <FullSidebar sidebarButtons={sidebarButtons} firstName={firstName} lastName={lastName} defaultEntityType={defaultEntityType} router={router} setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />}
+     {rootState.collapse && 
+      <CollapsedSidebar 
+        entityTypeLinks={entityTypeLinks} 
+        sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+        firstName={firstName} 
+        lastName={lastName} 
+        defaultEntityType={defaultEntityType} 
+        router={router} 
+        setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})}/> 
+     }  
+     
+     {!rootState.collapse && 
+        <FullSidebar 
+          sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+          firstName={firstName} 
+          lastName={lastName} 
+          defaultEntityType={defaultEntityType} 
+          router={router} 
+          setCollapse={e => rootDispatch({type: SET_COLLAPSE, payload: e})} />
+     }
+      <AppModal
+        show={isCollectionTypeBodyVisible}
+        onClose={() => setCollectionTypeBodyVisible(false)}
+        onClick={onModalSubmit}
+        modalTitle="Create a collection type"
+        buttonTitle="Continue"
+      >
+        <CollectionTypeBody formRef={formRef} />
+      </AppModal>
     </>
   )
 }

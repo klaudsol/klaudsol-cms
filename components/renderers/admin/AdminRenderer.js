@@ -9,11 +9,9 @@ const AdminRenderer = ({ type, ...params }) => {
   switch (type) {
     case CMS_TYPES.LINK:
     case CMS_TYPES.TEXT:
-      return <TextRenderer type="type" {...params} />;
+      return <TextRenderer type={type} {...params} />;
     case CMS_TYPES.IMAGE:
-      return (
-        <UploadRenderer accept={validImageTypes} {...params} />
-      );
+      return <UploadRenderer accept={validImageTypes} {...params} />;
     case CMS_TYPES.TEXT_AREA:
       return <TextAreaRenderer type={type} {...params} />;
     case CMS_TYPES.FLOAT:

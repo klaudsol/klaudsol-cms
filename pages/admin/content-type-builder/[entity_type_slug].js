@@ -1,7 +1,5 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import ContentBuilderSubMenu from "@/components/elements/inner/ContentBuilderSubMenu";
-
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks"
 
@@ -212,8 +210,8 @@ export default function ContentTypeBuilder({ cache }) {
         await slsFetch(`/api/entity_types/${typeSlug}`, {
           method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
              Authorization: `Bearer ${cache.JWTToken}`
+            'Content-Type': 'application/json',
           },
         });
         loadEntityTypes({ rootState, rootDispatch });

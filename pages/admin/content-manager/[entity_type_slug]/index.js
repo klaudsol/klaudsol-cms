@@ -15,10 +15,16 @@ import AppIconButton from "@/components/klaudsolcms/buttons/AppIconButton";
 import AppButtonSm from "@/components/klaudsolcms/buttons/AppButtonSm";
 
 /** react-icons */
-import { FaChevronLeft, FaSearch, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, 
+  FaSearch, 
+  FaChevronRight,
+  FaList,
+  FaTh
+} from "react-icons/fa";
 import { IoFilter } from "react-icons/io5";
 import { BsGearFill } from "react-icons/bs";
 import AppContentManagerTable from "components/klaudsolcms/tables/AppContentManagerTable";
+import AppContentManagerTableIconView from "@/components/klaudsolcms/views/AppContentManagerIconView";
 import SkeletonTable from "components/klaudsolcms/skeleton/SkeletonTable";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import {
@@ -35,6 +41,7 @@ import {
   SET_FIRST_FETCH,
   SET_PAGE,
   PAGE_SETS_RENDERER,
+  TOGGLE_VIEW
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
 import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
@@ -48,7 +55,7 @@ export default function ContentManager({ cache }) {
   const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
-  const { state: {currentContentType:{ entity_type_name, entity_type_slug: headerSlug } } } = useContext(RootContext);
+  const { state: {currentContentType} } = useContext(RootContext);
 
  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
@@ -109,6 +116,10 @@ export default function ContentManager({ cache }) {
     dispatch({type: PAGE_SETS_RENDERER,payload: defaultPageRender});
   }, [entity_type_slug]);
 
+  const handleView = () => {
+    dispatch({ type: TOGGLE_VIEW })
+  }
+
   return (
     <CacheContext.Provider value={cache}>
       <div className="d-flex flex-row mt-0 pt-0 mx-0 px-0">
@@ -117,13 +128,13 @@ export default function ContentManager({ cache }) {
             <AppBackButton link="/admin" />
             <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
               <div>
-                <div className="general-header"> {entity_type_name} </div>
+                <div className="general-header"> {/*entity_type_name*/} </div>
                 <a
                   href={`/api/${entity_type_slug}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  api/{headerSlug}
+                  api/{entity_type_slug}
                 </a>
                 <p> {state.values.length} entries found </p>
               </div>
@@ -148,13 +159,22 @@ export default function ContentManager({ cache }) {
                   id="dropdown_general"
                   isCheckbox={true}
                 />
+                {state.view === 'icon' && <AppIconButton icon={<FaList/>} onClick={handleView}/> }
+                {state.view === 'list' && <AppIconButton icon={<FaTh/>} onClick={handleView} /> }
                 {/* <AppIconButton icon={<BsGearFill/>} />  */}
               </div>
             </div>
 
             {(state.isLoading && state.firstFetch) && <SkeletonTable />}
-            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && (
+            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'list' && (
               <AppContentManagerTable
+                columns={state.columns}
+                entries={state.values}
+                entity_type_slug={entity_type_slug}
+              />
+            )}
+            {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'icon' && (
+              <AppContentManagerTableIconView
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}

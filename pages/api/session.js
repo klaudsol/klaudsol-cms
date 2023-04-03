@@ -1,11 +1,11 @@
 import People from '@klaudsol/commons/models/People';
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
-import { generateToken } from '@klaudsol/commons/lib/JWT';
 import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
+import EntityType from '@/backend/models/core/EntityType';
 
 export default withSession(handler);
 
@@ -14,9 +14,9 @@ async function handler(req, res) {
   try {
     switch(req.method) {
       case "POST":
-        return login(req, res);
+        return await login(req, res);
       case "DELETE":
-        return logout(req, res); 
+        return await logout(req, res); 
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -36,10 +36,6 @@ async function login (req, res) {
       }
 
     const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
-
-    // JWTToken so that it will not be consued with session token
-    const JWTToken = generateToken({ firstName, lastName });
-
     req.session.session_token = session_token;
     req.session.cache = {
       firstName,
@@ -49,7 +45,6 @@ async function login (req, res) {
       defaultEntityType,
       homepage: '/admin',
       forcePasswordChange,
-      JWTToken
     };
 
     await req.session.save();    
