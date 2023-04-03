@@ -44,4 +44,6 @@ package-lock.json
 
 # klaudsol plugins
 menus.json
+plugins/*
+!plugins/README.md
 
