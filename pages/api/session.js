@@ -6,6 +6,8 @@ import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
 import EntityType from '@/backend/models/core/EntityType';
+import { setCookie } from 'cookies-next';
+import { generateToken } from '@klaudsol/commons/lib/JWT';
 
 export default withSession(handler);
 
@@ -46,6 +48,9 @@ async function login (req, res) {
       homepage: '/admin',
       forcePasswordChange,
     };
+
+    const token = generateToken({ firstName, lastName });
+    setCookie('token', token, { req, res, httpOnly: true, secure: true, sameSite: 'none' });
 
     await req.session.save();    
     res.status(OK).json({ forcePasswordChange });
