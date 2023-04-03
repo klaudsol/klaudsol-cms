@@ -43,7 +43,7 @@ const AppSidebar = () => {
     const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
     return {
       title: plugin.title,
-      path: plugin.path,
+      path: plugin.link,
       icon: <PluginMenuIcon className='sidebar_button_icon'/>
   }});
 

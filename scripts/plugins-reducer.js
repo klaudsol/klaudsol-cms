@@ -16,8 +16,11 @@
   const output = {};
 
   const promises = pluginDescriptors.map(async pluginDescriptor =>  {
-    const data = await readFile(pluginDescriptor, 'utf8');   
-    reducedPlugins.plugins.push(JSON.parse(data)); 
+    const rawData = await readFile(pluginDescriptor, 'utf8');   
+    const data = JSON.parse(rawData);
+    //provide additional data for each descriptor
+    data.path = pluginDescriptor;
+    reducedPlugins.plugins.push(data); 
     //console.log(data);
   });
 
@@ -31,6 +34,12 @@
       output.menus = reducedPlugins.plugins.reduce((collector, item) => ([...collector, ...item.menus]), []);
       console.log(JSON.stringify(output));
       break;
+
+    case 'info':
+      console.log(JSON.stringify(reducedPlugins, null, "  "));
+      break;
+
+
 
   }
   
