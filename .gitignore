@@ -43,7 +43,10 @@ yarn-error.log*
 package-lock.json
 
 # klaudsol plugins
-menus.json
 plugins/*
 !plugins/README.md
+pages/plugins/*
+!pages/plugins/README.md
+pages/api/plugins/*
+!pages/api/plugins/README.md
 

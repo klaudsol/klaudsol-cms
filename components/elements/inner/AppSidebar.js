@@ -1,6 +1,7 @@
 import { FaFeatherAlt, FaRegUser, FaPlus } from 'react-icons/fa';
 import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
-import { BiPen } from 'react-icons/bi';
+import { BiPen, BiPlug } from 'react-icons/bi';
+import * as Icons from "react-icons/bi";
 import { RiSettings3Line } from 'react-icons/ri';
 import { AiOutlineLock } from 'react-icons/ai';
 import React, { useState, useContext, useEffect, useRef } from 'react';
@@ -18,6 +19,7 @@ import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
 import { writeSettings, writeContentTypes, readUsers,  readGroups } from "@/lib/Constants";
 import { loadEntityTypes } from '@/components/reducers/actions';
+import pluginMenus from '@/plugin-menus.json';
 
 const AppSidebar = () => {
 
@@ -37,11 +39,20 @@ const AppSidebar = () => {
     }
   };
 
+  const pluginMenuLinks = pluginMenus.menus.map(plugin => {
+    const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
+    return {
+      title: plugin.title,
+      path: plugin.path,
+      icon: <PluginMenuIcon className='sidebar_button_icon'/>
+  }});
+
   const entityTypeLinks = rootState.entityTypes.map(type => ({
       title: type.entity_type_name,
       path: `/admin/content-manager/${type.entity_type_slug}`,
       icon: <BiPen className='sidebar_button_icon'/>
     }));
+
   
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
@@ -106,7 +117,7 @@ const AppSidebar = () => {
      {rootState.collapse && 
       <CollapsedSidebar 
         entityTypeLinks={entityTypeLinks} 
-        sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+        sidebarButtons={[...entityTypeLinks, ...pluginMenuLinks, ...sidebarButtons]} 
         firstName={firstName} 
         lastName={lastName} 
         defaultEntityType={defaultEntityType} 
@@ -116,7 +127,7 @@ const AppSidebar = () => {
      
      {!rootState.collapse && 
         <FullSidebar 
-          sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+          sidebarButtons={[...entityTypeLinks, ...pluginMenuLinks, ...sidebarButtons]} 
           firstName={firstName} 
           lastName={lastName} 
           defaultEntityType={defaultEntityType} 
