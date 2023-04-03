@@ -13,10 +13,10 @@ git update-index --assume-unchanged ./plugin-menus.json
 
 #Process each plugin available in the directory
 for d in plugins/*/ ; do
-    echo "Processing $PLUGIN_NAME..."
     PLUGIN="${d}plugin.json"
+    echo "Processing ${PLUGIN}..."
     PLUGIN_ARRAY="$PLUGIN_ARRAY $PLUGIN"
 done
 
-node -v
+# Build plugin-menus.json based on the available plugins
 node scripts/plugins-reducer.js plugin-menus $PLUGIN_ARRAY > plugin-menus.json
