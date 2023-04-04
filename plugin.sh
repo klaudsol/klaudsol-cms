@@ -20,7 +20,8 @@ if [[ "$MODE" == "build" || "$MODE" == "cleanup" || "$MODE" == "info" ]]; then
       PLUGIN_NAME=$(basename $plugin_directory)
       echo "Processing ${PLUGIN_NAME}..."
       PLUGIN="${plugin_directory}plugin.json"
-      PLUGIN_ARRAY="$PLUGIN_ARRAY $PLUGIN"
+      PLUGIN_BASE64=$(cat $PLUGIN | base64)
+      PLUGIN_ARRAY="$PLUGIN_ARRAY $PLUGIN_BASE64"
 
       if [[ "$MODE" == "build" || "$MODE" == "cleanup" ]]; then
         rm -Rf pages/plugins/${PLUGIN_NAME}
