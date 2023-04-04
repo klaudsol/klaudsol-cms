@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
-import CacheContext from "@/components/contexts/CacheContext";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { redirectToBuilderTypeSlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import { useClientErrorHandler } from "@/components/hooks";
 
@@ -30,7 +30,7 @@ export default function EditCollectionTypeBody({ formRef }) {
       (async () => {
         try {
           //refactor to reducers/actions
-          await fetch(`/api/entity_types/${slug}`, {
+          await slsFetch(`/api/entity_types/${slug}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
