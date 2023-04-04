@@ -20,9 +20,11 @@ if [[ "$MODE" == "build" || "$MODE" == "cleanup" || "$MODE" == "info" ]]; then
       PLUGIN_NAME=$(basename $plugin_directory)
       echo "Processing ${PLUGIN_NAME}..."
       PLUGIN="${plugin_directory}plugin.json"
+      
       # https://stackoverflow.com/a/65861724/95552
       # base64(1) by default wraps lines at column 76. What you're seeing is the whitespace of those newlines.
-      PLUGIN_BASE64=$(cat $PLUGIN | base64 -w0)
+      # The base64 on Macs do not have a -w0 parameter
+      PLUGIN_BASE64=$((cat $PLUGIN | base64 -w0 2>/dev/null) || (cat $PLUGIN | base64))
       PLUGIN_ARRAY="$PLUGIN_ARRAY $PLUGIN_BASE64"
 
       if [[ "$MODE" == "build" || "$MODE" == "cleanup" ]]; then
@@ -35,7 +37,7 @@ if [[ "$MODE" == "build" || "$MODE" == "cleanup" || "$MODE" == "info" ]]; then
         cp -r ${plugin_directory}/pages/api pages/api/plugins/${PLUGIN_NAME} || true
 
         #Remove the API handler here, it is redundant and causes build problems
-        rm -Rf pages/plugins/${PLUGIN_NAME}/api
+        rm -Rf pages/plugins/${PLUGIN_NAME}/api || true
       fi
   done
 fi
@@ -50,8 +52,8 @@ case $MODE in
     # Build plugin-menus.json based on the available plugins
     #do not commit changes to plugin-menus.json
     git update-index --assume-unchanged ./plugin-menus.json 
-    echo "PLUGIN_ARRAY"
-    echo $PLUGIN_ARRAY
+    #echo "PLUGIN_ARRAY"
+    #echo $PLUGIN_ARRAY
     node scripts/plugins-reducer.js plugin-menus $PLUGIN_ARRAY > plugin-menus.json
     ;;
 
