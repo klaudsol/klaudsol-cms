@@ -33,6 +33,9 @@ if [[ "$MODE" == "build" || "$MODE" == "cleanup" || "$MODE" == "info" ]]; then
       if [[ "$MODE" == "build" ]]; then
         cp -r ${plugin_directory}/pages pages/plugins/${PLUGIN_NAME} || true
         cp -r ${plugin_directory}/pages/api pages/api/plugins/${PLUGIN_NAME} || true
+
+        #Remove the API handler here, it is redundant and causes build problems
+        rm -Rf pages/plugins/${PLUGIN_NAME}/api
       fi
   done
 fi
