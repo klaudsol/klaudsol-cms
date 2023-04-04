@@ -1,1 +1,0 @@
-This directory is being ignored by Git.
