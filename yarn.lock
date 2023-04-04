@@ -330,13 +330,15 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git#v1.0.1":
-  version "1.0.0"
-  resolved "https://github.com/klaudsol/klaudsol-commons.git#f94c7dcfde5569d0ef14c01e14ed33ea114171be"
+"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git#v1.1.0":
+  version "1.1.0"
+  resolved "https://github.com/klaudsol/klaudsol-commons.git#a693eb3592f47d9dd50e15e98d91c489a8e3ebef"
   dependencies:
     aws-sdk "^2.1333.0"
+    cookies-next "^2.1.1"
     es6-promisify "^7.0.0"
     iron-session "^6.3.1"
+    jsonwebtoken "^9.0.0"
     multer "^1.4.5-lts.1"
 
 "@next/env@13.2.4":
