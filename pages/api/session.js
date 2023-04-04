@@ -14,6 +14,7 @@ export default withSession(handler);
 
 
 async function handler(req, res) {
+  // i hate cors
   setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
   try {
@@ -22,6 +23,8 @@ async function handler(req, res) {
         return await login(req, res);
       case "DELETE":
         return await logout(req, res); 
+      case "OPTIONS":
+        res.status(200).json({ message: 'success' } );
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
@@ -33,7 +36,7 @@ async function handler(req, res) {
 async function login (req, res) {   
   try {
 
-    const {email=null, password=null} = JSON.parse(req.body); 
+    const {email=null, password=null} = req.body; 
   
     if (!email || !password) {
       res.status(UNPROCESSABLE_ENTITY).json({message: "Please enter your username/password."});   
