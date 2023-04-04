@@ -1,6 +1,7 @@
 import People from '@klaudsol/commons/models/People';
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
+import { setCORSHeaders } from "@klaudsol/commons/lib/API";
 import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
@@ -13,6 +14,8 @@ export default withSession(handler);
 
 
 async function handler(req, res) {
+  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
   try {
     switch(req.method) {
       case "POST":
@@ -30,7 +33,7 @@ async function handler(req, res) {
 async function login (req, res) {   
   try {
 
-    const {email=null, password=null} = req.body; 
+    const {email=null, password=null} = JSON.parse(req.body); 
   
     if (!email || !password) {
       res.status(UNPROCESSABLE_ENTITY).json({message: "Please enter your username/password."});   
