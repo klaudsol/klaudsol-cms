@@ -9,9 +9,7 @@
 
   const mode = process.argv[2];
   const pluginDescriptors = process.argv.slice(3);
-  //console.log(`Mode: ${mode}`);
 
-  //console.log(pluginDescriptors);
   const reducedPlugins = {plugins: []};
   const output = {};
 
@@ -21,12 +19,10 @@
     //provide additional data for each descriptor
     data.path = pluginDescriptor;
     reducedPlugins.plugins.push(data); 
-    //console.log(data);
   });
 
   await Promise.all(promises);
 
-  //console.log(reducedPlugins);
 
   switch(mode) {
 
