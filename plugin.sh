@@ -20,7 +20,9 @@ if [[ "$MODE" == "build" || "$MODE" == "cleanup" || "$MODE" == "info" ]]; then
       PLUGIN_NAME=$(basename $plugin_directory)
       echo "Processing ${PLUGIN_NAME}..."
       PLUGIN="${plugin_directory}plugin.json"
-      PLUGIN_BASE64=$(cat $PLUGIN | base64)
+      # https://stackoverflow.com/a/65861724/95552
+      # base64(1) by default wraps lines at column 76. What you're seeing is the whitespace of those newlines.
+      PLUGIN_BASE64=$(cat $PLUGIN | base64 -w0)
       PLUGIN_ARRAY="$PLUGIN_ARRAY $PLUGIN_BASE64"
 
       if [[ "$MODE" == "build" || "$MODE" == "cleanup" ]]; then
