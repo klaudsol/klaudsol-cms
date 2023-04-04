@@ -25,8 +25,8 @@ SOFTWARE.
 
 import Entity from "@backend/models/core/Entity";
 import {
-    deleteFilesFromBucket,
-    generatePresignedUrls,
+  deleteFilesFromBucket,
+  generatePresignedUrls,
 } from "@/backend/data_access/S3";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
@@ -96,7 +96,7 @@ async function del(req, res) {
     );
 
     (await assertUserCan(readContents, req)) &&
-        (await assertUserCan(writeContents, req));
+      (await assertUserCan(writeContents, req));
 
     const { entity_type_slug, id: slug } = req.query;
     const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });

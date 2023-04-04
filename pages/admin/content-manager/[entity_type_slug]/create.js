@@ -129,7 +129,7 @@ export default function CreateNewEntry({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify(entry),
           });

@@ -34,7 +34,7 @@ import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) { 
-  try{
+ try{
 
     await assert({
      loggedIn: true,

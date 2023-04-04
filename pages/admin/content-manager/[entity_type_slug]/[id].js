@@ -152,7 +152,7 @@ export default function Type({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "PUT",
             headers: {
-               "Content-type": "application/json",
+              "Content-type": "application/json",
             },
             body: JSON.stringify(entry),
           });

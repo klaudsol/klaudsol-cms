@@ -40,94 +40,90 @@ import { readContents, writeContents } from '@/lib/Constants';
 export default withSession(handleRequests({ get, post }));
 
 async function get(req, res) {
-  const {
-    entity_type_slug,
-    entry,
-    page,
-    sort: sortValue,
-    ...queries
-  } = req.query;
+    const {
+        entity_type_slug,
+        entry,
+        page,
+        sort: sortValue,
+        ...queries
+    } = req.query;
 
-  const rawData = await Entity.where(
-    { entity_type_slug, entry, page },
-    queries
-  );
-  const rawEntityType = await EntityType.find({ slug: entity_type_slug });
+    const rawData = await Entity.where(
+        { entity_type_slug, entry, page },
+        queries
+    );
+    const rawEntityType = await EntityType.find({ slug: entity_type_slug });
 
-  const initialFormat = {
-    indexedData: {},
-  };
-
-  const dataTemp = rawData.data.reduce((collection, item) => {
-    return {
-      indexedData: {
-        ...collection.indexedData,
-        [item.id]: {
-          ...collection.indexedData[item.id],
-          ...(!collection.indexedData[item.id]?.id && { id: item.id }),
-          ...(!collection.indexedData[item.id]?.slug && {
-            slug: item.entities_slug,
-          }),
-          ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
-            [item.attributes_name]: resolveValue(item),
-          }),
-        },
-      },
+    const initialFormat = {
+        indexedData: {},
     };
-  }, initialFormat);
 
-  const initialMetadata = {
-    attributes: {},
-  };
-
-  const metadata = rawEntityType.reduce((collection, item) => {
-    return {
-      attributes: {
-        ...collection.attributes,
-        ...(!collection.attributes[item.attribute_name] &&
-          item.attribute_name && {
-            [item.attribute_name]: {
-              type: item.attribute_type,
-              order: item.attribute_order,
+    const dataTemp = rawData.data.reduce((collection, item) => {
+        return {
+            indexedData: {
+                ...collection.indexedData,
+                [item.id]: {
+                    ...collection.indexedData[item.id],
+                    ...(!collection.indexedData[item.id]?.id && { id: item.id }),
+                    ...(!collection.indexedData[item.id]?.slug && {
+                        slug: item.entities_slug,
+                    }),
+                    ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
+                        [item.attributes_name]: resolveValue(item),
+                    }),
+                },
             },
-          }),
-      },
-      entity_type_id: item.entity_type_id,
-      total_rows: rawData.total_rows,
+        };
+    }, initialFormat);
+
+    const initialMetadata = {
+        attributes: {},
     };
-  }, initialMetadata);
 
-  let data;
-  if (sortValue) data = sortData(dataTemp.indexedData, sortValue);
+    const metadata = rawEntityType.reduce((collection, item) => {
+        return {
+            attributes: {
+                ...collection.attributes,
+                ...(!collection.attributes[item.attribute_name] &&
+                    item.attribute_name && {
+                    [item.attribute_name]: {
+                        type: item.attribute_type,
+                        order: item.attribute_order,
+                    },
+                }),
+            },
+            entity_type_id: item.entity_type_id,
+            total_rows: rawData.total_rows,
+        };
+    }, initialMetadata);
 
-  const output = {
-    data: data ? { ...data } : dataTemp.indexedData,
-    metadata: metadata,
-  };
+    let data;
+    if (sortValue) data = sortData(dataTemp.indexedData, sortValue);
 
-  output.metadata.hash = createHash(output);
+    const output = {
+        data: data ? { ...data } : dataTemp.indexedData,
+        metadata: metadata,
+    };
 
-  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+    output.metadata.hash = createHash(output);
 
-  rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
+    rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
-async function post(req, res) { 
-    try {
-        await assert({
-            loggedIn: true,
-        }, req);
+async function post(req, res) {
+    await assert({
+        loggedIn: true,
+    }, req);
 
-        await assertUserCan(readContents, req) &&
+    await assertUserCan(readContents, req) &&
         await assertUserCan(writeContents, req);
-        
-        const { fileNames, ...entry } = req.body;
-        await Entity.create(entry);
 
-        const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
+    const { fileNames, ...entry } = req.body;
+    await Entity.create(entry);
 
-        res.status(OK).json({ message: 'Successfully created a new entry', presignedUrls }) 
-    } catch (error) {
-      await defaultErrorHandler(error, req, res);
-    }
+    const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
+
+    res.status(OK).json({ message: 'Successfully created a new entry', presignedUrls })
 }
