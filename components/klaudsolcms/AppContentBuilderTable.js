@@ -42,7 +42,7 @@ const AppContentBuilderTable = ({ typeSlug }) => {
       (async () => {
         try {
           const valuesRaw = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
-            method: "DELETE",
+            method: "DELETE"
           });  
           const values = await valuesRaw.json();
   
