@@ -6,11 +6,11 @@ frontend:
         - yarn install
     build:
       commands:
-        - (env | grep -e KS_ >> .env.production) || true
-        - (env | grep -e NEXT_PUBLIC_ >> .env.production) || true
-        - (env | grep -e AURORA_ >> .env.production) || true
-        - (env | grep -e SECRET_COOKIE_PASSWORD >> .env.production) || true
-        - (env | grep -e FRONTEND_URL >> .env.production) || true
+        - (env | grep -e KS_ >> .env) || true
+        - (env | grep -e NEXT_PUBLIC_ >> .env) || true
+        - (env | grep -e AURORA_ >> .env) || true
+        - (env | grep -e SECRET_COOKIE_PASSWORD >> .env) || true
+        - (env | grep -e FRONTEND_URL >> .env) || true
         - yarn run plugin pull
         - yarn run plugin build
         - yarn run build
