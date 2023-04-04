@@ -15,7 +15,7 @@ export default withSession(handler);
 
 async function handler(req, res) {
   // i hate cors
-  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+  setCORSHeaders({ response: res, url: process.env.KS_FRONTEND_URL ?? process.env.FRONTEND_URL });
 
   try {
     switch(req.method) {
