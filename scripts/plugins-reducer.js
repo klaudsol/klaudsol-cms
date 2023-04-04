@@ -9,8 +9,8 @@
 
   pluginDescriptors.map(pluginDescriptor =>  {
     const rawData = Buffer.from(pluginDescriptor, 'base64').toString('utf-8');
-    console.error('rawData');
-    console.error(rawData);
+    //console.error('rawData');
+    //console.error(rawData);
     const data = JSON.parse(rawData);
 
     //provide additional data for each descriptor
