@@ -23,8 +23,8 @@ SOFTWARE.
 
 **/
 
-import EntityType from '@backend/models/core/EntityType';
-import Attribute from '@backend/models/core/Attribute';
+import EntityType from '@/backend/models/core/EntityType';
+import Attribute from '@/backend/models/core/Attribute';
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';

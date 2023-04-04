@@ -28,7 +28,7 @@ import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { handleRequests } from '@klaudsol/commons/lib/API';
 import { OK } from '@klaudsol/commons/lib/HttpStatuses';
-import Attribute from '@backend/models/core/Attribute';
+import Attribute from '@/backend/models/core/Attribute';
 import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
 export default withSession(handleRequests({ del, put }));

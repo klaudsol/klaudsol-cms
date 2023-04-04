@@ -23,15 +23,15 @@ SOFTWARE.
 
 **/
 
-import Entity from "@backend/models/core/Entity";
-import EntityType from "@backend/models/core/EntityType";
+import Entity from "@/backend/models/core/Entity";
+import EntityType from "@/backend/models/core/EntityType";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
 import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
-import { addFilesToBucket, generateEntries, generatePresignedUrls } from "@backend/data_access/S3";
+import { addFilesToBucket, generateEntries, generatePresignedUrls } from "@/backend/data_access/S3";
 import { transformQuery, sortData } from "@/components/Util";
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { filterData } from '@/components/Util';

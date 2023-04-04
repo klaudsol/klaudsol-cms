@@ -23,7 +23,7 @@ SOFTWARE.
 
 **/
 
-import Entity from "@backend/models/core/Entity";
+import Entity from "@/backend/models/core/Entity";
 import {
   deleteFilesFromBucket,
   generatePresignedUrls,

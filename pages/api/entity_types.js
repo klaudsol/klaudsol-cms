@@ -23,7 +23,7 @@ SOFTWARE.
 
 **/
 
-import EntityType from '@backend/models/core/EntityType';
+import EntityType from '@/backend/models/core/EntityType';
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
