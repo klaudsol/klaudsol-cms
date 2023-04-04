@@ -7,7 +7,7 @@
     "build": "next build --debug",
     "start": "next start",
     "lint": "next lint",
-    "plugin-build": "export $(cat .env) && ./plugin-build.sh"
+    "plugin": "export $(cat .env) && ./plugin.sh"
   },
   "engines": {
     "node": ">=14.0.0"

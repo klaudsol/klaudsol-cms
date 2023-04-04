@@ -11,6 +11,8 @@ frontend:
         - (env | grep -e AURORA_ >> .env.production) || true
         - (env | grep -e SECRET_COOKIE_PASSWORD >> .env.production) || true
         - (env | grep -e FRONTEND_URL >> .env.production) || true
+        - yarn run plugin pull
+        - yarn run plugin build
         - yarn run build
   artifacts:
     baseDirectory: .next
