@@ -26,6 +26,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: (env | grep -e KS_ >> .env) || true
+    - run: (env | grep -e NEXT_PUBLIC_ >> .env) || true
+    - run: (env | grep -e AURORA_ >> .env) || true
+    - run: (env | grep -e SECRET_COOKIE_PASSWORD >> .env) || true
+    - run: (env | grep -e FRONTEND_URL >> .env) || true
     - run: yarn install
+    - run: yarn run plugin pull
+    - run: yarn run plugin build
     - run: yarn build
     - run: mkdir -p /home/runner/.npm
