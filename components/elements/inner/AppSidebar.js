@@ -1,6 +1,7 @@
 import { FaFeatherAlt, FaRegUser, FaPlus } from 'react-icons/fa';
 import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
-import * as BiIcons from 'react-icons/bi';
+import { BiPen, BiPlug } from 'react-icons/bi';
+import * as Icons from "react-icons/bi";
 import { RiSettings3Line } from 'react-icons/ri';
 import { AiOutlineLock } from 'react-icons/ai';
 import React, { useState, useContext, useEffect, useRef } from 'react';
@@ -19,6 +20,7 @@ import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
 import { writeSettings, writeContentTypes, readUsers,  readGroups } from "@/lib/Constants";
 import { loadEntityTypes } from '@/components/reducers/actions';
+import pluginMenus from '@/plugin-menus.json';
 
 const AppSidebar = () => {
 
@@ -43,15 +45,23 @@ const AppSidebar = () => {
   };
 
   const entityTypeLinks = rootState.entityTypes.map(type => {
-      const Icon = BiIcons[type.entity_type_icon];
-      const iconData = { slug: type.entity_type_slug, icon: type.entity_type_icon}
+    const Icon = Icons[type.entity_type_icon];
+    const iconData = { slug: type.entity_type_slug, icon: type.entity_type_icon}
 
-      return {
-        title: type.entity_type_name,
-        path: `/admin/content-manager/${type.entity_type_slug}`,
-        icon: <Icon onClick={() => !rootState.collapse && setIconData(iconData)} className='sidebar_button_icon'/>
-      }
+    return {
+      title: type.entity_type_name,
+      path: `/admin/content-manager/${type.entity_type_slug}`,
+      icon: <Icon onClick={() => !rootState.collapse && setIconData(iconData)} className='sidebar_button_icon'/>
+    }
   });
+
+  const pluginMenuLinks = pluginMenus.menus.map(plugin => {
+    const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
+    return {
+      title: plugin.title,
+      path: plugin.link,
+      icon: <PluginMenuIcon className='sidebar_button_icon'/>
+  }});
 
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
@@ -116,7 +126,7 @@ const AppSidebar = () => {
      {rootState.collapse && 
       <CollapsedSidebar 
         entityTypeLinks={entityTypeLinks} 
-        sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+        sidebarButtons={[...entityTypeLinks, ...pluginMenuLinks, ...sidebarButtons]} 
         firstName={firstName} 
         lastName={lastName} 
         defaultEntityType={defaultEntityType} 
@@ -126,7 +136,7 @@ const AppSidebar = () => {
      
      {!rootState.collapse && 
         <FullSidebar 
-          sidebarButtons={[...entityTypeLinks, ...sidebarButtons]} 
+          sidebarButtons={[...entityTypeLinks, ...pluginMenuLinks, ...sidebarButtons]} 
           firstName={firstName} 
           lastName={lastName} 
           defaultEntityType={defaultEntityType} 
