@@ -24,7 +24,7 @@ async function handler(req, res) {
       case "DELETE":
         return await logout(req, res); 
       case "OPTIONS":
-        res.status(200).json({ message: 'success' } );
+        return res.status(OK).json({});
       default:
         throw new Error(`Unsupported method: ${req.method}`);
     }
