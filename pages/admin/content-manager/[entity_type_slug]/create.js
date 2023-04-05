@@ -1,5 +1,8 @@
 import CacheContext from "@/components/contexts/CacheContext";
+
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
+import { useClientErrorHandler } from "@/components/hooks";
+
 import { useRouter } from "next/router";
 import { useEffect, useReducer, useRef } from "react";
 import { sortByOrderAsc } from "@/components/Util";
@@ -38,6 +41,7 @@ import { RiQuestionLine } from "react-icons/ri";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
+  const errorHandler = useClientErrorHandler();
   const capabilities = cache?.capabilities;
 
   const { entity_type_slug } = router.query;
@@ -75,7 +79,7 @@ export default function CreateNewEntry({ cache }) {
           payload: values.metadata.entity_type_id,
         });
       } catch (ex) {
-        console.error(ex.stack);
+        errorHandler(ex);
       } finally {
         dispatch({ type: CLEANUP });
       }
@@ -135,7 +139,7 @@ export default function CreateNewEntry({ cache }) {
 
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
-          console.error(ex);
+          errorHandler(ex);
         } finally {
           dispatch({ type: CLEANUP });
         }

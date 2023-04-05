@@ -25,29 +25,16 @@ SOFTWARE.
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
 import { assert } from '@klaudsol/commons/lib/Permissions';
+import { handleRequests } from '@klaudsol/commons/lib/API';
 import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
 import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 
-export default withSession(handler);
+export default withSession(handleRequests({ put }));
 
-async function handler(req, res) {
-  
-  try {
-    switch(req.method) {
-      case "PUT":
-        return await update(req, res); 
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
-
-async function update(req, res) { 
-  try{
+async function put(req, res) { 
+ try{
 
     await assert({
      loggedIn: true,

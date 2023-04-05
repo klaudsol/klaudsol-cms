@@ -4,6 +4,7 @@ import cx from 'classnames';
 import { backendPath } from '@klaudsol/commons/lib/GlobalConstants';
 import { useLoginMode, LOGIN_MODE_LOGIN } from '@/components/contexts/LoginModeContext';
 import styles from '@/styles/FrontPageLayout.module.scss';
+import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 const SignupForm = ({className, ...props}) => {
   
@@ -20,7 +21,7 @@ const SignupForm = ({className, ...props}) => {
       setValidated(true); 
       if(email) { 
         try {
-          const response = await fetch(backendPath('/add_to_waitlist'), {
+          const response = await slsFetch(backendPath('/add_to_waitlist'), {
             method: 'POST',
             headers: {
               'Content-type': 'application/json'

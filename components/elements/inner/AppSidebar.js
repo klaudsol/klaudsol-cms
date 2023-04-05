@@ -52,7 +52,6 @@ const AppSidebar = () => {
       path: `/admin/content-manager/${type.entity_type_slug}`,
       icon: <BiPen className='sidebar_button_icon'/>
     }));
-
   
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {

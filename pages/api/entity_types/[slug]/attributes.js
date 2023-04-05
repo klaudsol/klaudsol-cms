@@ -23,57 +23,40 @@ SOFTWARE.
 
 **/
 
-import EntityType from '@backend/models/core/EntityType';
-import Attribute from '@backend/models/core/Attribute';
+import EntityType from '@/backend/models/core/EntityType';
+import Attribute from '@/backend/models/core/Attribute';
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import { createHash } from '@/lib/Hash';
-import { setCORSHeaders } from '@klaudsol/commons/lib/API';
+import { setCORSHeaders, handleRequests } from '@klaudsol/commons/lib/API';
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
-export default withSession(handler);
+export default withSession(handleRequests({ post }));
 
-async function handler(req, res) {
-  
-  try {
-    switch(req.method) {
-      case "POST":
-        return await create(req, res); 
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
+async function post(req, res) {
+  const { slug } = req.query;
 
-async function create(req, res) { 
-  try{
-
-    const { slug } = req.query;
-
-    await assert({
+  await assert(
+    {
       loggedIn: true,
-     }, req);
+    },
+    req
+  );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
-    
-    const { attribute } = req.body;
-    console.error(attribute);
-    const entityType = await EntityType.findBySlug(slug);
-    console.error(entityType);
-    await Attribute.create({
-      entity_type_id: entityType.entity_type_id,
-      name: attribute.name,
-      type: attribute.type,
-      order: attribute.order
-    }); 
-    res.status(OK).json({message: 'Successfully created a new attribute.'}) 
-  }
-  catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  (await assertUserCan(readContentTypes, req)) &&
+    (await assertUserCan(writeContentTypes, req));
+
+  const { attribute } = req.body;
+  console.error(attribute);
+  const entityType = await EntityType.findBySlug(slug);
+  console.error(entityType);
+  await Attribute.create({
+    entity_type_id: entityType.entity_type_id,
+    name: attribute.name,
+    type: attribute.type,
+    order: attribute.order,
+  });
+  res.status(OK).json({ message: "Successfully created a new attribute." });
 }

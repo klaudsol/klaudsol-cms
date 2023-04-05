@@ -3,6 +3,7 @@ import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { Formik, Form } from "formik";
 import { useRef, useReducer, useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/router";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
@@ -21,9 +22,12 @@ import { defaultLogo } from "@/constants/index";
 import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
 import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
+import { useClientErrorHandler } from "@/components/hooks"
 
 export default function Settings({ cache }) {
   const formRef = useRef();
+  const errorHandler = useClientErrorHandler();
+  const router = useRouter();
   const [state, dispatch] = useReducer(settingReducer, initialState);
   const isValueExists = Object.keys(state.values).length !== 0 
   const capabilities = cache?.capabilities;
@@ -45,6 +49,7 @@ export default function Settings({ cache }) {
         dispatch({ type: SET_VALUES, payload: newData });
       } catch (error) {
         dispatch({ type: SET_ERROR, payload: error.message });
+        errorHandler(error)
       } finally {
         dispatch({ type: CLEANUP });
       }
@@ -56,7 +61,7 @@ export default function Settings({ cache }) {
       try {
         dispatch({ type: DELETING, payload: true });
         const response = await slsFetch(`/api/settings/mainlogo`, {
-          method: "DELETE",
+          method: "DELETE", 
           headers: {
             "Content-type": "application/json",
           },
@@ -66,7 +71,7 @@ export default function Settings({ cache }) {
         setStaticLink('');
         dispatch({ type: SET_CHANGED, payload:false })
       } catch (ex) {
-        console.error(ex);
+        errorHandler(ex);
       } finally {
         dispatch({ type: DELETING, payload: false });
       }
@@ -114,7 +119,7 @@ export default function Settings({ cache }) {
           formRef.current.resetForm({ values: newData });
           dispatch({ type: SET_CHANGED, payload:false })
         } catch (ex) {
-          console.error(ex);
+          errorHandler(ex);
         } finally {
           dispatch({ type: CLEANUP });
         }
