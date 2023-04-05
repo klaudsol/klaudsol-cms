@@ -7,11 +7,12 @@ import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
 import EntityType from '@/backend/models/core/EntityType';
-import { setCookie } from 'cookies-next';
+import { setCookie, deleteCookie } from 'cookies-next';
 import { generateToken } from '@klaudsol/commons/lib/JWT';
 
-export default withSession(handler);
+const COOKIE_NAME = 'token';
 
+export default withSession(handler);
 
 async function handler(req, res) {
   // i hate cors
@@ -44,23 +45,34 @@ async function login (req, res) {
       }
 
     const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
-    req.session.session_token = session_token;
-    req.session.cache = {
-      firstName,
-      lastName,
-      roles,
-      capabilities,
-      defaultEntityType,
-      homepage: '/admin',
-      forcePasswordChange,
-    };
 
+    const { origin, host } = req.headers;
+    const isFromCMS = origin.endsWith(host);
     const token = generateToken({ firstName, lastName });
-    setCookie('token', token, { req, res, httpOnly: true, secure: true, sameSite: 'none' });
 
-    await req.session.save();    
-    res.status(OK).json({ forcePasswordChange });
-  
+    const response = {};
+    if (isFromCMS) {
+        req.session.session_token = session_token;
+        req.session.cache = {
+          token,
+          firstName,
+          lastName,
+          roles,
+          capabilities,
+          defaultEntityType,
+          homepage: '/admin',
+          forcePasswordChange,
+        };
+        await req.session.save();    
+
+        response.forcePasswordChange = forcePasswordChange;
+    } else {
+        response.message = 'Sucessfully logged in!'
+    }
+
+    setCookie(COOKIE_NAME, token, { req, res, httpOnly: true, secure: true, sameSite: 'none' });
+
+    res.status(OK).json(response);
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       res.status(UNPROCESSABLE_ENTITY).json({message: "Invalid username or password."});
@@ -73,9 +85,17 @@ async function login (req, res) {
 
 async function logout(req, res) {
   try {
-    const session_token = assertUserIsLoggedIn(req);
-    await Session.logout(session_token); 
-    req.session.destroy();
+    const { origin, host } = req.headers;
+    const isFromCMS = origin.endsWith(host);
+
+    if (isFromCMS) {
+        const session_token = assertUserIsLoggedIn(req);
+        await Session.logout(session_token); 
+        req.session.destroy();
+    } 
+
+    deleteCookie(COOKIE_NAME, { req, res });
+
     res.status(200).json({message: 'OK'});
   } catch (error) {
     await defaultErrorHandler(error, req, res);
