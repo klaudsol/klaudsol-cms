@@ -46,7 +46,7 @@ export async function loadEntityType({
 }) {
   try {
     onStartLoad();
-    const rawEntityType = await fetch(`/api/entity_types/${typeSlug}`);
+    const rawEntityType = await slsFetch(`/api/entity_types/${typeSlug}`);
     const entityType = await rawEntityType.json();
     if (
       rootState.entityType[typeSlug] &&

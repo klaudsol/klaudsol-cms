@@ -23,127 +23,107 @@ SOFTWARE.
 
 **/
 
-import Entity from "@backend/models/core/Entity";
-import EntityType from "@backend/models/core/EntityType";
+import Entity from "@/backend/models/core/Entity";
+import EntityType from "@/backend/models/core/EntityType";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders, parseFormData } from "@klaudsol/commons/lib/API";
+import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
-import { addFilesToBucket, generateEntries, generatePresignedUrls } from "@backend/data_access/S3";
+import { addFilesToBucket, generateEntries, generatePresignedUrls } from "@/backend/data_access/S3";
 import { transformQuery, sortData } from "@/components/Util";
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { filterData } from '@/components/Util';
 import { readContents, writeContents } from '@/lib/Constants';
 
+export default withSession(handleRequests({ get, post }));
 
-export default withSession(handler);
+async function get(req, res) {
+    const {
+        entity_type_slug,
+        entry,
+        page,
+        sort: sortValue,
+        ...queries
+    } = req.query;
 
-async function handler(req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        return await get(req, res);
-      case "POST":
-        return await create(req, res);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
-
-
-
-  async function get(req, res) { 
-    try {
-      const { entity_type_slug, entry, page, sort:sortValue, ...queries } = req.query;
-      const rawData = await Entity.where(
+    const rawData = await Entity.where(
         { entity_type_slug, entry, page },
         queries
-      );
-      const rawEntityType = await EntityType.find({ slug: entity_type_slug });
-  
-      const initialFormat = {
+    );
+    const rawEntityType = await EntityType.find({ slug: entity_type_slug });
+
+    const initialFormat = {
         indexedData: {},
-      };
-  
-      const dataTemp = rawData.data.reduce((collection, item) => {
+    };
+
+    const dataTemp = rawData.data.reduce((collection, item) => {
         return {
-          indexedData: {
-            ...collection.indexedData,
-            [item.id]: {
-              ...collection.indexedData[item.id],
-              ...(!collection.indexedData[item.id]?.id && { id: item.id }),
-              ...(!collection.indexedData[item.id]?.slug && {
-                slug: item.entities_slug,
-              }),
-              ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
-                [item.attributes_name]: resolveValue(item),
-              }),
-          },
-        },
-      };
+            indexedData: {
+                ...collection.indexedData,
+                [item.id]: {
+                    ...collection.indexedData[item.id],
+                    ...(!collection.indexedData[item.id]?.id && { id: item.id }),
+                    ...(!collection.indexedData[item.id]?.slug && {
+                        slug: item.entities_slug,
+                    }),
+                    ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
+                        [item.attributes_name]: resolveValue(item),
+                    }),
+                },
+            },
+        };
     }, initialFormat);
 
     const initialMetadata = {
-      attributes: {},
+        attributes: {},
     };
 
     const metadata = rawEntityType.reduce((collection, item) => {
-      return {
-        attributes: {
-          ...collection.attributes,
-          ...(!collection.attributes[item.attribute_name] &&
-            item.attribute_name && {
-              [item.attribute_name]: {
-                type: item.attribute_type,
-                order: item.attribute_order,
-              },
-            }),
-        },
-        entity_type_id: item.entity_type_id,
-        total_rows: rawData.total_rows,
-      };
+        return {
+            attributes: {
+                ...collection.attributes,
+                ...(!collection.attributes[item.attribute_name] &&
+                    item.attribute_name && {
+                    [item.attribute_name]: {
+                        type: item.attribute_type,
+                        order: item.attribute_order,
+                    },
+                }),
+            },
+            entity_type_id: item.entity_type_id,
+            total_rows: rawData.total_rows,
+        };
     }, initialMetadata);
 
-    const data = Object.values(dataTemp.indexedData);
+    let data;
+    if (sortValue) data = sortData(dataTemp.indexedData, sortValue);
 
-    const output = { 
-      data,
-      metadata,
-    }
+    const output = {
+        data: data ? { ...data } : dataTemp.indexedData,
+        metadata: metadata,
+    };
 
     output.metadata.hash = createHash(output);
 
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
-    rawData
-      ? res.status(OK).json(output ?? [])
-      : res.status(NOT_FOUND).json({});
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+    rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
-async function create(req, res) { 
-    try {
-        await assert({
-            loggedIn: true,
-        }, req);
+async function post(req, res) {
+    await assert({
+        loggedIn: true,
+    }, req);
 
-        await assertUserCan(readContents, req) &&
+    await assertUserCan(readContents, req) &&
         await assertUserCan(writeContents, req);
-        
-        const { fileNames, ...entry } = req.body;
-        await Entity.create(entry);
 
-        const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
+    const { fileNames, ...entry } = req.body;
+    await Entity.create(entry);
 
-        res.status(OK).json({ message: 'Successfully created a new entry', presignedUrls }) 
-    } catch (error) {
-      await defaultErrorHandler(error, req, res);
-    }
+    const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
+
+    res.status(OK).json({ message: 'Successfully created a new entry', presignedUrls })
 }

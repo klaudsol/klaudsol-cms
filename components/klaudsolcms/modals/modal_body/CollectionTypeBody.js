@@ -1,11 +1,15 @@
 import { useState, useContext, useEffect } from "react";
 import { Formik, Form, Field, useFormikContext, useField } from "formik";
 import { loadEntityTypes } from "@/components/reducers/actions";
+import { slsFetch } from '@klaudsol/commons/lib/Client';
 import RootContext from "@/components/contexts/RootContext";
+import CacheContext from "@/components/contexts/CacheContext";
 import DependentField from "@/components/fields/DependentField";
+import { useClientErrorHandler } from "@/components/hooks"
 
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+  const errorHandler = useClientErrorHandler();
 
   const formikParams = {
     initialValues: {},
@@ -14,7 +18,7 @@ export default function CollectionTypeBody({ formRef }) {
       (async () => {
         try {
           //refactor to reducers/actions
-          await fetch(`/api/entity_types`, {
+          await slsFetch(`/api/entity_types`, {
             method: "POST",
             body: JSON.stringify(values),
             headers: {
@@ -22,6 +26,7 @@ export default function CollectionTypeBody({ formRef }) {
             },
           });
         } catch (error) {
+          errorHandler(error);
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });
         }
