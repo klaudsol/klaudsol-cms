@@ -1,13 +1,14 @@
 {
   "name": "klaudsol-cms",
-  "version": "3.0.2",
+  "version": "3.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build --debug",
     "start": "next start",
     "lint": "next lint",
-    "plugin": "export $(cat .env) && ./scripts/plugin.sh"
+    "plugin": "export $(cat .env) && ./scripts/plugin.sh",
+    "db": "export $(cat .env) && ./scripts/db.sh"
   },
   "engines": {
     "node": ">=14.0.0"
