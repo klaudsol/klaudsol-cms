@@ -28,6 +28,8 @@ export const useClientErrorHandler = () => {
   return (err) => {
       console.error(err);
 
+      // The errors come from the response of the server,
+      // so we can't really use Error classes here
       if(err.message === 'Token expired. Please log in again.') {
         dispatch({ type: SET_IS_TOKEN_EXPIRED, payload: true });
       }
