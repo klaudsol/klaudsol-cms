@@ -17,7 +17,7 @@ import CollapsedSidebar from './sidebar/CollapsedSidebar';
 import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
-import { writeSettings, writeContentTypes, readUsers,  readGroups } from "@/lib/Constants";
+import { writeSettings, writeContentTypes, readUsers,  readGroups, writeContents } from "@/lib/Constants";
 import { loadEntityTypes } from '@/components/reducers/actions';
 import pluginMenus from '@/plugin-menus.json';
 
@@ -47,11 +47,13 @@ const AppSidebar = () => {
       icon: <PluginMenuIcon className='sidebar_button_icon'/>
   }});
 
-  const entityTypeLinks = rootState.entityTypes.map(type => ({
+  const entityTypeLinks = (capabilities.includes(writeContents) ? rootState.entityTypes.map(type => ({
       title: type.entity_type_name,
       path: `/admin/content-manager/${type.entity_type_slug}`,
       icon: <BiPen className='sidebar_button_icon'/>
-    }));
+    })) : 
+    []
+  );
   
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
