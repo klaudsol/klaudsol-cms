@@ -30,13 +30,16 @@ async function handler(req, res) {
         throw new Error(`Unsupported method: ${req.method}`);
     }
   } catch (error) {
-    await defaultErrorHandler(error, req, res);
+    if (error instanceof UnauthorizedError) {
+      res.status(UNPROCESSABLE_ENTITY).json({message: "Invalid username or password."});
+      return;
+    } else {
+      await defaultErrorHandler(error, req, res);
+    }
   }
 }
 
 async function login (req, res) {   
-  try {
-
     const {email=null, password=null} = req.body; 
   
     if (!email || !password) {
@@ -73,18 +76,9 @@ async function login (req, res) {
     setCookie(COOKIE_NAME, token, { req, res, httpOnly: true, secure: true, sameSite: 'none' });
 
     res.status(OK).json(response);
-  } catch (error) {
-    if (error instanceof UnauthorizedError) {
-      res.status(UNPROCESSABLE_ENTITY).json({message: "Invalid username or password."});
-      return;
-    } else {
-      await defaultErrorHandler(error, req, res);
-    }
-  }
 }
 
 async function logout(req, res) {
-  try {
     const { origin, host } = req.headers;
     const isFromCMS = origin.endsWith(host);
 
@@ -97,7 +91,4 @@ async function logout(req, res) {
     deleteCookie(COOKIE_NAME, { req, res });
 
     res.status(200).json({message: 'OK'});
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
 }
