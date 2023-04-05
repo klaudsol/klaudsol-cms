@@ -1,0 +1,4 @@
+{
+  "up": "SELECT 'This is a sample up migration. This may be an INSERT or CREATE TABLE statement.'",
+  "down": "SELECT 'This is a sample down migration. This may be a DELETE or a DROP TABLE statement.'" 
+}
