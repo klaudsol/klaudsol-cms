@@ -4,7 +4,6 @@ let buffer = '';
 
 process.stdin.on('data', data => {
   buffer += data;
-  //process.stdout.write(data);
 });
 
 process.stdin.on('end', () => {
