@@ -15,12 +15,16 @@ case $1 in
   migrate)
     echo "Migrate."
     echo '{"data": []}' > /tmp/migrate-acc.json
+
+    #Reduce all migration files in one big file
     for migration in $(ls db/migrations/*); do
       BASENAME=$(basename $migration)
       echo "Processing ${BASENAME}..."
-      echo $(echo "$(cat /tmp/migrate-acc.json | $CMD_BASE64) $(cat $migration | $CMD_BASE64) $BASENAME" | node scripts/migrations-reducer.js) > /tmp/migrate-acc.json 
+      echo "{\"filename\": \"$BASENAME\"}" > /tmp/migrate-filename.txt
+      echo $(scripts/base64cat.sh /tmp/migrate-acc.json $migration /tmp/migrate-filename.txt | node scripts/migrations-reducer.js) > /tmp/migrate-acc.json
     done
 
+    #Feed the big file into our migrations processor
     cat /tmp/migrate-acc.json | node scripts/migrations-processor.js
     ;;
 

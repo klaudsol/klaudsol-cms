@@ -8,20 +8,20 @@ const parse = (text) => (
 const main = (buffer) => {
   //Input over stream:
   //acc64 - base64-encoded content of the accumulator JSON object
-  //current4 - base4-encoded content of the migration
-  //filename - plaintext filename of the migration
+  //current64 - base4-encoded content of the migration
+  //filename64 - base64-encoded filename of the migration
 
-  const [acc64, current64, filename] = buffer.split(" ");
+  const [acc64, current64, filename64] = buffer.split(" ");
   
   const accumulator = parse(acc64);
-  //console.error(accumulator);
   const current = parse(current64);
+  const filename = parse(filename64);
   const output = {
     data: [
       ...accumulator.data,
       {
         ...current,
-        name: filename.trim() 
+        name: filename.filename.trim() 
       }
     ]
   }
