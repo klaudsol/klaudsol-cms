@@ -4,7 +4,7 @@ case $1 in
 
   structure)
     echo "Structure."
-    node scripts/db.mjs structure
+    cat db/structure.sql | node scripts/db.js structure
     ;;
 
   seeds)
