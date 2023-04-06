@@ -20,8 +20,8 @@ case $1 in
     for migration in $(ls db/migrations/*); do
       BASENAME=$(basename $migration)
       echo "Processing ${BASENAME}..."
-      echo "{\"filename\": \"$BASENAME\"}" > /tmp/migrate-filename.txt
-      echo $(scripts/base64cat.sh /tmp/migrate-acc.json $migration /tmp/migrate-filename.txt | node scripts/migrations-reducer.js) > /tmp/migrate-acc.json
+      echo "{\"filename\": \"$BASENAME\"}" > /tmp/migrate-filename.json
+      echo $(scripts/base64cat.sh /tmp/migrate-acc.json $migration /tmp/migrate-filename.json | node scripts/migrations-reducer.js) > /tmp/migrate-acc.json
     done
 
     #Feed the big file into our migrations processor
