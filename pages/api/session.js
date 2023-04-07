@@ -6,7 +6,6 @@ import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
-import EntityType from '@/backend/models/core/EntityType';
 import { setCookie, deleteCookie } from 'cookies-next';
 import { generateToken } from '@klaudsol/commons/lib/JWT';
 
@@ -62,7 +61,7 @@ async function login (req, res) {
     // the database. The session token is stored in two places if we are logged in 
     // to the CMS (JWT and req.session). Ideally it should only be placed in one, 
     // but that would require major code changes.
-    const token = generateToken({ firstName, lastName, sessionToken: session_token });
+    const token = generateToken({ firstName, lastName, email, sessionToken: session_token });
     const response = { message: 'Sucessfully logged in!' };
 
     // If a user logged in from the CMS, then we need to store the data from CMS.
