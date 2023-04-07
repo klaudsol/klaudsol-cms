@@ -1,0 +1,4 @@
+{
+  "up": "INSERT INTO groups (name, description, is_system_supplied) VALUES ('CMS Users', 'Lorem Ipsum', true)",
+  "down": "DELETE FROM groups WHERE name = 'CMS Users'" 
+}
