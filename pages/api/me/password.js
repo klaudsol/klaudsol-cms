@@ -24,22 +24,33 @@ SOFTWARE.
 
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
-import { assert } from '@klaudsol/commons/lib/Permissions';
 import { handleRequests } from '@klaudsol/commons/lib/API';
 import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
 import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
+import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
+import { verifyToken } from '@klaudsol/commons/lib/JWT';
+import { getCookie } from 'cookies-next';
 
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) { 
  try{
-    const { session_token } = req.session;
+    const cookie = getCookie('token', { req, res });
+    if (!cookie) throw new UnauthorizedError();
+
+    const { sessionToken } = verifyToken(cookie);
+
     const { currentPassword, newPassword, confirmNewPassword } = req.body; 
 
     //these should be captured by the front-end validator, but the backend should detect
     //it as well.
+    if (!currentPassword) {
+      res.status(UNPROCESSABLE_ENTITY).json({message: 'Please enter your old password.'}); 
+      return;
+    }
+
     if (!newPassword) {
       res.status(UNPROCESSABLE_ENTITY).json({message: 'A password is required.'}); 
       return;
@@ -50,14 +61,19 @@ async function put(req, res) {
       return;
     } 
 
-    const session = await Session.getSession(session_token);
+    const session = await Session.getSession(sessionToken);
     const forcePasswordChange = await People.updatePassword({id: session.people_id, oldPassword: currentPassword, newPassword});
-  
-    req.session.cache = {
-      ...req.session.cache,
-      forcePasswordChange,
-    };
-    await req.session.save();
+
+    const { origin, host } = req.headers;
+    const isFromCMS = origin.endsWith(host);
+
+    if (isFromCMS) {
+        req.session.cache = {
+          ...req.session.cache,
+          forcePasswordChange,
+        };
+        await req.session.save();
+    }
     
     res.status(OK).json({message: 'Successfully changed your password.'}); 
   }

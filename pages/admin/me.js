@@ -26,7 +26,7 @@ export default function Settings({cache}) {
     initialValues: {
       currentPassword: '',
       newPassword: '',
-      cconfirmNewPassword: ''
+      confirmNewPassword: ''
     },
     onSubmit: (values) => {
 
@@ -88,17 +88,17 @@ export default function Settings({cache}) {
                     </div>
                     <div className='row'>
                       <div className='col-12 col-md-6'>
-                        <Field type='password'className="input_text mb-2" name='current_password' id='current_password' />
+                        <Field type='password'className="input_text mb-2" name='currentPassword' id='current_password' />
                       </div>
                     </div>
                     <div className='row mt-3'>
                       <label htmlFor='password' className='col-12 col-md-6'>Password</label>
                       <label htmlFor='confirmation_password' className='col-12 col-md-6'>Confirmation Password</label>
                       <div className='col-12 col-md-6'>
-                        <Field type='password' className="input_text mb-2" name='password' id='password' />
+                        <Field type='password' className="input_text mb-2" name='newPassword' id='password' />
                       </div>
                       <div className='col-12 col-md-6'>
-                        <Field type='password' className="input_text mb-2" name='confirmation_password' id='confirmation_password' />
+                        <Field type='password' className="input_text mb-2" name='confirmNewPassword' id='confirmation_password' />
                       </div>
                     </div>
                   </Form>
