@@ -57,7 +57,7 @@ async function login (req, res) {
 
     if (isFromCMS && !isCMSUser) throw new UnauthorizedError();
 
-    // We need the session token to identify the user when changing they are 
+    // We need the session token to identify the user when they are 
     // updating their user info. Another option is to take the ID of the user in 
     // the database. The session token is stored in two places if we are logged in 
     // to the CMS (JWT and req.session). Ideally it should only be placed in one, 
