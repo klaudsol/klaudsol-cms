@@ -60,6 +60,8 @@ async function login (req, res) {
     const token = generateToken({ firstName, lastName });
     const response = { message: 'Sucessfully logged in!' };
 
+    // If a user logged in from the CMS, then we need to store the data from CMS.
+    // Otherwise, the data is just extra baggage for the 'external website'.
     if (isFromCMS) {
         req.session.session_token = session_token;
         req.session.cache = {
@@ -86,6 +88,8 @@ async function logout(req, res) {
     const { origin, host } = req.headers;
     const isFromCMS = origin.endsWith(host);
 
+    // assertUserIsLoggedIn throws an error if 
+    // a user is a non-cms user
     if (isFromCMS) {
         const session_token = assertUserIsLoggedIn(req);
         await Session.logout(session_token); 
