@@ -51,9 +51,15 @@ async function login (req, res) {
 
     const { origin, host } = req.headers;
     const isFromCMS = origin.endsWith(host);
-    const token = generateToken({ firstName, lastName });
 
+    const cmsUsers = "CMS Users"
+    const isCMSUser = roles.includes(cmsUsers);
+
+    if (isFromCMS && !isCMSUser) throw new UnauthorizedError();
+
+    const token = generateToken({ firstName, lastName });
     const response = { message: 'Sucessfully logged in!' };
+
     if (isFromCMS) {
         req.session.session_token = session_token;
         req.session.cache = {
@@ -69,7 +75,7 @@ async function login (req, res) {
         await req.session.save();    
 
         response.forcePasswordChange = forcePasswordChange;
-    } 
+    }
 
     setCookie(COOKIE_NAME, token, { req, res, httpOnly: true, secure: true, sameSite: 'none' });
 
