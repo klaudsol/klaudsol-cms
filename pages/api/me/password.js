@@ -35,11 +35,6 @@ export default withSession(handleRequests({ put }));
 
 async function put(req, res) { 
  try{
-
-    await assert({
-     loggedIn: true,
-    }, req);
-
     const { session_token } = req.session;
     const { currentPassword, newPassword, confirmNewPassword } = req.body; 
 
