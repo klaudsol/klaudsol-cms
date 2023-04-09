@@ -57,8 +57,6 @@ export default function ContentManager({ cache }) {
   const controllerRef = useRef();
   const { state: {currentContentType} } = useContext(RootContext);
 
-  console.log(cache);
-
  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
   /*** Entity Types List ***/
@@ -79,7 +77,7 @@ export default function ContentManager({ cache }) {
             signal: controllerRef.current?.signal,
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-type": "application/json",
+              "Content-Type": "application/json",
             }
           }
         );

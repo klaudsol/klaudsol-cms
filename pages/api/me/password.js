@@ -13,10 +13,6 @@ export default withSession(handleRequests({ put }));
 
 async function put(req, res) { 
  try{
-    const cookie = getCookie('token', { req, res });
-    if (!cookie) throw new UnauthorizedError();
-
-    const { sessionToken } = verifyToken(cookie);
     const { currentPassword, newPassword, confirmNewPassword } = req.body; 
 
     //these should be captured by the front-end validator, but the backend should detect
@@ -35,6 +31,8 @@ async function put(req, res) {
       res.status(UNPROCESSABLE_ENTITY).json({message: 'The password does not match the confirmation password.'});
       return;
     } 
+
+    const { sessionToken } = req.user;
 
     const session = await Session.getSession(sessionToken);
     const forcePasswordChange = await People.updatePassword({id: session.people_id, oldPassword: currentPassword, newPassword});

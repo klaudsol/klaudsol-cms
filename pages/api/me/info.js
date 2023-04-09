@@ -29,21 +29,17 @@ import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
 import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import UnableToUpdateError from '@klaudsol/commons/errors/UnableToUpdateError';
-import { verifyToken } from '@klaudsol/commons/lib/JWT';
-import { setCookie, getCookie } from 'cookies-next';
 
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) {
-    const cookie = getCookie('token', { req, res });
-    if (!cookie) throw new UnauthorizedError();
-
-    const { sessionToken } = verifyToken(cookie);
-
     const { firstName, lastName, email } = req.body;
+
     if (!firstName) throw new UnableToUpdateError({ message: 'Please enter your first name.'});
     if (!lastName) throw new UnableToUpdateError({ message: 'Please enter your last name.'});
     if (!email) throw new UnableToUpdateError({ message: 'Please enter your email.'});
+
+    const { sessionToken } = req.user;
 
     const session = await Session.getSession(sessionToken);
     await People.updateUserInfo({ id: session.people_id, firstName, lastName, email, });
@@ -57,8 +53,6 @@ async function put(req, res) {
         };
         await req.session.save();
     }
-
-    setCookie('token')
 
     res.status(OK).json({ message: 'User info updated.' });
 }

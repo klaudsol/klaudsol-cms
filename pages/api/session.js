@@ -10,8 +10,6 @@ import { generateToken, verifyToken } from '@klaudsol/commons/lib/JWT';
 
 export default withSession(handler);
 
-const BEARER_LENGTH = 7;
-
 async function handler(req, res) {
   setCORSHeaders({ response: res, url: process.env.KS_FRONTEND_URL ?? process.env.FRONTEND_URL });
 
@@ -44,7 +42,7 @@ async function login (req, res) {
       return
       }
 
-    const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
+    const { session_token, user: {firstName, lastName, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
 
     const { origin, host } = req.headers;
 
@@ -64,7 +62,6 @@ async function login (req, res) {
           token,
           firstName,
           lastName,
-          roles,
           capabilities,
           defaultEntityType,
           homepage: '/admin',
@@ -81,22 +78,21 @@ async function login (req, res) {
 }
 
 async function logout(req, res) {
-    const { origin, host, authorization } = req.headers;
+    const { origin, host } = req.headers;
     const isFromCMS = origin.endsWith(host);
 
-    let session_token;
+    let currentSessionToken;
     if (isFromCMS) {
-        session_token = assertUserIsLoggedIn(req);
+        currentSessionToken = assertUserIsLoggedIn(req);
 
         req.session.destroy();
     } else {
         const token = authorization.substring(BEARER_LENGTH);
-        const decodedToken = verifyToken(token);
+        const { sessionToken } = verifyToken(token); // Can verify if authorized or not
 
-        session_token = decodedToken.sessionToken;
+        currentSessionToken = sessionToken;
     }
 
-    await Session.logout(session_token); 
-
+    await Session.logout(currentSessionToken); 
     res.status(200).json({message: 'OK'});
 }
