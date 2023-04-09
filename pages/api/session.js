@@ -10,8 +10,10 @@ import { generateToken, verifyToken } from '@klaudsol/commons/lib/JWT';
 
 export default withSession(handler);
 
+const FRONTEND_URL = process.env.KS_FRONTEND_URL ?? process.env.FRONTEND_URL
+
 async function handler(req, res) {
-  setCORSHeaders({ response: res, url: process.env.KS_FRONTEND_URL ?? process.env.FRONTEND_URL });
+  setCORSHeaders({ response: res, url: FRONTEND_URL });
 
   try {
     switch(req.method) {
@@ -44,15 +46,15 @@ async function login (req, res) {
 
     const { session_token, user: {firstName, lastName, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
 
-    const { origin, host } = req.headers;
+    const { origin } = req.headers;
 
-    const isFromCMS = origin.endsWith(host);
+    const isFromCMS = origin !== FRONTEND_URL;
     const canLogInToCMS = capabilities.includes('can_log_in_to_cms');
 
     if (isFromCMS && !canLogInToCMS) throw new UnauthorizedError();
 
-    // If the user logged in from the CMS, the token is stored on the cache (basically just in a cookie).
-    // However, if the user is not logged in, the response token is returned.
+    // Ideally, the session token should be stored in JWT so that both the client and the CMS 
+    // can access it, but removing it from req.session might make the program explode.
     const token = generateToken({ firstName, lastName, email, sessionToken: session_token });
     const response = { message: 'Sucessfully logged in!' };
 
@@ -88,7 +90,7 @@ async function logout(req, res) {
         req.session.destroy();
     } else {
         const token = authorization.substring(BEARER_LENGTH);
-        const { sessionToken } = verifyToken(token); // Can verify if authorized or not
+        const { sessionToken } = verifyToken(token);
 
         currentSessionToken = sessionToken;
     }
