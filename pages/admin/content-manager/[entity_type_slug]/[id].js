@@ -53,7 +53,7 @@ import {
 export default function Type({ cache }) {
   const router = useRouter();
   const errorHandler = useClientErrorHandler();
-  const capabilities = cache?.capabilities;
+  const { token = null, capabilities = null} = cache;
 
   const { entity_type_slug, id } = router.query;
   const [state, dispatch] = useReducer(entityReducer, initialState);
@@ -64,7 +64,12 @@ export default function Type({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`,{
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+        });
         const values = await valuesRaw.json();
 
         const entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
@@ -99,7 +104,8 @@ export default function Type({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "DELETE",
             headers: {
-              "Content-type": "application/json",
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
             },
           });
           const { message, homepage } = await response.json();
@@ -152,7 +158,8 @@ export default function Type({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
             method: "PUT",
             headers: {
-              "Content-type": "application/json",
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(entry),
           });

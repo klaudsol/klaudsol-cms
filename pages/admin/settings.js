@@ -30,7 +30,7 @@ export default function Settings({ cache }) {
   const router = useRouter();
   const [state, dispatch] = useReducer(settingReducer, initialState);
   const isValueExists = Object.keys(state.values).length !== 0 
-  const capabilities = cache?.capabilities;
+  const { capabilities = null, token = null } = cache;
 
   const setInitialValues = (data) => {
     const initialVal = Object.keys(data).length !== 0 
@@ -42,7 +42,11 @@ export default function Settings({ cache }) {
   useEffect(() => {
     (async () => {
       try {
-        const response = await slsFetch("/api/settings/mainlogo");
+        const response = await slsFetch("/api/settings/mainlogo", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         const { data } = await response.json();
         const newData = setInitialValues(data);
 
@@ -64,6 +68,7 @@ export default function Settings({ cache }) {
           method: "DELETE", 
           headers: {
             "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         });
         dispatch({ type: SET_VALUES, payload: {} });
@@ -110,6 +115,9 @@ export default function Settings({ cache }) {
               
           const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
             method: `${isCreateMode ? "POST" : "PUT"}`,
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
             body: formattedEntries,
           });
           const { data } = await response.json()

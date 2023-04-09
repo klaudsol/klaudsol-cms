@@ -6,15 +6,13 @@ import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
-import { setCookie, deleteCookie } from 'cookies-next';
-import { generateToken } from '@klaudsol/commons/lib/JWT';
-
-const COOKIE_NAME = 'token';
+import { generateToken, verifyToken } from '@klaudsol/commons/lib/JWT';
 
 export default withSession(handler);
 
+const BEARER_LENGTH = 7;
+
 async function handler(req, res) {
-  // i hate cors
   setCORSHeaders({ response: res, url: process.env.KS_FRONTEND_URL ?? process.env.FRONTEND_URL });
 
   try {
@@ -49,23 +47,17 @@ async function login (req, res) {
     const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
 
     const { origin, host } = req.headers;
+
     const isFromCMS = origin.endsWith(host);
+    const canLogInToCMS = capabilities.includes('can_log_in_to_cms');
 
-    const cmsUsers = "CMS Users"
-    const isCMSUser = roles.includes(cmsUsers);
+    if (isFromCMS && !canLogInToCMS) throw new UnauthorizedError();
 
-    if (isFromCMS && !isCMSUser) throw new UnauthorizedError();
-
-    // We need the session token to identify the user when they are 
-    // updating their user info. Another option is to take the ID of the user in 
-    // the database. The session token is stored in two places if we are logged in 
-    // to the CMS (JWT and req.session). Ideally it should only be placed in one, 
-    // but that would require major code changes.
+    // If the user logged in from the CMS, the token is stored on the cache (basically just in a cookie).
+    // However, if the user is not logged in, the response token is returned.
     const token = generateToken({ firstName, lastName, email, sessionToken: session_token });
     const response = { message: 'Sucessfully logged in!' };
 
-    // If a user logged in from the CMS, then we need to store the data from CMS.
-    // Otherwise, the data is just extra baggage for the 'external website'.
     if (isFromCMS) {
         req.session.session_token = session_token;
         req.session.cache = {
@@ -81,26 +73,30 @@ async function login (req, res) {
         await req.session.save();    
 
         response.forcePasswordChange = forcePasswordChange;
+    } else {
+        response.token = token;
     }
-
-    setCookie(COOKIE_NAME, token, { req, res, httpOnly: true, secure: true, sameSite: 'none' });
 
     res.status(OK).json(response);
 }
 
 async function logout(req, res) {
-    const { origin, host } = req.headers;
+    const { origin, host, authorization } = req.headers;
     const isFromCMS = origin.endsWith(host);
 
-    // assertUserIsLoggedIn throws an error if 
-    // a user is a non-cms user
+    let session_token;
     if (isFromCMS) {
-        const session_token = assertUserIsLoggedIn(req);
-        await Session.logout(session_token); 
-        req.session.destroy();
-    } 
+        session_token = assertUserIsLoggedIn(req);
 
-    deleteCookie(COOKIE_NAME, { req, res });
+        req.session.destroy();
+    } else {
+        const token = authorization.substring(BEARER_LENGTH);
+        const decodedToken = verifyToken(token);
+
+        session_token = decodedToken.sessionToken;
+    }
+
+    await Session.logout(session_token); 
 
     res.status(200).json({message: 'OK'});
 }

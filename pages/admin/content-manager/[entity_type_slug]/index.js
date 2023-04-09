@@ -52,10 +52,12 @@ import { useClientErrorHandler } from "@/components/hooks"
 export default function ContentManager({ cache }) {
   const router = useRouter();
   const errorHandler = useClientErrorHandler();
-  const capabilities = cache?.capabilities;
+  const { capabilities = null, token = null } = cache;
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
   const { state: {currentContentType} } = useContext(RootContext);
+
+  console.log(cache);
 
  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
@@ -75,6 +77,10 @@ export default function ContentManager({ cache }) {
           `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`,
           { 
             signal: controllerRef.current?.signal,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-type": "application/json",
+            }
           }
         );
           

@@ -57,6 +57,9 @@ export const generatePresignedUrl = (file) => {
 };
 
 export const generatePresignedUrls = async (fileNames) => {
+    console.log('----------------------------');
+    console.log(S3_BUCKET);
+    console.log('----------------------------');
   const presignedUrls = fileNames.map(generatePresignedUrl);
 
   return presignedUrls;

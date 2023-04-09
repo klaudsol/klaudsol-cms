@@ -6,15 +6,20 @@ import { useRouter } from 'next/router';
 import RootContext from '@/components/contexts/RootContext';
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { RESET_CLIENT_SESSION } from '@/lib/actions';
+import CacheContext from '@/components/contexts/CacheContext';
 
 const SidebarFooterIcon = ({title}) => {
     const router = useRouter();
+    const { token = null } = useContext(CacheContext);
   
   const { state, dispatch } = useContext(RootContext);
     const onLogout = (evt) => {
         evt.preventDefault();   
         const callback = async () => {
           await slsFetch('/api/session',{
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
             method: "DELETE"
           });
           dispatch({type: RESET_CLIENT_SESSION});

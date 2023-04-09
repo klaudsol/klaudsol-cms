@@ -42,7 +42,7 @@ import { RiQuestionLine } from "react-icons/ri";
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
   const errorHandler = useClientErrorHandler();
-  const capabilities = cache?.capabilities;
+  const { capabilities = null, token = null } = cache;
 
   const { entity_type_slug } = router.query;
 
@@ -56,7 +56,12 @@ export default function CreateNewEntry({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+        });
         const values = await valuesRaw.json();
 
         const validateValues = metaDataHandler(
@@ -129,7 +134,8 @@ export default function CreateNewEntry({ cache }) {
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(entry),
           });

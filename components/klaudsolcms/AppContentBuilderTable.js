@@ -14,6 +14,7 @@ const AppContentBuilderTable = ({ typeSlug }) => {
 
    const capabilities = useCapabilities();
    const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+   const { token = null } = useContext(CacheContext);
    const [loading, setLoading] = useState(false);
    const [isModalVisible, setModalVisible] = useState(false);
    const [isEditModalVisible, setEditModalVisible] = useState(false);
@@ -42,7 +43,10 @@ const AppContentBuilderTable = ({ typeSlug }) => {
       (async () => {
         try {
           const valuesRaw = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
           });  
           const values = await valuesRaw.json();
   
@@ -86,6 +90,7 @@ const AppContentBuilderTable = ({ typeSlug }) => {
               method: 'PUT',
               headers: {
                 'Content-type': 'application/json',
+                Authorization: `Bearer ${token}`
               },
               body: JSON.stringify({
                 attribute: {
