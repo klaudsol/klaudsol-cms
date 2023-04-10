@@ -5,9 +5,16 @@ import { BiCheck, BiX } from "react-icons/bi";
 
 const BASE_URL = '/api/admin/users';
 
-const UsersTable = ({ users, token }) => {
+const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
+    const setUserList = (id) => {
+        const newUserList = users.filter((user) => user.id !== id);
+        setUsers(newUserList);
+    }
+
     const approveUser = async (id) => {
         try {
+            setLoading(true);
+
             const params = {
                 method: 'PUT',
                 body: JSON.stringify({ id }),
@@ -17,13 +24,19 @@ const UsersTable = ({ users, token }) => {
                 }
             }
             await slsFetch(BASE_URL, params);
+
+            setUserList(id);
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
     const rejectUser = async (id) => {
         try {
+            setLoading(true);
+
             const params = {
                 method: 'DELETE',
                 headers: {
@@ -32,8 +45,12 @@ const UsersTable = ({ users, token }) => {
                 }
             }
             await slsFetch(`${BASE_URL}?id=${id}`, params);
+
+            setUserList(id);
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -61,11 +78,13 @@ const UsersTable = ({ users, token }) => {
                                     className="users__pending_button users__pending_button--approve"
                                     icon={<BiCheck />}
                                     onClick={() => approveUser(user.id)}
+                                    isDisabled={isLoading}
                                 />
                                 <AppButtonSm
                                     className="users__pending_button users__pending_button--reject"
                                     icon={<BiX />}
                                     onClick={() => rejectUser(user.id)}
+                                    isDisabled={isLoading}
                                 />
                             </td>
                         </tr>

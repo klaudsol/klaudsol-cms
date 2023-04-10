@@ -7,40 +7,47 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 
 import AppCreatebutton from "@/components/klaudsolcms/buttons/AppCreateButton";
 import PendingUsersTable from "@/components/klaudsolcms/tables/PendingUsersTable";
+import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 
 export default function PendingUsers({ cache }) {
-  const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [isLoading, setLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const url = `/api/admin/users?pending=true`;
-      const params = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${cache.token}`
-        }
-      }
-      const resRaw = await slsFetch(url, params);
-      const { data } = await resRaw.json();
+    useEffect(() => {
+        (async () => {
+            try {
+                setLoading(true);
 
-      console.log(data);
-      setUsers(data);
-    })();
-  }, []);
+                const url = `/api/admin/users?pending=true`;
+                const params = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${cache.token}`
+                    }
+                }
+                const resRaw = await slsFetch(url, params);
+                const { data } = await resRaw.json();
 
-  return (
-    <CacheContext.Provider value={cache}>
-      <InnerSingleLayout>
-        <div className="mt-5 mb-3 d-flex justify-content-between">
-          <h3>Pending users</h3>
-          <AppCreatebutton
-            link={`/admin/users/create`}
-            title="Create new user"
-          />
-        </div>
-        <PendingUsersTable users={users} token={cache.token} />
-      </InnerSingleLayout>
-    </CacheContext.Provider>
-  );
+                setUsers(data);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, []);
+
+    return (
+        <CacheContext.Provider value={cache}>
+            <InnerSingleLayout>
+                <div className="mt-5 mb-3 d-flex align-items-center gap-2">
+                    <h3>Pending users</h3>
+                    {isLoading && <AppButtonSpinner />}
+                </div>
+                <PendingUsersTable users={users} setUsers={setUsers} loading={isLoading} setLoading={setLoading} token={cache.token} />
+            </InnerSingleLayout>
+        </CacheContext.Provider>
+    );
 }
+
 export const getServerSideProps = getSessionCache();
