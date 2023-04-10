@@ -27,16 +27,16 @@ import { handleRequests } from '@klaudsol/commons/lib/API';
 import { OK } from '@klaudsol/commons/lib/HttpStatuses';
 import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
-import UnableToUpdateError from '@klaudsol/commons/errors/UnableToUpdateError';
+import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) {
     const { firstName, lastName, email } = req.body;
 
-    if (!firstName) throw new UnableToUpdateError({ message: 'Please enter your first name.'});
-    if (!lastName) throw new UnableToUpdateError({ message: 'Please enter your last name.'});
-    if (!email) throw new UnableToUpdateError({ message: 'Please enter your email.'});
+    if (!firstName) throw new InsufficientDataError('Please enter your first name.');
+    if (!lastName) throw new InsufficientDataError('Please enter your last name.');
+    if (!email) throw new InsufficientDataError('Please enter your email.');
 
     const { sessionToken } = req.user;
 
