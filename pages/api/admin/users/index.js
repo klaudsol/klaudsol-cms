@@ -1,11 +1,24 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
-import { OK } from '@klaudsol/commons/lib/HttpStatuses';
+import { createHash } from '@/lib/Hash';
+import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 
-export default withSession(handleRequests({ post }));
+export default withSession(handleRequests({ get, post }));
+
+async function get(req, res) {
+  const people = await People.getAll();
+  const output = {
+    data: people,
+    metadata: {},
+  };
+
+  output.metadata.hash = createHash(output);
+
+  people ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+}
 
 async function post(req, res) {
     const { firstName, lastName, loginEnabled, email, password, confirmPassword, forcePasswordChange } = req.body;
