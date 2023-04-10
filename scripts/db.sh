@@ -19,7 +19,6 @@ case $1 in
     #Reduce all migration files in one big file
     for migration in $(ls db/migrations/*); do
       BASENAME=$(basename $migration)
-      echo "Processing ${BASENAME}..."
       echo "{\"filename\": \"$BASENAME\"}" > /tmp/migrate-filename.json
       echo $(scripts/base64cat.sh /tmp/migrate-acc.json $migration /tmp/migrate-filename.json | node scripts/migrations-reducer.js) > /tmp/migrate-acc.json
     done
