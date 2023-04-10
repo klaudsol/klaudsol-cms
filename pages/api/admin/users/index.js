@@ -9,15 +9,23 @@ import People from '@klaudsol/commons/models/People';
 export default withSession(handleRequests({ get, post }));
 
 async function get(req, res) {
-  const people = await People.getAll();
-  const output = {
-    data: people,
-    metadata: {},
-  };
+    const { approved, pending } = req.query;
 
-  output.metadata.hash = createHash(output);
+    let people;
+    if (approved) {
+        people = await People.getAll({ loginEnabled: true });
+    } else if (pending) {
+        people = await People.getAll({ loginEnabled: false });
+    }
 
-  people ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+    const output = {
+        data: people,
+        metadata: {},
+    };
+
+    output.metadata.hash = createHash(output);
+
+    people ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
 async function post(req, res) {

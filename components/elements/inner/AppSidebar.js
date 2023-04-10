@@ -85,7 +85,7 @@ const AppSidebar = () => {
       path: "/admin/settings",
       icon: <RiSettings3Line className='sidebar_button_icon'/>
     }:null),
-    (false ? {
+    {
       multiple: true,
       title: "Admin",
       subItems:[capabilities.includes(readUsers) ?
@@ -93,14 +93,14 @@ const AppSidebar = () => {
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
                  subPath:"/admin/users" 
                 }: null,
-
-                capabilities.includes(readGroups) ? 
+                // capabilities.includes(readGroups)
+                false ? 
                 {subTitle:"Groups",
                  subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
                  subPath:"/admin/groups"
                 } : null].filter(item => item),
       icon: <AiOutlineLock className='sidebar_button_icon'/>
-    }:null)
+    }
   ].filter(item => item);
 
     useEffect(() => { 

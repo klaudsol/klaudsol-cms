@@ -13,8 +13,13 @@ export default function Type({ cache }) {
 
   useEffect(() => {
     (async () => {
-      const url = `/api/admin/users`;
-      const resRaw = await slsFetch(url);
+      const url = `/api/admin/users?approved=true`;
+      const params = {
+        headers: {
+            Authorization: `Bearer ${cache.token}`,
+        }
+      }
+      const resRaw = await slsFetch(url, params);
       const { data } = await resRaw.json();
 
       console.log(data);
