@@ -2,6 +2,7 @@ import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { OK } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
+import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 
 export default withSession(handleRequests({ post }));
@@ -16,7 +17,12 @@ async function post(req, res) {
     if (!confirmPassword) throw new InsufficientDataError('Please confirm your password.');
     if (password !== confirmPassword) throw new InsufficientDataError('The passwords do not match.');
 
-    // await People.createUser({ firstName, lastName, loginEnabled, email, password, forcePasswordChange });
+    const existingUser = await People.findByColumn('email', email);
+
+    if (existingUser) throw new UserAlreadyExists();
+
+    await People.createUser({ firstName, lastName, loginEnabled, email, password, forcePasswordChange });
 
     res.status(OK).json({ message: 'Signup successful!' });
 }
+
