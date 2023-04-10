@@ -10,11 +10,13 @@ const main = async (buffer) => {
   for(let i = 0; i < reducedMigrations.data.length; i++) {
     let commandUp =reducedMigrations.data[i].up; 
     const name = reducedMigrations.data[i].name;
+
     if(existingMigrationRecords.includes(name)) {
       console.error(`Skipping ${name}...`);
       continue;
     };
-    console.error(name);
+
+    console.error(`Executing ${name}...`);
     if(Array.isArray(commandUp)) commandUp = commandUp.join('')
     console.error(">>>SQL:");
     console.error(commandUp);
