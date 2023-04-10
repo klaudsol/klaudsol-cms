@@ -80,8 +80,8 @@ async function login (req, res) {
 }
 
 async function logout(req, res) {
-    const { origin, host } = req.headers;
-    const isFromCMS = origin.endsWith(host);
+    const { origin, authorization } = req.headers;
+    const isFromCMS = origin !== process.env.FRONTEND_URL;
 
     let currentSessionToken;
     if (isFromCMS) {
@@ -89,7 +89,8 @@ async function logout(req, res) {
 
         req.session.destroy();
     } else {
-        const token = authorization.substring(BEARER_LENGTH);
+        const bearerLength = 7;
+        const token = authorization.substring(bearerLength);
         const { sessionToken } = verifyToken(token);
 
         currentSessionToken = sessionToken;

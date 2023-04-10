@@ -37,8 +37,8 @@ async function put(req, res) {
     const session = await Session.getSession(sessionToken);
     const forcePasswordChange = await People.updatePassword({id: session.people_id, oldPassword: currentPassword, newPassword});
 
-    const { origin, host } = req.headers;
-    const isFromCMS = origin.endsWith(host);
+    const { origin } = req.headers;
+    const isFromCMS = origin !== process.env.FRONTEND_URL;
 
     if (isFromCMS) {
         req.session.cache = {

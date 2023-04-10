@@ -27,7 +27,6 @@ import { handleRequests } from '@klaudsol/commons/lib/API';
 import { OK } from '@klaudsol/commons/lib/HttpStatuses';
 import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
-import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import UnableToUpdateError from '@klaudsol/commons/errors/UnableToUpdateError';
 
 export default withSession(handleRequests({ put }));
@@ -44,8 +43,8 @@ async function put(req, res) {
     const session = await Session.getSession(sessionToken);
     await People.updateUserInfo({ id: session.people_id, firstName, lastName, email, });
 
-    const { origin, host } = req.headers;
-    const isFromCMS = origin.endsWith(host);
+    const { origin } = req.headers;
+    const isFromCMS = origin !== process.env.FRONTEND_URL;
 
     if (isFromCMS) {
         req.session.cache = {
@@ -54,5 +53,5 @@ async function put(req, res) {
         await req.session.save();
     }
 
-    res.status(OK).json({ message: 'User info updated.' });
+    res.status(OK).json({ message: 'User info updated.', values: { firstName, lastName, email } });
 }
