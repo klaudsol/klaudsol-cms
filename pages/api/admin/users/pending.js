@@ -6,12 +6,19 @@ import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataErro
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 
-export default withSession(handleRequests({ get, post, put, del }));
+export default withSession(handleRequests({ get, post }));
 
 async function get(req, res) {
     const { approved, pending } = req.query;
 
-    const people = await People.getAll({ approved, pending });
+    let people;
+    if (approved) {
+        people = await People.getAll({ loginEnabled: true });
+    } else if (pending) {
+        people = await People.getAll({ loginEnabled: false });
+    } else {
+        people = await People.getAll();
+    }
 
     const output = {
         data: people,
@@ -40,21 +47,5 @@ async function post(req, res) {
     await People.createUser({ firstName, lastName, loginEnabled, email, password, forcePasswordChange });
 
     res.status(OK).json({ message: 'Signup successful!' });
-}
-
-async function put(req, res) {
-    const { id } = req.body;
-
-    await People.approve({ id });
-
-    res.status(OK).json({ message: 'User approved.' });
-}
-
-async function del(req, res) {
-    const { id } = req.query;
-
-    await People.delete({ id });
-
-    res.status(OK).json({ message: 'User rejected.' });
 }
 

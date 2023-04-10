@@ -36,7 +36,7 @@ import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
 import { RiQuestionLine } from "react-icons/ri";
 
-export default function CreateNewEntry({ cache }) {
+export default function CreateUsersPage({ cache }) {
   const router = useRouter();
 
   const [state, dispatch] = useReducer(createEntriesReducer, initialState);

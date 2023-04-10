@@ -93,6 +93,11 @@ const AppSidebar = () => {
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
                  subPath:"/admin/users" 
                 }: null,
+                capabilities.includes(readUsers) ?
+                {subTitle:"Pending Users", 
+                 subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
+                 subPath:"/admin/users/pending" 
+                }: null,
                 // capabilities.includes(readGroups)
                 false ? 
                 {subTitle:"Groups",

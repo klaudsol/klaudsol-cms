@@ -815,6 +815,38 @@ $onFocus: #323C4E;
   color: black;
 }
 
+/** 
+=================================================================
+                    USER TABLE STYLES
+=================================================================
+**/
+
+.users {
+    &__pending_button {
+        font-size: 20px;
+        padding: 0 5px;
+
+        &--approve {
+            &:hover {
+                border-color: #455a64;
+            }
+        }
+
+        &--reject {
+            color: #7C0A02;
+
+            &:hover {
+                border-color: #7C0A02;
+            }
+        }
+
+        &:hover {
+            transition: 0.2s;
+        }
+    }
+}
+
+
 /**
 ===============================================
             CARD VIEW STYLES

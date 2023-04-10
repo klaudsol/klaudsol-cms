@@ -6,17 +6,18 @@ import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 
 import AppCreatebutton from "@/components/klaudsolcms/buttons/AppCreateButton";
-import UsersTable from "@/components/klaudsolcms/tables/UsersTable";
+import PendingUsersTable from "@/components/klaudsolcms/tables/PendingUsersTable";
 
-export default function ApprovedUsers({ cache }) {
+export default function PendingUsers({ cache }) {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const url = `/api/admin/users?approved=true`;
+      const url = `/api/admin/users?pending=true`;
       const params = {
         headers: {
-            Authorization: `Bearer ${cache.token}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cache.token}`
         }
       }
       const resRaw = await slsFetch(url, params);
@@ -31,13 +32,13 @@ export default function ApprovedUsers({ cache }) {
     <CacheContext.Provider value={cache}>
       <InnerSingleLayout>
         <div className="mt-5 mb-3 d-flex justify-content-between">
-          <h3>Users</h3>
+          <h3>Pending users</h3>
           <AppCreatebutton
             link={`/admin/users/create`}
             title="Create new user"
           />
         </div>
-        <UsersTable users={users} />
+        <PendingUsersTable users={users} token={cache.token} />
       </InnerSingleLayout>
     </CacheContext.Provider>
   );
