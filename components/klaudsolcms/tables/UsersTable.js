@@ -10,9 +10,7 @@ const UsersTable = ({ users }) => {
                     <tr>
                         <th> Name </th>
                         <th> Email </th>
-                        <th> Role </th>
                         <th> Created At </th>
-                        <th> Enabled </th>
                     </tr>
                 </thead>
                 {/*table body*/}
@@ -27,9 +25,7 @@ const UsersTable = ({ users }) => {
                             <tr>
                                 <td className="table--expand_cell">{user.name}</td>
                                 <td>{user.email}</td>
-                                <td>{user.role}</td>
                                 <td>{user.createdAt}</td>
-                                <td className="table--shrink_cell">{user.loginEnabled && "True"}</td>
                             </tr>
                         </Link>
                     ))}

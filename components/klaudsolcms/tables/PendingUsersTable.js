@@ -60,20 +60,20 @@ const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
                 {/*table head*/}
                 <thead>
                     <tr>
-                        <th> Name </th>
+                        <th className="table--expand_first"> Name </th>
                         <th> Email </th>
                         <th> Created At </th>
-                        <th> Approve / Reject </th>
+                        <th className="table--shrink_cell table--center_cell"> Approve / Reject </th>
                     </tr>
                 </thead>
                 {/*table body*/}
                 <tbody>
                     {users.map((user) => (
                         <tr key={user.id}>
-                            <td className="table--expand_cell">{user.name}</td>
+                            <td className="table--expand_first">{user.name}</td>
                             <td>{user.email}</td>
                             <td>{user.createdAt}</td>
-                            <td className="table--shrink_cell">
+                            <td className="table--shrink_cell table--center_cell">
                                 <AppButtonSm
                                     className="users__pending_button users__pending_button--approve"
                                     icon={<BiCheck />}

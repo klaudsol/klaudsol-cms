@@ -54,7 +54,7 @@ const AppSidebar = () => {
     })) : 
     []
   );
-  
+
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
       multiple: true,
@@ -88,6 +88,8 @@ const AppSidebar = () => {
     {
       multiple: true,
       title: "Admin",
+      path: `/admin`,
+      icon: <AiOutlineLock className='sidebar_button_icon'/>,
       subItems:[capabilities.includes(readUsers) ?
                 {subTitle:"Users", 
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
@@ -104,7 +106,6 @@ const AppSidebar = () => {
                  subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
                  subPath:"/admin/groups"
                 } : null].filter(item => item),
-      icon: <AiOutlineLock className='sidebar_button_icon'/>
     }
   ].filter(item => item);
 

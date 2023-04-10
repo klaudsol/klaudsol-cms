@@ -811,6 +811,23 @@ $onFocus: #323C4E;
     max-width: 50px;
 }
 
+#table_general td.table--expand_first,
+#table_general th.table--expand_first {
+    min-width: none;
+    max-width: none;
+}
+
+#table_general td.table--shrink_cell,
+#table_general th.table--shrink_cell {
+    min-width: 50px;
+    max-width: 50px;
+}
+
+#table_general td.table--center_cell,
+#table_general th.table--center_cell {
+    text-align: center;
+}
+
 #table_general th {
   color: black;
 }
