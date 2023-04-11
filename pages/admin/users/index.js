@@ -41,7 +41,7 @@ export default function ApprovedUsers({ cache }) {
         <CacheContext.Provider value={cache}>
             <InnerSingleLayout>
                 <div className="mt-5 mb-3 d-flex justify-content-between">
-                    <div className="align-items-center gap-2">
+                    <div className="d-flex align-items-center gap-2">
                         <h3>Users</h3>
                         {isLoading && <AppButtonSpinner />}
                     </div>

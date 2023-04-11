@@ -24,17 +24,19 @@ async function get(req, res) {
 
 async function put(req, res) {
     const { id } = req.query; 
-    const { firstName, lastName, loginEnabled, email } = req.body;
+    const { firstName, lastName, forcePasswordChange, loginEnabled, email, isSameEmail } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
     if (!email) throw new InsufficientDataError('Please enter your email.');
 
-    const existingUser = await People.findByColumn('email', email);
+    if (!isSameEmail) {
+        const existingUser = await People.findByColumn('email', email);
 
-    if (existingUser) throw new UserAlreadyExists();
+        if (existingUser) throw new UserAlreadyExists();
+    }
 
-    await People.updateUserInfo({ id, firstName, lastName, loginEnabled, email });
+    await People.updateUserInfo({ id, firstName, lastName, forcePasswordChange, loginEnabled, email });
 
     res.status(OK).json({ message: 'Update successful!' });
 }

@@ -1,59 +1,37 @@
-import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
-import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useEffect, useState, useReducer, useCallback, useRef } from "react";
-import { sortByOrderAsc } from "@/components/Util";
+import { useEffect, useRef } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
-/** kladusol CMS components */
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 
-/** react-icons */
 import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
-import { MdModeEditOutline } from "react-icons/md";
-import { VscListSelection } from "react-icons/vsc";
-import { Col } from "react-bootstrap";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "lib/Constants";
-import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
-import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
-
-import {
-    initialState,
-    entityReducer,
-} from "@/components/reducers/entityReducer";
 
 import {
     LOADING,
-    REFRESH,
     SAVING,
     DELETING,
-    CLEANUP,
-    SET_SHOW,
     SET_MODAL_CONTENT,
     SET_VALUES,
-    SET_ATTRIBUTES,
-    SET_COLUMNS,
-    SET_ENTITY_TYPE_NAME,
-    SET_ENTITY_TYPE_ID,
-    SET_ALL_VALIDATES
 } from "@/lib/actions";
 
+import useUserReducer from "@/components/reducers/userReducer";
+
 export default function Type({ cache }) {
-    const [user, setUser] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
+    const [state, setState] = useUserReducer();
+
     const router = useRouter();
 
     const errorHandler = useClientErrorHandler();
@@ -65,7 +43,7 @@ export default function Type({ cache }) {
     useEffect(() => {
         (async () => {
             try {
-                setIsLoading(true);
+                setState(LOADING, true);
                 const url = `/api/admin/users/${id}`;
                 const params = {
                     method: 'GET',
@@ -78,11 +56,11 @@ export default function Type({ cache }) {
                 const resRaw = await slsFetch(url, params);
                 const { data } = await resRaw.json();
 
-                setUser(data[0]);
+                setState(SET_VALUES, data[0]);
             } catch (ex) {
                 errorHandler(ex);
             } finally {
-                setIsLoading(false);
+                setState(LOADING, false);
             }
         })();
     }, []);
@@ -90,58 +68,72 @@ export default function Type({ cache }) {
     const onSubmit = (e) => {
         e.preventDefault();
         formRef.current.handleSubmit();
-        state.allValidates && formRef.current.setTouched({ ...state.allValidates });
     };
 
-    const onDelete = () => { }
+    const onDelete = async () => {
+        try {
+            setState(DELETING, true);
+
+            const url = `/api/admin/users/${id}`
+            const params = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+
+            await slsFetch(url, params);
+
+            setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully deleted a user." });
+        } catch (err) {
+            errorHandler(err);
+            setState(SET_MODAL_CONTENT, { title: "Error", text: err.message });
+        } finally {
+            setState(DELETING, false);
+        }
+    }
 
     const formikParams = {
         innerRef: formRef,
-        initialValues: user,
+        initialValues: state.user,
         onSubmit: (values) => {
             (async () => {
                 try {
-                    dispatch({ type: SAVING });
+                    setState(SAVING, true);
 
-                    const { files, data, fileNames } = await getBody(values);
-                    const toDelete = getFilesToDelete(values);
+                    const isSameEmail = values.email === state.user.email;
 
-                    const entry = {
-                        ...data,
-                        fileNames,
-                        toDelete,
-                        entity_type_slug,
-                        entity_id: id,
-                    };
-
-                    const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
-                        method: "PUT",
+                    const url = `/api/admin/users/${id}`
+                    const params = {
+                        method: 'PUT',
+                        body: JSON.stringify({ ...values, isSameEmail }),
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${token}`
-                        },
-                        body: JSON.stringify(entry),
-                    });
+                        }
+                    }
 
-                    const { message, presignedUrls } = await response.json();
+                    await slsFetch(url, params);
 
-                    if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
-
-                    dispatch({
-                        type: SET_MODAL_CONTENT,
-                        payload: "You have successfully edited the entry.",
-                    });
-                    dispatch({ type: SET_SHOW, payload: true });
-                } catch (ex) {
-                    errorHandler(ex);
+                    setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully updated a user." });
+                } catch (err) {
+                    errorHandler(err);
+                    setState(SET_MODAL_CONTENT, { title: "Error", text: err.message });
                 } finally {
-                    dispatch({ type: CLEANUP });
+                    setState(SAVING, false);
                 }
             })();
         },
     };
 
-    console.log(user)
+    const onModalClose = () => {
+        setState(SET_MODAL_CONTENT, {});
+
+        if (state.modalContent.title !== 'Success') return;
+
+        router.push('/admin/users');
+    }
 
     return (
         <CacheContext.Provider value={cache}>
@@ -165,7 +157,7 @@ export default function Type({ cache }) {
                         <div className="row mt-4 mx-0 px-0">
                             <div className="col-12 mx-0 px-0 mb-2">
                                 <div className="py-0 px-0 mb-3">
-                                    {isLoading &&
+                                    {state.isLoading &&
                                         Array.from(
                                             { length: DEFAULT_SKELETON_ROW_COUNT },
                                             (_, i) => (
@@ -176,7 +168,7 @@ export default function Type({ cache }) {
                                                 </div>
                                             )
                                         )}
-                                    {!isLoading && (
+                                    {!state.isLoading && (
                                         <Formik {...formikParams}>
                                             {(props) => (
                                                 <Form>
@@ -239,34 +231,33 @@ export default function Type({ cache }) {
                                 </div>
                             </div>
                         </div>
-                        {!isLoading &&
+                        {!state.isLoading &&
                             <div className="d-flex flex-row justify-content-center">
                                 {capabilities.includes(writeUsers) && <><AppButtonLg
-                                    title="Cancel"
-                                    // onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
-                                    className="general-button-cancel"
+                                    title="Delete"
+                                    icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon" />}
+                                    onClick={onDelete}
+                                    className="general-button-delete"
+                                    isDisabled={state.isDeleting || state.isSaving}
                                 />
                                     <AppButtonLg
-                                        // title={state.isSaving ? "Saving" : "Save"}
-                                        // icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
-                                        // onClick={!state.isSaving ? onSubmit : null}
+                                        title={state.isSaving ? "Saving" : "Save"}
+                                        icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon" />}
+                                        onClick={onSubmit}
+                                        isDisabled={state.isSaving || state.isSaving}
                                         className="general-button-save"
                                     /></>}
                             </div>}
                         <div className="py-3"> </div>
                     </div>
-                    {/* <AppInfoModal */}
-                    {/*   show={state.show} */}
-                    {/*   onClose={() => ( */}
-                    {/*     dispatch({ type: SET_SHOW, payload: false }), */}
-                    {/*     router.push(`/admin/content-manager/${entity_type_slug}`) */}
-                    {/*   )} */}
-                    {/*   modalTitle="Success" */}
-                    {/*   buttonTitle="Close" */}
-                    {/* > */}
-                    {/*   {" "} */}
-                    {/*   {state.modalContent}{" "} */}
-                    {/* </AppInfoModal> */}
+                    <AppInfoModal
+                        show={state.modalContent.title}
+                        onClose={onModalClose}
+                        modalTitle={state.modalContent.title}
+                        buttonTitle="Close"
+                    >
+                        {state.modalContent.text}
+                    </AppInfoModal>
                 </ContentManagerLayout>
             </div>
         </CacheContext.Provider>

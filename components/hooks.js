@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useReducer } from 'react';
 import RootContext from '@/components/contexts/RootContext';
 import CacheContext from '@/components/contexts/CacheContext';
 import { useRouter} from 'next/router'; 
@@ -34,4 +34,14 @@ export const useClientErrorHandler = () => {
         dispatch({ type: SET_IS_TOKEN_EXPIRED, payload: true });
       }
   }
+}
+
+export const useSetReducer = (reducer, initialState) => {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    const setState = (type, payload = "") => {
+        dispatch({ type, payload });
+    }
+
+    return [state, setState];
 }
