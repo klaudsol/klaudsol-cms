@@ -23,7 +23,8 @@ async function get(req, res) {
 }
 
 async function put(req, res) {
-    const { id } = req.query; const { firstName, lastName, loginEnabled, email } = req.body;
+    const { id } = req.query; 
+    const { firstName, lastName, loginEnabled, email } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
@@ -38,7 +39,8 @@ async function put(req, res) {
     res.status(OK).json({ message: 'Update successful!' });
 }
 
-// patch is appropriate since we're not replacing the whole row
+// patch is appropriate since we're not replacing the whole row 
+// (and I also need another 'PUT' on the same route)
 async function patch(req, res) {
     const { id } = req.query;
 

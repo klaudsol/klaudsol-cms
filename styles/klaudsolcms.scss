@@ -117,6 +117,27 @@
     border: 1px solid lightgray;
   }
 
+.general-input-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    margin-left: 4px;
+
+    > * {
+        margin-right: 10px;
+    }
+
+    &__checkbox {
+        transform: scale(1.5);
+        accent-color: #455a64;
+    }
+
+    &__text {
+        font-size: 16px;
+    }
+}
+
 .sidebar_buttons:hover {
     background-color: #b0bec5;
     text-decoration: none;
