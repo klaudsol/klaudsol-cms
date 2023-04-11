@@ -7,39 +7,52 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 
 import AppCreatebutton from "@/components/klaudsolcms/buttons/AppCreateButton";
 import UsersTable from "@/components/klaudsolcms/tables/UsersTable";
+import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 
 export default function ApprovedUsers({ cache }) {
-  const [users, setUsers] = useState([]);
+    const [isLoading, setLoading] = useState(false);
+    const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    (async () => {
-      const url = `/api/admin/users?approved=true`;
-      const params = {
-        headers: {
-            Authorization: `Bearer ${cache.token}`,
-        }
-      }
-      const resRaw = await slsFetch(url, params);
-      const { data } = await resRaw.json();
+    useEffect(() => {
+        (async () => {
+            try {
+                setLoading(true);
 
-      console.log(data);
-      setUsers(data);
-    })();
-  }, []);
+                const url = `/api/admin/users?approved=true`;
+                const params = {
+                    headers: {
+                        Authorization: `Bearer ${cache.token}`,
+                    }
+                }
+                const resRaw = await slsFetch(url, params);
+                const { data } = await resRaw.json();
 
-  return (
-    <CacheContext.Provider value={cache}>
-      <InnerSingleLayout>
-        <div className="mt-5 mb-3 d-flex justify-content-between">
-          <h3>Users</h3>
-          <AppCreatebutton
-            link={`/admin/users/create`}
-            title="Create new user"
-          />
-        </div>
-        <UsersTable users={users} />
-      </InnerSingleLayout>
-    </CacheContext.Provider>
-  );
+                console.log(data);
+                setUsers(data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, []);
+
+    return (
+        <CacheContext.Provider value={cache}>
+            <InnerSingleLayout>
+                <div className="mt-5 mb-3 d-flex justify-content-between">
+                    <div className="d-flex align-items-center gap-2">
+                        <h3>Users</h3>
+                        {isLoading && <AppButtonSpinner />}
+                    </div>
+                    <AppCreatebutton
+                        link={`/admin/users/create`}
+                        title="Create new user"
+                    />
+                </div>
+                <UsersTable users={users} />
+            </InnerSingleLayout>
+        </CacheContext.Provider>
+    );
 }
 export const getServerSideProps = getSessionCache();

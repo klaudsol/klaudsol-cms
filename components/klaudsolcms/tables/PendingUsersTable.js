@@ -15,15 +15,15 @@ const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
         try {
             setLoading(true);
 
+            const url = `${BASE_URL}/${id}`;
             const params = {
-                method: 'PUT',
-                body: JSON.stringify({ id }),
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 }
             }
-            await slsFetch(BASE_URL, params);
+            await slsFetch(url, params);
 
             setUserList(id);
         } catch (err) {
@@ -37,6 +37,7 @@ const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
         try {
             setLoading(true);
 
+            const url = `${BASE_URL}/${id}`;
             const params = {
                 method: 'DELETE',
                 headers: {
@@ -44,7 +45,7 @@ const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
                     Authorization: `Bearer ${token}`
                 }
             }
-            await slsFetch(`${BASE_URL}?id=${id}`, params);
+            await slsFetch(url, params);
 
             setUserList(id);
         } catch (err) {
@@ -69,7 +70,7 @@ const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
                 {/*table body*/}
                 <tbody>
                     {users.map((user) => (
-                        <tr key={user.id}>
+                        <tr className="table_row--default_cursor" key={user.id}>
                             <td className="table--expand_first">{user.name}</td>
                             <td>{user.email}</td>
                             <td>{user.createdAt}</td>

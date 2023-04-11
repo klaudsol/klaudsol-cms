@@ -41,7 +41,7 @@ async function put(req, res) {
     const { sessionToken } = req.user;
 
     const session = await Session.getSession(sessionToken);
-    await People.updateUserInfo({ id: session.people_id, firstName, lastName, email, });
+    await People.updateUserInfo({ id: session.people_id, firstName, lastName, email, loginEnabled: true});
 
     const { origin } = req.headers;
     const isFromCMS = origin !== process.env.FRONTEND_URL;

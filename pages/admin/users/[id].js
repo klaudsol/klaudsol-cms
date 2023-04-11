@@ -1,0 +1,274 @@
+import InnerLayout from "@/components/layouts/InnerLayout";
+import CacheContext from "@/components/contexts/CacheContext";
+import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
+
+import { getSessionCache } from "@klaudsol/commons/lib/Session";
+import { useClientErrorHandler } from "@/components/hooks";
+
+import { useRouter } from "next/router";
+import { useEffect, useReducer, useCallback, useRef } from "react";
+import { sortByOrderAsc } from "@/components/Util";
+import { slsFetch } from "@klaudsol/commons/lib/Client";
+
+/** kladusol CMS components */
+import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
+import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
+import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
+
+/** react-icons */
+import { FaCheck, FaTrash } from "react-icons/fa";
+import { MdModeEditOutline } from "react-icons/md";
+import { VscListSelection } from "react-icons/vsc";
+import { Col } from "react-bootstrap";
+import { Formik, Form, Field } from "formik";
+import ContentManagerLayout from "components/layouts/ContentManagerLayout";
+import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
+import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
+import { uploadFilesToUrl } from "@/backend/data_access/S3";
+import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+
+import {
+  initialState,
+  entityReducer,
+} from "@/components/reducers/entityReducer";
+
+import {
+  LOADING,
+  REFRESH,
+  SAVING,
+  DELETING,
+  CLEANUP,
+  SET_SHOW,
+  SET_MODAL_CONTENT,
+  SET_VALUES,
+  SET_ATTRIBUTES,
+  SET_COLUMNS,
+  SET_ENTITY_TYPE_NAME,
+  SET_ENTITY_TYPE_ID,
+  SET_ALL_VALIDATES
+} from "@/lib/actions";
+
+export default function Type({ cache }) {
+  const router = useRouter();
+  const errorHandler = useClientErrorHandler();
+  const { token = null, capabilities = null} = cache;
+
+  const { entity_type_slug, id } = router.query;
+  const [state, dispatch] = useReducer(entityReducer, initialState);
+  const formRef = useRef();
+
+  /*** Entity Types List ***/
+  useEffect(() => {
+    (async () => {
+      try {
+
+      } catch (ex) {
+        errorHandler(ex);
+      } finally {
+
+      }
+    })();
+  }, []);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    formRef.current.handleSubmit();
+    state.allValidates && formRef.current.setTouched({ ...state.allValidates});
+  };
+
+  const onDelete = () => {}
+
+  const formikParams = {
+    innerRef: formRef,
+    initialValues: getFormikInitialVals(),
+    onSubmit: (values) => {
+      (async () => {
+        try {
+          dispatch({ type: SAVING });
+
+          const { files, data, fileNames } = await getBody(values);
+          const toDelete = getFilesToDelete(values);
+
+          const entry = {
+            ...data,
+            fileNames,
+            toDelete,
+            entity_type_slug,
+            entity_id: id,
+          };
+
+          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+            method: "PUT",
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(entry),
+          });
+
+          const { message, presignedUrls } = await response.json();
+
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+
+          dispatch({
+            type: SET_MODAL_CONTENT,
+            payload: "You have successfully edited the entry.",
+          });
+          dispatch({ type: SET_SHOW, payload: true });
+        } catch (ex) {
+          errorHandler(ex);
+        } finally {
+          dispatch({ type: CLEANUP });
+        }
+      })();
+    },
+  };
+//{capabilities.includes(writeContents) ?
+//: <p className="errorMessage">forbidden.</p>}
+
+  return (
+    <CacheContext.Provider value={cache}>
+      <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
+        <ContentManagerLayout currentTypeSlug={entity_type_slug}>
+            <div className="py-4">
+              <AppBackButton link={`/admin/content-manager/${entity_type_slug}`} />
+            <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
+              <div>
+                <div className="general-header"> {entity_type_slug} </div>
+                <a
+                  href={`/api/${entity_type_slug}/${id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  api/{entity_type_slug}/{id}
+                </a>
+                <p> API ID : {id} </p>
+              </div>
+              {(!state.isLoading && capabilities.includes(writeContents)) && 
+                <AppButtonLg
+                title={state.isDeleting ? "Deleting" : "Delete"}
+                icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon"/>}
+                onClick={!state.isSaving ? onDelete : null} // Add confirmation modal before deleting the entry
+                className="general-button-delete"
+              />
+              }
+            </div>
+            <div className="row mt-4 mx-0 px-0">
+              <div className="col-12 mx-0 px-0 mb-2">
+                <div className="py-0 px-0 mb-3">
+                  {state.isLoading &&
+                    Array.from(
+                      { length: DEFAULT_SKELETON_ROW_COUNT },
+                      (_, i) => (
+                        <div key={i}>
+                          <div className="skeleton-label" />
+                          <div className="skeleton-text" />
+                          <div />
+                        </div>
+                      )
+                    )}
+
+                  {!state.isLoading && (
+                    <Formik {...formikParams}>
+                      {(props) => (
+                        <Form>
+                          {Object.entries(state.attributes)
+                            .sort(sortByOrderAsc)
+                            .map(([attributeName, attribute]) => {
+                              return (
+                                <div key={attributeName}>
+                                  <p className="general-input-title"> {attributeName.replaceAll('_', " ")}  </p>
+                                  <AdminRenderer
+                                    errors={props.errors}
+                                    touched={props.touched}
+                                    type={attribute.type}
+                                    name={attributeName}
+                                    disabled={!capabilities.includes(writeContents)}
+                                  />
+                                </div>
+                              );
+                            })}
+                        </Form>
+                      )}
+                    </Formik>
+                  )}
+                </div>
+              </div>
+              <div className="col-3 mx-0">
+                {/* <div className="container_new_entry px-3 py-4">
+                  <p style={{ fontSize: "11px" }}> INFORMATION </p>
+                  <div className="block_bar"></div>
+
+                  <div className="d-flex align-items-center justify-content-between mt-4">
+                    <p style={{ fontSize: "12px" }}>
+                      {" "}
+                      <b> Created </b>{" "}
+                    </p>
+                    <p style={{ fontSize: "12px" }}> 2 days ago </p>
+                  </div>
+
+                  <div className="d-flex align-items-center justify-content-between">
+                    <p style={{ fontSize: "12px" }}>
+                      {" "}
+                      <b> By </b>{" "}
+                    </p>
+                    <p style={{ fontSize: "12px" }}> Ardee Aram </p>
+                  </div>
+
+                  <div className="d-flex align-items-center justify-content-between">
+                    <p style={{ fontSize: "12px" }}>
+                      {" "}
+                      <b> 2 days ago </b>{" "}
+                    </p>
+                    <p style={{ fontSize: "12px" }}> Ardee Aram </p>
+                  </div>
+
+                  <div className="d-flex align-items-center justify-content-between">
+                    <p style={{ fontSize: "12px" }}>
+                      {" "}
+                      <b> By </b>{" "}
+                    </p>
+                    <p style={{ fontSize: "12px" }}> </p>
+                  </div>
+                </div> */}
+                {/* <button className="new_entry_block_button mt-2">  <MdModeEditOutline  className='icon_block_button' /> Edit the model </button>
+            <button className="new_entry_block_button mt-2">  <VscListSelection  className='icon_block_button' /> Configure the view </button> */}
+
+              </div>
+            </div>
+            {!state.isLoading && 
+            <div className="d-flex flex-row justify-content-center">
+              {capabilities.includes(writeContents) && <><AppButtonLg
+                title="Cancel"
+                onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
+                className="general-button-cancel"
+              />
+              <AppButtonLg
+                title={state.isSaving ? "Saving" : "Save"}
+                icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
+                onClick={!state.isSaving ? onSubmit : null}
+                className="general-button-save"
+              /></>}
+            </div>}
+            <div className="py-3"> </div>
+          </div> 
+          <AppInfoModal
+            show={state.show}
+            onClose={() => (
+              dispatch({ type: SET_SHOW, payload: false }),
+              router.push(`/admin/content-manager/${entity_type_slug}`)
+            )}
+            modalTitle="Success"
+            buttonTitle="Close"
+          >
+            {" "}
+            {state.modalContent}{" "}
+          </AppInfoModal>
+        </ContentManagerLayout>
+      </div>
+    </CacheContext.Provider>
+  );
+}
+export const getServerSideProps = getSessionCache();

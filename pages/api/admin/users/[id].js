@@ -6,41 +6,52 @@ import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataErro
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 
-export default withSession(handleRequests({ get, post }));
+export default withSession(handleRequests({ get, put, patch, del }));
 
 async function get(req, res) {
-    const { approved, pending } = req.query;
-
-    const people = await People.getAll({ approved, pending });
+    const { id } = req.query;
+    const person = await People.get({ id });
 
     const output = {
-        data: people,
+        data: person,
         metadata: {},
     };
 
     output.metadata.hash = createHash(output);
 
-    people ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+    person ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
-async function post(req, res) {
-    const { firstName, lastName, loginEnabled, email, password, confirmPassword, forcePasswordChange } = req.body;
+async function put(req, res) {
+    const { id } = req.query; const { firstName, lastName, loginEnabled, email } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
     if (!email) throw new InsufficientDataError('Please enter your email.');
-    if (!password) throw new InsufficientDataError('Please enter your first password.');
-    if (!confirmPassword) throw new InsufficientDataError('Please confirm your password.');
-    if (password !== confirmPassword) throw new InsufficientDataError('The passwords do not match.');
 
     const existingUser = await People.findByColumn('email', email);
 
     if (existingUser) throw new UserAlreadyExists();
 
-    await People.createUser({ firstName, lastName, loginEnabled, email, password, forcePasswordChange });
+    await People.updateUserInfo({ id, firstName, lastName, loginEnabled, email });
 
-    res.status(OK).json({ message: 'Signup successful!' });
+    res.status(OK).json({ message: 'Update successful!' });
 }
 
+// patch is appropriate since we're not replacing the whole row
+async function patch(req, res) {
+    const { id } = req.query;
 
+    await People.approve({ id });
+
+    res.status(OK).json({ message: 'User approved.' });
+}
+
+async function del(req, res) {
+    const { id } = req.query;
+
+    await People.delete({ id });
+
+    res.status(OK).json({ message: 'User rejected.' });
+}
 

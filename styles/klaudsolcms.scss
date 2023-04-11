@@ -798,6 +798,10 @@ $onFocus: #323C4E;
     cursor: pointer;
 }
 
+#table_general tr.table_row--default_cursor:hover {
+    cursor: default;
+}
+
 #table_general th, #table_skeleton th {
     padding-top: 12px;
     padding-bottom: 12px;
