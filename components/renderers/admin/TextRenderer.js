@@ -6,7 +6,7 @@ import ErrorRenderer from "./ErrorRenderer";
 const TextRenderer = ({ className, name, type, errors, touched, disabled }) => (
   <>
     <Field
-      type="text"
+      type={type}
       name={name}
       className={cx("general-input-text", {
         "general-input-error": errors[name] && touched[name],

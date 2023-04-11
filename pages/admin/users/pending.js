@@ -44,7 +44,7 @@ export default function PendingUsers({ cache }) {
                     <h3>Pending users</h3>
                     {isLoading && <AppButtonSpinner />}
                 </div>
-                <PendingUsersTable users={users} setUsers={setUsers} loading={isLoading} setLoading={setLoading} token={cache.token} />
+                <PendingUsersTable users={users} setUsers={setUsers} token={cache.token} />
             </InnerSingleLayout>
         </CacheContext.Provider>
     );

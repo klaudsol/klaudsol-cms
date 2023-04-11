@@ -10,7 +10,6 @@ import CacheContext from "@/components/contexts/CacheContext";
 
 const ForceChangePasswordForm = ({ pwd }) => {
   const router = useRouter();
-  const { token } = useContext(CacheContext);
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [state, dispatch] = useReducer(authReducer, initialState);

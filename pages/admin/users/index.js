@@ -27,7 +27,6 @@ export default function ApprovedUsers({ cache }) {
                 const resRaw = await slsFetch(url, params);
                 const { data } = await resRaw.json();
 
-                console.log(data);
                 setUsers(data);
             } catch (err) {
                 console.error(err);

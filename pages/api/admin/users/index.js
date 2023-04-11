@@ -24,7 +24,7 @@ async function get(req, res) {
 }
 
 async function post(req, res) {
-    const { firstName, lastName, loginEnabled, email, password, confirmPassword, forcePasswordChange } = req.body;
+    const { firstName, lastName, email, password, confirmPassword, loginEnabled = false, forcePasswordChange = false } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');

@@ -2,10 +2,14 @@ import Link from "next/link";
 import AppButtonSm from "../buttons/AppButtonSm";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { BiCheck, BiX } from "react-icons/bi";
+import { useState } from "react";
+import AppButtonSpinner from "../AppButtonSpinner";
 
 const BASE_URL = '/api/admin/users';
 
-const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
+const UsersTable = ({ users, setUsers, token }) => {
+    const [isLoading, setLoading] = useState(false);
+
     const setUserList = (id) => {
         const newUserList = users.filter((user) => user.id !== id);
         setUsers(newUserList);
@@ -75,18 +79,23 @@ const UsersTable = ({ users, setUsers, isLoading, setLoading, token }) => {
                             <td>{user.email}</td>
                             <td>{user.createdAt}</td>
                             <td className="table--shrink_cell table--center_cell">
-                                <AppButtonSm
-                                    className="users__pending_button users__pending_button--approve"
-                                    icon={<BiCheck />}
-                                    onClick={() => approveUser(user.id)}
-                                    isDisabled={isLoading}
-                                />
-                                <AppButtonSm
-                                    className="users__pending_button users__pending_button--reject"
-                                    icon={<BiX />}
-                                    onClick={() => rejectUser(user.id)}
-                                    isDisabled={isLoading}
-                                />
+                                {!isLoading &&
+                                    <>
+                                        <AppButtonSm
+                                            className="users__pending_button users__pending_button--approve"
+                                            icon={<BiCheck />}
+                                            onClick={() => approveUser(user.id)}
+                                            isDisabled={isLoading}
+                                        />
+                                        <AppButtonSm
+                                            className="users__pending_button users__pending_button--reject"
+                                            icon={<BiX />}
+                                            onClick={() => rejectUser(user.id)}
+                                            isDisabled={isLoading}
+                                        />
+                                    </>
+                                }
+                                {isLoading && <AppButtonSpinner />}
                             </td>
                         </tr>
                     ))}

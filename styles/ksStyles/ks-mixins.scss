@@ -125,3 +125,14 @@ $font-style: normal !default;
   border: 1px solid lightgray;
   border-radius: $input-border-radius;
 }
+
+@mixin general-password-input-box() {
+    @include flex('flex-start', 'center', 'row');
+    position: relative;
+
+    > button {
+        position: absolute;
+        top: 5px;
+        right: 5px
+    }
+}

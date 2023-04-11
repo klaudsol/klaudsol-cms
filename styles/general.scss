@@ -40,6 +40,20 @@
       @include general-text-input(12px);
     }
 
+    &-password-box {
+      @include flex('flex-start', 'center', 'row');
+      position: relative;
+
+      &-button {
+        all: unset;
+        color: $dark-blue-1;
+        font-size: 24px;
+        position: absolute;
+        top: 2px;
+        right: 10px;
+      }
+    }
+
     &-textarea {
       @include general-text-input(12px);
       @include width-height(100%, 15vh);
