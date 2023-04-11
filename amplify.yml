@@ -15,6 +15,7 @@ frontend:
         - yarn run plugin build
         - yarn run build
         - yarn run db structure
+        - yarn run db seed
         - yarn run db migrate
   artifacts:
     baseDirectory: .next
