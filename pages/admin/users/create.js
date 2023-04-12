@@ -38,7 +38,7 @@ const ADD_GROUPS = 'add_groups';
 export default function Type({ cache }) {
     const [state, setState] = useUserReducer();
     const [passwordMode, setPasswordMode] = useState(AUTO_PASSWORD);
-    const [page, setPage] = useState(USER_INFO);
+    const [currentPage, setCurrentPage] = useState(USER_INFO);
 
     const router = useRouter();
 
@@ -91,6 +91,7 @@ export default function Type({ cache }) {
             password: '',
             confirmPassword: '',
             forcePasswordChange: true,
+            loginEnabled: true,
             groups: ['4'], // "Guests" is auto selected
         },
         onSubmit: (values) => {
@@ -129,10 +130,10 @@ export default function Type({ cache }) {
         // router.push('/admin/users');
     }
 
-    const handlePage = async (page) => {
-        const { errors, setTouched } = formRef.current;
+    const handlePage = async (nextPage) => {
+        if (nextPage === USER_INFO) return setCurrentPage(nextPage);
 
-        if (page === USER_INFO) setPage(page);
+        const { errors, setTouched } = formRef.current;
 
         const errorKeys = Object.keys(errors);
         if (errorKeys.length > 0) {
@@ -142,7 +143,7 @@ export default function Type({ cache }) {
             return;
         };
         
-        setPage(page)
+        setCurrentPage(nextPage)
     }
 
     return (
@@ -151,8 +152,8 @@ export default function Type({ cache }) {
                 <ContentManagerLayout currentTypeSlug={entity_type_slug}>
                     <div className="py-4">
                         <div className="d-flex align-items-center justify-content-between">
-                            <AppBackButton link={`/admin/users/`} onClick={() => handlePage(USER_INFO)} noLink={page === ADD_GROUPS} />
-                            {page === USER_INFO && <AppForwardButton onClick={() => handlePage(ADD_GROUPS)} text="Add groups" noLink={true} />}
+                            <AppBackButton link={`/admin/users/`} onClick={() => handlePage(USER_INFO)} noLink={currentPage === ADD_GROUPS} />
+                            {currentPage === USER_INFO && <AppForwardButton onClick={() => handlePage(ADD_GROUPS)} text="Add groups" noLink={true} />}
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
                             <div>
@@ -177,8 +178,8 @@ export default function Type({ cache }) {
                                         <div className="py-0 px-0 mb-3">
                                             <Formik {...formikParams}>
                                                 <Form>
-                                                    {page === USER_INFO && <CreateUserForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />}
-                                                    {page === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}
+                                                    {currentPage === USER_INFO && <CreateUserForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />}
+                                                    {currentPage === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}
                                                 </Form>
                                             </Formik>
                                         </div>
