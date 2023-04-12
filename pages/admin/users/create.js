@@ -31,6 +31,7 @@ import useUserReducer from "@/components/reducers/userReducer";
 import CreateUserForm from "@/components/forms/CreateUserForm";
 import AppForwardButton from "@/components/klaudsolcms/buttons/AppForwardButton";
 import AddToGroupsForm from "@/components/forms/AddToGroupsForm";
+import PasswordForm from "@/components/forms/PasswordForm";
 
 const USER_INFO = 'user_info';
 const ADD_GROUPS = 'add_groups';
@@ -71,7 +72,7 @@ export default function Type({ cache }) {
                 }
 
                 const resRaw = await slsFetch(url, params);
-                const { data } = await resRaw.json(); 
+                const { data } = await resRaw.json();
 
                 setState(SET_GROUPS, data);
             } catch (err) {
@@ -142,7 +143,7 @@ export default function Type({ cache }) {
             setTouched(touchedFields);
             return;
         };
-        
+
         setCurrentPage(nextPage)
     }
 
@@ -178,7 +179,12 @@ export default function Type({ cache }) {
                                         <div className="py-0 px-0 mb-3">
                                             <Formik {...formikParams}>
                                                 <Form>
-                                                    {currentPage === USER_INFO && <CreateUserForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />}
+                                                    {currentPage === USER_INFO &&
+                                                        <>
+                                                            <CreateUserForm />
+                                                            <PasswordForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />
+                                                        </>
+                                                    }
                                                     {currentPage === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}
                                                 </Form>
                                             </Formik>

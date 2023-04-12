@@ -5,7 +5,7 @@ import { useClientErrorHandler } from "@/components/hooks";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
@@ -16,24 +16,21 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "lib/Constants";
+import { CUSTOM_PASSWORD, DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "lib/Constants";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 
 import {
-    LOADING,
     SAVING,
     DELETING,
     SET_MODAL_CONTENT,
-    SET_VALUES,
-    SET_GROUPS,
 } from "@/lib/actions";
 
 import useUserReducer from "@/components/reducers/userReducer";
-import EditUserForm from "@/components/forms/EditUserForm";
-import AddToGroupsForm from "@/components/forms/AddToGroupsForm";
+import PasswordForm from "@/components/forms/PasswordForm";
 
 export default function UserInfo({ cache }) {
     const [state, setState] = useUserReducer();
+    const [passwordMode, setPasswordMode] = useState(CUSTOM_PASSWORD);
 
     const router = useRouter();
 
@@ -42,46 +39,6 @@ export default function UserInfo({ cache }) {
 
     const { entity_type_slug, id } = router.query;
     const formRef = useRef();
-
-    useEffect(() => {
-        (async () => {
-            try {
-                setState(LOADING, true);
-
-                const userDataUrl = `/api/admin/users/${id}`;
-                const userParams = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-
-                const groupsUrl = `/api/admin/groups`;
-                const groupsParams = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-
-                const groupsPromise = slsFetch(groupsUrl, groupsParams);
-                const userPromise = slsFetch(userDataUrl, userParams);
-                const [groupsRaw, userRaw] = await Promise.all([groupsPromise, userPromise]);
-
-                const { data: user } = await userRaw.json();
-                const { person, groups: userGroups } = user;
-
-                const { data: groups } = await groupsRaw.json(); 
-
-                setState(SET_VALUES, { ...person[0], groups: userGroups } );
-                setState(SET_GROUPS, groups);
-            } catch (ex) {
-                errorHandler(ex);
-            } finally {
-                setState(LOADING, false);
-            }
-        })();
-    }, []);
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -114,7 +71,9 @@ export default function UserInfo({ cache }) {
 
     const formikParams = {
         innerRef: formRef,
-        initialValues: state.user,
+        initialValues: {
+            passwordMode: CUSTOM_PASSWORD,
+        },
         onSubmit: (values) => {
             (async () => {
                 try {
@@ -162,62 +121,42 @@ export default function UserInfo({ cache }) {
                 <ContentManagerLayout currentTypeSlug={entity_type_slug}>
                     <div className="py-4">
                         <div className="d-flex align-items-center justify-content-between">
-                            <AppBackButton link={`/admin/users/`} />
-                            <Link href={`/admin/users/${id}/change-password`}> {/* I just copied AppBackButton */}
-                                <button className="btn_back">
-                                    <FaArrowRight className='icon_general' />
-                                    Change Password
-                                </button>
-                            </Link>
+                            <AppBackButton link={`/admin/users/${id}`} />
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
                             <div>
-                                <div className="general-header"> Edit user </div>
+                                <div className="general-header"> Change password </div>
                             </div>
                         </div>
                         <div className="row mt-4 mx-0 px-0">
                             <div className="col-12 mx-0 px-0 mb-2">
                                 <div className="py-0 px-0 mb-3">
-                                    {state.isLoading &&
-                                        Array.from(
-                                            { length: DEFAULT_SKELETON_ROW_COUNT },
-                                            (_, i) => (
-                                                <div key={i}>
-                                                    <div className="skeleton-label" />
-                                                    <div className="skeleton-text" />
-                                                    <div />
-                                                </div>
-                                            )
-                                        )}
-                                    {!state.isLoading && (
-                                        <Formik {...formikParams}>
-                                            <Form>
-                                                <EditUserForm />
-                                                <AddToGroupsForm groups={state.groups} />
-                                            </Form>
-                                        </Formik>
-
-                                    )}
+                                    <Formik {...formikParams}>
+                                        <Form>
+                                            <PasswordForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />
+                                        </Form>
+                                    </Formik>
                                 </div>
                             </div>
                         </div>
-                        {!state.isLoading &&
-                            <div className="d-flex flex-row justify-content-center">
-                                {capabilities.includes(writeUsers) && <><AppButtonLg
-                                    title="Delete"
-                                    icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon" />}
-                                    onClick={onDelete}
-                                    className="general-button-delete"
-                                    isDisabled={state.isDeleting || state.isSaving}
-                                />
+                        <div className="d-flex flex-row justify-content-center">
+                            {capabilities.includes(writeUsers) &&
+                                <>
                                     <AppButtonLg
-                                        title={state.isSaving ? "Saving" : "Save"}
+                                        title="Cancel"
+                                        onClick={!state.isSaving ? () => router.push(`/admin/users`) : null}
+                                        className="general-button-cancel"
+                                    />
+                                    <AppButtonLg
+                                        title={state.isSaving ? "Creating" : "Create"}
                                         icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon" />}
                                         onClick={onSubmit}
                                         isDisabled={state.isSaving || state.isSaving}
                                         className="general-button-save"
-                                    /></>}
-                            </div>}
+                                    />
+                                </>
+                            }
+                        </div>
                         <div className="py-3"> </div>
                     </div>
                     <AppInfoModal
