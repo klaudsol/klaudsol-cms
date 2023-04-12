@@ -4,7 +4,17 @@ import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import ErrorRenderer from "./ErrorRenderer";
 
 // Add validators in the future when "required" is optional
-const CheckboxRenderer = ({ className, title, name, type, errors, touched, disabled, checked, value }) => {
+const CheckboxRenderer = ({ className, title, name, type, errors, touched, disabled, value }) => {
+    const { values } = useFormikContext();
+
+    const isChecked = () => {
+        const field = values[name];
+        if (!(field instanceof Array)) return values[name];
+
+        // formik converts everything to string if the field is not type = "number"
+        return field.includes(value.toString()); 
+    }
+
     return (
         <>
             <label className="general-input-checkbox">
@@ -13,7 +23,7 @@ const CheckboxRenderer = ({ className, title, name, type, errors, touched, disab
                     name={name}
                     value={value}
                     disabled={disabled}
-                    checked={checked}
+                    checked={isChecked()}
                     className="general-input-checkbox__checkbox"
                 />
                 <span className="general-input-checkbox__text">

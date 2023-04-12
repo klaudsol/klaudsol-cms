@@ -8,7 +8,7 @@ import { generateRandVals } from "@klaudsol/commons/lib/Math";
 import CacheContext from "../contexts/CacheContext";
 
 export default function CreateUserForm({ passwordMode, setPasswordMode }) {
-    const { setFieldValue, errors, touched } = useFormikContext();
+    const { setFieldValue, values, errors, touched } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
 
     const setRandomPassword = async () => {
@@ -151,7 +151,8 @@ export default function CreateUserForm({ passwordMode, setPasswordMode }) {
                     errors={errors}
                     touched={touched}
                     type="checkbox"
-                    name='forcePasswordChange'
+                    name="forcePasswordChange"
+                    checked={values.forcePasswordChange}
                     disabled={!capabilities.includes(writeUsers)}
                 />
             </div>

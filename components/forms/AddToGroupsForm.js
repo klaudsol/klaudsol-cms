@@ -27,7 +27,7 @@ export default function AddToGroupsForm({ groups }) {
                                 value={group.id}
                                 errors={errors}
                                 touched={touched}
-                                checked={values.groups.includes(group.id)}
+                                checked={values.groups.includes(group.id.toString())}
                                 type="checkbox"
                                 name="groups"
                                 disabled={!capabilities.includes(writeUsers)}
@@ -49,7 +49,7 @@ export default function AddToGroupsForm({ groups }) {
                                 value={group.id}
                                 errors={errors}
                                 touched={touched}
-                                checked={values.groups.includes(group.id)}
+                                checked={values.groups.includes(group.id.toString())}
                                 type="checkbox"
                                 name="groups"
                                 disabled={!capabilities.includes(writeUsers)}
