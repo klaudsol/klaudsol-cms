@@ -96,8 +96,6 @@ export default function Type({ cache }) {
         onSubmit: (values) => {
             (async () => {
                 try {
-
-                    console.log(values.groups)
                     setState(SAVING, true);
 
                     const url = `/api/admin/users`
@@ -131,14 +129,30 @@ export default function Type({ cache }) {
         // router.push('/admin/users');
     }
 
+    const handlePage = async (page) => {
+        const { errors, setTouched } = formRef.current;
+
+        if (page === USER_INFO) setPage(page);
+
+        const errorKeys = Object.keys(errors);
+        if (errorKeys.length > 0) {
+            const touchedFields = errorKeys.reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
+
+            setTouched(touchedFields);
+            return;
+        };
+        
+        setPage(page)
+    }
+
     return (
         <CacheContext.Provider value={cache}>
             <div className="wrapper d-flex align-items-start justify-content-start min-vh-100 bg-light">
                 <ContentManagerLayout currentTypeSlug={entity_type_slug}>
                     <div className="py-4">
                         <div className="d-flex align-items-center justify-content-between">
-                            <AppBackButton link={`/admin/users/`} onClick={() => setPage(USER_INFO)} noLink={page === ADD_GROUPS} />
-                            {page === USER_INFO && <AppForwardButton onClick={() => setPage(ADD_GROUPS)} text="Add groups" noLink={true} />}
+                            <AppBackButton link={`/admin/users/`} onClick={() => handlePage(USER_INFO)} noLink={page === ADD_GROUPS} />
+                            {page === USER_INFO && <AppForwardButton onClick={() => handlePage(ADD_GROUPS)} text="Add groups" noLink={true} />}
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
                             <div>
@@ -163,7 +177,7 @@ export default function Type({ cache }) {
                                         <div className="py-0 px-0 mb-3">
                                             <Formik {...formikParams}>
                                                 <Form>
-                                                    {page === USER_INFO && <CreateUserForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />}
+                                                    {page === USER_INFO && <CreateUserForm groups={state.groups} passwordMode={passwordMode} setPasswordMode={setPasswordMode} />}
                                                     {page === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}
                                                 </Form>
                                             </Formik>
