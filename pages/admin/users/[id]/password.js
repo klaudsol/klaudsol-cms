@@ -45,49 +45,24 @@ export default function UserInfo({ cache }) {
         formRef.current.handleSubmit();
     };
 
-    const onDelete = async () => {
-        try {
-            setState(DELETING, true);
-
-            const url = `/api/admin/users/${id}`
-            const params = {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
-            }
-
-            await slsFetch(url, params);
-
-            setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully deleted a user." });
-        } catch (err) {
-            errorHandler(err);
-            setState(SET_MODAL_CONTENT, { title: "Error", text: err.message });
-        } finally {
-            setState(DELETING, false);
-        }
-    }
-
     const formikParams = {
         innerRef: formRef,
         initialValues: {
-            passwordMode: CUSTOM_PASSWORD,
+            oldPassword: '',
+            password: '',
+            confirmPassword: '',
+            forcePasswordChange: false,
+            passwordMode: CUSTOM_PASSWORD
         },
         onSubmit: (values) => {
             (async () => {
                 try {
                     setState(SAVING, true);
 
-                    const isSameEmail = values.email === state.user.email;
-
-                    const toAdd = values.groups.filter((group) => !state.user.groups.includes(group));
-                    const toDelete = state.user.groups.filter((group) => !values.groups.includes(group));
-
-                    const url = `/api/admin/users/${id}`
+                    const url = `/api/admin/users/${id}/password`
                     const params = {
                         method: 'PUT',
-                        body: JSON.stringify({ ...values, toAdd, toDelete, isSameEmail }),
+                        body: JSON.stringify(values),
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${token}`
@@ -96,7 +71,7 @@ export default function UserInfo({ cache }) {
 
                     await slsFetch(url, params);
 
-                    setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully updated a user." });
+                    setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully updated this user's password." });
                 } catch (err) {
                     errorHandler(err);
                     setState(SET_MODAL_CONTENT, { title: "Error", text: err.message });
@@ -133,7 +108,7 @@ export default function UserInfo({ cache }) {
                                 <div className="py-0 px-0 mb-3">
                                     <Formik {...formikParams}>
                                         <Form>
-                                            <PasswordForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />
+                                            <PasswordForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} changePass />
                                         </Form>
                                     </Formik>
                                 </div>

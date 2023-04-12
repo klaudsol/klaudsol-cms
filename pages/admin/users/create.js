@@ -103,7 +103,7 @@ export default function Type({ cache }) {
                     const url = `/api/admin/users`
                     const params = {
                         method: 'POST',
-                        body: JSON.stringify({ ...values, passwordMode }),
+                        body: JSON.stringify(values),
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${token}`

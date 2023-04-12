@@ -36,6 +36,9 @@ async function post(req, res) {
         forcePasswordChange = false 
     } = req.body;
 
+    console.log(password);
+    console.log(confirmPassword);
+
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
     if (!email) throw new InsufficientDataError('Please enter your email.');
