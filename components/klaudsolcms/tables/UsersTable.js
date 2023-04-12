@@ -1,4 +1,5 @@
 import Link from "next/link";
+import moment from "moment";
 import { readContents } from "@/lib/Constants";
 
 const UsersTable = ({ users }) => {
@@ -25,7 +26,7 @@ const UsersTable = ({ users }) => {
                             <tr>
                                 <td className="table--expand_cell">{user.name}</td>
                                 <td>{user.email}</td>
-                                <td>{user.createdAt}</td>
+                                <td>{moment(user.createdAt).format('MM/DD/YYYY - h:mm:ss A')}</td>
                             </tr>
                         </Link>
                     ))}

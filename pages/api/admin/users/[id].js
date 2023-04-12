@@ -5,6 +5,7 @@ import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
+import Groups from '@klaudsol/commons/models/Groups';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 
 export default withSession(handleRequests({ get, put, patch, del }));
@@ -12,9 +13,10 @@ export default withSession(handleRequests({ get, put, patch, del }));
 async function get(req, res) {
     const { id } = req.query;
     const person = await People.get({ id });
+    const groups = await Groups.findByUser({ id });
 
     const output = {
-        data: person,
+        data: { person, groups },
         metadata: {},
     };
 
@@ -25,7 +27,7 @@ async function get(req, res) {
 
 async function put(req, res) {
     const { id } = req.query; 
-    const { firstName, lastName, forcePasswordChange, loginEnabled, email, isSameEmail } = req.body;
+    const { firstName, lastName, forcePasswordChange, loginEnabled, email, isSameEmail, toAdd, toDelete } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
@@ -38,6 +40,9 @@ async function put(req, res) {
     }
 
     await People.updateUserInfo({ id, firstName, lastName, forcePasswordChange, loginEnabled, email });
+
+    if (toAdd.length > 0) await PeopleGroups.connect({ id, groups: toAdd });
+    if (toDelete.length > 0) await PeopleGroups.disconnect({ id, groups: toDelete });
 
     res.status(OK).json({ message: 'Update successful!' });
 }

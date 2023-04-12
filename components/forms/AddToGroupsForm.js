@@ -14,8 +14,9 @@ export default function AddToGroupsForm({ groups }) {
     const { capabilities, token } = useContext(CacheContext);
 
     return (
-        <>
-            <h4>System supplied</h4>
+        <div>
+            <h4 className="mb-4">Groups</h4>
+            <h5>System supplied</h5>
             <div className="groups__container">
                 {groups.map((group) => {
                     if (!group.isSystemSupplied) return;
@@ -37,7 +38,7 @@ export default function AddToGroupsForm({ groups }) {
                     )
                 })}
             </div>
-            <h4>Created</h4>
+            <h5>Created</h5>
             <div className="groups__container">
                 {groups.map((group) => {
                     if (group.isSystemSupplied) return;
@@ -59,6 +60,6 @@ export default function AddToGroupsForm({ groups }) {
                     )
                 })}
             </div>
-        </>
+        </div>
     );
 }

@@ -25,11 +25,14 @@ import {
     DELETING,
     SET_MODAL_CONTENT,
     SET_VALUES,
+    SET_GROUPS,
 } from "@/lib/actions";
 
 import useUserReducer from "@/components/reducers/userReducer";
+import EditUserForm from "@/components/forms/EditUserForm";
+import AddToGroupsForm from "@/components/forms/AddToGroupsForm";
 
-export default function Type({ cache }) {
+export default function UserInfo({ cache }) {
     const [state, setState] = useUserReducer();
 
     const router = useRouter();
@@ -44,18 +47,34 @@ export default function Type({ cache }) {
         (async () => {
             try {
                 setState(LOADING, true);
-                const url = `/api/admin/users/${id}`;
-                const params = {
+
+                const userDataUrl = `/api/admin/users/${id}`;
+                const userParams = {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`
                     }
                 }
 
-                const resRaw = await slsFetch(url, params);
-                const { data } = await resRaw.json();
+                const groupsUrl = `/api/admin/groups`;
+                const groupsParams = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    }
+                }
 
-                setState(SET_VALUES, data[0]);
+                const groupsPromise = slsFetch(groupsUrl, groupsParams);
+                const userPromise = slsFetch(userDataUrl, userParams);
+                const [groupsRaw, userRaw] = await Promise.all([groupsPromise, userPromise]);
+
+                const { data: user } = await userRaw.json();
+                const { person, groups: userGroups } = user;
+
+                const { data: groups } = await groupsRaw.json(); 
+
+                setState(SET_VALUES, { ...person[0], groups: userGroups } );
+                setState(SET_GROUPS, groups);
             } catch (ex) {
                 errorHandler(ex);
             } finally {
@@ -103,10 +122,13 @@ export default function Type({ cache }) {
 
                     const isSameEmail = values.email === state.user.email;
 
+                    const toAdd = values.groups.filter((group) => !state.user.groups.includes(group));
+                    const toDelete = state.user.groups.filter((group) => !values.groups.includes(group));
+
                     const url = `/api/admin/users/${id}`
                     const params = {
                         method: 'PUT',
-                        body: JSON.stringify({ ...values, isSameEmail }),
+                        body: JSON.stringify({ ...values, toAdd, toDelete, isSameEmail }),
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${token}`
@@ -169,63 +191,12 @@ export default function Type({ cache }) {
                                         )}
                                     {!state.isLoading && (
                                         <Formik {...formikParams}>
-                                            {(props) => (
-                                                <Form>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="col">
-                                                            <p className="general-input-title"> First Name </p>
-                                                            <AdminRenderer
-                                                                errors={props.errors}
-                                                                touched={props.touched}
-                                                                type="text"
-                                                                name='firstName'
-                                                                disabled={!capabilities.includes(writeUsers)}
-                                                            />
-                                                        </div>
-                                                        <div className="col">
-                                                            <p className="general-input-title"> Last Name </p>
-                                                            <AdminRenderer
-                                                                errors={props.errors}
-                                                                touched={props.touched}
-                                                                type="text"
-                                                                name='lastName'
-                                                                disabled={!capabilities.includes(writeUsers)}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <p className="general-input-title"> Email </p>
-                                                        <AdminRenderer
-                                                            errors={props.errors}
-                                                            touched={props.touched}
-                                                            type="text"
-                                                            name='email'
-                                                            disabled={!capabilities.includes(writeUsers)}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <AdminRenderer
-                                                            title="Force password change"
-                                                            errors={props.errors}
-                                                            touched={props.touched}
-                                                            type="checkbox"
-                                                            name='forcePasswordChange'
-                                                            disabled={!capabilities.includes(writeUsers)}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <AdminRenderer
-                                                            title="Login enabled"
-                                                            errors={props.errors}
-                                                            touched={props.touched}
-                                                            type="checkbox"
-                                                            name='loginEnabled'
-                                                            disabled={!capabilities.includes(writeUsers)}
-                                                        />
-                                                    </div>
-                                                </Form>
-                                            )}
+                                            <Form>
+                                                <EditUserForm />
+                                                <AddToGroupsForm groups={state.groups} />
+                                            </Form>
                                         </Formik>
+
                                     )}
                                 </div>
                             </div>
