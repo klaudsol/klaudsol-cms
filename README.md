@@ -22,16 +22,14 @@ KlaudSol CMS is a Headless and Serverless CMS (Content Management System). Welco
 * nvm
 * yarn
 
-#### Copy .env to .env.local, and modify the following values:  
+#### Copy .env to .env.local, and modify the following values (minimal configuration):  
 ```
-AURORA_AWS_ACCESS_KEY_ID=
-AURORA_AWS_SECRET_ACCESS_KEY=
-AURORA_DATABASE=
-AURORA_RESOURCE_ARN=
-AURORA_SECRET_ARN=
-SECRET_COOKIE_PASSWORD=a random secret value that should be unique for each KlaudSol CMS installation.
-FRONTEND_URL= 
-IMAGE_DOMAINS=
+KS_AWS_ACCESS_KEY_ID=
+KS_AWS_SECRET_ACCESS_KEY=
+KS_AURORA_DATABASE=
+KS_AURORA_RESOURCE_ARN=
+KS_AURORA_SECRET_ARN=
+KS_SECRET_COOKIE_PASSWORD=a random secret value that should be unique for each KlaudSol CMS installation.
 ```
 
 #### Run the following commands:
