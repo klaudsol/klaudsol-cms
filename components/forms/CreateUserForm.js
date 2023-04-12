@@ -40,7 +40,7 @@ export default function CreateUserForm({ passwordMode, setPasswordMode }) {
     return (
         <>
             <h4>General info</h4>
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-start gap-2">
                 <div className="col">
                     <p className="general-input-title"> First Name </p>
                     <AdminRenderer

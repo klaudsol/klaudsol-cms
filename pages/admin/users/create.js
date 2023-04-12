@@ -91,7 +91,7 @@ export default function Type({ cache }) {
             password: '',
             confirmPassword: '',
             forcePasswordChange: true,
-            groups: [],
+            groups: ['4'], // "Guests" is auto selected
         },
         onSubmit: (values) => {
             (async () => {
@@ -108,7 +108,7 @@ export default function Type({ cache }) {
                         }
                     }
 
-                    // await slsFetch(url, params);
+                    await slsFetch(url, params);
 
                     setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully created a user." });
                 } catch (err) {
@@ -177,7 +177,7 @@ export default function Type({ cache }) {
                                         <div className="py-0 px-0 mb-3">
                                             <Formik {...formikParams}>
                                                 <Form>
-                                                    {page === USER_INFO && <CreateUserForm groups={state.groups} passwordMode={passwordMode} setPasswordMode={setPasswordMode} />}
+                                                    {page === USER_INFO && <CreateUserForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />}
                                                     {page === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}
                                                 </Form>
                                             </Formik>

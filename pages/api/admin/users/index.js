@@ -5,6 +5,7 @@ import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
+import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 
 export default withSession(handleRequests({ get, post }));
 
@@ -24,7 +25,16 @@ async function get(req, res) {
 }
 
 async function post(req, res) {
-    const { firstName, lastName, email, password, confirmPassword, loginEnabled = false, forcePasswordChange = false } = req.body;
+    const { 
+        firstName, 
+        lastName, 
+        email, 
+        password, 
+        confirmPassword, 
+        groups, 
+        loginEnabled = false, 
+        forcePasswordChange = false 
+    } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
@@ -37,7 +47,9 @@ async function post(req, res) {
 
     if (existingUser) throw new UserAlreadyExists();
 
-    await People.createUser({ firstName, lastName, loginEnabled, email, password, forcePasswordChange });
+    const id = await People.createUser({ firstName, lastName, loginEnabled, email, password, forcePasswordChange });
+
+    if (groups.length > 0) await PeopleGroups.connect({ id, groups });
 
     res.status(OK).json({ message: 'Signup successful!' });
 }
