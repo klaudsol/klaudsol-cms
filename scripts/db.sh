@@ -28,9 +28,22 @@ case $1 in
     ;;
 
   seed-demo)
+    echo "Seed demo."
     #Seed-demo contains sample data as onboarding guide for newcomers.
     #This may be skipped by more advanced users.
-    echo "Seed demo."
+    #Can be manually overriden by settitng KS_SKIP_DB_SEED_DEMO=1
+    SKIP_DB_SEED_DEMO_FROM_ENV=$KS_SKIP_DB_SEED_DEMO
+    SKIP_DB_SEED_DEMO_FROM_DB=$(node scripts/system.js get skip_db_seed_demo)
+
+    #No skips. Proceed.
+    if [[ -z $SKIP_DB_SEED_DEMO_FROM_ENV ]] && [[ -z $SKIP_DB_SEED_DEMO_FROM_DB ]]; then 
+      cat db/seed-demo.sql | node scripts/db.js structure
+      node scripts/system.js add skip_db_seed_demo 1
+    elif [[ -n $SKIP_DB_SEED_DEMO_FROM_ENV ]]; then 
+      echo "Skipping seed. \$KS_SKIP_DB_SEED_DEMO=${SKIP_DB_SEED_DEMO_FROM_ENV}"
+    elif [[ -n $SKIP_DB_SEED_DEMO_FROM_DB ]]; then 
+      echo "Skipping seed. system.skip_db_seed_demo=${SKIP_DB_SEED_DEMO_FROM_DB}"
+    fi
     ;;
 
   migrate)
