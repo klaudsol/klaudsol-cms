@@ -5,6 +5,7 @@ import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
+import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 
 export default withSession(handleRequests({ get, put, patch, del }));
 
@@ -55,6 +56,7 @@ async function del(req, res) {
     const { id } = req.query;
 
     await People.delete({ id });
+    await PeopleGroups.delete({ id });
 
     res.status(OK).json({ message: 'User rejected.' });
 }

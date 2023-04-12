@@ -18,6 +18,7 @@ const PasswordRenderer = ({ className, name, type, errors, touched, disabled }) 
                 })}
                 validate={(v) => TypesValidator(v, type)}
                 disabled={disabled}
+                autoComplete="true"
             />
             <button 
                 type="button" 
