@@ -973,6 +973,26 @@ $onFocus: #323C4E;
 
 /**
 ===============================================
+            GROUPS GRID STYLES
+===============================================
+
+**/
+
+.groups {
+    &__container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 2fr));
+        gap: 10px;
+    }
+
+    &__description {
+        font-size: 12px;
+        margin-left: 32px;
+    }
+}
+
+/**
+===============================================
             MEDIA LIBRARY STYLES
 ===============================================
 

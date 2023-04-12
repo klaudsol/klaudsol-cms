@@ -12,6 +12,7 @@ import Image from "next/image";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { authReducer, initialState } from "@/components/reducers/authReducer";
 import { INIT, ERROR, CLEANUP, SUCCESS } from "@/lib/actions";
+import ForceChangePasswordForm from "@/components/elements/frontPage/ForceChangePasswordForm";
 
 const LoginForm = ({ className, logo }) => {
   const router = useRouter();

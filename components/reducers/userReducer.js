@@ -3,13 +3,14 @@ import {
     SAVING,
     DELETING,
     SET_VALUES,
-    SET_SHOW,
+    SET_GROUPS,
     SET_MODAL_CONTENT
 } from "@/lib/actions";
 import { useSetReducer } from "../hooks";
 
 export const initialState = {
     user: {},
+    groups: [],
     isLoading: false,
     isDeleting: false,
     isSaving: false,
@@ -38,6 +39,11 @@ export const reducer = (state, action) => {
                 ...state,
                 user: action.payload,
             };
+        case SET_GROUPS:
+            return {
+                ...state,
+                groups: action.payload,
+            }
         case SET_MODAL_CONTENT:
             return {
                 ...state,

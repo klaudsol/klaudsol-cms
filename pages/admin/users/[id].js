@@ -46,7 +46,6 @@ export default function Type({ cache }) {
                 setState(LOADING, true);
                 const url = `/api/admin/users/${id}`;
                 const params = {
-                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`
