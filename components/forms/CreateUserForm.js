@@ -20,8 +20,9 @@ export default function CreateUserForm({ passwordMode, setPasswordMode }) {
     }
 
     useEffect(() => {
-        setRandomPassword();
-    }, []);
+        const isEmptyPassword = !values.password && !values.changePassword;
+        if (passwordMode === AUTO_PASSWORD && isEmptyPassword) setRandomPassword();
+    }, [passwordMode]);
 
     const handlePasswordMode = async (e) => {
         const mode = e.target.value;
