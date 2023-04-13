@@ -5,12 +5,12 @@ import ErrorRenderer from "./ErrorRenderer";
 import { BiShow, BiHide } from "react-icons/bi";
 import { useState } from "react";
 
-const PasswordRenderer = ({ className, name, type, errors, touched, disabled, readOnly }) => {
+const PasswordRenderer = ({ className, name, type, errors, touched, button, disabled, readOnly }) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
         <>
-            <div className="general-input-password-box">
+            <div className="general-input-password">
                 <Field
                     type={showPassword ? 'text' : 'password'}
                     name={name}
@@ -22,13 +22,24 @@ const PasswordRenderer = ({ className, name, type, errors, touched, disabled, re
                     readOnly={readOnly}
                     autoComplete="true"
                 />
-                <button
-                    type="button"
-                    className="general-input-password-box-button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                >
-                    {showPassword ? <BiHide /> : <BiShow />}
-                </button>
+                <div className="general-input-password-box">
+                    {button && 
+                        <button 
+                            className="general-input-password-button"
+                            type="button"
+                            onClick={button.onClick}
+                        >
+                            {button.icon}
+                        </button>
+                    }
+                    <button
+                        className="general-input-password-button"
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                        {showPassword ? <BiHide /> : <BiShow />}
+                    </button>
+                </div>
             </div>
             <ErrorRenderer name={name} errors={errors} touched={touched} />
         </>

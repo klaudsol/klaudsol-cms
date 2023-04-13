@@ -5,9 +5,6 @@ import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
 import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
-import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
-import { verifyToken } from '@klaudsol/commons/lib/JWT';
-import { getCookie } from 'cookies-next';
 
 export default withSession(handleRequests({ put }));
 

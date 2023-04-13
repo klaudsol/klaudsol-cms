@@ -2,10 +2,11 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Button from 'react-bootstrap/Button';
 
-const GeneralHoverTooltip = ({ className, icon, text, tooltipText, position }) => (
+const GeneralHoverTooltip = ({ className, show, icon, text, tooltipText, position }) => (
   <OverlayTrigger
     placement={position}
     overlay={<Tooltip id="button-tooltip-2">{tooltipText}</Tooltip>}
+    show={show}
    >
     {({ ref, ...triggerHandler }) => (
       <Button

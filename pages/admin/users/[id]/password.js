@@ -101,7 +101,7 @@ export default function UserInfo({ cache }) {
                                 <div className="py-0 px-0 mb-3">
                                     <Formik {...formikParams}>
                                         <Form>
-                                            <PasswordForm defaultMode={CUSTOM_PASSWORD} changePass />
+                                            <PasswordForm setState={setState} defaultMode={CUSTOM_PASSWORD} changePass />
                                         </Form>
                                     </Formik>
                                 </div>

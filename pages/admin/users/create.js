@@ -120,7 +120,7 @@ export default function Type({ cache }) {
     const onModalClose = () => {
         setState(SET_MODAL_CONTENT, {});
 
-        if (state.modalContent.title !== 'Success') return;
+        if (state.modalContent.title !== 'Success' && !state.modalContent.noRedirect) return;
 
         router.push('/admin/users');
     }
@@ -174,7 +174,7 @@ export default function Type({ cache }) {
                                                     {currentPage === USER_INFO &&
                                                         <>
                                                             <UserForm />
-                                                            <PasswordForm />
+                                                            <PasswordForm setState={setState} />
                                                         </>
                                                     }
                                                     {currentPage === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}

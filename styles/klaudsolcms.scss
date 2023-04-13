@@ -609,11 +609,12 @@ $onFocus: #323C4E;
 
 .btn_text {
     all: unset;
+    color: #455a64;
     size: 12px;
 
     &:hover {
-        color: #455a64;
-        transition: 0.2s;
+        color: #b0bec5;
+        transition: 0.1s;
     }
 }
 
