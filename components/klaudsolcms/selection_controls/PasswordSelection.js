@@ -21,12 +21,12 @@ const PasswordSelection = ({ passwordMode, setPasswordMode }) => {
         const mode = e.target.value;
 
         if (mode === AUTO_PASSWORD) {
-            const unTouched = {
+            const toBeUntouched = {
                 password: false,
                 confirmPassword: false
             }
 
-            setTouched(unTouched);
+            setTouched(toBeUntouched);
             await setRandomPassword();
         } else {
             setFieldValue('password', '');

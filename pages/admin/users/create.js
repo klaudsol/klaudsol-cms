@@ -28,7 +28,7 @@ import {
 } from "@/lib/actions";
 
 import useUserReducer from "@/components/reducers/userReducer";
-import CreateUserForm from "@/components/forms/CreateUserForm";
+import UserForm from "@/components/forms/UserForm";
 import AppForwardButton from "@/components/klaudsolcms/buttons/AppForwardButton";
 import AddToGroupsForm from "@/components/forms/AddToGroupsForm";
 import PasswordForm from "@/components/forms/PasswordForm";
@@ -178,7 +178,7 @@ export default function Type({ cache }) {
                                                 <Form>
                                                     {currentPage === USER_INFO &&
                                                         <>
-                                                            <CreateUserForm />
+                                                            <UserForm />
                                                             <PasswordForm />
                                                         </>
                                                     }

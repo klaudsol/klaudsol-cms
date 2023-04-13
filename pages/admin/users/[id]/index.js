@@ -29,7 +29,7 @@ import {
 } from "@/lib/actions";
 
 import useUserReducer from "@/components/reducers/userReducer";
-import EditUserForm from "@/components/forms/EditUserForm";
+import UserForm from "@/components/forms/UserForm";
 import AddToGroupsForm from "@/components/forms/AddToGroupsForm";
 
 export default function UserInfo({ cache }) {
@@ -135,6 +135,7 @@ export default function UserInfo({ cache }) {
                         }
                     }
 
+                    console.log(values, toAdd, toDelete)
                     await slsFetch(url, params);
 
                     setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully updated a user." });
@@ -190,7 +191,7 @@ export default function UserInfo({ cache }) {
                                     {!state.isLoading && (
                                         <Formik {...formikParams}>
                                             <Form>
-                                                <EditUserForm />
+                                                <UserForm />
                                                 <AddToGroupsForm groups={state.groups} />
                                             </Form>
                                         </Formik>

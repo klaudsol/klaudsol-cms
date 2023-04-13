@@ -8,14 +8,14 @@ import { generateRandVals } from "@klaudsol/commons/lib/Math";
 import CacheContext from "../contexts/CacheContext";
 import { FaRandom } from "react-icons/fa";
 
-export default function CreateUserForm() {
+export default function UserForm() {
     const { errors, touched } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
 
     return (
-        <>
+        <div className="mb-4">
             <h4>General info</h4>
-            <div className="d-flex align-items-start gap-2">
+            <div className="d-flex align-items-center gap-2">
                 <div className="col">
                     <p className="general-input-title"> First Name </p>
                     <AdminRenderer
@@ -47,7 +47,7 @@ export default function CreateUserForm() {
                     disabled={!capabilities.includes(writeUsers)}
                 />
             </div>
-            <div className="mb-4">
+            <div>
                 <AdminRenderer
                     title="Login enabled"
                     errors={errors}
@@ -57,7 +57,7 @@ export default function CreateUserForm() {
                     disabled={!capabilities.includes(writeUsers)}
                 />
             </div>
-        </>
+        </div>
     );
 }
 
