@@ -12,7 +12,14 @@ export default withSession(handleRequests({ get, post }));
 async function get(req, res) {
     const { approved, pending } = req.query;
 
-    const people = await People.getAll({ approved, pending });
+    let people;
+    if ((approved && pending) || (!approved && !pending)) {
+        people = await People.getAll();
+    } else if (approved) {
+        people = await People.getApproved();
+    } else {
+        people = await People.getPending();
+    }
 
     const output = {
         data: people,
@@ -36,9 +43,6 @@ async function post(req, res) {
         forcePasswordChange = false 
     } = req.body;
 
-    console.log(password);
-    console.log(confirmPassword);
-
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
     if (!email) throw new InsufficientDataError('Please enter your email.');
@@ -56,6 +60,3 @@ async function post(req, res) {
 
     res.status(OK).json({ message: 'Signup successful!' });
 }
-
-
-
