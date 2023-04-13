@@ -93,7 +93,6 @@ export default function Type({ cache }) {
             forcePasswordChange: true,
             loginEnabled: true,
             groups: ['4'], // "Guests" is auto selected
-            passwordMode: AUTO_PASSWORD
         },
         onSubmit: (values) => {
             (async () => {
@@ -157,9 +156,7 @@ export default function Type({ cache }) {
                             {currentPage === USER_INFO && <AppForwardButton onClick={() => handlePage(ADD_GROUPS)} text="Add groups" noLink={true} />}
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
-                            <div>
-                                <div className="general-header"> Create user </div>
-                            </div>
+                            <div className="general-header"> Create user </div>
                         </div>
                         {state.isLoading &&
                             Array.from(

@@ -6,7 +6,6 @@ export const CMS_TYPES = {
   LINK: "link",
   IMAGE: "image",
   CHECKBOX: "checkbox",
-  RADIO: "radio",
 };
 
 // resources types

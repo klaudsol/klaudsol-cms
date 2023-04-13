@@ -9,6 +9,7 @@ const BASE_URL = '/api/admin/users';
 
 const UsersTable = ({ users, setUsers, token }) => {
     const [isLoading, setLoading] = useState(false);
+    const [selected, setSelected] = useState(0);
 
     const setUserList = (id) => {
         const newUserList = users.filter((user) => user.id !== id);
@@ -17,6 +18,7 @@ const UsersTable = ({ users, setUsers, token }) => {
 
     const approveUser = async (id) => {
         try {
+            setSelected(id);
             setLoading(true);
 
             const url = `${BASE_URL}/${id}`;
@@ -39,6 +41,7 @@ const UsersTable = ({ users, setUsers, token }) => {
 
     const rejectUser = async (id) => {
         try {
+            setSelected(id);
             setLoading(true);
 
             const url = `${BASE_URL}/${id}`;
@@ -79,7 +82,7 @@ const UsersTable = ({ users, setUsers, token }) => {
                             <td>{user.email}</td>
                             <td>{user.createdAt}</td>
                             <td className="table--shrink_cell table--center_cell">
-                                {!isLoading &&
+                                {(!isLoading || (isLoading && (selected !== user.id))) &&
                                     <>
                                         <AppButtonSm
                                             className="users__pending_button users__pending_button--approve"
@@ -95,7 +98,7 @@ const UsersTable = ({ users, setUsers, token }) => {
                                         />
                                     </>
                                 }
-                                {isLoading && <AppButtonSpinner />}
+                                {(isLoading && (selected === user.id)) && <AppButtonSpinner />}
                             </td>
                         </tr>
                     ))}

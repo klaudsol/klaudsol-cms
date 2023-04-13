@@ -51,7 +51,6 @@ export default function UserInfo({ cache }) {
             password: '',
             confirmPassword: '',
             forcePasswordChange: false,
-            passwordMode: CUSTOM_PASSWORD
         },
         onSubmit: (values) => {
             (async () => {
@@ -98,9 +97,7 @@ export default function UserInfo({ cache }) {
                             <AppBackButton link={`/admin/users/${id}`} />
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
-                            <div>
-                                <div className="general-header"> Change password </div>
-                            </div>
+                            <div className="general-header"> Change password </div>
                         </div>
                         <div className="row mt-4 mx-0 px-0">
                             <div className="col-12 mx-0 px-0 mb-2">

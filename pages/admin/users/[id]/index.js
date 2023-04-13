@@ -71,9 +71,9 @@ export default function UserInfo({ cache }) {
                 const { data: user } = await userRaw.json();
                 const { person, groups: userGroups } = user;
 
-                const { data: groups } = await groupsRaw.json(); 
+                const { data: groups } = await groupsRaw.json();
 
-                setState(SET_VALUES, { ...person[0], groups: userGroups } );
+                setState(SET_VALUES, { ...person[0], groups: userGroups });
                 setState(SET_GROUPS, groups);
             } catch (ex) {
                 errorHandler(ex);
@@ -171,9 +171,7 @@ export default function UserInfo({ cache }) {
                             </Link>
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
-                            <div>
-                                <div className="general-header"> Edit user </div>
-                            </div>
+                            <div className="general-header"> Edit user </div>
                         </div>
                         <div className="row mt-4 mx-0 px-0">
                             <div className="col-12 mx-0 px-0 mb-2">
