@@ -3,8 +3,8 @@ import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks";
 
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
@@ -17,7 +17,6 @@ import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "lib/Constants";
-import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 
 import {
     LOADING,
@@ -135,7 +134,6 @@ export default function UserInfo({ cache }) {
                         }
                     }
 
-                    console.log(values, toAdd, toDelete)
                     await slsFetch(url, params);
 
                     setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully updated a user." });

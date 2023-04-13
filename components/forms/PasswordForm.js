@@ -1,20 +1,31 @@
 import { useFormikContext } from "formik";
 import { AUTO_PASSWORD, CUSTOM_PASSWORD, writeUsers } from "lib/Constants";
+import { generateRandVals } from "@klaudsol/commons/lib/Math";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { useContext, useState } from "react";
 import CacheContext from "../contexts/CacheContext";
 import PasswordSelection from "../klaudsolcms/selection_controls/PasswordSelection";
+import { FaRandom } from "react-icons/fa";
+import AppTextButton from "../klaudsolcms/buttons/AppTextButton";
 
 export default function PasswordForm({ defaultMode, changePass }) {
     const [passwordMode, setPasswordMode] = useState(defaultMode ?? AUTO_PASSWORD);
 
-    const { values, errors, touched } = useFormikContext();
+    const { setFieldValue, values, errors, touched } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
+
+    const setRandomPassword = async () => {
+        const randVal = await generateRandVals(5);
+
+        setFieldValue('password', randVal);
+        setFieldValue('confirmPassword', randVal);
+        setFieldValue('forcePasswordChange', true);
+    }
 
     return (
         <>
             <h4>Password</h4>
-            <PasswordSelection passwordMode={passwordMode} setPasswordMode={setPasswordMode} />
+            <PasswordSelection setRandomPassword={setRandomPassword} passwordMode={passwordMode} setPasswordMode={setPasswordMode} />
             {changePass &&
                 <>
                     <p className="general-input-title"> Old Password </p>
@@ -37,6 +48,9 @@ export default function PasswordForm({ defaultMode, changePass }) {
                         name="password"
                         readOnly={true}
                     />
+                    <div className="d-flex justify-content-end">
+                        <AppTextButton title="Regenerate Password" icon={<FaRandom />} onClick={setRandomPassword} />
+                    </div>
                 </>
             }
             {(passwordMode === CUSTOM_PASSWORD) &&

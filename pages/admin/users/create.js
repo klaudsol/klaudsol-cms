@@ -13,17 +13,15 @@ import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 
-import { FaCheck, FaArrowRight } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { AUTO_PASSWORD, DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "@/lib/Constants";
+import { DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "@/lib/Constants";
 
 import {
     LOADING,
     SAVING,
-    DELETING,
     SET_MODAL_CONTENT,
-    SET_VALUES,
     SET_GROUPS
 } from "@/lib/actions";
 
@@ -53,10 +51,6 @@ export default function Type({ cache }) {
         formRef.current.handleSubmit();
     };
 
-    // Gets the groups
-    // Need to find a way to put this in <AddGroupsToForm />. If we put this 
-    // on AddGroupsToForm, the setState(LOADING, true) function
-    // will cause it to rerender in a loop
     useEffect(() => {
         (async () => {
             try {
@@ -128,7 +122,7 @@ export default function Type({ cache }) {
 
         if (state.modalContent.title !== 'Success') return;
 
-        // router.push('/admin/users');
+        router.push('/admin/users');
     }
 
     const handlePage = async (nextPage) => {

@@ -4,8 +4,7 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks";
 
 import { useRouter } from "next/router";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
@@ -13,15 +12,13 @@ import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 
-import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { CUSTOM_PASSWORD, DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "lib/Constants";
-import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import { CUSTOM_PASSWORD, writeUsers } from "lib/Constants";
 
 import {
     SAVING,
-    DELETING,
     SET_MODAL_CONTENT,
 } from "@/lib/actions";
 

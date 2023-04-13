@@ -11,7 +11,7 @@ export default function UserForm() {
     return (
         <div className="mb-4">
             <h4>General info</h4>
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-start gap-2">
                 <div className="col">
                     <p className="general-input-title"> First Name </p>
                     <AdminRenderer
@@ -57,6 +57,6 @@ export default function UserForm() {
                 name='loginEnabled'
                 disabled={!capabilities.includes(writeUsers)}
             />
-        </div >
+        </div>
     );
 }

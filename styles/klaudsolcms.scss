@@ -607,6 +607,16 @@ $onFocus: #323C4E;
     color: #b0bec5;
 }
 
+.btn_text {
+    all: unset;
+    size: 12px;
+
+    &:hover {
+        color: #455a64;
+        transition: 0.2s;
+    }
+}
+
 .icon_general {
     margin-right: 5px;
     margin-bottom: 2px;

@@ -1,11 +1,8 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
-import { createHash } from '@/lib/Hash';
-import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
+import { OK } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
-import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
-import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 
 export default withSession(handleRequests({ put }));
 
@@ -21,6 +18,3 @@ async function put(req, res) {
 
     res.status(OK).json({ message: 'Signup successful!' });
 }
-
-
-

@@ -3,19 +3,10 @@ import { AUTO_PASSWORD, CUSTOM_PASSWORD, writeUsers } from "@/lib/Constants";
 import { useFormikContext } from "formik";
 import React, { useContext, useEffect } from "react";
 import AppRadioButton from "../buttons/AppRadioButton";
-import { generateRandVals } from "@klaudsol/commons/lib/Math";
 
-const PasswordSelection = ({ passwordMode, setPasswordMode }) => {
+const PasswordSelection = ({ setRandomPassword, passwordMode, setPasswordMode }) => {
     const { setFieldValue, setTouched, values } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
-
-    const setRandomPassword = async () => {
-        const randVal = await generateRandVals(5);
-
-        setFieldValue('password', randVal);
-        setFieldValue('confirmPassword', randVal);
-        setFieldValue('forcePasswordChange', true);
-    }
 
     const handlePasswordMode = async (e) => {
         const mode = e.target.value;
