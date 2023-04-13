@@ -44,6 +44,7 @@ async function put(req, res) {
     const userInfo = {
         id: session.people_id,
         loginEnabled: true,
+        approved: true,
         forceChangePassword: false,
         firstName,
         lastName,

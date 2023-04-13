@@ -1,17 +1,12 @@
-import { getSessionCache } from "@klaudsol/commons/lib/Session";
-
-import { useFormikContext, Form } from "formik";
-import { AUTO_PASSWORD, CUSTOM_PASSWORD, writeUsers } from "lib/Constants";
+import { useFormikContext } from "formik";
+import { writeUsers } from "lib/Constants";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import { useContext, useEffect, useState } from "react";
-import { generateRandVals } from "@klaudsol/commons/lib/Math";
+import { useContext } from "react";
 import CacheContext from "../contexts/CacheContext";
-import { slsFetch } from "@klaudsol/commons/lib/Client";
-import { LOADING, SET_VALUES, SAVING } from "@/lib/actions";
 
 export default function AddToGroupsForm({ groups }) {
-    const { setFieldValue, values, errors, touched } = useFormikContext();
-    const { capabilities, token } = useContext(CacheContext);
+    const { values, errors, touched } = useFormikContext();
+    const { capabilities } = useContext(CacheContext);
 
     return (
         <div>

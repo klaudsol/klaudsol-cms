@@ -1,12 +1,8 @@
-import { getSessionCache } from "@klaudsol/commons/lib/Session";
-
-import { useFormikContext, Form } from "formik";
-import { AUTO_PASSWORD, CUSTOM_PASSWORD, writeUsers } from "lib/Constants";
+import { useFormikContext } from "formik";
+import { writeUsers } from "lib/Constants";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import { useContext, useEffect } from "react";
-import { generateRandVals } from "@klaudsol/commons/lib/Math";
+import { useContext } from "react";
 import CacheContext from "../contexts/CacheContext";
-import { FaRandom } from "react-icons/fa";
 
 export default function UserForm() {
     const { errors, touched } = useFormikContext();
@@ -37,28 +33,30 @@ export default function UserForm() {
                     />
                 </div>
             </div>
-            <div>
-                <p className="general-input-title"> Email </p>
-                <AdminRenderer
-                    errors={errors}
-                    touched={touched}
-                    type="text"
-                    name='email'
-                    disabled={!capabilities.includes(writeUsers)}
-                />
-            </div>
-            <div>
-                <AdminRenderer
-                    title="Login enabled"
-                    errors={errors}
-                    touched={touched}
-                    type="checkbox"
-                    name='loginEnabled'
-                    disabled={!capabilities.includes(writeUsers)}
-                />
-            </div>
-        </div>
+            <p className="general-input-title"> Email </p>
+            <AdminRenderer
+                errors={errors}
+                touched={touched}
+                type="text"
+                name='email'
+                disabled={!capabilities.includes(writeUsers)}
+            />
+            <AdminRenderer
+                title="Approved"
+                errors={errors}
+                touched={touched}
+                type="checkbox"
+                name='approved'
+                disabled={!capabilities.includes(writeUsers)}
+            />
+            <AdminRenderer
+                title="Login enabled"
+                errors={errors}
+                touched={touched}
+                type="checkbox"
+                name='loginEnabled'
+                disabled={!capabilities.includes(writeUsers)}
+            />
+        </div >
     );
 }
-
-export const getServerSideProps = getSessionCache();

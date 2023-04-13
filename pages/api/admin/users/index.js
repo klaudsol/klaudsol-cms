@@ -12,14 +12,7 @@ export default withSession(handleRequests({ get, post }));
 async function get(req, res) {
     const { approved, pending } = req.query;
 
-    let people;
-    if ((approved && pending) || (!approved && !pending)) {
-        people = await People.getAll();
-    } else if (approved) {
-        people = await People.getApproved();
-    } else {
-        people = await People.getPending();
-    }
+    const people = await People.getAll({ approved, pending });
 
     const output = {
         data: people,
@@ -39,6 +32,7 @@ async function post(req, res) {
         password, 
         confirmPassword, 
         groups, 
+        approved = false,
         loginEnabled = false, 
         forcePasswordChange = false 
     } = req.body;
@@ -54,7 +48,7 @@ async function post(req, res) {
 
     if (existingUser) throw new UserAlreadyExists();
 
-    const id = await People.createUser({ firstName, lastName, loginEnabled, email, password, forcePasswordChange });
+    const id = await People.createUser({ firstName, lastName, loginEnabled, approved, email, password, forcePasswordChange });
 
     if (groups.length > 0) await PeopleGroups.connect({ id, groups });
 

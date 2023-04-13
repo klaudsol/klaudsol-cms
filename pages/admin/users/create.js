@@ -90,6 +90,7 @@ export default function Type({ cache }) {
             email: '',
             password: '',
             confirmPassword: '',
+            approved: true,
             forcePasswordChange: true,
             loginEnabled: true,
             groups: ['4'], // "Guests" is auto selected

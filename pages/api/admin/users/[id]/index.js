@@ -27,7 +27,7 @@ async function get(req, res) {
 
 async function put(req, res) {
     const { id } = req.query; 
-    const { firstName, lastName, forcePasswordChange, loginEnabled, email, isSameEmail, toAdd, toDelete } = req.body;
+    const { firstName, lastName, forcePasswordChange, loginEnabled, approved, email, isSameEmail, toAdd, toDelete } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
@@ -39,7 +39,7 @@ async function put(req, res) {
         if (existingUser) throw new UserAlreadyExists();
     }
 
-    await People.updateUserInfo({ id, firstName, lastName, forcePasswordChange, loginEnabled, email });
+    await People.updateUserInfo({ id, firstName, lastName, forcePasswordChange, loginEnabled, approved, email });
 
     if (toAdd.length > 0) await PeopleGroups.connect({ id, groups: toAdd });
     if (toDelete.length > 0) await PeopleGroups.disconnect({ id, groups: toDelete });
