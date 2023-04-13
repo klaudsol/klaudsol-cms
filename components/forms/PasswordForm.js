@@ -3,12 +3,14 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useFormikContext, Form } from "formik";
 import { AUTO_PASSWORD, CUSTOM_PASSWORD, writeUsers } from "lib/Constants";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { generateRandVals } from "@klaudsol/commons/lib/Math";
 import CacheContext from "../contexts/CacheContext";
 import { FaRandom } from "react-icons/fa";
 
-export default function PasswordForm({ passwordMode, setPasswordMode, changePass }) {
+export default function PasswordForm({ defaultMode, changePass }) {
+    const [passwordMode, setPasswordMode] = useState(defaultMode ?? AUTO_PASSWORD);
+
     const { setFieldValue, setTouched, values, errors, touched } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
 
@@ -99,7 +101,7 @@ export default function PasswordForm({ passwordMode, setPasswordMode, changePass
             {(passwordMode === CUSTOM_PASSWORD) &&
                 <>
                     <div className={!changePass ? "mt-4" : ""}>
-                        <p className="general-input-title"> Password </p>
+                        <p className="general-input-title"> {changePass ? "New Password" : "Password"} </p>
                         <AdminRenderer
                             errors={errors}
                             touched={touched}
@@ -109,7 +111,7 @@ export default function PasswordForm({ passwordMode, setPasswordMode, changePass
                         />
                     </div>
                     <div>
-                        <p className="general-input-title"> Confirm Password </p>
+                        <p className="general-input-title"> {changePass ? "Confirm New Password" : "Confirm Password"} </p>
                         <AdminRenderer
                             errors={errors}
                             touched={touched}

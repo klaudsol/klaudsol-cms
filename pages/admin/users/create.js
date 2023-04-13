@@ -38,7 +38,6 @@ const ADD_GROUPS = 'add_groups';
 
 export default function Type({ cache }) {
     const [state, setState] = useUserReducer();
-    const [passwordMode, setPasswordMode] = useState(AUTO_PASSWORD);
     const [currentPage, setCurrentPage] = useState(USER_INFO);
 
     const router = useRouter();
@@ -94,6 +93,7 @@ export default function Type({ cache }) {
             forcePasswordChange: true,
             loginEnabled: true,
             groups: ['4'], // "Guests" is auto selected
+            passwordMode: AUTO_PASSWORD
         },
         onSubmit: (values) => {
             (async () => {
@@ -182,7 +182,7 @@ export default function Type({ cache }) {
                                                     {currentPage === USER_INFO &&
                                                         <>
                                                             <CreateUserForm />
-                                                            <PasswordForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} />
+                                                            <PasswordForm />
                                                         </>
                                                     }
                                                     {currentPage === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}

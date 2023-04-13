@@ -7,6 +7,7 @@ import UnauthorizedError from '@klaudsol/commons/errors/UnauthorizedError';
 import Session from '@klaudsol/commons/models/Session';
 import { assertUserIsLoggedIn } from '@klaudsol/commons/lib/Permissions';
 import { generateToken, verifyToken } from '@klaudsol/commons/lib/JWT';
+import { canLogInToCms, isApproved } from '@/lib/Constants';
 
 export default withSession(handler);
 
@@ -46,19 +47,16 @@ async function login (req, res) {
 
     const { session_token, user: {firstName, lastName, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
 
-    const { origin } = req.headers;
-
-    const isFromCMS = origin !== FRONTEND_URL;
-    const canLogInToCMS = capabilities.includes('can_log_in_to_cms');
-
-    if (isFromCMS && !canLogInToCMS) throw new UnauthorizedError();
-
-    // Ideally, the session token should be stored in JWT so that both the client and the CMS 
-    // can access it, but removing it from req.session might make the program explode.
-    const token = generateToken({ firstName, lastName, email, sessionToken: session_token });
+    const token = generateToken({ firstName, lastName, email, capabilities, sessionToken: session_token });
     const response = { message: 'Sucessfully logged in!' };
 
+    const { origin } = req.headers;
+    const isFromCMS = origin !== FRONTEND_URL;
+
     if (isFromCMS) {
+        const isAuthorized = capabilities.includes(canLogInToCms);
+        if (!isAuthorized) throw new UnauthorizedError();
+
         req.session.session_token = session_token;
         req.session.cache = {
           token,
@@ -69,10 +67,14 @@ async function login (req, res) {
           homepage: '/admin',
           forcePasswordChange,
         };
-        await req.session.save();    
+
+        await req.session.save();
 
         response.forcePasswordChange = forcePasswordChange;
     } else {
+        const isAuthorized = capabilities.includes(isApproved);
+        if (!isAuthorized) throw new UnauthorizedError();
+
         response.token = token;
     }
 

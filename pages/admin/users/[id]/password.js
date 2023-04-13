@@ -30,7 +30,6 @@ import PasswordForm from "@/components/forms/PasswordForm";
 
 export default function UserInfo({ cache }) {
     const [state, setState] = useUserReducer();
-    const [passwordMode, setPasswordMode] = useState(CUSTOM_PASSWORD);
 
     const router = useRouter();
 
@@ -108,7 +107,7 @@ export default function UserInfo({ cache }) {
                                 <div className="py-0 px-0 mb-3">
                                     <Formik {...formikParams}>
                                         <Form>
-                                            <PasswordForm passwordMode={passwordMode} setPasswordMode={setPasswordMode} changePass />
+                                            <PasswordForm defaultMode={CUSTOM_PASSWORD} changePass />
                                         </Form>
                                     </Formik>
                                 </div>
