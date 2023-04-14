@@ -19,10 +19,11 @@ import {
 } from "@/components/reducers/settingReducer";
 import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES, SET_CHANGED, SET_ERROR } from "@/lib/actions";
 import { defaultLogo } from "@/constants/index";
-import { convertToFormData, getAllFiles } from "@/lib/s3FormController";
+import { convertToFormData, getAllFiles, getBody } from "@/lib/s3FormController";
 import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
 import { useClientErrorHandler } from "@/components/hooks"
+import { uploadFilesToUrl } from "@/backend/data_access/S3";
 
 export default function Settings({ cache }) {
   const formRef = useRef();
@@ -92,6 +93,16 @@ export default function Settings({ cache }) {
     return s3Keys;
   };
 
+  const getFilesToDelete = (values) => {
+    const files = Object.keys(values).filter(
+      (value) => values[value] instanceof File
+    );
+    const keys = files.map((file) => state.values[file].key);
+
+    return keys;
+  };
+
+
   const formikParams = {
     innerRef: formRef,
     initialValues: state.values,
@@ -99,25 +110,45 @@ export default function Settings({ cache }) {
       (async () => {
         try {
           dispatch({ type: SAVING });
-          const isFile = Object.entries(values)[0][1] instanceof File;
-          const isCreateMode = !isValueExists && isFile;
-       
-          const filesToUpload = !isCreateMode && getAllFiles(values);
-          const s3Keys = getS3Keys(filesToUpload);   
-          const newValues = isCreateMode ? values : {...values, toDeleteRaw: s3Keys}
+          const { files, data, fileNames } = await getBody(values);
 
-          const formattedEntries = convertToFormData(newValues);
-              
-          const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
-            method: `${isCreateMode ? "POST" : "PUT"}`,
-            body: formattedEntries,
-          });
-          const { data } = await response.json()
+          // const toDelete = getFilesToDelete(values);
 
-          const newData = setInitialValues(data);
-          dispatch({ type: SET_VALUES, payload: newData });
-          formRef.current.resetForm({ values: newData });
-          dispatch({ type: SET_CHANGED, payload:false })
+          const url = `/api/settings`;
+          const params = {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({ fileNames }),
+          };
+
+          const response = await slsFetch(url, params);
+
+          const { presignedUrls } = await response.json();
+
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+
+       //    const isFile = Object.entries(values)[0][1] instanceof File;
+       //    const isCreateMode = !isValueExists && isFile;
+       // 
+       //    const filesToUpload = !isCreateMode && getAllFiles(values);
+       //    const s3Keys = getS3Keys(filesToUpload);   
+       //    const newValues = isCreateMode ? values : {...values, toDeleteRaw: s3Keys}
+       //
+       //    const formattedEntries = convertToFormData(newValues);
+       //        
+       //    const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
+       //      method: `${isCreateMode ? "POST" : "PUT"}`,
+       //      body: formattedEntries,
+       //    });
+       //    const { data } = await response.json()
+       //
+       //    const newData = setInitialValues(data);
+       //    dispatch({ type: SET_VALUES, payload: newData });
+       //    formRef.current.resetForm({ values: newData });
+       //    dispatch({ type: SET_CHANGED, payload:false })
+
         } catch (ex) {
           errorHandler(ex);
         } finally {
