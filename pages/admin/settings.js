@@ -45,7 +45,7 @@ export default function Settings({ cache }) {
       try {
         const response = await slsFetch("/api/settings/mainlogo");
         const { data } = await response.json();
-        const newData = setInitialValues(data);
+        const newData = data?.value ? setInitialValues(data) : {};
 
         dispatch({ type: SET_VALUES, payload: newData });
       } catch (error) {
@@ -97,11 +97,11 @@ export default function Settings({ cache }) {
     const files = Object.keys(values).filter(
       (value) => values[value] instanceof File
     );
+
     const keys = files.map((file) => state.values[file].key);
 
     return keys;
   };
-
 
   const formikParams = {
     innerRef: formRef,
@@ -110,45 +110,33 @@ export default function Settings({ cache }) {
       (async () => {
         try {
           dispatch({ type: SAVING });
-          const { files, data, fileNames } = await getBody(values);
+          const isFile = Object.entries(values)[0][1] instanceof File;
+          const isCreateMode = !isValueExists && isFile;
 
-          // const toDelete = getFilesToDelete(values);
+          const { files, data, fileNames } = await getBody(values);
+          const toDelete = !isCreateMode && getFilesToDelete(values);
+
+          const entries = {
+            fileNames,
+            toDelete
+          }
 
           const url = `/api/settings`;
           const params = {
-            method: "POST",
+            method: isCreateMode ? "POST" : "PUT",
             headers: {
               "Content-type": "application/json",
             },
-            body: JSON.stringify({ fileNames }),
+            body: JSON.stringify(entries),
           };
 
           const response = await slsFetch(url, params);
 
-          const { presignedUrls } = await response.json();
+          const { newValues, presignedUrls } = await response.json();
 
           if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
-       //    const isFile = Object.entries(values)[0][1] instanceof File;
-       //    const isCreateMode = !isValueExists && isFile;
-       // 
-       //    const filesToUpload = !isCreateMode && getAllFiles(values);
-       //    const s3Keys = getS3Keys(filesToUpload);   
-       //    const newValues = isCreateMode ? values : {...values, toDeleteRaw: s3Keys}
-       //
-       //    const formattedEntries = convertToFormData(newValues);
-       //        
-       //    const response = await slsFetch(`/api/settings${isCreateMode ? '' : '/mainlogo'}`, {
-       //      method: `${isCreateMode ? "POST" : "PUT"}`,
-       //      body: formattedEntries,
-       //    });
-       //    const { data } = await response.json()
-       //
-       //    const newData = setInitialValues(data);
-       //    dispatch({ type: SET_VALUES, payload: newData });
-       //    formRef.current.resetForm({ values: newData });
-       //    dispatch({ type: SET_CHANGED, payload:false })
-
+          dispatch({ type: SET_VALUES, payload: { mainlogo: newValues } });
         } catch (ex) {
           errorHandler(ex);
         } finally {
