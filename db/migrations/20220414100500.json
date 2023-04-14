@@ -8,5 +8,9 @@
         "(2, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
         "(3, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
   ],
-  "down": "DELETE FROM groups WHERE name = 'CMS Users'" 
+  "down": [
+    "ALTER TABLE people DROP COLUMN approved;",
+    "DELETE FROM people_groups WHERE group_id = (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms);",
+    "DELETE FROM groups WHERE name = 'can_log_in_to_cms';",
+  ]
 }
