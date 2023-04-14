@@ -69,7 +69,7 @@ export default function Type({ cache }) {
 
                 setState(SET_GROUPS, data);
             } catch (err) {
-                console.error(err)
+                errorHandler(err);
             } finally {
                 setState(LOADING, false);
             }

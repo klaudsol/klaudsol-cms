@@ -8,10 +8,12 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import AppCreatebutton from "@/components/klaudsolcms/buttons/AppCreateButton";
 import UsersTable from "@/components/klaudsolcms/tables/UsersTable";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import { useClientErrorHandler } from "@/components/hooks";
 
 export default function ApprovedUsers({ cache }) {
     const [isLoading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
+    const errorHandler = useClientErrorHandler();
 
     useEffect(() => {
         (async () => {
@@ -29,7 +31,7 @@ export default function ApprovedUsers({ cache }) {
 
                 setUsers(data);
             } catch (err) {
-                console.error(err);
+                errorHandler(err);
             } finally {
                 setLoading(false);
             }

@@ -8,10 +8,12 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import AppCreatebutton from "@/components/klaudsolcms/buttons/AppCreateButton";
 import PendingUsersTable from "@/components/klaudsolcms/tables/PendingUsersTable";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import { useClientErrorHandler } from "@/components/hooks";
 
 export default function PendingUsers({ cache }) {
     const [users, setUsers] = useState([]);
     const [isLoading, setLoading] = useState(false);
+    const errorHandler = useClientErrorHandler();
 
     useEffect(() => {
         (async () => {
@@ -30,7 +32,7 @@ export default function PendingUsers({ cache }) {
 
                 setUsers(data);
             } catch (error) {
-                console.error(error);
+                errorHandler(error);
             } finally {
                 setLoading(false);
             }
