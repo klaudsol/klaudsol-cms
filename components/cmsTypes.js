@@ -4,6 +4,7 @@ export const CMS_TYPES = {
   FLOAT: "float",
   LINK: "link",
   IMAGE: "image",
+  GALLERY: "gallery",
 };
 
 // resources types

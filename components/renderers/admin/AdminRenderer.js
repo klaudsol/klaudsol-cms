@@ -3,6 +3,7 @@ import TextRenderer from "./TextRenderer";
 import TextAreaRenderer from "./TextAreaRenderer";
 import FloatRenderer from "./FloatRenderer";
 import UploadRenderer from "./UploadRenderer.js";
+import GalleryRenderer from "./GalleryRenderer.js";
 import { validImageTypes } from "@/lib/Constants";
 
 const AdminRenderer = ({ type, ...params }) => {
@@ -12,6 +13,8 @@ const AdminRenderer = ({ type, ...params }) => {
       return <TextRenderer type={type} {...params} />;
     case CMS_TYPES.IMAGE:
       return <UploadRenderer accept={validImageTypes} {...params} />;
+    case CMS_TYPES.GALLERY:
+      return <GalleryRenderer accept={validImageTypes} {...params} />;
     case CMS_TYPES.TEXT_AREA:
       return <TextAreaRenderer type={type} {...params} />;
     case CMS_TYPES.FLOAT:
