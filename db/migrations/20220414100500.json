@@ -1,16 +1,4 @@
 {
-  "up": [
-    "ALTER TABLE people ADD approved BOOLEAN AFTER login_enabled;",
-    "UPDATE people SET approved = true;",
-    "INSERT INTO capabilities (name, description, is_system_supplied) VALUES ('can_log_in_to_cms', 'Can log in to CMS', true);",
-    "INSERT INTO group_capabilities (group_id, capabilities_id) VALUES",
-        "(1, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
-        "(2, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
-        "(3, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'));",
-  ],
-  "down": [
-    "ALTER TABLE people DROP COLUMN approved;",
-    "DELETE FROM people_groups WHERE group_id = (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms);",
-    "DELETE FROM groups WHERE name = 'can_log_in_to_cms';",
-  ]
+  "up": "ALTER TABLE people ADD approved BOOLEAN AFTER login_enabled",
+  "down": "ALTER TABLE people DROP COLUMN approved"
 }

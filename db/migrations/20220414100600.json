@@ -1,0 +1,4 @@
+{
+  "up": "UPDATE people SET approved = true",
+  "down": "UPDATE people SET approved = NULL"
+}
