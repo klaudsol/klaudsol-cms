@@ -29,7 +29,7 @@ export default function Settings({cache}) {
       newPassword: '',
       confirmNewPassword: ''
     },
-    onSubmit: (values) => {
+    onSubmit: (values, actions) => {
 
       (async () => {
 
@@ -46,6 +46,8 @@ export default function Settings({cache}) {
           const response = await responseRaw.json();
           setModalMessage(response.message);
           setModalTitle("Success");
+
+          actions.resetForm();
         } catch (error) {
           setModalMessage(error.message);
           setModalTitle("Error");
@@ -86,21 +88,21 @@ export default function Settings({cache}) {
                   <Form>
                     <div className='row'>
                       <h6 className="mt-1 mb-3">Change password</h6>
-                      <label htmlFor='current_password' className='col-12 col-md-6'>Current Password</label>
+                      <label htmlFor='currentPassword' className='col-12 col-md-6'>Current Password</label>
                     </div>
                     <div className='row'>
                       <div className='col-12 col-md-6'>
-                        <Field type='password'className="input_text mb-2" name='currentPassword' id='current_password' />
+                        <Field type='password' className="input_text mb-2" name='currentPassword' id='currentPassword' />
                       </div>
                     </div>
                     <div className='row mt-3'>
-                      <label htmlFor='password' className='col-12 col-md-6'>Password</label>
-                      <label htmlFor='confirmation_password' className='col-12 col-md-6'>Confirmation Password</label>
+                      <label htmlFor='newPassword' className='col-12 col-md-6'>New Password</label>
+                      <label htmlFor='confirmNewPassword' className='col-12 col-md-6'>Confirmation Password</label>
                       <div className='col-12 col-md-6'>
-                        <Field type='password' className="input_text mb-2" name='newPassword' id='password' />
+                        <Field type='password' className="input_text mb-2" name='newPassword' id='newPassword' />
                       </div>
                       <div className='col-12 col-md-6'>
-                        <Field type='password' className="input_text mb-2" name='confirmNewPassword' id='confirmation_password' />
+                        <Field type='password' className="input_text mb-2" name='confirmNewPassword' id='confirmNewPassword' />
                       </div>
                     </div>
                   </Form>
