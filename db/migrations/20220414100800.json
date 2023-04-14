@@ -1,8 +1,8 @@
 {
   "up": [
     "INSERT INTO group_capabilities (group_id, capabilities_id) VALUES",
-        "(1, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
-        "(2, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
+        "(1, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms')),",
+        "(2, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms')),",
         "(3, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
   ],
   "down": "DELETE FROM group_capabilities WHERE group_id = (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms')",
