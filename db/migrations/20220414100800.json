@@ -6,5 +6,5 @@
         "(3, (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms'))",
     "'"
   ],
-  "down": "DELETE FROM group_capabilities WHERE group_id = (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms)",
+  "down": "DELETE FROM group_capabilities WHERE group_id = (SELECT id FROM capabilities WHERE name = 'can_log_in_to_cms')",
 }
