@@ -8,6 +8,7 @@ export default function AddToGroupsForm({ groups }) {
     const { values, errors, touched } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
 
+    const systemSupplied = groups.filter((group) => !group.systemSupplied);
     const userCreated = groups.filter((group) => !group.isSystemSupplied);
 
     return (
@@ -15,12 +16,7 @@ export default function AddToGroupsForm({ groups }) {
             <h4 className="mb-4">Groups</h4>
             <h5>System supplied</h5>
             <div className="groups__container">
-                {groups.map((group) => {
-                    // I purposely did not filter the list of system supplied groups
-                    // for performance reasons (3-4 for loops vs 2-3 for loops)
-                    if (!group.isSystemSupplied) return;
-
-                    return (
+                {systemSupplied.map((group) => (
                         <div className="groups__item" key={group.id}>
                             <AdminRenderer
                                 title={group.name}
@@ -34,8 +30,7 @@ export default function AddToGroupsForm({ groups }) {
                             />
                             <p className="groups__description">{group.description}</p>
                         </div>
-                    )
-                })}
+                    ))}
             </div>
             {userCreated.length > 0 &&
                 <>
