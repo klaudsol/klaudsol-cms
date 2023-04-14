@@ -19,7 +19,7 @@ async function post(req, res) {
         return
     }
 
-    const { session_token, user: { firstName, lastName, capabilities, defaultEntityType, forcePasswordChange, approved } } = await People.login(email, password);
+    const { session_token, user: { firstName, lastName, capabilities, defaultEntityType, forcePasswordChange } } = await People.login(email, password);
 
     const token = generateToken({ firstName, lastName, email, capabilities, sessionToken: session_token });
     const response = { message: 'Sucessfully logged in!' };
@@ -47,8 +47,6 @@ async function post(req, res) {
 
         response.forcePasswordChange = forcePasswordChange;
     } else {
-        if (!approved) throw new UnauthorizedError(errorMessage);
-
         response.token = token;
     }
 

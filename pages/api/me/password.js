@@ -32,7 +32,7 @@ async function put(req, res) {
     const { sessionToken } = req.user;
 
     const session = await Session.getSession(sessionToken);
-    const forcePasswordChange = await People.updatePassword({id: session.people_id, oldPassword: currentPassword, newPassword});
+    const forcePasswordChange = await People.updatePassword({id: session.people_id, oldPassword: currentPassword, forcePasswordChange: false, newPassword});
 
     const { origin } = req.headers;
     const isFromCMS = origin !== process.env.FRONTEND_URL;

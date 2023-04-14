@@ -28,15 +28,22 @@ import { OK } from '@klaudsol/commons/lib/HttpStatuses';
 import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
+import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) {
-    const { firstName, lastName, email } = req.body;
+    const { firstName, lastName, email, isSameEmail } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
     if (!email) throw new InsufficientDataError('Please enter your email.');
+
+    if (!isSameEmail) {
+        const existingUser = await People.findByColumn('email', email);
+
+        if (existingUser) throw new UserAlreadyExists();
+    }
 
     const { sessionToken } = req.user;
 
@@ -45,7 +52,7 @@ async function put(req, res) {
         id: session.people_id,
         loginEnabled: true,
         approved: true,
-        forceChangePassword: false,
+        forcePasswordChange: false,
         firstName,
         lastName,
         email
