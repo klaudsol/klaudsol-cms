@@ -29,7 +29,6 @@ import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) { 
- try{
     const { currentPassword, newPassword, confirmNewPassword } = req.body; 
 
     //these should be captured by the front-end validator, but the backend should detect
@@ -66,13 +65,4 @@ async function put(req, res) {
     }
     
     res.status(OK).json({message: 'Successfully changed your password.'}); 
-  }
-  catch (error) {
-    if (error instanceof RecordNotFound) {
-      res.status(422).json({message: "Incorrect password."});
-      return;
-    } else {
-      await defaultErrorHandler(error, req, res);
-    }
-  }
 }
