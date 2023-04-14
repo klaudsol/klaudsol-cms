@@ -26,10 +26,10 @@ async function post(req, res) {
 
     const { origin } = req.headers;
     const isFromCMS = origin !== FRONTEND_URL;
-    const errorMessage = "You do not have permission to log in. Please contact your administrator."
 
     if (isFromCMS) {
         const isAuthorized = capabilities.includes(canLogInToCms);
+        const errorMessage = "You do not have permission to log in. Please contact your administrator."
         if (!isAuthorized) throw new UnauthorizedError(errorMessage);
 
         req.session.session_token = session_token;
