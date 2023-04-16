@@ -11,13 +11,39 @@ import { setCORSHeaders, handleRequests } from '@klaudsol/commons/lib/API';
 import { OK, NOT_FOUND, BAD_REQUEST } from "@klaudsol/commons/lib/HttpStatuses";
 import Setting from '@/backend/models/core/Setting';
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
-import { resolveResource } from "@/components/Util";
+import { formatImageResource, resolveResource } from "@/components/Util";
 import { createHash } from "@/lib/Hash";
 import { readSettings, writeSettings } from '@/lib/Constants';
+import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
 
-export default withSession(handleRequests({ put, post }));
+export default withSession(handleRequests({ get, put, post }));
 
-async function get(req, res) { }
+async function get(req, res) {
+    // await assertUserCan(readSettings, req);
+
+    const settingsRaw = await Setting.get();
+    const settings = settingsRaw.map((setting) => {
+        if (TYPES_REGEX.IMAGE.test(setting.value)) {
+            const value = formatImageResource(setting.value);
+
+            return { ...setting, value }
+        }
+
+        return setting;
+    });
+
+    const output = {
+        data: settings,
+        metadata: {},
+    };
+
+    output.metadata.hash = createHash(output);
+    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
+    settings.length
+        ? res.status(OK).json(output)
+        : res.status(NOT_FOUND).json({});
+}
 
 async function post(req, res) {
     (await assertUserCan(readSettings, req)) &&

@@ -61,14 +61,6 @@ async function del(req, res) {
   const { slug } = req.query;
 
   const foundResource = await Setting.get({ slug });
-  const imageNames = foundResource.flatMap((item) =>
-    TYPES_REGEX.IMAGE.test(item.value) ? item.value : []
-  );
-
-  if (imageNames.length > 0) {
-    const params = generateS3ParamsForDeletion(imageNames);
-    await deleteFilesFromBucket(params);
-  }
 
   await Setting.delete({ slug });
 

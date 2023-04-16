@@ -87,12 +87,10 @@ class Resource {
 
   static async delete({ slug }) {
     const db = new DB();
-    const deleteSettingSQL = "DELETE from settings where `key` = :key";
+    const deleteSettingSQL = "UPDATE settings SET `value` = '' WHERE `key` = :key";
+    const params = [ { name: 'key', value: { longValue: { string: slug } } } ];
 
-    const executeStatementParam = [
-      { name: "key", value: { stringValue: slug } },
-    ];
-    await db.executeStatement(deleteSettingSQL, executeStatementParam);
+    await db.executeStatement(deleteSettingSQL, params);
   }
 }
 
