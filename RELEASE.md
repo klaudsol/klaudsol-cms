@@ -1,3 +1,7 @@
+# 3.2.1
+* Refactored out migration scripts and plugin system to @klaudsol/commons
+* Bump up @klaudsol/commons to 1.4.0
+
 # 3.2.0
 * New Plugin System - introduce custom code to Klaudsol CMS without modifying a single line to the codebase.
 * JWT tokens - enable authentication for external systems
