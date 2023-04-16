@@ -40,6 +40,24 @@
       @include general-text-input(12px);
     }
 
+    &-password {
+      position: relative;
+
+      &-box {
+        @include flex('start', 'center', 'row');
+        gap: 5px;
+        position: absolute;
+        top: 2px;
+        right: 10px;
+      }
+
+      &-button {
+        all: unset;
+        color: $dark-blue-1;
+        font-size: 24px;
+      }
+    }
+
     &-textarea {
       @include general-text-input(12px);
       @include width-height(100%, 15vh);

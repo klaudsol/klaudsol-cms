@@ -1,0 +1,4 @@
+{
+  "up": "ALTER TABLE people ADD approved BOOLEAN AFTER login_enabled",
+  "down": "ALTER TABLE people DROP COLUMN approved"
+}

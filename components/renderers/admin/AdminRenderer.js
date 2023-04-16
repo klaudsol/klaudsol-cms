@@ -2,7 +2,9 @@ import { CMS_TYPES } from "@/components/cmsTypes";
 import TextRenderer from "./TextRenderer";
 import TextAreaRenderer from "./TextAreaRenderer";
 import FloatRenderer from "./FloatRenderer";
+import CheckboxRenderer from "./CheckboxRenderer";
 import UploadRenderer from "./UploadRenderer.js";
+import PasswordRenderer from "./PasswordRenderer";
 import { validImageTypes } from "@/lib/Constants";
 
 const AdminRenderer = ({ type, ...params }) => {
@@ -10,6 +12,10 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.LINK:
     case CMS_TYPES.TEXT:
       return <TextRenderer type={type} {...params} />;
+    case CMS_TYPES.PASSWORD:
+      return <PasswordRenderer type={type} {...params} />;
+    case CMS_TYPES.CHECKBOX:
+      return <CheckboxRenderer type={type} {...params} />;
     case CMS_TYPES.IMAGE:
       return <UploadRenderer accept={validImageTypes} {...params} />;
     case CMS_TYPES.TEXT_AREA:

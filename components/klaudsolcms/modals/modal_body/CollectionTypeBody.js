@@ -10,6 +10,7 @@ import { useClientErrorHandler } from "@/components/hooks"
 export default function CollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const errorHandler = useClientErrorHandler();
+  const { token = null } = useContext(CacheContext);
 
   const formikParams = {
     initialValues: {},
@@ -23,6 +24,7 @@ export default function CollectionTypeBody({ formRef }) {
             body: JSON.stringify(values),
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
           });
         } catch (error) {

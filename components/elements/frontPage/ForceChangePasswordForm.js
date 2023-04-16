@@ -6,6 +6,7 @@ import Link from "next/link";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { authReducer, initialState } from "@/components/reducers/authReducer";
 import { INIT, ERROR, CLEANUP, SUCCESS } from "@/lib/actions";
+import CacheContext from "@/components/contexts/CacheContext";
 
 const ForceChangePasswordForm = ({ pwd }) => {
   const router = useRouter();
@@ -22,6 +23,7 @@ const ForceChangePasswordForm = ({ pwd }) => {
           const response = await slsFetch("/api/me/password", {
             method: "PUT",
             headers: {
+              Authorization: `Bearer ${token}`,
               "Content-type": "application/json",
             },
             body: JSON.stringify({ currentPassword:pwd, newPassword, confirmNewPassword }),

@@ -13,9 +13,17 @@ import cx from 'classnames';
 
 const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, router, setCollapse}) => {
   
-  const [isShowAdminSub, setIsShowAdminSub] = useState(false);
+  const [expandedSubItems, setExpandedSubItems] = useState([]);
   const noop = () => {};
-  
+
+  const handleExpandSubItems = (path) => {
+    if(expandedSubItems.includes(path)) {
+        setExpandedSubItems(expandedSubItems.filter((itemPath) => itemPath !== path));
+    } else {
+        setExpandedSubItems([...expandedSubItems, path]);
+    }
+  }
+
   return (
     <CSidebar
      className='sidebar_container'
@@ -54,13 +62,13 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
                   </div>
                   :
                   <div className='sidebar_button_category_container' key={i}>
-                    <div className='sidebar_buttons' onClick={()=>{setIsShowAdminSub(prev => !prev)}}>{button.icon} {button.title} {<MdKeyboardArrowUp width="2em" className={isShowAdminSub ? 'arrowbutton' : 'arrowbutton active'}/>}</div>                   
-                    {isShowAdminSub && button.subItems.map((item, i)=> (
+                    <div className='sidebar_buttons' onClick={()=>{handleExpandSubItems(button.path)}}>{button.icon} {button.title} {<MdKeyboardArrowUp width="2em" className={expandedSubItems.includes(button.path) ? 'arrowbutton' : 'arrowbutton active'}/>}</div>                   
+                    {expandedSubItems.includes(button.path) && button.subItems.map((item, i)=> (
                         <Link 
                         key={i} 
                         href={item.subPath} 
                         onClick={item.onClick ?? noop}
-                        className={cx((router.asPath?.includes?.(item.subPath) && item.highlight !== false) ? 'sidebar_buttons_active sub_button' : 'sidebar_buttons sub_button')}
+                        className={cx((router.asPath?.endsWith?.(item.subPath) && item.highlight !== false) ? 'sidebar_buttons_active sub_button' : 'sidebar_buttons sub_button')}
                         passHref
                     >
                       {item.subIcon} {item.subTitle}

@@ -1,5 +1,5 @@
 import { FaFeatherAlt, FaRegUser, FaPlus } from 'react-icons/fa';
-import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
+import { HiOutlineUser, HiUserAdd, HiOutlineUserGroup } from 'react-icons/hi';
 import { BiPen, BiPlug } from 'react-icons/bi';
 import * as Icons from "react-icons/bi";
 import { RiSettings3Line } from 'react-icons/ri';
@@ -54,7 +54,7 @@ const AppSidebar = () => {
     })) : 
     []
   );
-  
+
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
       multiple: true,
@@ -85,22 +85,28 @@ const AppSidebar = () => {
       path: "/admin/settings",
       icon: <RiSettings3Line className='sidebar_button_icon'/>
     }:null),
-    (false ? {
+    {
       multiple: true,
       title: "Admin",
+      path: `/admin`,
+      icon: <AiOutlineLock className='sidebar_button_icon'/>,
       subItems:[capabilities.includes(readUsers) ?
                 {subTitle:"Users", 
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
                  subPath:"/admin/users" 
                 }: null,
-
-                capabilities.includes(readGroups) ? 
+                capabilities.includes(readUsers) ?
+                {subTitle:"Pending Users", 
+                 subIcon:<HiUserAdd className='sidebar_button_icon'/>,
+                 subPath:"/admin/users/pending" 
+                }: null,
+                // capabilities.includes(readGroups)
+                false ? 
                 {subTitle:"Groups",
                  subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
                  subPath:"/admin/groups"
                 } : null].filter(item => item),
-      icon: <AiOutlineLock className='sidebar_button_icon'/>
-    }:null)
+    }
   ].filter(item => item);
 
     useEffect(() => { 

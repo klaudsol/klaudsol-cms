@@ -13,6 +13,7 @@ import { useContext, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useRouter} from 'next/router'; 
 import RootContext from '@/components/contexts/RootContext';
+import CacheContext from '@/components/contexts/CacheContext';
 
 import avatar8 from '@/public/assets/images/avatars/patrick-square.png'
 import { slsFetch } from "@klaudsol/commons/lib/Client";
@@ -25,12 +26,17 @@ const AppHeaderDropdown = () => {
   const router = useRouter();
   
   const { state, dispatch } = useContext(RootContext);
+  const { token } = useContext(CacheContext);
   
   const onLogout = (evt) => {
     evt.preventDefault();   
     const callback = async () => {
       await slsFetch('/api/session',{
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-type": "application/json",
+        }
       });
       dispatch({type: 'RESET_CLIENT_SESSION'});
       router.push('/');

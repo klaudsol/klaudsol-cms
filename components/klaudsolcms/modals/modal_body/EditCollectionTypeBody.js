@@ -4,12 +4,14 @@ import { useRouter } from "next/router";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import RootContext from "@/components/contexts/RootContext";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
+import CacheContext from "@/components/contexts/CacheContext";
 import { redirectToBuilderTypeSlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import { useClientErrorHandler } from "@/components/hooks";
 
 export default function EditCollectionTypeBody({ formRef }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const errorHandler = useClientErrorHandler();
+  const { token = null } = useContext(CacheContext);
   const router = useRouter();
   const slug = router.query.entity_type_slug;
 
@@ -34,6 +36,7 @@ export default function EditCollectionTypeBody({ formRef }) {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(values),
           });

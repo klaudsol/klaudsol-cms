@@ -42,7 +42,7 @@ export default function ContentTypeBuilder({ cache }) {
   const router = useRouter();
   const errorHandler = useClientErrorHandler();
 
-  const capabilities = cache?.capabilities;
+  const { capabilities = null, token = null } = cache;
   const { entity_type_slug } = router.query;
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
 
@@ -124,7 +124,11 @@ export default function ContentTypeBuilder({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING, payload: true });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`);
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
         const values = await valuesRaw.json();
 
         let attributes = [],
@@ -207,6 +211,7 @@ export default function ContentTypeBuilder({ cache }) {
           method: "DELETE",
           headers: {
             'Content-Type': 'application/json',
+             Authorization: `Bearer ${token}`
           },
         });
         loadEntityTypes({ rootState, rootDispatch });
@@ -248,6 +253,7 @@ export default function ContentTypeBuilder({ cache }) {
               method: "POST",
               headers: {
                 "Content-type": "application/json",
+                Authorization: `Bearer ${token}`
               },
               body: JSON.stringify({
                 attribute: {

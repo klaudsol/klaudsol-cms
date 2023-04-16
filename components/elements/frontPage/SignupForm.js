@@ -24,7 +24,7 @@ const SignupForm = ({className, ...props}) => {
           const response = await slsFetch(backendPath('/add_to_waitlist'), {
             method: 'POST',
             headers: {
-              'Content-type': 'application/json'
+              "Content-type": "application/json",
             },
             body: JSON.stringify({email: email })
           });

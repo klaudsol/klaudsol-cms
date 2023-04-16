@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 export default function Settings({cache}) {
   const router = useRouter();
   const errorHandler = useClientErrorHandler();
+  const { token = null } = cache;
 
   const [isSaving, setSaving] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -38,6 +39,7 @@ export default function Settings({cache}) {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+               Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(values)
           });

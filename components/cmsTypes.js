@@ -1,9 +1,11 @@
 export const CMS_TYPES = {
   TEXT: "text",
+  PASSWORD: "password",
   TEXT_AREA: "textarea",
   FLOAT: "float",
   LINK: "link",
   IMAGE: "image",
+  CHECKBOX: "checkbox",
 };
 
 // resources types
