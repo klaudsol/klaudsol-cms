@@ -125,7 +125,7 @@ async function put(req, res) {
     const { entity_id, entity_type_slug, ...entries } = body
     await Entity.update({ entries, entity_type_slug, entity_id });
 
-    if (toDelete.length > 0) deleteFilesFromBucket(toDelete);
+    //if (toDelete.length > 0) deleteFilesFromBucket(toDelete);
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
     res.status(OK).json({ message: "Successfully created a new entry", presignedUrls });
