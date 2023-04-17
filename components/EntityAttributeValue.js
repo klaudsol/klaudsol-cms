@@ -1,5 +1,11 @@
 const formatMultipleValues = (collection, item, format = () => {}) => {
-    const prevValues = collection.indexedData[item.id]?.[item.attributes_name] ?? [];
+    
+    let prevValues;
+    if (collection?.indexedData) {
+        prevValues = collection.indexedData[item.id]?.[item.attributes_name] ?? [];
+    } else {
+        prevValues = collection.data[item.attributes_name] ?? [];
+    }
 
     const newValues = [...prevValues, format(item.value_string)];
 
@@ -31,7 +37,6 @@ const formatImage = (key) => {
         
         return imageValues;
       case 'gallery':
-        console.log(item);
         const galleryValues = formatMultipleValues(collection, item, formatImage);
 
         return galleryValues;
