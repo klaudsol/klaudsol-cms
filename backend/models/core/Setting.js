@@ -3,15 +3,14 @@ import DB from '@klaudsol/commons/lib/DB';
 class Resource {
   static async get({ slug }) {
     const db = new DB();
-    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key`;
+    const getSettingSQL = `SELECT * FROM \`settings\` WHERE \`key\` = :key LIMIT 1`;
 
     const resource = await db.executeStatement(getSettingSQL, [
       { name: "key", value: { stringValue: slug } },
     ]);
 
     return resource.records.map(
-      ([{ longValue: id }, { stringValue: key }, { stringValue: value }]) => ({
-        id,
+      ([{ stringValue: key }, { stringValue: value }]) => ({
         key,
         value,
       })
@@ -60,9 +59,8 @@ class Resource {
   static async update({ key, value }) {
     const db = new DB();
 
-    const updateValuesBatchSQL = `UPDATE settings SET 
-    value = :value 
-    WHERE \`key\` = :key
+    const updateValuesBatchSQL = `REPLACE INTO settings(\`key\`, \`value\`) 
+    VALUES(:key, :value)
     `;
 
     const valueParams = [
@@ -77,8 +75,7 @@ class Resource {
     ]);
 
     return updatedResource.records.map(
-      ([{ longValue: id }, { stringValue: key }, { stringValue: value }]) => ({
-        id,
+      ([{ stringValue: key }, { stringValue: value }]) => ({
         key,
         value,
       })
