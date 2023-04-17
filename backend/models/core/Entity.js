@@ -200,6 +200,27 @@ class Entity {
         { stringValue: attributeType },
       ] = record;
 
+      if (attributeType === "gallery") {
+        const galleryParams = entry[attributeName].map((item) => [
+          { name: "entity_id", value: { longValue: lastInsertedEntityID } },
+          { name: "attribute_id", value: { longValue: attributeId } },
+          {
+            name: "value_string",
+            value: { stringValue: item }
+          },
+          {
+            name: "value_long_string",
+            value: { isNull: true }
+          },
+          {
+            name: "value_double",
+            value: { isNull: true }
+          },
+        ]);
+
+        return [...collection, ...galleryParams];
+      }
+
       return [
         ...collection,
         [

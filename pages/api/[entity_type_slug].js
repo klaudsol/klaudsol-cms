@@ -68,8 +68,8 @@ async function get(req, res) {
                     ...(!collection.indexedData[item.id]?.slug && {
                         slug: item.entities_slug,
                     }),
-                    ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
-                        [item.attributes_name]: resolveValue(item),
+                    ...((!collection.indexedData[item.id]?.[item.attributes_name] || item.atrributes_type !== 'gallery') && {
+                        [item.attributes_name]: resolveValue(collection, item),
                     }),
                 },
             },
@@ -121,6 +121,7 @@ async function post(req, res) {
         await assertUserCan(writeContents, req);
 
     const { fileNames, ...entry } = req.body;
+    console.log(entry);
     await Entity.create(entry);
 
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
