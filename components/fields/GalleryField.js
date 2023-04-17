@@ -38,7 +38,6 @@ const GalleryField = (props) => {
         document.body.onfocus = checkIfUnfocused;
     };
 
-    console.log(files)
     return (
         <>
             <input

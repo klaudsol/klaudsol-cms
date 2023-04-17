@@ -123,8 +123,12 @@ export default function CreateNewEntry({ cache }) {
           entity_type_id: state.entity_type_id,
         };
 
+        console.log(files)
+        console.log(data)
+        console.log(fileNames)
+
         try {
-          dispatch({ type: SAVING });
+          // dispatch({ type: SAVING });
 
           // const response = await slsFetch(`/api/${entity_type_slug}`, {
           //   method: "POST",
@@ -137,11 +141,11 @@ export default function CreateNewEntry({ cache }) {
           //   
           // if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
-          dispatch({ type: SET_SHOW, payload: true });
+          // dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           errorHandler(ex);
         } finally {
-          dispatch({ type: CLEANUP });
+          // dispatch({ type: CLEANUP });
         }
       })();
     },
