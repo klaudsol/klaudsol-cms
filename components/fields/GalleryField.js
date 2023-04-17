@@ -38,38 +38,42 @@ const GalleryField = (props) => {
         document.body.onfocus = checkIfUnfocused;
     };
 
+    console.log(files)
     return (
-        <div>
-            <div className="field_base">
-                <input
-                    accept={props.accept}
-                    type="file"
-                    onChange={setFileValue}
-                    hidden="hidden"
-                    ref={inputRef}
-                    {...formattedField}
-                />
-                <div
-                    className="card__container"
-                    onClick={openUploadMenu}
-                >
-                    {files.map((image, i) => (
-                        <div
-                            key={i}
-                            className="card__data"
-                        >
+        <>
+            <input
+                accept={props.accept}
+                type="file"
+                onChange={setFileValue}
+                hidden="hidden"
+                ref={inputRef}
+                {...formattedField}
+            />
+            <div
+                className="card__container"
+                onClick={openUploadMenu}
+            >
+                {files.map((image, i) => (
+                    <div
+                        key={i}
+                        className="card__item"
+                    >
+                        <div className="card__image-container">
                             <Image
                                 src={image?.link ?? URL.createObjectURL(image)}
                                 alt={image?.name}
-                                width={800}
-                                height={300}
-                                loading="lazy"
+                                className="card__image"
+                                sizes={290}
+                                fill
                             />
                         </div>
-                    ))}
-                </div>
+                        <div className="card__data--container">
+                            <div className="card__data">{image.name}</div>
+                        </div>
+                    </div>
+                ))}
             </div>
-        </div>
+        </>
     );
 };
 

@@ -126,16 +126,16 @@ export default function CreateNewEntry({ cache }) {
         try {
           dispatch({ type: SAVING });
 
-          const response = await slsFetch(`/api/${entity_type_slug}`, {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(entry),
-          });
-          const { message, presignedUrls } = await response.json();
-            
-          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+          // const response = await slsFetch(`/api/${entity_type_slug}`, {
+          //   method: "POST",
+          //   headers: {
+          //     'Content-Type': 'application/json'
+          //   },
+          //   body: JSON.stringify(entry),
+          // });
+          // const { message, presignedUrls } = await response.json();
+          //   
+          // if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
           dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
