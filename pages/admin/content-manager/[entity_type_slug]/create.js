@@ -135,7 +135,7 @@ export default function CreateNewEntry({ cache }) {
           });
           const { message, presignedUrls } = await response.json();
             
-          // if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
           // dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {

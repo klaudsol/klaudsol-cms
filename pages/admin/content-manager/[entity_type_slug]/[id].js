@@ -130,13 +130,20 @@ export default function Type({ cache }) {
     return keys;
   };
 
+  const getMultipleValueAttributes = () => {
+    const { values } = state;
+    const attributes = Object.keys(values).filter((value) => values[value] instanceof Array);
+
+    return attributes;
+  }
+
   const formikParams = {
     innerRef: formRef,
     initialValues: getFormikInitialVals(),
     onSubmit: (values) => {
       (async () => {
         try {
-          dispatch({ type: SAVING });
+          // dispatch({ type: SAVING });
 
           const { files, data, fileNames } = await getBody(values);
           const toDelete = getFilesToDelete(values);
@@ -149,27 +156,30 @@ export default function Type({ cache }) {
             entity_id: id,
           };
 
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
-            method: "PUT",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify(entry),
-          });
+          const multipleValueAttributes = getMultipleValueAttributes()
+          console.log(multipleValueAttributes);
 
-          const { message, presignedUrls } = await response.json();
+          // const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+          //   method: "PUT",
+          //   headers: {
+          //     "Content-type": "application/json",
+          //   },
+          //   body: JSON.stringify(entry),
+          // });
+          //
+          // const { message, presignedUrls } = await response.json();
 
-          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+          // if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
-          dispatch({
-            type: SET_MODAL_CONTENT,
-            payload: "You have successfully edited the entry.",
-          });
-          dispatch({ type: SET_SHOW, payload: true });
+          // dispatch({
+          //   type: SET_MODAL_CONTENT,
+          //   payload: "You have successfully edited the entry.",
+          // });
+          // dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           errorHandler(ex);
         } finally {
-          dispatch({ type: CLEANUP });
+          // dispatch({ type: CLEANUP });
         }
       })();
     },

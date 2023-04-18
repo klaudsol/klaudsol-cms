@@ -54,6 +54,7 @@ async function get(req, res) {
     //Priority is the first entry in the collection, to make the
     //system more stable. Suceeding entries that are inconsistent are discarded.
     const output = rawData.reduce((collection, item) => {
+        console.log(item)
         return {
             data: {
                 ...collection.data,

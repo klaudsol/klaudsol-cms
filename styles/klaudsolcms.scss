@@ -895,6 +895,32 @@ $onFocus: #323C4E;
             align-items: center;
         }
     }
+
+    &__side-button {
+        all: unset;
+
+        &-container {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            z-index: 1000;
+
+            display: flex;
+            flex-direction: column;
+
+            font-size: 24px;
+            color: #455a64;
+        }
+
+        &--delete {
+            color: #800000;
+
+            &:hover {
+                color: #FF0000;
+                transition: 0.2s;
+            }
+        }
+    }
 }
 
 /**

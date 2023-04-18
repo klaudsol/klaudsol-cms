@@ -3,16 +3,19 @@ import { useFormikContext, useField } from "formik";
 import Image from "next/image";
 import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
+import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaTrash } from "react-icons/fa";
 import { useEffect } from "react";
 import { SET_CHANGED } from "@/lib/actions"
 
 const GalleryField = (props) => {
-    const [files, setFiles] = useState([]);
     const { setFieldValue, setTouched, touched } = useFormikContext();
-    const [field] = useField(props);
 
+    const [field] = useField(props);
     const { onChange, value, ...formattedField } = field;
+
+    const [files, setFiles] = useState(value || []);
+    const [showDelete, setDelete] = useState(false);
 
     const inputRef = useRef();
 
@@ -26,7 +29,8 @@ const GalleryField = (props) => {
         setFieldValue(field.name, newFiles);
     };
 
-    const openUploadMenu = () => {
+    const openUploadMenu = (e) => {
+        if (e.target.nodeName === 'path' || e.target.nodeName === 'svg' || e.target.nodeName === "BUTTON") return;
         inputRef.current.click();
 
         const checkIfUnfocused = () => {
@@ -37,6 +41,13 @@ const GalleryField = (props) => {
 
         document.body.onfocus = checkIfUnfocused;
     };
+
+    const removeItem = (key) => {
+        const newFiles = files.filter((file) => file.key !== key);
+
+        setFiles(newFiles);
+        setFieldValue(field.name, newFiles);
+    }
 
     return (
         <>
@@ -52,25 +63,33 @@ const GalleryField = (props) => {
                 className="card__container"
                 onClick={openUploadMenu}
             >
-                {files.map((image, i) => (
-                    <div
-                        key={i}
-                        className="card__item"
-                    >
-                        <div className="card__image-container">
-                            <Image
-                                src={image?.link ?? URL.createObjectURL(image)}
-                                alt={image?.name}
-                                className="card__image"
-                                sizes={290}
-                                fill
-                            />
+                {value.length === 0 && <p>UPLOAD HERE</p>}
+                {value.length > 0 &&
+                    files.map((image, i) => (
+                        <div
+                            key={i}
+                            className="card__item"
+                        >
+                            <div className="card__image-container">
+                                <div className="card__side-button-container">
+                                    <button type="button" onClick={() => removeItem(image?.key)} className="card__side-button card__side-button--delete">
+                                        <FaTrash />
+                                    </button>
+                                </div>
+                                <Image
+                                    src={image?.link ?? URL.createObjectURL(image)}
+                                    alt={image?.name}
+                                    className="card__image"
+                                    sizes={290}
+                                    fill
+                                />
+                            </div>
+                            <div className="card__data--container">
+                                <div className="card__data">{image.name}</div>
+                            </div>
                         </div>
-                        <div className="card__data--container">
-                            <div className="card__data">{image.name}</div>
-                        </div>
-                    </div>
-                ))}
+                    ))
+                }
             </div>
         </>
     );

@@ -39,6 +39,8 @@ const formatImage = (key) => {
       case 'gallery':
         const galleryValues = formatMultipleValues(collection, item, formatImage);
 
+        if (!galleryValues[0]) return [];
+
         return galleryValues;
       case 'float':
         //TODO: Find a more accurate representation of float
