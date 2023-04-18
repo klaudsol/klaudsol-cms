@@ -7,6 +7,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaTrash } from "react-icons/fa";
 import { useEffect } from "react";
 import { SET_CHANGED } from "@/lib/actions"
+import { generateRandVals } from "@klaudsol/commons/lib/Math";
 
 const GalleryField = (props) => {
     const { setFieldValue, setTouched, touched } = useFormikContext();
@@ -19,10 +20,11 @@ const GalleryField = (props) => {
 
     const inputRef = useRef();
 
-    const setFileValue = (e) => {
+    const setFileValue = async (e) => {
         const file = e.target.files[0];
 
         if (!file) return;
+        file.key = await generateRandVals(5); // For deletion
 
         const newFiles = [...files, file];
         setFiles(newFiles);

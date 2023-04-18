@@ -1,4 +1,5 @@
-const formatMultipleValues = (collection, item, format = () => {}) => {
+const formatMultipleValues = (collection, item, format = (item) => item ) => {
+    if (!item) return [];
     
     let prevValues;
     if (collection?.indexedData) {

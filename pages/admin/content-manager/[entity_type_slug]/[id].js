@@ -123,18 +123,43 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
-  const getFilesToDelete = (values) => {
+  const getFilesToDelete = (values, filesToDelete) => {
     const files = Object.keys(values).filter((value) => values[value] instanceof File);
     const keys = files.map((file) => state.values[file].key);
     
     return keys;
   };
 
+  // Get items of values as well
   const getMultipleValueAttributes = () => {
     const { values } = state;
     const attributes = Object.keys(values).filter((value) => values[value] instanceof Array);
 
     return attributes;
+  }
+
+  // O(n^3) time complexity. I dont know how to improve this
+  // What I'm trying to do:
+  // - Get all of the attributes that have multiple values
+  // - In each of these attributes, get all of its values
+  // - Compare the current values (from formik) to the values on the state
+  // - If the value is in the state, but not in formik, delete the value in db
+  // - If the value is not in the state, but it is in formik, add the value in db
+  // - If the value is in the state, and it is also in formik, ignore
+  const getToDelete = (values, attributes) => {
+    const toDelete = attributes.reduce((acc, curr) => {
+        const stateList = state.values[curr];
+        const valuesList = values[curr];
+
+        const itemsToDeleteRaw = stateList.filter((item) => !valuesList.includes(item));
+        const itemsToDelete = itemsToDeleteRaw.map((item) => item.key);
+
+        if (itemsToDelete.length === 0) return acc;
+
+        return [...acc, { attribute: curr, toDelete: itemsToDelete }];
+    }, []);
+
+    return toDelete;
   }
 
   const formikParams = {
@@ -145,19 +170,22 @@ export default function Type({ cache }) {
         try {
           // dispatch({ type: SAVING });
 
+          const multipleValueAttributes = getMultipleValueAttributes();
+          const valuesToDelete = multipleValueAttributes.length > 0 && getToDelete(values, multipleValueAttributes);
+
+
           const { files, data, fileNames } = await getBody(values);
-          const toDelete = getFilesToDelete(values);
+          const filesToDelete = getFilesToDelete(values);
+          console.log(valuesToDelete);
+          console.log(filesToDelete);
 
           const entry = {
             ...data,
             fileNames,
-            toDelete,
+            filesToDelete,
             entity_type_slug,
             entity_id: id,
           };
-
-          const multipleValueAttributes = getMultipleValueAttributes()
-          console.log(multipleValueAttributes);
 
           // const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
           //   method: "PUT",
