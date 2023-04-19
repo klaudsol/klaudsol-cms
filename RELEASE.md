@@ -1,3 +1,6 @@
+# 3.3.0
+* Allow plugins to have migrations 
+
 # 3.2.2
 * Fixed a bug that prevents users from changing the front logo
 
