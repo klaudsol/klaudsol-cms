@@ -41,11 +41,13 @@ const AppSidebar = () => {
 
   const pluginMenuLinks = pluginMenus.menus.map(plugin => {
     const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
-    return {
+    return capabilities.includes(plugin.capability) ? {
       title: plugin.title,
       path: plugin.link,
       icon: <PluginMenuIcon className='sidebar_button_icon'/>
-  }});
+    } : null
+    ;
+  }).filter(x => x);
 
   const entityTypeLinks = (capabilities.includes(writeContents) ? rootState.entityTypes.map(type => ({
       title: type.entity_type_name,
