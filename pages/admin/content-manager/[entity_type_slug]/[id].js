@@ -138,14 +138,6 @@ export default function Type({ cache }) {
     return attributes;
   }
 
-  // O(n^3) time complexity. I dont know how to improve this
-  // What I'm trying to do:
-  // - Get all of the attributes that have multiple values
-  // - In each of these attributes, get all of its values
-  // - Compare the current values (from formik) to the values on the state
-  // - If the value is in the state, but not in formik, delete the value in db
-  // - If the value is not in the state, but it is in formik, add the value in db
-  // - If the value is in the state, and it is also in formik, ignore
   const getToDelete = (values, attributes) => {
     const toDelete = attributes.reduce((acc, curr) => {
         const stateList = state.values[curr];
@@ -162,6 +154,21 @@ export default function Type({ cache }) {
     return toDelete;
   }
 
+  const getValuesToAdd = (values, attributes) => {
+    const toAdd = attributes.reduce((acc, curr) => {
+        const stateList = state.values[curr].map((item) => item.key);
+        const valuesList = values[curr].map((item) => item.key);
+
+        const itemsToAdd = valuesList.filter((item) => !stateList.includes(item));
+
+        if (itemsToAdd.length === 0) return acc;
+
+        return {...acc, [curr]: itemsToAdd}
+    }, {});
+
+    return toAdd;
+  }
+
   const formikParams = {
     innerRef: formRef,
     initialValues: getFormikInitialVals(),
@@ -171,22 +178,22 @@ export default function Type({ cache }) {
           // dispatch({ type: SAVING });
 
           const multipleValueAttributes = getMultipleValueAttributes();
-          const valuesToDelete = multipleValueAttributes.length > 0 && getToDelete(values, multipleValueAttributes);
+          // const valuesToDelete = multipleValueAttributes.length > 0 && getToDelete(values, multipleValueAttributes);
 
-
-          const { files, data, fileNames } = await getBody(values);
+          const { data, fileNames, files } = await getBody(values);
           const filesToDelete = getFilesToDelete(values);
-          console.log(valuesToDelete);
-          console.log(filesToDelete);
+          const valuesToAdd = getValuesToAdd(values, multipleValueAttributes);
 
           const entry = {
             ...data,
+            valuesToAdd,
             fileNames,
             filesToDelete,
             entity_type_slug,
             entity_id: id,
           };
 
+                    console.log(fileNames)
           // const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
           //   method: "PUT",
           //   headers: {
@@ -194,9 +201,11 @@ export default function Type({ cache }) {
           //   },
           //   body: JSON.stringify(entry),
           // });
-          //
-          // const { message, presignedUrls } = await response.json();
 
+          // const { message, presignedUrls } = await response.json();
+          //
+          // console.log(presignedUrls)
+          //
           // if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
           // dispatch({

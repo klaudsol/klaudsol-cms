@@ -24,9 +24,12 @@ const GalleryField = (props) => {
         const file = e.target.files[0];
 
         if (!file) return;
-        file.key = await generateRandVals(5); // For deletion
+
+        const randVal = await generateRandVals(5); // For deletion
+        file.key = `${randVal}_${file.name}`
 
         const newFiles = [...files, file];
+
         setFiles(newFiles);
         setFieldValue(field.name, newFiles);
     };
@@ -74,7 +77,7 @@ const GalleryField = (props) => {
                         >
                             <div className="card__image-container">
                                 <div className="card__side-button-container">
-                                    <button type="button" onClick={() => removeItem(image?.key)} className="card__side-button card__side-button--delete">
+                                    <button type="button" onClick={() => removeItem(image.key)} className="card__side-button card__side-button--delete">
                                         <FaTrash />
                                     </button>
                                 </div>

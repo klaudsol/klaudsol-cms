@@ -114,7 +114,14 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
-        const { files, data, fileNames } = await getBody(values);
+        const { data: dataRaw, files, fileNames } = await getBody(values);
+
+        const data = Object.keys(dataRaw).reduce((acc, curr) => {
+            if (dataRaw[curr] instanceof Array) return { ...acc, [curr]: JSON.stringify(dataRaw[curr]) };
+
+            return { ...acc, [curr]: dataRaw[curr] };
+        }, {...dataRaw});
+        console.log(data)
 
         const entry = {
           ...data,
@@ -124,7 +131,7 @@ export default function CreateNewEntry({ cache }) {
         };
 
         try {
-          // dispatch({ type: SAVING });
+          dispatch({ type: SAVING });
 
           const response = await slsFetch(`/api/${entity_type_slug}`, {
             method: "POST",
@@ -134,10 +141,10 @@ export default function CreateNewEntry({ cache }) {
             body: JSON.stringify(entry),
           });
           const { message, presignedUrls } = await response.json();
-            
+
           if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
-          // dispatch({ type: SET_SHOW, payload: true });
+          dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           errorHandler(ex);
         } finally {

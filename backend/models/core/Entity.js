@@ -200,27 +200,6 @@ class Entity {
         { stringValue: attributeType },
       ] = record;
 
-      if (attributeType === "gallery") {
-        const galleryParams = entry[attributeName].map((item) => [
-          { name: "entity_id", value: { longValue: lastInsertedEntityID } },
-          { name: "attribute_id", value: { longValue: attributeId } },
-          {
-            name: "value_string",
-            value: { stringValue: item }
-          },
-          {
-            name: "value_long_string",
-            value: { isNull: true }
-          },
-          {
-            name: "value_double",
-            value: { isNull: true }
-          },
-        ]);
-
-        return [...collection, ...galleryParams];
-      }
-
       return [
         ...collection,
         [
@@ -239,7 +218,8 @@ class Entity {
           {
             name: "value_long_string",
             value:
-              attributeType == "textarea"
+              attributeType == "textarea" ||
+              attributeType === "gallery"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -282,7 +262,7 @@ class Entity {
     return true;
   }
   //Work in progress
-  static async update({ entries, entity_type_slug, entity_id }) {
+  static async update({ entries, entity_type_slug, valuesToAdd, entity_id }) {
     const db = new DB();
     // entity_type_slug will always be a string
     // entity_id can be a string or a number
@@ -295,7 +275,7 @@ class Entity {
     //TODO: start transaction
     //Attribute Introspection
 
-    const entityIntrospectionSQL = `SELECT entities.id , attributes.id, attributes.name, attributes.type                 
+    const entityIntrospectionSQL = `SELECT DISTINCT entities.id , attributes.id, attributes.name, attributes.type                 
     FROM entities
     LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
     LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
@@ -316,26 +296,7 @@ class Entity {
         { stringValue: attributeType },
       ] = record;
 
-      if (attributeType === "gallery") {
-        const galleryParams = entries[attributeName].map((item) => [
-          { name: "entity_id", value: { longValue: entityId } },
-          { name: "attribute_id", value: { longValue: attributeId } },
-          {
-            name: "value_string",
-            value: { stringValue: item }
-          },
-          {
-            name: "value_long_string",
-            value: { isNull: true }
-          },
-          {
-            name: "value_double",
-            value: { isNull: true }
-          },
-        ]);
-
-        return [...collection, ...galleryParams];
-      }
+      if (entries[attributeName] instanceof Array) return collection;
 
       return [
         ...collection,
@@ -369,6 +330,40 @@ class Entity {
           },
         ],
       ];
+    }, []);
+
+    const valuesToAddBatchParams = Object.keys(valuesToAdd).length > 0 && attributes.records.reduce((collection, record) => {
+        const [
+            { longValue: entityId },
+            { longValue: attributeId },
+            { stringValue: attributeName },
+            { stringValue: attributeType },
+        ] = record;
+
+        if (!(entries[attributeName] instanceof Array) || !valuesToAdd[attributeName]) return collection;
+
+        const valueParams = valuesToAdd[attributeName].map((item) => [
+            { name: "entity_id", value: { longValue: entityId } },
+            { name: "attribute_id", value: { longValue: attributeId } },
+            {
+                name: "value_string",
+                value:
+                    (attributeType == "gallery") &&
+                    entries[attributeName]
+                    ? { stringValue: item }
+                    : { isNull: true },
+            },
+            {
+              name: "value_long_string",
+              value: { isNull: true },
+            },
+            {
+              name: "value_double",
+              value: { isNull: true },
+            },
+        ]);
+
+        return [...collection, ...valueParams];
     }, []);
 
     const getAllIdSQL = `SELECT \`values\`.attribute_id                 
@@ -418,7 +413,22 @@ class Entity {
     WHERE entity_id = :entity_id AND attribute_id = :attribute_id
     `;
 
-    await db.batchExecuteStatement(updateValuesBatchSQL, valueBatchParams);
+    const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
+        value_string, value_long_string, value_double  
+      ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double) 
+    `;
+
+    console.log(valuesToAdd);
+    console.log(Object.keys(valuesToAdd).length > 0)
+    console.log(valuesToAddBatchParams)
+    if (Object.keys(valuesToAdd).length > 0) {
+        const updatePromise = db.batchExecuteStatement(updateValuesBatchSQL, valueBatchParams);
+        const insertPromise = db.batchExecuteStatement(insertValuesBatchSQL, valuesToAddBatchParams);
+
+        await Promise.all([updatePromise, insertPromise]);
+    } else {
+        await db.batchExecuteStatement(updateValuesBatchSQL, valueBatchParams);
+    }
 
     //TODO: end transaction
     return true;
