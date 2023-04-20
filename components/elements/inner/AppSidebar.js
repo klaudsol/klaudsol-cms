@@ -8,6 +8,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import 'simplebar/dist/simplebar.min.css'
 import CacheContext from "@/components/contexts/CacheContext";
 import AppModal from "@/components/klaudsolcms/AppModal";
+import IconsListModalBody from "@/components/klaudsolcms/modals/modal_body/IconsListModalBody";
 import CollectionTypeBody from "@/components/klaudsolcms/modals/modal_body/CollectionTypeBody";
 import { useRouter } from 'next/router'
 
@@ -31,13 +32,28 @@ const AppSidebar = () => {
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
   const [isCollectionTypeBodyVisible, setCollectionTypeBodyVisible] = useState(false);
+  const [iconData, setIconData] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onModalSubmit = () => {
     if (formRef.current) {
       formRef.current.handleSubmit();
-      setCollectionTypeBodyVisible(false);
     }
+
+    if (isCollectionTypeBodyVisible) setCollectionTypeBodyVisible(false);
+    else if (iconData) setIconData(false);
   };
+
+  const entityTypeLinks = rootState.entityTypes.map(type => {
+    const Icon = Icons[type.entity_type_icon];
+    const iconData = { slug: type.entity_type_slug, icon: type.entity_type_icon}
+
+    return {
+      title: type.entity_type_name,
+      path: `/admin/content-manager/${type.entity_type_slug}`,
+      icon: <Icon onClick={() => !rootState.collapse && setIconData(iconData)} className='sidebar_button_icon'/>
+    }
+  });
 
   const pluginMenuLinks = pluginMenus.menus.map(plugin => {
     const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
@@ -48,6 +64,7 @@ const AppSidebar = () => {
     } : null
     ;
   }).filter(x => x);
+
 
   const entityTypeLinks = (capabilities.includes(writeContents) ? rootState.entityTypes.map(type => ({
       title: type.entity_type_name,
@@ -145,6 +162,23 @@ const AppSidebar = () => {
         buttonTitle="Continue"
       >
         <CollectionTypeBody formRef={formRef} />
+      </AppModal>
+      <AppModal
+        show={iconData}
+        isLoading={isLoading}
+        onClose={() => setIconData(false)}
+        onClick={onModalSubmit}
+        modalTitle="Choose an icon"
+        size="default"
+        loadingAlt
+        noSubmit
+      >
+        <IconsListModalBody 
+            iconData={iconData} 
+            setIconData={setIconData} 
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+        />
       </AppModal>
     </>
   )
