@@ -120,7 +120,7 @@ class EntityTypes {
   static async create({ name, slug }) {
     const db = new DB();
 
-    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name, icon) VALUES (:slug, :name, 'BiPen')";
+    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name) VALUES (:slug, :name)";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "slug", value: { stringValue: slug } },
