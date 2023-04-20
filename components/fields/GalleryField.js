@@ -26,8 +26,7 @@ const GalleryField = (props) => {
         setFieldValue(field.name, newFiles);
     };
 
-    const openUploadMenu = (e) => {
-        console.log(e);
+    const openUploadMenu = () => {
         inputRef.current.click();
 
         const checkIfUnfocused = () => {
@@ -38,6 +37,12 @@ const GalleryField = (props) => {
 
         document.body.onfocus = checkIfUnfocused;
     };
+
+    const openNonEmptyUploadMenu = (e) => {
+        if (e.target.nodeName === 'path' || e.target.nodeName === 'svg' || e.target.nodeName === "BUTTON") return;
+
+        openUploadMenu();
+    }
 
     const removeItem = (key) => {
         const newFiles = value.filter((file) => file.key !== key);
@@ -58,11 +63,11 @@ const GalleryField = (props) => {
             {(!(value instanceof Array) || value.length === 0) && 
                 <div className={`image-box ${errors[props.name] && touched[props.name] ? 'image-box--error' : ""}`} onClick={openUploadMenu}>
                     <BiUpload className="image-box__icon"/>
-                    <p className="image-box__text"> Drop files here or click to upload </p>
+                    <p className="image-box__text"> Click me to upload images </p>
                 </div>
             }
             {(value instanceof Array && value.length > 0) &&
-                <div className="card__container" onClick={openUploadMenu} >
+                <div className="card__container" onClick={openNonEmptyUploadMenu} >
                     {value.map((image, i) => (
                         <div
                             key={i}
