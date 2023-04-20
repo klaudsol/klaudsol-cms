@@ -45,7 +45,7 @@ const AppContentManagerIconView = ({ columns, entries, entity_type_slug }) => {
               />
             </div>
           </Link>
-          <div className="card__data--container">
+          <div className="card__data-container">
             <div className="card__data">{getTitle(entry)}</div>
           </div>
         </div>

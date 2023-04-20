@@ -852,6 +852,10 @@ $onFocus: #323C4E;
 
         width: 100%;
         min-height: 100%;
+
+        &--attribute {
+            padding: 0 0 7px 0;
+        }
     }
 
     &__item {
@@ -888,7 +892,11 @@ $onFocus: #323C4E;
         text-overflow: ellipsis;
         white-space: nowrap;
 
-        &--container {
+        // I accidentally typed in --container instead of -container.
+        // "--" should be reserved for modifiers
+        // Some block of code might be relying on --container so I decided
+        // to keep it.
+        &--container, &-container {
             height: 40px; // grid-auto-rows - image-container height
             display: flex;
             justify-content: center;

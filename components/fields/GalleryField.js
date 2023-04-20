@@ -14,22 +14,22 @@ const GalleryField = (props) => {
     const inputRef = useRef();
 
     const setFileValue = async (e) => {
-        const files = Array.from(e.target.files);
+        const filesListRaw = Array.from(e.target.files);
 
-        if (!files || files.length === 0) return;
+        if (!filesListRaw || filesListRaw.length === 0) return;
 
-        const filesFormatted = files.map(async (file) => {
+        const filesList = filesListRaw.map(async (file) => {
             const randVal = await generateRandVals(5); // For deletion
             file.key = `${randVal}_${file.name}`
 
             return file;
         });
 
-        const filesList = await Promise.all(filesFormatted);
+        const files = await Promise.all(filesList);
 
-        const newFiles = [...value, ...filesList];
+        const updatedFilesList = [...value, ...files];
 
-        setFieldValue(field.name, newFiles);
+        setFieldValue(field.name, updatedFilesList);
     };
 
     const openUploadMenu = () => {
@@ -74,7 +74,7 @@ const GalleryField = (props) => {
                 </div>
             }
             {(value instanceof Array && value.length > 0) &&
-                <div className="card__container" onClick={openNonEmptyUploadMenu} >
+                <div className="card__container card__container--attribute" onClick={openNonEmptyUploadMenu} >
                     {value.map((image, i) => (
                         <div
                             key={i}
@@ -94,7 +94,7 @@ const GalleryField = (props) => {
                                     fill
                                 />
                             </div>
-                            <div className="card__data--container">
+                            <div className="card__data-container">
                                 <div className="card__data">{image.name}</div>
                             </div>
                         </div>
