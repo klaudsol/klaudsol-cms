@@ -18,18 +18,18 @@ const GalleryField = (props) => {
 
         if (!filesListRaw || filesListRaw.length === 0) return;
 
-        const filesList = filesListRaw.map(async (file) => {
+        const fileListPromise = filesListRaw.map(async (file) => {
             const randVal = await generateRandVals(5); // For deletion
             file.key = `${randVal}_${file.name}`
 
             return file;
         });
 
-        const files = await Promise.all(filesList);
+        const updatedFilesList = await Promise.all(fileListPromise);
 
-        const updatedFilesList = [...value, ...files];
+        const files = [...value, ...updatedFilesList];
 
-        setFieldValue(field.name, updatedFilesList);
+        setFieldValue(field.name, files);
     };
 
     const openUploadMenu = () => {

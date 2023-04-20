@@ -121,7 +121,6 @@ async function post(req, res) {
         await assertUserCan(writeContents, req);
 
     const { fileNames, ...entry } = req.body;
-    console.log(entry);
     await Entity.create(entry);
 
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
