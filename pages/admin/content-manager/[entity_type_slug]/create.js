@@ -120,7 +120,7 @@ export default function CreateNewEntry({ cache }) {
             if (dataRaw[curr] instanceof Array) return { ...acc, [curr]: JSON.stringify(dataRaw[curr]) };
 
             return { ...acc, [curr]: dataRaw[curr] };
-        }, {...dataRaw});
+        }, {});
 
         const entry = {
           ...data,

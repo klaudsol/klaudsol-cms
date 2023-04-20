@@ -123,52 +123,6 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
-  const getFilesToDelete = (values, filesToDelete) => {
-    const files = Object.keys(values).filter((value) => values[value] instanceof File);
-    const keys = files.map((file) => state.values[file].key);
-    
-    return keys;
-  };
-
-  // Get items of values as well
-  const getMultipleValueAttributes = () => {
-    const { values } = state;
-    const attributes = Object.keys(values).filter((value) => values[value] instanceof Array);
-
-    return attributes;
-  }
-
-  const getToDelete = (values, attributes) => {
-    const toDelete = attributes.reduce((acc, curr) => {
-        const stateList = state.values[curr];
-        const valuesList = values[curr];
-
-        const itemsToDeleteRaw = stateList.filter((item) => !valuesList.includes(item));
-        const itemsToDelete = itemsToDeleteRaw.map((item) => item.key);
-
-        if (itemsToDelete.length === 0) return acc;
-
-        return [...acc, { attribute: curr, toDelete: itemsToDelete }];
-    }, []);
-
-    return toDelete;
-  }
-
-  const getValuesToAdd = (values, attributes) => {
-    const toAdd = attributes.reduce((acc, curr) => {
-        const stateList = state.values[curr].map((item) => item.key);
-        const valuesList = values[curr].map((item) => item.key);
-
-        const itemsToAdd = valuesList.filter((item) => !stateList.includes(item));
-
-        if (itemsToAdd.length === 0) return acc;
-
-        return {...acc, [curr]: itemsToAdd}
-    }, {});
-
-    return toAdd;
-  }
-
   const formikParams = {
     innerRef: formRef,
     initialValues: getFormikInitialVals(),
@@ -177,36 +131,34 @@ export default function Type({ cache }) {
         try {
           // dispatch({ type: SAVING });
 
-          const multipleValueAttributes = getMultipleValueAttributes();
-          // const valuesToDelete = multipleValueAttributes.length > 0 && getToDelete(values, multipleValueAttributes);
+          const { data: dataRaw, fileNames, files } = await getBody(values);
 
-          const { data, fileNames, files } = await getBody(values);
-          const filesToDelete = getFilesToDelete(values);
-          const valuesToAdd = getValuesToAdd(values, multipleValueAttributes);
+          const data = Object.keys(dataRaw).reduce((acc, curr) => {
+              if (dataRaw[curr] instanceof Array) return { ...acc, [curr]: JSON.stringify(dataRaw[curr]) };
+
+              return { ...acc, [curr]: dataRaw[curr] };
+          }, {});
 
           const entry = {
             ...data,
-            valuesToAdd,
             fileNames,
-            filesToDelete,
             entity_type_slug,
             entity_id: id,
           };
 
-                    console.log(fileNames)
-          // const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
-          //   method: "PUT",
-          //   headers: {
-          //     "Content-type": "application/json",
-          //   },
-          //   body: JSON.stringify(entry),
-          // });
+          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(entry),
+          });
 
-          // const { message, presignedUrls } = await response.json();
-          //
-          // console.log(presignedUrls)
-          //
-          // if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
+          const { message, presignedUrls } = await response.json();
+
+          console.log(presignedUrls)
+
+          if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
           // dispatch({
           //   type: SET_MODAL_CONTENT,

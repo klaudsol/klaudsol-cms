@@ -60,7 +60,7 @@ async function get(req, res) {
                 ...collection.data,
                 ...(!collection.data.id && { id: item.id }),
                 ...(!collection.data.slug && { slug: item.entities_slug }),
-                ...((!collection.data[item.attributes_name] || item.atrributes_type !== 'gallery') && {
+                ...((!collection.data[item.attributes_name]) && {
                     [item.attributes_name]: resolveValue(item),
                 }),
             },
@@ -122,11 +122,10 @@ async function put(req, res) {
     (await assertUserCan(readContents, req)) &&
       (await assertUserCan(writeContents, req));
 
-    const { fileNames, filesToDelete, valuesToAdd, ...body } = req.body;
+    const { fileNames, ...body } = req.body;
     const { entity_id, entity_type_slug, ...entries } = body
-    await Entity.update({ entries, entity_type_slug, entity_id, valuesToAdd });
+    await Entity.update({ entries, entity_type_slug, entity_id });
 
-    if (filesToDelete.length > 0) deleteFilesFromBucket(filesToDelete);
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
     res.status(OK).json({ message: "Successfully created a new entry", presignedUrls });
