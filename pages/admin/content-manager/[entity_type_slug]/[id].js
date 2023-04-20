@@ -131,13 +131,7 @@ export default function Type({ cache }) {
         try {
           dispatch({ type: SAVING });
 
-          const { data: dataRaw, fileNames, files } = await getBody(values);
-
-          const data = Object.keys(dataRaw).reduce((acc, curr) => {
-              if (dataRaw[curr] instanceof Array) return { ...acc, [curr]: JSON.stringify(dataRaw[curr]) };
-
-              return { ...acc, [curr]: dataRaw[curr] };
-          }, {});
+          const { data, fileNames, files } = await getBody(values);
 
           const entry = {
             ...data,

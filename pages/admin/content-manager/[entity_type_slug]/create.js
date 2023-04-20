@@ -114,13 +114,7 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
-        const { data: dataRaw, files, fileNames } = await getBody(values);
-
-        const data = Object.keys(dataRaw).reduce((acc, curr) => {
-            if (dataRaw[curr] instanceof Array) return { ...acc, [curr]: JSON.stringify(dataRaw[curr]) };
-
-            return { ...acc, [curr]: dataRaw[curr] };
-        }, {});
+        const { data, files, fileNames } = await getBody(values);
 
         const entry = {
           ...data,
