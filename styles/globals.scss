@@ -1,3 +1,21 @@
+* {
+
+  &::-webkit-scrollbar-track {
+    background-color: #fff;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: #fff;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: lightgray;
+    border-radius: 10px
+  }
+}
+
 body {
   font-family: "Poppins", sans-serif;
   padding: 0;

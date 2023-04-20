@@ -43,14 +43,17 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
 
                  return !button.multiple ? 
                  <div className='sidebar_button_category_container' key={i}>
-                    <Link 
-                        key={i} 
-                        href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
-                        className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}
-                        passHref
-                    >
-                      {button.icon} {button.title}
-                    </Link>
+                    <div className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active' : 'sidebar_buttons')}>
+                        {button.icon} 
+                        <Link 
+                            key={i} 
+                            href={button.title === 'Content Manager' || button.title === 'Content-Type Builder' ? button.path + `${defaultEntityType}` : button.path} 
+                            className={cx(router.asPath?.includes?.(button.path) ? 'sidebar_buttons_active--link' : 'sidebar_buttons--link')}
+                            passHref
+                        >
+                          {button.title}
+                        </Link>
+                    </div>
                   </div>
                   :
                   <div className='sidebar_button_category_container' key={i}>

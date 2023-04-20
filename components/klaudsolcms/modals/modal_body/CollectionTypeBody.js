@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { Formik, Form, Field, useFormikContext, useField } from "formik";
+import { TOGGLE_ICONS_LIST, SET_CURRENT_ICON } from "@/lib/actions";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import { slsFetch } from '@klaudsol/commons/lib/Client';
 import RootContext from "@/components/contexts/RootContext";
@@ -12,7 +13,10 @@ export default function CollectionTypeBody({ formRef }) {
   const errorHandler = useClientErrorHandler();
 
   const formikParams = {
-    initialValues: {},
+    initialValues: {
+      name: "",
+      slug: "",
+    },
     innerRef: formRef,
     onSubmit: (values) => {
       (async () => {
