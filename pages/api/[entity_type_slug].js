@@ -68,7 +68,7 @@ async function get(req, res) {
                     ...(!collection.indexedData[item.id]?.slug && {
                         slug: item.entities_slug,
                     }),
-                    ...((!collection.indexedData[item.id]?.[item.attributes_name]) && {
+                    ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
                         [item.attributes_name]: resolveValue(item),
                     }),
                 },

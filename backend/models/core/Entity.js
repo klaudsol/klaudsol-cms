@@ -262,7 +262,7 @@ class Entity {
     return true;
   }
   //Work in progress
-  static async update({ entries, entity_type_slug, valuesToAdd, entity_id }) {
+  static async update({ entries, entity_type_slug, entity_id }) {
     const db = new DB();
     // entity_type_slug will always be a string
     // entity_id can be a string or a number
@@ -275,7 +275,7 @@ class Entity {
     //TODO: start transaction
     //Attribute Introspection
 
-    const entityIntrospectionSQL = `SELECT DISTINCT entities.id , attributes.id, attributes.name, attributes.type                 
+    const entityIntrospectionSQL = `SELECT entities.id , attributes.id, attributes.name, attributes.type                 
     FROM entities
     LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
     LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id

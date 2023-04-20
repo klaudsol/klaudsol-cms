@@ -1,18 +1,3 @@
-const formatMultipleValues = (collection, item, format = (item) => item ) => {
-    if (!item) return [];
-    
-    let prevValues;
-    if (collection?.indexedData) {
-        prevValues = collection.indexedData[item.id]?.[item.attributes_name] ?? [];
-    } else {
-        prevValues = collection.data[item.attributes_name] ?? [];
-    }
-
-    const newValues = [...prevValues, format(item.value_string)];
-
-    return newValues;
-}
-
 const formatImage = (key) => {
     if (!key) return;
 
