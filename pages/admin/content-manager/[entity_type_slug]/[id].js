@@ -129,7 +129,7 @@ export default function Type({ cache }) {
     onSubmit: (values) => {
       (async () => {
         try {
-          // dispatch({ type: SAVING });
+          dispatch({ type: SAVING });
 
           const { data: dataRaw, fileNames, files } = await getBody(values);
 
@@ -160,15 +160,15 @@ export default function Type({ cache }) {
 
           if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
-          // dispatch({
-          //   type: SET_MODAL_CONTENT,
-          //   payload: "You have successfully edited the entry.",
-          // });
-          // dispatch({ type: SET_SHOW, payload: true });
+          dispatch({
+            type: SET_MODAL_CONTENT,
+            payload: "You have successfully edited the entry.",
+          });
+          dispatch({ type: SET_SHOW, payload: true });
         } catch (ex) {
           errorHandler(ex);
         } finally {
-          // dispatch({ type: CLEANUP });
+          dispatch({ type: CLEANUP });
         }
       })();
     },

@@ -1,11 +1,12 @@
 import { useRef } from "react";
-import { useFormikContext, useField } from "formik";
 import Image from "next/image";
+import { useFormikContext, useField } from "formik";
 import { FaTrash } from "react-icons/fa";
+import { BiUpload } from "react-icons/bi";
 import { generateRandVals } from "@klaudsol/commons/lib/Math";
 
 const GalleryField = (props) => {
-    const { setFieldValue, setTouched, touched } = useFormikContext();
+    const { setFieldValue, setTouched, touched, errors } = useFormikContext();
 
     const [field] = useField(props);
     const { onChange, value, ...formattedField } = field;
@@ -26,7 +27,7 @@ const GalleryField = (props) => {
     };
 
     const openUploadMenu = (e) => {
-        if (e.target.nodeName === 'path' || e.target.nodeName === 'svg' || e.target.nodeName === "BUTTON") return;
+        console.log(e);
         inputRef.current.click();
 
         const checkIfUnfocused = () => {
@@ -39,7 +40,7 @@ const GalleryField = (props) => {
     };
 
     const removeItem = (key) => {
-        const newFiles = files.filter((file) => file.key !== key);
+        const newFiles = value.filter((file) => file.key !== key);
 
         setFieldValue(field.name, newFiles);
     }
@@ -54,13 +55,15 @@ const GalleryField = (props) => {
                 ref={inputRef}
                 {...formattedField}
             />
-            <div
-                className="card__container"
-                onClick={openUploadMenu}
-            >
-                {(!(value instanceof Array) || value.length === 0) && <p>UPLOAD HERE</p>}
-                {(value instanceof Array && value.length > 0) &&
-                    value.map((image, i) => (
+            {(!(value instanceof Array) || value.length === 0) && 
+                <div className={`image-box ${errors[props.name] && touched[props.name] ? 'image-box--error' : ""}`} onClick={openUploadMenu}>
+                    <BiUpload className="image-box__icon"/>
+                    <p className="image-box__text"> Drop files here or click to upload </p>
+                </div>
+            }
+            {(value instanceof Array && value.length > 0) &&
+                <div className="card__container" onClick={openUploadMenu} >
+                    {value.map((image, i) => (
                         <div
                             key={i}
                             className="card__item"
@@ -83,9 +86,9 @@ const GalleryField = (props) => {
                                 <div className="card__data">{image.name}</div>
                             </div>
                         </div>
-                    ))
-                }
-            </div>
+                    ))}
+                </div>
+            }
         </>
     );
 };

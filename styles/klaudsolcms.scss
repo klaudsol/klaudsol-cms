@@ -925,6 +925,37 @@ $onFocus: #323C4E;
 
 /**
 ===============================================
+            IMAGE BOX STYLES
+===============================================
+
+**/
+
+.image-box {
+    color: lightgray;
+    border: 5px dashed lightgray;
+    border-radius: 15px;
+    margin: 15px 0;
+    padding: 20px;
+    text-align: center;
+    cursor: default;
+
+    &__icon {
+        font-size: 400px;
+    }
+
+    &__text {
+        font-size: 24px;
+    }
+
+    &--error {
+        color: red;
+        border: 5px dashed red;
+    }
+
+}
+
+/**
+===============================================
             MEDIA LIBRARY STYLES
 ===============================================
 
