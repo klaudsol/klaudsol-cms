@@ -1,12 +1,7 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { useFormikContext, useField } from "formik";
 import Image from "next/image";
-import AppButtonLg from "../klaudsolcms/buttons/AppButtonLg";
-import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
-import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaTrash } from "react-icons/fa";
-import { useEffect } from "react";
-import { SET_CHANGED } from "@/lib/actions"
 import { generateRandVals } from "@klaudsol/commons/lib/Math";
 
 const GalleryField = (props) => {
@@ -14,9 +9,6 @@ const GalleryField = (props) => {
 
     const [field] = useField(props);
     const { onChange, value, ...formattedField } = field;
-
-    const [files, setFiles] = useState(value || []);
-    const [showDelete, setDelete] = useState(false);
 
     const inputRef = useRef();
 
@@ -28,9 +20,8 @@ const GalleryField = (props) => {
         const randVal = await generateRandVals(5); // For deletion
         file.key = `${randVal}_${file.name}`
 
-        const newFiles = [...files, file];
+        const newFiles = [...value, file];
 
-        setFiles(newFiles);
         setFieldValue(field.name, newFiles);
     };
 
@@ -50,7 +41,6 @@ const GalleryField = (props) => {
     const removeItem = (key) => {
         const newFiles = files.filter((file) => file.key !== key);
 
-        setFiles(newFiles);
         setFieldValue(field.name, newFiles);
     }
 
@@ -68,9 +58,9 @@ const GalleryField = (props) => {
                 className="card__container"
                 onClick={openUploadMenu}
             >
-                {value.length === 0 && <p>UPLOAD HERE</p>}
-                {value.length > 0 &&
-                    files.map((image, i) => (
+                {(!(value instanceof Array) || value.length === 0) && <p>UPLOAD HERE</p>}
+                {(value instanceof Array && value.length > 0) &&
+                    value.map((image, i) => (
                         <div
                             key={i}
                             className="card__item"
