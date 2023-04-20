@@ -114,7 +114,7 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
-        const { data, files, fileNames } = await getBody(values);
+        const { data, fileNames, files } = await getBody(values);
 
         const entry = {
           ...data,
