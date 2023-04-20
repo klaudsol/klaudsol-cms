@@ -25,7 +25,7 @@ const formatImage = (key) => {
     return { name, key, link }
 }
 
-  export const resolveValue = (collection, item) => {
+  export const resolveValue = (item) => {
     switch(item.attributes_type) {
       case 'text':
       case 'link':
@@ -38,9 +38,10 @@ const formatImage = (key) => {
         
         return imageValues;
       case 'gallery':
-        const galleryValues = formatMultipleValues(collection, item, formatImage);
+        if(!item.value_long_string) return;
 
-        if (!galleryValues[0]) return [];
+        const galleryValuesRaw = JSON.parse(item.value_long_string);
+        const galleryValues = galleryValuesRaw.map((item) => formatImage(item));
 
         return galleryValues;
       case 'float':

@@ -121,7 +121,6 @@ export default function CreateNewEntry({ cache }) {
 
             return { ...acc, [curr]: dataRaw[curr] };
         }, {...dataRaw});
-        console.log(data)
 
         const entry = {
           ...data,
