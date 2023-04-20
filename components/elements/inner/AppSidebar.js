@@ -44,16 +44,6 @@ const AppSidebar = () => {
     else if (iconData) setIconData(false);
   };
 
-  const entityTypeLinks = rootState.entityTypes.map(type => {
-    const Icon = Icons[type.entity_type_icon];
-    const iconData = { slug: type.entity_type_slug, icon: type.entity_type_icon}
-
-    return {
-      title: type.entity_type_name,
-      path: `/admin/content-manager/${type.entity_type_slug}`,
-      icon: <Icon onClick={() => !rootState.collapse && setIconData(iconData)} className='sidebar_button_icon'/>
-    }
-  });
 
   const pluginMenuLinks = pluginMenus.menus.map(plugin => {
     const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
@@ -65,12 +55,14 @@ const AppSidebar = () => {
     ;
   }).filter(x => x);
 
+  const entityTypeLinks = (capabilities.includes(writeContents) ? rootState.entityTypes.map(type => {
+    const Icon = Icons[type.entity_type_icon ?? "BiPen"];
 
-  const entityTypeLinks = (capabilities.includes(writeContents) ? rootState.entityTypes.map(type => ({
+    return {
       title: type.entity_type_name,
       path: `/admin/content-manager/${type.entity_type_slug}`,
-      icon: <BiPen className='sidebar_button_icon'/>
-    })) : 
+      icon: <Icon className='sidebar_button_icon'/>
+    }}) : 
     []
   );
   
