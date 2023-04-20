@@ -14,14 +14,20 @@ const GalleryField = (props) => {
     const inputRef = useRef();
 
     const setFileValue = async (e) => {
-        const file = e.target.files[0];
+        const files = Array.from(e.target.files);
 
-        if (!file) return;
+        if (!files || files.length === 0) return;
 
-        const randVal = await generateRandVals(5); // For deletion
-        file.key = `${randVal}_${file.name}`
+        const filesFormatted = files.map(async (file) => {
+            const randVal = await generateRandVals(5); // For deletion
+            file.key = `${randVal}_${file.name}`
 
-        const newFiles = [...value, file];
+            return file;
+        });
+
+        const filesList = await Promise.all(filesFormatted);
+
+        const newFiles = [...value, ...filesList];
 
         setFieldValue(field.name, newFiles);
     };
@@ -58,6 +64,7 @@ const GalleryField = (props) => {
                 onChange={setFileValue}
                 hidden="hidden"
                 ref={inputRef}
+                multiple="multiple"
                 {...formattedField}
             />
             {(!(value instanceof Array) || value.length === 0) && 
