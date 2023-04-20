@@ -14,7 +14,7 @@ const S3_SECRET_ACCESS_KEY =
 const REGION =
   process.env.KS_S3_REGION ??
   process.env.KS_AWS_REGION ??
-  process.env.AURORA_AWS_REGION;
+  process.env.AURORA_AWS_REGION ?? 'us-east-1';
 const S3_BUCKET = process.env.KS_S3_BUCKET;
 
 const s3Config = {

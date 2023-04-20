@@ -1,0 +1,13 @@
+
+{
+  "up":[
+    "CREATE TABLE IF NOT EXISTS `settings`  (",
+    " `key` varchar(255) NOT NULL,",
+    " `value` TEXT NOT NULL,",
+    "  PRIMARY KEY (`key`)",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+  ],
+  "down": [
+    "DROP TABLE `settings`"
+  ]
+}

@@ -45,10 +45,13 @@ import {
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
 import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
+
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
+import { useClientErrorHandler } from "@/components/hooks"
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
+  const errorHandler = useClientErrorHandler();
   const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
@@ -70,7 +73,9 @@ export default function ContentManager({ cache }) {
 
         const valuesRaw = await slsFetch(
           `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`,
-          { signal: controllerRef.current?.signal }
+          { 
+            signal: controllerRef.current?.signal,
+          }
         );
           
         const values = await valuesRaw.json();
@@ -94,7 +99,7 @@ export default function ContentManager({ cache }) {
         dispatch({ type: SET_VALUES, payload: entries });
         controllerRef.current = null;
       } catch (ex) {
-        console.log(ex)
+        errorHandler(ex);
       } finally {
         !controllerRef.current && dispatch({ type: CLEANUP });
         !controllerRef.current && dispatch({ type: SET_FIRST_FETCH, payload: false });       

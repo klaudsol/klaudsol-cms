@@ -1,0 +1,13 @@
+
+{
+  "up": [
+    "SELECT '",
+      "This is an example of a multiline up migration. ", 
+      "This may be an INSERT or CREATE TABLE statement. ",
+      "If you provide an array of text, the system will just ",
+      "join these arrays.",
+    "'"
+  ],
+  
+  "down": "SELECT 'This is a sample down migration. This may be a DELETE or a DROP TABLE statement.'" 
+}

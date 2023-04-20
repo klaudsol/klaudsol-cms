@@ -23,105 +23,76 @@ SOFTWARE.
 
 **/
 
-import Entity from "@backend/models/core/Entity";
+import Entity from "@/backend/models/core/Entity";
 import {
   deleteFilesFromBucket,
-  updateFilesFromBucket,
-  generateS3ParamsForDeletion,
   generatePresignedUrls,
-  generateEntries,
 } from "@/backend/data_access/S3";
 import { withSession } from "@klaudsol/commons/lib/Session";
-import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
 import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";
-import { setCORSHeaders } from "@klaudsol/commons/lib/API";
+import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert, assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { readContents, writeContents } from "@/lib/Constants";
 
-export default withSession(handler);
-
-async function handler(req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        return await get(req, res);
-      case "PUT":
-        return await update(req, res);
-      case "DELETE":
-        return await del(req, res);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
+export default withSession(handleRequests({ get, del, put }));
 
 async function get(req, res) {
-  try {
     await assertUserCan(readContents, req);
 
     const { entity_type_slug, id: slug } = req.query;
-
     const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
     const initialFormat = {
-      data: {},
-      metadata: {
-        attributes: {},
-      },
+        data: {},
+        metadata: {
+            attributes: {},
+        },
     };
 
     //Priority is the first entry in the collection, to make the
     //system more stable. Suceeding entries that are inconsistent are discarded.
     const output = rawData.reduce((collection, item) => {
-      return {
-        data: {
-          ...collection.data,
-          ...(!collection.data.id && { id: item.id }),
-          ...(!collection.data.slug && { slug: item.entities_slug }),
-          ...(!collection.data[item.attributes_name] && {
-            [item.attributes_name]: resolveValue(item),
-          }),
-        },
-        metadata: {
-          ...collection.metadata,
-          ...(!collection.metadata.type && { type: item.entity_type_slug }),
-          ...(!collection.metadata.id && {
-            entity_type_id: item.entity_type_id,
-          }),
-          attributes: {
-            ...collection.metadata.attributes,
-            ...(!collection.metadata.attributes[item.attributes_name] && {
-              [item.attributes_name]: {
-                type: item.attributes_type,
-                order: item.attributes_order,
-              },
-            }),
-          },
-        },
-      };
+        return {
+            data: {
+                ...collection.data,
+                ...(!collection.data.id && { id: item.id }),
+                ...(!collection.data.slug && { slug: item.entities_slug }),
+                ...(!collection.data[item.attributes_name] && {
+                    [item.attributes_name]: resolveValue(item),
+                }),
+            },
+            metadata: {
+                ...collection.metadata,
+                ...(!collection.metadata.type && { type: item.entity_type_slug }),
+                ...(!collection.metadata.id && {
+                    entity_type_id: item.entity_type_id,
+                }),
+                attributes: {
+                    ...collection.metadata.attributes,
+                    ...(!collection.metadata.attributes[item.attributes_name] && {
+                        [item.attributes_name]: {
+                            type: item.attributes_type,
+                            order: item.attributes_order,
+                        },
+                    }),
+                },
+            },
+        };
     }, initialFormat);
 
     output.metadata.hash = createHash(output);
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
-    rawData
-      ? res.status(OK).json(output ?? [])
-      : res.status(NOT_FOUND).json({});
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+    rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
 async function del(req, res) {
-  try {
     await assert(
-      {
-        loggedIn: true,
-      },
-      req
+        {
+            loggedIn: true,
+        },
+        req
     );
 
     (await assertUserCan(readContents, req)) &&
@@ -130,25 +101,21 @@ async function del(req, res) {
     const { entity_type_slug, id: slug } = req.query;
     const entity = await Entity.findBySlugOrId({ entity_type_slug, slug });
     const imageNames = entity.flatMap((item) =>
-      item.attributes_type === "image" ? item.value_string : []
+        item.attributes_type === "image" ? item.value_string : []
     );
 
     if (imageNames.length > 0) await deleteFilesFromBucket(imageNames);
     await Entity.delete({ id: slug });
 
-    res.status(OK).json({ message: "Successfully delete the entry" });
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+    res.status(OK).json({ message: "Successfully deleted the entry" });
 }
 
-async function update(req, res) {
-  try {
+async function put(req, res) {
     await assert(
-      {
-        loggedIn: true,
-      },
-      req
+        {
+            loggedIn: true,
+        },
+        req
     );
 
     (await assertUserCan(readContents, req)) &&
@@ -158,11 +125,8 @@ async function update(req, res) {
     const { entity_id, entity_type_slug, ...entries } = body
     await Entity.update({ entries, entity_type_slug, entity_id });
 
-    if (toDelete.length > 0) deleteFilesFromBucket(toDelete);
+    //if (toDelete.length > 0) deleteFilesFromBucket(toDelete);
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
     res.status(OK).json({ message: "Successfully created a new entry", presignedUrls });
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
 }

@@ -26,67 +26,46 @@ SOFTWARE.
 import { withSession } from '@klaudsol/commons/lib/Session';
 import { defaultErrorHandler } from '@klaudsol/commons/lib/ErrorHandler';
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
+import { handleRequests } from '@klaudsol/commons/lib/API';
 import { OK } from '@klaudsol/commons/lib/HttpStatuses';
-import Attribute from '@backend/models/core/Attribute';
+import Attribute from '@/backend/models/core/Attribute';
 import { readContentTypes, writeContentTypes } from '@/lib/Constants';
 
-export default withSession(handler);
-
-async function handler(req, res) {
-  
-  try {
-    switch(req.method) {
-      case "DELETE":
-        return await del(req, res);
-      case "PUT":
-        return await update(req, res);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
+export default withSession(handleRequests({ del, put }));
 
 async function del(req, res) {
-  try{
-    
-    await assert({
-      loggedIn: true,
-     }, req);
+    await assert(
+        {
+            loggedIn: true,
+        },
+        req
+    );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
+    (await assertUserCan(readContentTypes, req)) &&
+        (await assertUserCan(writeContentTypes, req));
 
     const { slug: typeSlug, name } = req.query;
 
-    await Attribute.deleteWhere({type_slug: typeSlug, name});
+    await Attribute.deleteWhere({ type_slug: typeSlug, name });
 
-    res.status(OK).json({message: 'Successfully deleted the attribute.'}) 
-  }
-  catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+    res.status(OK).json({ message: "Successfully deleted the attribute." });
 }
 
-async function update(req, res) {
-  try{
-    
-    await assert({
-      loggedIn: true,
-     }, req);
+async function put(req, res) {
+    await assert(
+        {
+            loggedIn: true,
+        },
+        req
+    );
 
-    await assertUserCan(readContentTypes, req) &&
-    await assertUserCan(writeContentTypes, req);
-    
+    (await assertUserCan(readContentTypes, req)) &&
+        (await assertUserCan(writeContentTypes, req));
+
     const { slug: typeSlug, name } = req.query;
     const { attribute } = req.body;
 
-    await Attribute.updateWhere({type_slug: typeSlug, name, attribute});
+    await Attribute.updateWhere({ type_slug: typeSlug, name, attribute });
 
-    res.status(OK).json({message: 'Successfully updated the attribute.'}) 
-  }
-  catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }  
+    res.status(OK).json({message: 'Successfully updated the attribute.'})
 }

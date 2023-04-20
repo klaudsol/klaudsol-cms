@@ -1,6 +1,8 @@
 import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
+import { useClientErrorHandler } from "@/components/hooks"
+
 import { FaTrash } from "react-icons/fa";
 
 import React, { useEffect, useReducer, useContext, useRef } from "react";
@@ -38,6 +40,7 @@ import {  writeContentTypes } from "@/lib/Constants";
 
 export default function ContentTypeBuilder({ cache }) {
   const router = useRouter();
+  const errorHandler = useClientErrorHandler();
 
   const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
@@ -145,7 +148,7 @@ export default function ContentTypeBuilder({ cache }) {
 
         dispatch({ type: SET_ATTRIBUTES, payload: entries });
       } catch (ex) {
-        console.error(ex.stack);
+        errorHandler(ex);
       } finally {
         dispatch({ type: LOADING, payload: false });
       }
@@ -202,11 +205,15 @@ export default function ContentTypeBuilder({ cache }) {
         dispatch({ type: LOADING, payload: true });
         await slsFetch(`/api/entity_types/${typeSlug}`, {
           method: "DELETE",
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
         loadEntityTypes({ rootState, rootDispatch });
           
         router.push(`/admin`) 
       } catch (err) {
+        errorHandler(err);
       } finally {
         dispatch({ type: HIDE_DELETE_CONFIRMATION_MODAL })
         dispatch({ type: LOADING, payload: false });   
@@ -251,7 +258,7 @@ export default function ContentTypeBuilder({ cache }) {
             }
           );
         } catch (ex) {
-          console.error(ex);
+          errorHandler(ex);
         } finally {
           //dispatch({type: CLEANUP})
           await loadEntityType({

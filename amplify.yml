@@ -6,12 +6,18 @@ frontend:
         - yarn install
     build:
       commands:
-        - (env | grep -e KS_ >> .env.production) || true
-        - (env | grep -e NEXT_PUBLIC_ >> .env.production) || true
-        - (env | grep -e AURORA_ >> .env.production) || true
-        - (env | grep -e SECRET_COOKIE_PASSWORD >> .env.production) || true
-        - (env | grep -e FRONTEND_URL >> .env.production) || true
+        - (env | grep -e KS_ >> .env) || true
+        - (env | grep -e NEXT_PUBLIC_ >> .env) || true
+        - (env | grep -e AURORA_ >> .env) || true                   #remove in v4.0.0
+        - (env | grep -e SECRET_COOKIE_PASSWORD >> .env) || true    #remove in v4.0.0
+        - (env | grep -e FRONTEND_URL >> .env) || true              #remove in v4.0.0
+        - yarn run plugin pull
+        - yarn run plugin build
         - yarn run build
+        - yarn run db structure
+        - yarn run db seed
+        - yarn run db seed-demo
+        - yarn run db migrate
   artifacts:
     baseDirectory: .next
     files:

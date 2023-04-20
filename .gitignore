@@ -35,6 +35,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*
 
 # vercel
 .vercel
@@ -49,4 +50,9 @@ pages/plugins/*
 !pages/plugins/README.md
 pages/api/plugins/*
 !pages/api/plugins/README.md
+
+# klaudsol migrations
+db/migrations/plugins/*
+!db/migrations/plugins/.keep
+
 

@@ -1,6 +1,6 @@
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { defaultErrorHandler } from "@klaudsol/commons/lib/ErrorHandler";
-import { setCORSHeaders, parseFormData } from "@klaudsol/commons/lib/API";
+import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import {
   OK,
   NOT_FOUND,
@@ -18,148 +18,98 @@ import {
   updateFilesFromBucket,
   generateEntries,
   generateResource,
-  addFileToBucket
+  addFileToBucket,
 } from "@/backend/data_access/S3";
-import { TYPES_REGEX } from '@/components/renderers/validation/TypesRegex';
-import { readSettings, writeSettings } from '@/lib/Constants';
+import { TYPES_REGEX } from "@/components/renderers/validation/TypesRegex";
+import { readSettings, writeSettings } from "@/lib/Constants";
 
-export default withSession(handler);
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-async function handler(req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        return await get(req, res);
-      case "PUT":
-        const { req: parsedReq, res: parsedRes } = await parseFormData(
-          req,
-          res
-        );
-        return await update(parsedReq, parsedRes);
-      case "DELETE":
-        return await del(req, res);
-      default:
-        throw new Error(`Unsupported method: ${req.method}`);
-    }
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
-}
+export default withSession(handleRequests({ get, put, del }));
 
 async function get(req, res) {
-  try {
+  await assertUserCan(readSettings, req);
 
-    await assertUserCan(readSettings, req);
+  const { slug } = req.query;
 
-    const { slug } = req.query;
-   
-    const resourceData = await Setting.get({ slug });
-  
-    const resolvedResource = resolveResource(resourceData[0])
+  const resourceData = await Setting.get({ slug });
 
-    const output = {
-      data: resolvedResource,
-      metadata: {},
-    };
+  const resolvedResource = resolveResource(resourceData[0]);
 
-    output.metadata.hash = createHash(output);
-    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+  const output = {
+    data: resolvedResource,
+    metadata: {},
+  };
 
-    resourceData.length
-      ? res.status(OK).json(output)
-      : res.status(NOT_FOUND).json({});
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  output.metadata.hash = createHash(output);
+  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
+  resourceData.length
+    ? res.status(OK).json(output)
+    : res.status(NOT_FOUND).json({});
 }
 
 async function del(req, res) {
-  try {
-    
-    await assert(
-      {
-        loggedIn: true,
-      },
-      req
-    );
+  await assert(
+    {
+      loggedIn: true,
+    },
+    req
+  );
 
-    await assertUserCan(readSettings, req) &&
-    await assertUserCan(writeSettings, req);
+  (await assertUserCan(readSettings, req)) &&
+    (await assertUserCan(writeSettings, req));
 
-    const { slug } = req.query;
-    
-    const foundResource = await Setting.get({ slug });
-    const imageNames = foundResource.flatMap((item) =>
-      TYPES_REGEX.IMAGE.test(item.value) ? item.value : []
-    );
+  const { slug } = req.query;
 
-    if (imageNames.length > 0) {
-      const params = generateS3ParamsForDeletion(imageNames);
-      await deleteFilesFromBucket(params);
-    }
+  const foundResource = await Setting.get({ slug });
 
-    await Setting.delete({ slug });
+  await Setting.delete({ slug });
 
-    res.status(OK).json({ message: "Successfully deleted the entry" });
-  } catch (error) {
-    await defaultErrorHandler(error, req, res);
-  }
+  res.status(OK).json({ message: "Successfully deleted the entry" });
 }
 
-async function update (req, res) {
-  try {
-    await assert({
-        loggedIn: true,
-    }, req);
+async function put(req, res) {
+  await assert(
+    {
+      loggedIn: true,
+    },
+    req
+  );
 
-    await assertUserCan(readSettings, req) &&
-    await assertUserCan(writeSettings, req);
+  (await assertUserCan(readSettings, req)) &&
+    (await assertUserCan(writeSettings, req));
 
-    const { files, body: bodyRaw } = req;
-    const  entriesRaw  = JSON.parse(
-      JSON.stringify(bodyRaw)
-    );
+  const { files, body: bodyRaw } = req;
+  const entriesRaw = JSON.parse(JSON.stringify(bodyRaw));
 
-    const { toDeleteRaw, ...body } = entriesRaw;
-    const toDelete = toDeleteRaw.split(",");
-     
-    let updatedResource;
-    if (files.length) {
-      const params = generateS3ParamsForDeletion(toDelete);
+  const { toDeleteRaw, ...body } = entriesRaw;
+  const toDelete = toDeleteRaw.split(",");
 
-      await deleteFilesFromBucket(params);
-      const resFromS3 = await addFileToBucket(files[0]);
-      const entry = generateResource(resFromS3, files[0]);
-      
-      updatedResource = await Setting.update(entry) // receives name, key and type 
-    }
-    else if(body) {
-      updatedResource = await Setting.update(body) // receives name, key and type 
-    }
-    else{
-      return res.status(BAD_REQUEST).json({message:'undefined entry'})
-    }
-   
-  const resolvedResource = resolveResource(updatedResource[0])
-   
-    const output = {
-      data: resolvedResource,
-      metadata: {},
-    };
+  let updatedResource;
+  if (files.length) {
+    const params = generateS3ParamsForDeletion(toDelete);
 
-    output.metadata.hash = createHash(output);
-    setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+    await deleteFilesFromBucket(params);
+    const resFromS3 = await addFileToBucket(files[0]);
+    const entry = generateResource(resFromS3, files[0]);
 
-    updatedResource.length
+    updatedResource = await Setting.update(entry); // receives name, key and type
+  } else if (body) {
+    updatedResource = await Setting.update(body); // receives name, key and type
+  } else {
+    return res.status(BAD_REQUEST).json({ message: "undefined entry" });
+  }
+
+  const resolvedResource = resolveResource(updatedResource[0]);
+
+  const output = {
+    data: resolvedResource,
+    metadata: {},
+  };
+
+  output.metadata.hash = createHash(output);
+  setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
+
+  updatedResource.length
     ? res.status(OK).json(output)
     : res.status(NOT_FOUND).json({});
-} catch (error) {
-  await defaultErrorHandler(error, req, res);
-}
 }

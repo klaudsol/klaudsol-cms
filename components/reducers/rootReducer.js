@@ -4,13 +4,15 @@ import {
   SET_ENTITY_TYPES,
   SET_ENTITY_TYPE,
   SET_COLLAPSE,
-  SET_CURRENT_ENTITY_TYPE
+  SET_CURRENT_ENTITY_TYPE,
+  SET_IS_TOKEN_EXPIRED,
 } from '@/lib/actions';
 
 export const rootInitialState = {
   entityTypes: [],
   entityType: {},
-  currentContentType:{}
+  currentContentType:{},
+  isTokenExpired: false,
 };
 
 export const rootReducer = (state, action) => {
@@ -52,6 +54,11 @@ export const rootReducer = (state, action) => {
         return {
           ...state,
           currentContentType: action.payload
+        }
+      case SET_IS_TOKEN_EXPIRED:
+        return {
+          ...state,
+          isTokenExpired: action.payload
         }
       default:
         return state; 
