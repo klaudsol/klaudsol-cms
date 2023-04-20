@@ -10,7 +10,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
   const capabilities = useCapabilities();
 
   const formatSpecialDataTypes = (entry, accessor) => {
-    if (Array.isArray(entry[accessor])) return `${entry[accessor].length} item/s`; // Checks if its a value w/ multiple attributes
+    if (Array.isArray(entry[accessor])) return `${entry[accessor].length} item/s`; // Checks if its an attribute w/ multiple values
     else if (typeof entry[accessor] === "object" && entry[accessor]?.link) return entry[accessor]?.name; // Checks if its an image
 
     return entry[accessor];
