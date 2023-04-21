@@ -11,7 +11,7 @@ import { editProfile } from '@/lib/Constants';
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) {
-    await assertUserCan(editProfile);
+    // await assertUserCan(editProfile);
 
     const { firstName, lastName, email, isSameEmail } = req.body;
 
