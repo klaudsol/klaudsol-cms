@@ -15,7 +15,7 @@ async function get(req, res) {
     const { approved, pending } = req.query;
 
     if (approved) assertUserCan(readUsers);
-    else if (pending) assertUserCan(readPendingUsers);
+    if (pending) assertUserCan(readPendingUsers);
 
     const people = await People.getAll({ approved, pending });
 
