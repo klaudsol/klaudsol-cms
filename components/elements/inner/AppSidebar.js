@@ -1,5 +1,5 @@
 import { FaFeatherAlt, FaRegUser, FaPlus } from 'react-icons/fa';
-import { HiOutlineUser, HiOutlineUserGroup } from 'react-icons/hi';
+import { HiOutlineUser, HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi';
 import { BiPen, BiPlug } from 'react-icons/bi';
 import * as Icons from "react-icons/bi";
 import { RiSettings3Line } from 'react-icons/ri';
@@ -92,7 +92,7 @@ const AppSidebar = () => {
                 }: null,
                 capabilities.includes(readPendingUsers) ?
                 {subTitle:"Pending Users", 
-                 subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
+                 subIcon:<HiUserAdd className='sidebar_button_icon'/>,
                  subPath:"/admin/users/pending" 
                 }: null,
                 false && capabilities.includes(readGroups) ? 

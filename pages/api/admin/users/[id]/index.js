@@ -53,18 +53,6 @@ async function put(req, res) {
     res.status(OK).json({ message: 'Update successful!' });
 }
 
-// patch is appropriate since we're not replacing the whole row 
-// (and I also need another 'PUT' on the same route)
-async function patch(req, res) {
-    assertUserCan(writeUsers);
-
-    const { id } = req.query;
-
-    await People.approve({ id });
-
-    res.status(OK).json({ message: 'User approved.' });
-}
-
 async function del(req, res) {
     assertUserCan(writeUsers);
 
@@ -73,7 +61,7 @@ async function del(req, res) {
     await People.delete({ id });
     await PeopleGroups.delete({ id });
 
-    res.status(OK).json({ message: 'User rejected.' });
+    res.status(OK).json({ message: 'User deleted.' });
 }
 
 

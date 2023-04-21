@@ -7,7 +7,7 @@ import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataErro
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
-import { readPendingUsers, readUsers, writeUsers } from "@/lib/Constants";
+import { readPendingUsers, readUsers, writeGroups, writeUsers } from "@/lib/Constants";
 
 export default withSession(handleRequests({ get, post }));
 
@@ -30,7 +30,6 @@ async function get(req, res) {
 }
 
 async function post(req, res) {
-    assertUserCan(writeUsers);
 
     const { 
         firstName, 
@@ -43,6 +42,9 @@ async function post(req, res) {
         loginEnabled = false, 
         forcePasswordChange = false 
     } = req.body;
+
+    assertUserCan(writeUsers);
+    if (groups.length > 0) assertUserCan(writeGroups);
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');

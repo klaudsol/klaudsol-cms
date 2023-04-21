@@ -2,14 +2,22 @@ import Link from "next/link";
 import AppButtonSm from "../buttons/AppButtonSm";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { BiCheck, BiX } from "react-icons/bi";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AppButtonSpinner from "../AppButtonSpinner";
+import CacheContext from "@/components/contexts/CacheContext";
+import { approveUsers, rejectUsers } from "@/lib/Constants";
 
-const BASE_URL = '/api/admin/users';
+const BASE_URL = '/api/admin/users/pending';
 
-const UsersTable = ({ users, setUsers, token }) => {
+const UsersTable = ({ users, setUsers }) => {
     const [isLoading, setLoading] = useState(false);
     const [selected, setSelected] = useState(0);
+    const { capabilities } = useContext(CacheContext);
+
+    // I will be using these two multiple times, this is why
+    // I stored them in a variable
+    const canApproveUser = capabilities.includes(approveUsers);
+    const canRejectUser = capabilities.includes(rejectUsers);
 
     const setUserList = (id) => {
         const newUserList = users.filter((user) => user.id !== id);
@@ -21,14 +29,13 @@ const UsersTable = ({ users, setUsers, token }) => {
             setSelected(id);
             setLoading(true);
 
-            const url = `${BASE_URL}/${id}`;
             const params = {
-                method: 'PATCH',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 }
             }
-            await slsFetch(url, params);
+            await slsFetch(BASE_URL, params);
 
             setUserList(id);
         } catch (err) {
@@ -43,14 +50,13 @@ const UsersTable = ({ users, setUsers, token }) => {
             setSelected(id);
             setLoading(true);
 
-            const url = `${BASE_URL}/${id}`;
             const params = {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 }
             }
-            await slsFetch(url, params);
+            await slsFetch(BASE_URL, params);
 
             setUserList(id);
         } catch (err) {
@@ -69,7 +75,9 @@ const UsersTable = ({ users, setUsers, token }) => {
                         <th className="table--expand_first"> Name </th>
                         <th> Email </th>
                         <th> Created At </th>
-                        <th className="table--shrink_cell table--center_cell"> Approve / Reject </th>
+                        {(canApproveUser || canRejectUser) &&
+                            <th className="table--shrink_cell table--center_cell"> Approve / Reject </th>
+                        }
                     </tr>
                 </thead>
                 {/*table body*/}
@@ -79,25 +87,31 @@ const UsersTable = ({ users, setUsers, token }) => {
                             <td className="table--expand_first">{user.name}</td>
                             <td>{user.email}</td>
                             <td>{user.createdAt}</td>
-                            <td className="table--shrink_cell table--center_cell">
-                                {(!isLoading || (isLoading && (selected !== user.id))) &&
-                                    <>
-                                        <AppButtonSm
-                                            className="users__pending_button users__pending_button--approve"
-                                            icon={<BiCheck />}
-                                            onClick={() => approveUser(user.id)}
-                                            isDisabled={isLoading}
-                                        />
-                                        <AppButtonSm
-                                            className="users__pending_button users__pending_button--reject"
-                                            icon={<BiX />}
-                                            onClick={() => rejectUser(user.id)}
-                                            isDisabled={isLoading}
-                                        />
-                                    </>
-                                }
-                                {(isLoading && (selected === user.id)) && <AppButtonSpinner />}
-                            </td>
+                            {(canApproveUser || canRejectUser) &&
+                                <td className="table--shrink_cell table--center_cell">
+                                    {(!isLoading || (isLoading && (selected !== user.id))) &&
+                                        <>
+                                            {canApproveUser &&
+                                                <AppButtonSm
+                                                    className="users__pending_button users__pending_button--approve"
+                                                    icon={<BiCheck />}
+                                                    onClick={() => approveUser(user.id)}
+                                                    isDisabled={isLoading}
+                                                />
+                                            }
+                                            {canRejectUser &&
+                                                <AppButtonSm
+                                                    className="users__pending_button users__pending_button--reject"
+                                                    icon={<BiX />}
+                                                    onClick={() => rejectUser(user.id)}
+                                                    isDisabled={isLoading}
+                                                />
+                                            }
+                                        </>
+                                    }
+                                    {(isLoading && (selected === user.id)) && <AppButtonSpinner />}
+                                </td>
+                            }
                         </tr>
                     ))}
                 </tbody>
