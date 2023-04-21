@@ -41,7 +41,7 @@ export default function Type({ cache }) {
     const router = useRouter();
 
     const errorHandler = useClientErrorHandler();
-    const { token = null, capabilities = [] } = cache;
+    const { capabilities } = cache;
 
     const { entity_type_slug, id } = router.query;
     const formRef = useRef();

@@ -16,7 +16,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "lib/Constants";
+import { DEFAULT_SKELETON_ROW_COUNT, deleteUsers, writeUsers } from "lib/Constants";
 
 import {
     LOADING,
@@ -37,7 +37,7 @@ export default function UserInfo({ cache }) {
     const router = useRouter();
 
     const errorHandler = useClientErrorHandler();
-    const { token = null, capabilities = [] } = cache;
+    const { capabilities } = cache;
 
     const { entity_type_slug, id } = router.query;
     const formRef = useRef();
@@ -196,20 +196,22 @@ export default function UserInfo({ cache }) {
                         </div>
                         {!state.isLoading &&
                             <div className="d-flex flex-row justify-content-center">
-                                {capabilities.includes(writeUsers) && <><AppButtonLg
-                                    title="Delete"
-                                    icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon" />}
-                                    onClick={onDelete}
-                                    className="general-button-delete"
-                                    isDisabled={state.isDeleting || state.isSaving}
-                                />
+                                {capabilities.includes(writeUsers) &&
+                                    <AppButtonLg
+                                        title="Delete"
+                                        icon={state.isDeleting ? <AppButtonSpinner /> : <FaTrash className="general-button-icon" />}
+                                        onClick={onDelete}
+                                        className="general-button-delete"
+                                        isDisabled={state.isDeleting || state.isSaving}
+                                    />}
+                                {capabilities.includes(deleteUsers) &&
                                     <AppButtonLg
                                         title={state.isSaving ? "Saving" : "Save"}
                                         icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon" />}
                                         onClick={onSubmit}
                                         isDisabled={state.isSaving || state.isSaving}
                                         className="general-button-save"
-                                    /></>}
+                                    />}
                             </div>}
                         <div className="py-3"> </div>
                     </div>

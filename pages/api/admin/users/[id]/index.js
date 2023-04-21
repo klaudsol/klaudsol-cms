@@ -1,7 +1,7 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { createHash } from '@/lib/Hash';
-import { readUsers, writeUsers } from "@/lib/Constants";
+import { deleteUsers, readUsers, writeUsers } from "@/lib/Constants";
 import { assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
@@ -10,7 +10,7 @@ import People from '@klaudsol/commons/models/People';
 import Groups from '@klaudsol/commons/models/Groups';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 
-export default withSession(handleRequests({ get, put, patch, del }));
+export default withSession(handleRequests({ get, put, del }));
 
 async function get(req, res) {
     assertUserCan(readUsers);
@@ -53,8 +53,10 @@ async function put(req, res) {
     res.status(OK).json({ message: 'Update successful!' });
 }
 
+// Almost exactly the same code as DELETE /api/admin/users/pending
+// The difference is the permission and the message
 async function del(req, res) {
-    assertUserCan(writeUsers);
+    assertUserCan(deleteUsers);
 
     const { id } = req.query;
 
