@@ -81,6 +81,27 @@ const AppSidebar = () => {
       }
     ]
     }),
+    ({
+      multiple: true,
+      title: "Admin",
+      path: "/admin",
+      subItems:[capabilities.includes(readUsers) ?
+                {subTitle:"Users", 
+                 subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
+                 subPath:"/admin/users" 
+                }: null,
+                capabilities.includes(readUsers) ?
+                {subTitle:"Pending Users", 
+                 subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
+                 subPath:"/admin/users/pending" 
+                }: null,
+                false && capabilities.includes(readGroups) ? 
+                {subTitle:"Groups",
+                 subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
+                 subPath:"/admin/groups"
+                } : null].filter(item => item),
+      icon: <AiOutlineLock className='sidebar_button_icon'/>
+    }),
     {
       title: "Profile",
       path: "/admin/me",
@@ -91,22 +112,6 @@ const AppSidebar = () => {
       path: "/admin/settings",
       icon: <RiSettings3Line className='sidebar_button_icon'/>
     }:null),
-    (false ? {
-      multiple: true,
-      title: "Admin",
-      subItems:[capabilities.includes(readUsers) ?
-                {subTitle:"Users", 
-                 subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
-                 subPath:"/admin/users" 
-                }: null,
-
-                capabilities.includes(readGroups) ? 
-                {subTitle:"Groups",
-                 subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
-                 subPath:"/admin/groups"
-                } : null].filter(item => item),
-      icon: <AiOutlineLock className='sidebar_button_icon'/>
-    }:null)
   ].filter(item => item);
 
     useEffect(() => { 
