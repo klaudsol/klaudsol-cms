@@ -108,7 +108,7 @@ export default function UserInfo({ cache }) {
                             </div>
                         </div>
                         <div className="d-flex flex-row justify-content-center">
-                            {capabilities.includes(writeUsers) &&
+                            {capabilities.includes(changeUserPassword) &&
                                 <>
                                     <AppButtonLg
                                         title="Cancel"
