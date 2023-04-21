@@ -11,6 +11,8 @@ import { canSignUp } from "@/lib/Constants";
 export default withSession(handleRequests({ post }));
 
 async function post(req, res) {
+    assertUserCan(canSignUp);
+
     const { 
         firstName, 
         lastName, 
@@ -22,8 +24,6 @@ async function post(req, res) {
         loginEnabled = false, 
         forcePasswordChange = false 
     } = req.body;
-
-    assertUserCan(canSignUp);
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
