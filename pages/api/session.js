@@ -66,8 +66,6 @@ async function del (req, res) {
     assertUserCan(canLogIn);
 
     const session_token = req?.user?.sessionToken ?? assertUserIsLoggedIn(req);
-    console.log(req?.user?.sessionToken);
-    console.log(req?.session.session_token);
 
     await Session.logout(session_token); 
     req.session.destroy();
