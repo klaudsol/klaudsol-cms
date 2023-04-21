@@ -6,7 +6,7 @@ import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataErro
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
-import {  canSignUp, writeGroups, writeUsers } from "@/lib/Constants";
+import { canSignUp } from "@/lib/Constants";
 
 export default withSession(handleRequests({ post }));
 
@@ -24,7 +24,6 @@ async function post(req, res) {
     } = req.body;
 
     assertUserCan(canSignUp);
-    if (groups.length > 0) assertUserCan(writeGroups);
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
