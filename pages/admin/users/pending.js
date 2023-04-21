@@ -24,7 +24,6 @@ export default function PendingUsers({ cache }) {
                 const params = {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${cache.token}`
                     }
                 }
                 const resRaw = await slsFetch(url, params);

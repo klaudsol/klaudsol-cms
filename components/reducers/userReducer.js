@@ -6,7 +6,7 @@ import {
     SET_GROUPS,
     SET_MODAL_CONTENT
 } from "@/lib/actions";
-import { useSetReducer } from "../hooks";
+import { useInitializeReducer } from "../hooks";
 
 export const initialState = {
     user: {},
@@ -53,7 +53,7 @@ export const reducer = (state, action) => {
 };
 
 const useUserReducer = () => {
-    const [state, setState] = useSetReducer(reducer, initialState);
+    const [state, setState] = useInitializeReducer(reducer, initialState);
 
     return [state, setState];
 }

@@ -51,7 +51,6 @@ export default function UserInfo({ cache }) {
                 const userParams = {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
                     }
                 }
 
@@ -59,7 +58,6 @@ export default function UserInfo({ cache }) {
                 const groupsParams = {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
                     }
                 }
 
@@ -96,7 +94,6 @@ export default function UserInfo({ cache }) {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
                 }
             }
 
@@ -130,7 +127,6 @@ export default function UserInfo({ cache }) {
                         body: JSON.stringify({ ...values, toAdd, toDelete, isSameEmail }),
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`
                         }
                     }
 

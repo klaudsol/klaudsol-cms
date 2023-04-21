@@ -4,6 +4,11 @@ export const CMS_TYPES = {
   FLOAT: "float",
   LINK: "link",
   IMAGE: "image",
+  // Not sure if I should include the password and the checkbox here
+  // since they are not attribute types. I included it so that
+  // The AdminRenderer component can function properly
+  PASSWORD: "password",
+  CHECKBOX: "checkbox"
 };
 
 // resources types

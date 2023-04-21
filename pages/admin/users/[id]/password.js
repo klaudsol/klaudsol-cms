@@ -1,4 +1,3 @@
-import CacheContext from "@/components/contexts/CacheContext";
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks";
@@ -60,7 +59,6 @@ export default function UserInfo({ cache }) {
                         body: JSON.stringify(values),
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`
                         }
                     }
 

@@ -21,12 +21,7 @@ export default function ApprovedUsers({ cache }) {
                 setLoading(true);
 
                 const url = `/api/admin/users?approved=true`;
-                const params = {
-                    headers: {
-                        Authorization: `Bearer ${cache.token}`,
-                    }
-                }
-                const resRaw = await slsFetch(url, params);
+                const resRaw = await slsFetch(url);
                 const { data } = await resRaw.json();
 
                 setUsers(data);

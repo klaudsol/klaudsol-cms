@@ -60,7 +60,6 @@ export default function Type({ cache }) {
                 const params = {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
                     }
                 }
 
@@ -100,7 +99,6 @@ export default function Type({ cache }) {
                         body: JSON.stringify(values),
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`
                         }
                     }
 
