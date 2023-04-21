@@ -11,7 +11,7 @@ export default withSession(handleRequests({ post, del }));
 async function post(req, res) {
     assertUserCan(approveUsers);
 
-    const { id } = req.query;
+    const { id } = req.body;
 
     await People.approve({ id });
 

@@ -16,7 +16,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { DEFAULT_SKELETON_ROW_COUNT, writeUsers } from "@/lib/Constants";
+import { DEFAULT_SKELETON_ROW_COUNT, writeGroups, writeUsers } from "@/lib/Constants";
 
 import {
     LOADING,
@@ -45,6 +45,8 @@ export default function Type({ cache }) {
 
     const { entity_type_slug, id } = router.query;
     const formRef = useRef();
+
+    if (!capabilities.includes(writeUsers)) router.push('/admin');
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -146,7 +148,7 @@ export default function Type({ cache }) {
                     <div className="py-4">
                         <div className="d-flex align-items-center justify-content-between">
                             <AppBackButton link={`/admin/users/`} onClick={() => handlePage(USER_INFO)} noLink={currentPage === ADD_GROUPS} />
-                            {currentPage === USER_INFO && <AppForwardButton onClick={() => handlePage(ADD_GROUPS)} text="Add groups" noLink={true} />}
+                            {(currentPage === USER_INFO && capabilities.includes(writeGroups)) && <AppForwardButton onClick={() => handlePage(ADD_GROUPS)} text="Add groups" noLink={true} />}
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
                             <div className="general-header"> Create user </div>

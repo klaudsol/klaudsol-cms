@@ -31,6 +31,7 @@ const UsersTable = ({ users, setUsers }) => {
 
             const params = {
                 method: 'POST',
+                body: JSON.stringify({ id }),
                 headers: {
                     'Content-Type': 'application/json',
                 }
@@ -50,13 +51,14 @@ const UsersTable = ({ users, setUsers }) => {
             setSelected(id);
             setLoading(true);
 
+            const url = `${BASE_URL}?id=${id}`;
             const params = {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 }
             }
-            await slsFetch(BASE_URL, params);
+            await slsFetch(url, params);
 
             setUserList(id);
         } catch (err) {

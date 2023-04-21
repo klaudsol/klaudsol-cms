@@ -15,7 +15,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { CUSTOM_PASSWORD, writeUsers } from "lib/Constants";
+import { changeUserPassword, CUSTOM_PASSWORD, writeUsers } from "lib/Constants";
 
 import {
     SAVING,
@@ -35,6 +35,8 @@ export default function UserInfo({ cache }) {
 
     const { entity_type_slug, id } = router.query;
     const formRef = useRef();
+
+    if (!capabilities.includes(changeUserPassword)) router.push('/admin');
 
     const onSubmit = (e) => {
         e.preventDefault();

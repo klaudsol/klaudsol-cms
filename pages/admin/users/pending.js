@@ -16,6 +16,10 @@ export default function PendingUsers({ cache }) {
     const [users, setUsers] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const errorHandler = useClientErrorHandler();
+    const router = useRouter();
+    const { capabilities } = cache;
+
+    if (!capabilities.includes(readPendingUsers)) router.push('/admin');
 
     useEffect(() => {
         (async () => {

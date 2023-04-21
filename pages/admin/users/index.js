@@ -9,11 +9,17 @@ import AppCreatebutton from "@/components/klaudsolcms/buttons/AppCreateButton";
 import UsersTable from "@/components/klaudsolcms/tables/UsersTable";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import { useClientErrorHandler } from "@/components/hooks";
+import { readUsers, writeUsers } from "@/lib/Constants";
+import { useRouter } from "next/router";
 
 export default function ApprovedUsers({ cache }) {
     const [isLoading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
+    const { capabilities } = cache;
     const errorHandler = useClientErrorHandler();
+    const router = useRouter();
+
+    if (!capabilities.includes(readUsers)) router.push('/admin');
 
     useEffect(() => {
         (async () => {
@@ -41,10 +47,12 @@ export default function ApprovedUsers({ cache }) {
                         <h3>Users</h3>
                         {isLoading && <AppButtonSpinner />}
                     </div>
-                    <AppCreatebutton
-                        link={`/admin/users/create`}
-                        title="Create new user"
-                    />
+                    {capabilities.includes(writeUsers) &&
+                        <AppCreatebutton
+                            link={`/admin/users/create`}
+                            title="Create new user"
+                        />
+                    }
                 </div>
                 <UsersTable users={users} />
             </InnerSingleLayout>

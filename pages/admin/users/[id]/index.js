@@ -39,6 +39,8 @@ export default function UserInfo({ cache }) {
     const errorHandler = useClientErrorHandler();
     const { capabilities } = cache;
 
+    if (!capabilities.includes(writeUsers)) router.push('/admin');
+
     const { entity_type_slug, id } = router.query;
     const formRef = useRef();
 
