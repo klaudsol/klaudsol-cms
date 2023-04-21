@@ -26,7 +26,6 @@ const UsersTable = ({ users, setUsers, token }) => {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
                 }
             }
             await slsFetch(url, params);
@@ -49,7 +48,6 @@ const UsersTable = ({ users, setUsers, token }) => {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
                 }
             }
             await slsFetch(url, params);
