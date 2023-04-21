@@ -16,7 +16,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { DEFAULT_SKELETON_ROW_COUNT, deleteUsers, writeUsers } from "lib/Constants";
+import { changeUserPassword, DEFAULT_SKELETON_ROW_COUNT, deleteUsers, writeUsers } from "lib/Constants";
 
 import {
     LOADING,
@@ -158,12 +158,14 @@ export default function UserInfo({ cache }) {
                     <div className="py-4">
                         <div className="d-flex align-items-center justify-content-between">
                             <AppBackButton link={`/admin/users/`} />
-                            <Link href={`/admin/users/${id}/password`}> {/* I just copied AppBackButton */}
-                                <button className="btn_back">
-                                    <FaArrowRight className='icon_general' />
-                                    Change Password
-                                </button>
-                            </Link>
+                            {capabilities.includes(changeUserPassword) &&
+                                <Link href={`/admin/users/${id}/password`}> {/* I just copied AppBackButton */}
+                                    <button className="btn_back">
+                                        <FaArrowRight className='icon_general' />
+                                        Change Password
+                                    </button>
+                                </Link>
+                            }
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-0 mx-0 px-0">
                             <div className="general-header"> Edit user </div>
@@ -203,7 +205,8 @@ export default function UserInfo({ cache }) {
                                         onClick={onDelete}
                                         className="general-button-delete"
                                         isDisabled={state.isDeleting || state.isSaving}
-                                    />}
+                                    />
+                                }
                                 {capabilities.includes(deleteUsers) &&
                                     <AppButtonLg
                                         title={state.isSaving ? "Saving" : "Save"}
@@ -211,7 +214,8 @@ export default function UserInfo({ cache }) {
                                         onClick={onSubmit}
                                         isDisabled={state.isSaving || state.isSaving}
                                         className="general-button-save"
-                                    />}
+                                    />
+                                }
                             </div>}
                         <div className="py-3"> </div>
                     </div>

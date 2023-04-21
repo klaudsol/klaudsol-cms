@@ -44,7 +44,6 @@ export default function UserInfo({ cache }) {
     const formikParams = {
         innerRef: formRef,
         initialValues: {
-            oldPassword: '',
             password: '',
             confirmPassword: '',
             forcePasswordChange: false,
@@ -100,7 +99,7 @@ export default function UserInfo({ cache }) {
                                 <div className="py-0 px-0 mb-3">
                                     <Formik {...formikParams}>
                                         <Form>
-                                            <PasswordForm setState={setState} defaultMode={CUSTOM_PASSWORD} changePass />
+                                            <PasswordForm setState={setState} defaultMode={CUSTOM_PASSWORD} />
                                         </Form>
                                     </Formik>
                                 </div>
