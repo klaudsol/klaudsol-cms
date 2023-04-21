@@ -5,10 +5,14 @@ import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
+import { assertUserCan } from '@klaudsol/commons/lib/Permissions';
+import { editProfile } from '@/lib/Constants';
 
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) {
+    await assertUserCan(editProfile);
+
     const { firstName, lastName, email, isSameEmail } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
