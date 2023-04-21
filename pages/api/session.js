@@ -63,9 +63,14 @@ async function post (req, res) {
 }
 
 async function del (req, res) {
-    const session_token = assertUserIsLoggedIn(req);
-    await Session.logout(session_token); 
+    assertUserCan(canLogIn);
 
+    const session_token = req?.user?.sessionToken ?? assertUserIsLoggedIn(req);
+    console.log(req?.user?.sessionToken);
+    console.log(req?.session.session_token);
+
+    await Session.logout(session_token); 
     req.session.destroy();
+
     res.status(200).json({message: 'OK'});
 }
