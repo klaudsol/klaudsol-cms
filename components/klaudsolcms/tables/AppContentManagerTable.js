@@ -7,13 +7,19 @@ import { readContents } from "@/lib/Constants";
 
 const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
 
+  const MAX_STRING_LENGTH = 50;
   const capabilities = useCapabilities();
   // If entry is an object, chances are its a file uploaded to S3.
   // Files uploaded to S3 should have an originalname property
+
   const checkEntryIfObject = (entry, accessor) => {
     if (typeof entry[accessor] === "object") return entry[accessor]?.name;
     return entry[accessor];
   };
+
+  const truncate = (string)  => {
+    return (string?.length && string.length > MAX_STRING_LENGTH) ? `${string.slice(0, MAX_STRING_LENGTH)}...` : string;   
+  }
 
   return (
     <div id="table_general_main">
@@ -49,7 +55,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
                   key={index}
                   disabled={!capabilities.includes(readContents)}
                 >
-                  <td key={index}>{checkEntryIfObject(entry, col.accessor)}</td>
+                  <td key={index}>{truncate(checkEntryIfObject(entry, col.accessor))}</td>
                 </Link>
               ))}
             </tr>
