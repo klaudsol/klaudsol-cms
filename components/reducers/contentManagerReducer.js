@@ -101,7 +101,7 @@ export const contentManagerReducer = (state, action) => {
     case TOGGLE_VIEW:
       return {
         ...state,
-        view: state.view === 'list' ? 'icon' : 'list'
+        view: action.payload       
       };
   }
 };
