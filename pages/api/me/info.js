@@ -21,7 +21,7 @@ async function put(req, res) {
         if (existingUser) throw new UserAlreadyExists();
     }
 
-    const sessionToken = req?.user?.sessionToken ?? req.session.session_token;
+    const sessionToken = req?.user?.sessionToken ?? req?.session?.session_token;
 
     const session = await Session.getSession(sessionToken);
     const userInfo = {
