@@ -37,7 +37,7 @@ async function post(req, res) {
         email, 
         password, 
         confirmPassword, 
-        groups, 
+        groups = [], 
         approved = false,
         loginEnabled = false, 
         forcePasswordChange = false 
