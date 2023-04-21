@@ -36,7 +36,7 @@ import { editProfile } from '@/lib/Constants';
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) { 
-    assertUserCan(editProfile);
+    await assertUserCan(editProfile);
 
     const session_token = req?.user?.sessionToken ?? req?.session?.session_token;
     const { currentPassword, newPassword, confirmNewPassword } = req.body; 
