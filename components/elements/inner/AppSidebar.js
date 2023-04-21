@@ -17,7 +17,7 @@ import CollapsedSidebar from './sidebar/CollapsedSidebar';
 import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
-import { writeSettings, writeContentTypes, readUsers,  readGroups, writeContents } from "@/lib/Constants";
+import { writeSettings, writeContentTypes, readUsers,  readGroups, writeContents, readPendingUsers } from "@/lib/Constants";
 import { loadEntityTypes } from '@/components/reducers/actions';
 import pluginMenus from '@/plugin-menus.json';
 
@@ -90,7 +90,7 @@ const AppSidebar = () => {
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
                  subPath:"/admin/users" 
                 }: null,
-                capabilities.includes(readUsers) ?
+                capabilities.includes(readPendingUsers) ?
                 {subTitle:"Pending Users", 
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
                  subPath:"/admin/users/pending" 

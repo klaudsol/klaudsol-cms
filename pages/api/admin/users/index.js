@@ -1,16 +1,21 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { createHash } from '@/lib/Hash';
+import { assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
+import { readPendingUsers, readUsers, writeUsers } from "@/lib/Constants";
 
 export default withSession(handleRequests({ get, post }));
 
 async function get(req, res) {
     const { approved, pending } = req.query;
+
+    if (approved) assertUserCan(readUsers);
+    else if (pending) assertUserCan(readPendingUsers);
 
     const people = await People.getAll({ approved, pending });
 
@@ -25,6 +30,8 @@ async function get(req, res) {
 }
 
 async function post(req, res) {
+    assertUserCan(writeUsers);
+
     const { 
         firstName, 
         lastName, 

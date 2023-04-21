@@ -1,6 +1,8 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { createHash } from '@/lib/Hash';
+import { readUsers, writeUsers } from "@/lib/Constants";
+import { assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
@@ -11,6 +13,8 @@ import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 export default withSession(handleRequests({ get, put, patch, del }));
 
 async function get(req, res) {
+    assertUserCan(readUsers);
+
     const { id } = req.query;
     const person = await People.get({ id });
     const groups = await Groups.findByUser({ id });
@@ -26,6 +30,8 @@ async function get(req, res) {
 }
 
 async function put(req, res) {
+    assertUserCan(writeUsers);
+
     const { id } = req.query; 
     const { firstName, lastName, forcePasswordChange, loginEnabled, approved, email, isSameEmail, toAdd, toDelete } = req.body;
 
@@ -50,6 +56,8 @@ async function put(req, res) {
 // patch is appropriate since we're not replacing the whole row 
 // (and I also need another 'PUT' on the same route)
 async function patch(req, res) {
+    assertUserCan(writeUsers);
+
     const { id } = req.query;
 
     await People.approve({ id });
@@ -58,6 +66,8 @@ async function patch(req, res) {
 }
 
 async function del(req, res) {
+    assertUserCan(writeUsers);
+
     const { id } = req.query;
 
     await People.delete({ id });

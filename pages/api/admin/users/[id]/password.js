@@ -1,5 +1,7 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
+import { assertUserCan } from "@klaudsol/commons/lib/Permissions";
+import { writeUsers } from "@/lib/Constants";
 import { OK } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
 import People from '@klaudsol/commons/models/People';
@@ -7,6 +9,8 @@ import People from '@klaudsol/commons/models/People';
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) {
+    assertUserCan(writeUsers);
+
     const { id } = req.query;
     const { oldPassword, password, confirmPassword, forcePasswordChange } = req.body;
 
