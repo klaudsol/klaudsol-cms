@@ -19,7 +19,6 @@ async function post(req, res) {
         email, 
         password, 
         confirmPassword, 
-        groups = [], 
         approved = false,
         loginEnabled = false, 
         forcePasswordChange = false 
@@ -37,8 +36,6 @@ async function post(req, res) {
     if (existingUser) throw new UserAlreadyExists();
 
     const id = await People.createUser({ firstName, lastName, loginEnabled, approved, email, password, forcePasswordChange });
-
-    if (groups.length > 0) await PeopleGroups.connect({ id, groups });
 
     res.status(OK).json({ message: 'Signup successful!' });
 }
