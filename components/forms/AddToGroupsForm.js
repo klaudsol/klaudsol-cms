@@ -8,8 +8,11 @@ export default function AddToGroupsForm({ groups }) {
     const { values, errors, touched } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
 
-    const systemSupplied = groups.filter((group) => group.isSystemSupplied);
-    const userCreated = groups.filter((group) => !group.isSystemSupplied);
+    const { systemSupplied, userCreated } = groups.reduce((acc, group) => {
+        if (group.isSystemSupplied) return { ...acc, systemSupplied: [...acc.systemSupplied, group] }
+
+        return { ...acc, userCreated: [...acc.userCreated, group]}
+    }, { systemSupplied: [], userCreated: [] })
 
     return (
         <div>
