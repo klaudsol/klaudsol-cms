@@ -35,9 +35,10 @@ const AppSidebar = () => {
   const onModalSubmit = () => {
     if (formRef.current) {
       formRef.current.handleSubmit();
-      setCollectionTypeBodyVisible(false);
     }
+
   };
+
 
   const pluginMenuLinks = pluginMenus.menus.map(plugin => {
     const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
@@ -49,11 +50,14 @@ const AppSidebar = () => {
     ;
   }).filter(x => x);
 
-  const entityTypeLinks = (capabilities.includes(writeContents) ? rootState.entityTypes.map(type => ({
+  const entityTypeLinks = (capabilities.includes(writeContents) ? rootState.entityTypes.map(type => {
+    const Icon = Icons[type.entity_type_icon ?? "BiPen"];
+
+    return {
       title: type.entity_type_name,
       path: `/admin/content-manager/${type.entity_type_slug}`,
-      icon: <BiPen className='sidebar_button_icon'/>
-    })) : 
+      icon: <Icon className='sidebar_button_icon'/>
+    }}) : 
     []
   );
   

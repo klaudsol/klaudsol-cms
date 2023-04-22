@@ -2,6 +2,7 @@ import {
   SET_CLIENT_SESSION, 
   RESET_CLIENT_SESSION,
   SET_ENTITY_TYPES,
+  SET_ENTITY_TYPE,
   SET_COLLAPSE,
   SET_CURRENT_ENTITY_TYPE,
   SET_IS_TOKEN_EXPIRED,
@@ -19,7 +20,6 @@ export const rootReducer = (state, action) => {
     const { displayName = null, isLoggedIn = null} = action.payload ?? {};
     
     switch(action.type) {
-      
       case SET_CLIENT_SESSION: 
         return {
           ...state,
@@ -37,8 +37,7 @@ export const rootReducer = (state, action) => {
           entityTypes: action.payload.entityTypes,
           entityTypesHash: action.payload.entityTypesHash
         }
-
-      case 'SET_ENTITY_TYPE':
+      case SET_ENTITY_TYPE:
         return {
           ...state,
           entityType: {
@@ -46,25 +45,21 @@ export const rootReducer = (state, action) => {
             [action.payload.slug]: action.payload.entityType
           }
         }
-      
       case SET_COLLAPSE:
         return {
           ...state,
           collapse: action.payload,
         }
-      
       case SET_CURRENT_ENTITY_TYPE:
         return {
           ...state,
           currentContentType: action.payload
         }
-
       case SET_IS_TOKEN_EXPIRED:
         return {
           ...state,
           isTokenExpired: action.payload
         }
-        
       default:
         return state; 
       
