@@ -51,3 +51,8 @@ pages/plugins/*
 pages/api/plugins/*
 !pages/api/plugins/README.md
 
+# klaudsol migrations
+db/migrations/plugins/*
+!db/migrations/plugins/.keep
+
+
