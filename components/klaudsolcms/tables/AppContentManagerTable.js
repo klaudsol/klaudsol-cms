@@ -7,6 +7,7 @@ import { readContents } from "@/lib/Constants";
 
 const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
 
+  const MAX_STRING_LENGTH = 50;
   const capabilities = useCapabilities();
 
   const formatSpecialDataTypes = (entry, accessor) => {
@@ -15,6 +16,10 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
 
     return entry[accessor];
   };
+
+  const truncate = (string)  => {
+    return (string?.length && string.length > MAX_STRING_LENGTH) ? `${string.slice(0, MAX_STRING_LENGTH)}...` : string;   
+  }
 
   return (
     <div id="table_general_main">

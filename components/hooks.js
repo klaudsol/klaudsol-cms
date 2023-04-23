@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useReducer } from 'react';
 import RootContext from '@/components/contexts/RootContext';
 import CacheContext from '@/components/contexts/CacheContext';
 import { useRouter} from 'next/router'; 
@@ -21,6 +21,17 @@ export const useCapabilities = () => {
   const cache = useContext(CacheContext);
   return cache?.capabilities ?? [];
 };
+
+
+export const useInitializeReducer = (reducer, initialState) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+    
+  const setState = (type, payload) => {
+    dispatch({ type, payload });
+  }
+
+  return [state, setState];
+}
 
 export const useClientErrorHandler = () => {
   const { state, dispatch } = useContext(RootContext);
