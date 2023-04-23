@@ -14,8 +14,9 @@ const UsersTable = ({ users, setUsers }) => {
     const [selected, setSelected] = useState(0);
     const { capabilities } = useContext(CacheContext);
 
-    // I will be using these two multiple times, this is why
-    // I stored them in a variable
+    // The reason why I stored these two permissions on a 
+    // variable is because I will be using them multiple times
+    // across this file
     const canApproveUser = capabilities.includes(approveUsers);
     const canRejectUser = capabilities.includes(rejectUsers);
 
