@@ -11,7 +11,7 @@ import { canSignUp } from "@/lib/Constants";
 export default withSession(handleRequests({ post }));
 
 async function post(req, res) {
-    assertUserCan(canSignUp);
+    await assertUserCan(canSignUp, req);
 
     const { 
         firstName, 
