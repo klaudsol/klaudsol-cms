@@ -113,8 +113,8 @@ export default function ContentManager({ cache }) {
     dispatch({type: PAGE_SETS_RENDERER,payload: defaultPageRender});
   }, [entity_type_slug]);
 
-  const handleView = () => {
-    dispatch({ type: TOGGLE_VIEW })
+  const handleView = (view) => {
+    dispatch({ type: TOGGLE_VIEW, payload: view })
   }
 
   return (
@@ -156,7 +156,8 @@ export default function ContentManager({ cache }) {
                   id="dropdown_general"
                   isCheckbox={true}
                 />
-                <AppIconButton icon={state.view === 'icon' ? <FaList/> : <FaTh />} onClick={handleView}/>
+                <AppIconButton icon={<FaList/>} selected={state.view ==='list'} onClick={() => handleView('list')}/>
+                <AppIconButton icon={<FaTh />} selected={state.view === 'icon'} onClick={() => handleView('icon')}/>
                 {/* <AppIconButton icon={<BsGearFill/>} />  */}
               </div>
             </div>
