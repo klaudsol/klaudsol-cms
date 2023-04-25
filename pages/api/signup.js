@@ -18,10 +18,7 @@ async function post(req, res) {
         lastName, 
         email, 
         password, 
-        confirmPassword, 
-        approved = false,
-        loginEnabled = false, 
-        forcePasswordChange = false 
+        confirmPassword
     } = req.body;
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
@@ -35,7 +32,7 @@ async function post(req, res) {
 
     if (existingUser) throw new UserAlreadyExists();
 
-    const id = await People.createUser({ firstName, lastName, loginEnabled, approved, email, password, forcePasswordChange });
+    await People.createUser({ firstName, lastName, email, password, approved: false, loginEnabled: false, forcePasswordChange: false });
 
     res.status(OK).json({ message: 'Signup successful!' });
 }
