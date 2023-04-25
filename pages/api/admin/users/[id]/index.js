@@ -47,9 +47,15 @@ async function put(req, res) {
 
     await People.updateUserInfo({ id, firstName, lastName, forcePasswordChange, loginEnabled, approved, email });
 
-    if (toAdd.length > 0) await PeopleGroups.connect({ id, groups: toAdd });
-    if (toDelete.length > 0) await PeopleGroups.disconnect({ id, groups: toDelete });
-    // if approved false remove people groups
+    // If we approve a user, we automatically connect them with the "guest" group. But if we remove the "approve"
+    // status of a user, and then approve them again, the program will associate the user with the "guest" group
+    // again, making duplicates. 
+    if (!approved) {
+        await PeopleGroups.delete({ id });
+    } else {
+        if (toAdd.length > 0) await PeopleGroups.connect({ id, groups: toAdd });
+        if (toDelete.length > 0) await PeopleGroups.disconnect({ id, groups: toDelete });
+    }
 
     res.status(OK).json({ message: 'Update successful!' });
 }
