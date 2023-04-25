@@ -17,7 +17,7 @@ import CollapsedSidebar from './sidebar/CollapsedSidebar';
 import { SET_COLLAPSE } from '@/lib/actions';
 import RootContext from '@/components/contexts/RootContext';
 import { useCapabilities } from '@/components/hooks';
-import { writeSettings, writeContentTypes, readUsers,  readGroups, writeContents, readPendingUsers } from "@/lib/Constants";
+import { writeSettings, writeContentTypes, readUsers,  readGroups, writeContents, readPendingUsers, readAdmin } from "@/lib/Constants";
 import { loadEntityTypes } from '@/components/reducers/actions';
 import pluginMenus from '@/plugin-menus.json';
 
@@ -74,11 +74,6 @@ const AppSidebar = () => {
     []
   );
   
-  // These will be used multiple times
-  const canReadUsers = capabilities.includes(readUsers);
-  const canReadPendingUsers = capabilities.includes(readPendingUsers);
-  const canReadGroups = capabilities.includes(readGroups);
-
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
       multiple: true,
@@ -99,22 +94,22 @@ const AppSidebar = () => {
       }
     ]
     }),
-    ((canReadUsers || canReadPendingUsers || canReadGroups) && {
+    (capabilities.includes(readAdmin) && {
       multiple: true,
       title: "Admin",
       path: "/admin",
       icon: <AiOutlineLock className='sidebar_button_icon'/>,
-      subItems:[canReadUsers ?
+      subItems:[capabilities.includes(readUsers) ?
                 {subTitle:"Users", 
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
                  subPath:"/admin/users" 
                 }: null,
-                canReadPendingUsers ?
+                capabilities.includes(readPendingUsers) ?
                 {subTitle:"Pending Users", 
                  subIcon:<HiUserAdd className='sidebar_button_icon'/>,
                  subPath:"/admin/users/pending" 
                 }: null,
-                false && canReadGroups ? 
+                false && capabilities.includes(readGroups) ? 
                 {subTitle:"Groups",
                  subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
                  subPath:"/admin/groups"
