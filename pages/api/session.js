@@ -18,7 +18,7 @@ export default withSession(handleRequests({ post, del }));
 
 async function post (req, res) {
     // When assertUserCan can cater to OR statements, include canLogInToCms
-    assertUserCan(canLogIn);
+    await assertUserCan(canLogIn, req);
 
     const {email=null, password=null} = req.body; 
   
@@ -63,7 +63,7 @@ async function post (req, res) {
 }
 
 async function del (req, res) {
-    assertUserCan(canLogIn);
+    await assertUserCan(canLogIn, req);
 
     const session_token = req?.user?.sessionToken ?? assertUserIsLoggedIn(req);
 
