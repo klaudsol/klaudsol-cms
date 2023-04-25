@@ -48,6 +48,24 @@
       resize: none;
     } 
 
+    &-password {
+      position: relative;
+
+      &-box {
+        @include flex('start', 'center', 'row');
+        gap: 5px;
+        position: absolute;
+        top: 2px;
+        right: 10px;
+      }
+
+      &-button {
+        all: unset;
+        color: $dark-blue-1;
+        font-size: 24px;
+      }
+    }
+
     &-error {
       border: 1px solid red;
       outline: none;
