@@ -90,6 +90,7 @@ const AppSidebar = () => {
       multiple: true,
       title: "Admin",
       path: "/admin",
+      icon: <AiOutlineLock className='sidebar_button_icon'/>,
       subItems:[canReadUsers ?
                 {subTitle:"Users", 
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
@@ -104,8 +105,7 @@ const AppSidebar = () => {
                 {subTitle:"Groups",
                  subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
                  subPath:"/admin/groups"
-                } : null].filter(item => item),
-      icon: <AiOutlineLock className='sidebar_button_icon'/>
+                } : null].filter(item => item)
     }),
     {
       title: "Profile",
