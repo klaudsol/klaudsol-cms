@@ -1041,9 +1041,9 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git#v1.5.0":
-  version "1.5.0"
-  resolved "https://github.com/klaudsol/klaudsol-commons.git#b604e8bc210f5285d7dee6aa9aa68e9aa5f13c87"
+"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git#v1.6.0":
+  version "1.6.0"
+  resolved "https://github.com/klaudsol/klaudsol-commons.git#400750ec12770524d4e42c606743544d432e5ba4"
   dependencies:
     "@aws-sdk/client-sesv2" "3.288.0"
     aws-sdk "^2.1333.0"
@@ -1966,9 +1966,9 @@ aws-sdk@^2.1098.0:
     xml2js "0.4.19"
 
 aws-sdk@^2.1333.0:
-  version "2.1363.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1363.0.tgz#30c3b7fe999ee2ba1103a533ea27e1b0f5708e1f"
-  integrity sha512-M2MZZXehgi/EMQv5GlzRkn3TlhoOYHg2cYdSAAqhjv67WaEG50MjaQy5vRvfN1i8XvB24aJFJ5pCrx69TaCaIg==
+  version "2.1364.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1364.0.tgz#91392b071c412c71531636060dafe182f5fcf7f5"
+  integrity sha512-PFoq9Rnu0DVi07wZ/SjKlrJDwso8AxE5q/ufLdNtINZPaSkB92OqKYVdlfQ4srsH2ala2NCrg8gFX98SCmqW3w==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
