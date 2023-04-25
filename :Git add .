@@ -64,7 +64,7 @@ const AppSidebar = () => {
   // These will be used multiple times
   const canReadUsers = capabilities.includes(readUsers);
   const canReadPendingUsers = capabilities.includes(readPendingUsers);
-  const canReadGroups = capabilities.includes(readGroups);
+  const canReadGroups = capabilities.includes(canReadGroups);
 
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
@@ -90,7 +90,6 @@ const AppSidebar = () => {
       multiple: true,
       title: "Admin",
       path: "/admin",
-      icon: <AiOutlineLock className='sidebar_button_icon'/>,
       subItems:[canReadUsers ?
                 {subTitle:"Users", 
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
@@ -105,7 +104,8 @@ const AppSidebar = () => {
                 {subTitle:"Groups",
                  subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
                  subPath:"/admin/groups"
-                } : null].filter(item => item)
+                } : null].filter(item => item),
+      icon: <AiOutlineLock className='sidebar_button_icon'/>
     }),
     {
       title: "Profile",
