@@ -86,7 +86,7 @@
 }
 
 .sidebar_buttons,
-.sidebar_buttons_active,
+.sidebar_buttons_active
  {
     position: relative;
     background-color: #eceff1;
@@ -125,6 +125,27 @@
     color: #000;
     border: 1px solid lightgray;
   }
+
+.general-input-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    margin-left: 4px;
+
+    > * {
+        margin-right: 10px;
+    }
+
+    &__checkbox {
+        transform: scale(1.5);
+        accent-color: #455a64;
+    }
+
+    &__text {
+        font-size: 16px;
+    }
+}
 
 .sidebar_buttons:hover,
 .sidebar_buttons--link:hover {
@@ -587,6 +608,17 @@ $onFocus: #323C4E;
 
 /** BACK BUTTON **/
 
+.btn_text {
+    all: unset;
+    color: #455a64;
+    size: 12px;
+
+    &:hover {
+        color: #b0bec5;
+        transition: 0.1s;
+    }
+}
+
 .btn_back {
     border: transparent;
     background-color: transparent;
@@ -810,6 +842,53 @@ $onFocus: #323C4E;
   color: black;
 }
 
+#table_general td.table--expand_first,
+#table_general th.table--expand_first {
+    min-width: none;
+    max-width: none;
+}
+
+#table_general td.table--shrink_cell,
+#table_general th.table--shrink_cell {
+    min-width: 50px;
+    max-width: 50px;
+}
+
+#table_general td.table--center_cell,
+#table_general th.table--center_cell {
+    text-align: center;
+}
+/** 
+=================================================================
+                    USER TABLE STYLES
+=================================================================
+**/
+
+.users {
+    &__pending_button {
+        font-size: 20px;
+        padding: 0 5px;
+
+        &--approve {
+            &:hover {
+                border-color: #455a64;
+            }
+        }
+
+        &--reject {
+            color: #7C0A02;
+
+            &:hover {
+                border-color: #7C0A02;
+            }
+        }
+
+        &:hover {
+            transition: 0.2s;
+        }
+    }
+}
+
 /**
 ===============================================
             CARD VIEW STYLES
@@ -960,6 +1039,25 @@ $onFocus: #323C4E;
 
     &__item {
         font-size: 32px;
+    }
+}
+
+/**
+===============================================
+            GROUPS GRID STYLES
+===============================================
+**/
+
+.groups {
+    &__container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 2fr));
+        gap: 10px;
+    }
+
+    &__description {
+        font-size: 12px;
+        margin-left: 32px;
     }
 }
 
