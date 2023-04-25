@@ -9,7 +9,7 @@ import { approveUsers, rejectUsers } from "@/lib/Constants";
 export default withSession(handleRequests({ post, del }));
 
 async function post(req, res) {
-    assertUserCan(approveUsers);
+    await assertUserCan(approveUsers, req);
 
     const { id } = req.body;
 
@@ -21,7 +21,7 @@ async function post(req, res) {
 }
 
 async function del (req, res) {
-    assertUserCan(rejectUsers);
+    await assertUserCan(rejectUsers, req);
 
     const { id } = req.query;
 
