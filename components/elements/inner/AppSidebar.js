@@ -73,7 +73,12 @@ const AppSidebar = () => {
     }}) : 
     []
   );
-  
+
+   // These will be used multiple times
+  const canReadUsers = capabilities.includes(readUsers);
+  const canReadPendingUsers = capabilities.includes(readPendingUsers);
+  const canReadGroups = capabilities.includes(readGroups); 
+
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {
       multiple: true,
@@ -94,22 +99,22 @@ const AppSidebar = () => {
       }
     ]
     }),
-    (capabilities.includes(readAdmin) && {
+    ((canReadUsers || canReadPendingUsers || canReadGroups) && {
       multiple: true,
       title: "Admin",
       path: "/admin",
       icon: <AiOutlineLock className='sidebar_button_icon'/>,
-      subItems:[capabilities.includes(readUsers) ?
+      subItems:[canReadUsers ?
                 {subTitle:"Users", 
                  subIcon:<HiOutlineUser className='sidebar_button_icon'/>,
                  subPath:"/admin/users" 
                 }: null,
-                capabilities.includes(readPendingUsers) ?
+                canReadPendingUsers ?
                 {subTitle:"Pending Users", 
                  subIcon:<HiUserAdd className='sidebar_button_icon'/>,
                  subPath:"/admin/users/pending" 
                 }: null,
-                false && capabilities.includes(readGroups) ? 
+                false && canReadGroups ? 
                 {subTitle:"Groups",
                  subIcon:<HiOutlineUserGroup className='sidebar_button_icon'/>,
                  subPath:"/admin/groups"
