@@ -8,15 +8,12 @@ import { approveUsers, rejectUsers } from "@/lib/Constants";
 
 export default withSession(handleRequests({ post, del }));
 
-const GUEST_ID = 4;
-
 async function post(req, res) {
     assertUserCan(approveUsers);
 
     const { id } = req.body;
 
     await People.approve({ id });
-    await PeopleGroups.connect({ id, groups: [ GUEST_ID ] })
 
     res.status(OK).json({ message: 'User approved.' });
 }
