@@ -39,7 +39,6 @@ const AppSidebar = () => {
 
   };
 
-
   const pluginMenuLinks = pluginMenus.menus.map(plugin => {
     const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
     return capabilities.includes(plugin.capability) ? {
