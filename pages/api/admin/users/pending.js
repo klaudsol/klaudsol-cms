@@ -16,7 +16,7 @@ async function post(req, res) {
     const { id } = req.body;
 
     await People.approve({ id });
-    await PeopleGroups.connect({ id, groups: [GUEST_ID] })
+    await PeopleGroups.connect({ id, groups: [ GUEST_ID ] })
 
     res.status(OK).json({ message: 'User approved.' });
 }
