@@ -123,6 +123,13 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
+  const getFilesToDelete = (values) => {
+    const files = Object.keys(values).filter((value) => values[value] instanceof File);
+    const keys = files.map((file) => state.values[file].key);
+
+    return keys;
+  };
+
   const formikParams = {
     innerRef: formRef,
     initialValues: getFormikInitialVals(),
@@ -131,7 +138,8 @@ export default function Type({ cache }) {
         try {
           dispatch({ type: SAVING });
 
-          const { data, fileNames, files } = await getBody(values);
+          const { files, data, fileNames } = await getBody(values);
+          const toDelete = getFilesToDelete(values);
 
           const entry = {
             ...data,
