@@ -55,7 +55,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
                   key={index}
                   disabled={!capabilities.includes(readContents)}
                 >
-                  <td key={index}>{formatSpecialDataTypes(entry, col.accessor)}</td>
+                  <td key={index}>{truncate(formatSpecialDataTypes(entry, col.accessor))}</td>
                 </Link>
               ))}
             </tr>
