@@ -26,7 +26,7 @@ import {
 import { FaCheck } from "react-icons/fa";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
 import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
-import { uploadFilesToUrl } from "@/backend/data_access/S3";
+import { uploadFilesToUrl } from "@klaudsol/commons/lib/S3";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import classname from "classnames";
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";

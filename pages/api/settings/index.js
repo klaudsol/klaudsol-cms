@@ -5,7 +5,7 @@ import {
     generatePresignedUrls,
     deleteFilesFromBucket
 }
-    from "@/backend/data_access/S3";
+    from "@klaudsol/commons/lib/S3";
 import { resourceValueTypes } from "@/components/cmsTypes";
 import { setCORSHeaders, handleRequests } from '@klaudsol/commons/lib/API';
 import { OK, NOT_FOUND, BAD_REQUEST } from "@klaudsol/commons/lib/HttpStatuses";
