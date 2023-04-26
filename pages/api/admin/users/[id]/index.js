@@ -49,7 +49,6 @@ async function put(req, res) {
 
     if (toAdd.length > 0) await PeopleGroups.connect({ id, groups: toAdd });
     if (toDelete.length > 0) await PeopleGroups.disconnect({ id, groups: toDelete });
-    // if approved false remove people groups
 
     res.status(OK).json({ message: 'Update successful!' });
 }
