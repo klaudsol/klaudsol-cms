@@ -19,7 +19,7 @@ import {
   generateEntries,
   generateResource,
   addFileToBucket,
-} from "@/backend/data_access/S3";
+} from "@klaudsol/commons/lib/S3";
 import { TYPES_REGEX } from "@/components/renderers/validation/TypesRegex";
 import { readSettings, writeSettings } from "@/lib/Constants";
 

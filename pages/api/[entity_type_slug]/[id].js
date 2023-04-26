@@ -27,7 +27,7 @@ import Entity from "@/backend/models/core/Entity";
 import {
   deleteFilesFromBucket,
   generatePresignedUrls,
-} from "@/backend/data_access/S3";
+} from "@klaudsol/commons/lib/S3";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { OK, NOT_FOUND } from "@klaudsol/commons/lib/HttpStatuses";
 import { resolveValue } from "@/components/EntityAttributeValue";

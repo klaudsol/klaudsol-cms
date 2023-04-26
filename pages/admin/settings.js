@@ -23,7 +23,7 @@ import { convertToFormData, getAllFiles, getBody } from "@/lib/s3FormController"
 import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
 import { useClientErrorHandler } from "@/components/hooks"
-import { uploadFilesToUrl } from "@/backend/data_access/S3";
+import { uploadFilesToUrl } from "@klaudsol/commons/lib/S3";
 
 export default function Settings({ cache }) {
   const formRef = useRef();
