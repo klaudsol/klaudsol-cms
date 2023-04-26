@@ -8,12 +8,15 @@ import { approveUsers, rejectUsers } from "@/lib/Constants";
 
 export default withSession(handleRequests({ post, del }));
 
+const GUEST_ID = 4;
+
 async function post(req, res) {
     await assertUserCan(approveUsers, req);
 
     const { id } = req.body;
 
     await People.approve({ id });
+    await PeopleGroups.connect({ id, groups: [ GUEST_ID ] })
     // get all default groups
     // connect person to default groups
 
