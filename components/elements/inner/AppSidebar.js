@@ -76,7 +76,7 @@ const AppSidebar = () => {
   // These will be used multiple times
   const canReadUsers = capabilities.includes(readUsers);
   const canReadPendingUsers = capabilities.includes(readPendingUsers);
-  const canReadGroups = capabilities.includes(readGroups); 
+  const canReadGroups = capabilities.includes(readGroups);
 
   const sidebarButtons = [
     (capabilities.includes(writeContentTypes) && {

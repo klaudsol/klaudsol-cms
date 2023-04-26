@@ -14,6 +14,8 @@ async function post(req, res) {
     const { id } = req.body;
 
     await People.approve({ id });
+    // get all default groups
+    // connect person to default groups
 
     res.status(OK).json({ message: 'User approved.' });
 }
