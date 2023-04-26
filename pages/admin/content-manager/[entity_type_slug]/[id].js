@@ -126,7 +126,7 @@ export default function Type({ cache }) {
   const getFilesToDelete = (values) => {
     const files = Object.keys(values).filter((value) => values[value] instanceof File);
     const keys = files.map((file) => state.values[file].key);
-
+        
     return keys;
   };
 
@@ -144,6 +144,7 @@ export default function Type({ cache }) {
           const entry = {
             ...data,
             fileNames,
+            toDelete,
             entity_type_slug,
             entity_id: id,
           };
