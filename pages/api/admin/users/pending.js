@@ -6,11 +6,11 @@ import People from '@klaudsol/commons/models/People';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 import { approveUsers, rejectUsers } from "@/lib/Constants";
 
-export default withSession(handleRequests({ post, del }));
+export default withSession(handleRequests({ put, del }));
 
 const GUEST_ID = 4;
 
-async function post(req, res) {
+async function put(req, res) {
     await assertUserCan(approveUsers, req);
 
     const { id } = req.body;
