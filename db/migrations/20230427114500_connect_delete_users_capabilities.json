@@ -6,6 +6,6 @@
   ],
   "down":[
     "DELETE FROM group_capabilities WHERE group_id IN (1, 2) ",
-    "AND capabilities_id = (SELECT id FROM capabilities WHERE name = 'delete_users' AND is_system_supplied = true)",
+    "AND capabilities_id = (SELECT id FROM capabilities WHERE name = 'delete_users' AND is_system_supplied = true)"
   ] 
 }
