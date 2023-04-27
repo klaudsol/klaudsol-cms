@@ -1,11 +1,11 @@
 {
   "up": [
     "INSERT INTO group_capabilities (group_id, capabilities_id) VALUES",
-    "(1, (SELECT id FROM capabilities WHERE name = `edit_profile` AND is_system_supplied = true)),",
-    "(2, (SELECT id FROM capabilities WHERE name = `edit_profile` AND is_system_supplied = true));",
+    "(1, (SELECT id FROM capabilities WHERE name = 'edit_profile' AND is_system_supplied = true)),",
+    "(2, (SELECT id FROM capabilities WHERE name = 'edit_profile' AND is_system_supplied = true));",
   ],
   "down":[
-    "DELETE FROM `group_capabilities` WHERE group_id IN (1, 2) ",
-    "AND capabilities_id = (SELECT id FROM capabilities WHERE name = `edit_profile` AND is_system_supplied = true);",
+    "DELETE FROM group_capabilities WHERE group_id IN (1, 2) ",
+    "AND capabilities_id = (SELECT id FROM capabilities WHERE name = 'edit_profile' AND is_system_supplied = true);",
   ] 
 }
