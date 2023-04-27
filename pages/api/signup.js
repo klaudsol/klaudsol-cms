@@ -32,7 +32,7 @@ async function post(req, res) {
 
     if (existingUser) throw new UserAlreadyExists();
 
-    await People.createUser({ firstName, lastName, email, password, approved: false, loginEnabled: false, forcePasswordChange: false });
+    await People.createUser({ firstName, lastName, email, password, loginEnabled: true, approved: false, forcePasswordChange: false });
 
     res.status(OK).json({ message: 'Signup successful!' });
 }
