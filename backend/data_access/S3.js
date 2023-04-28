@@ -31,6 +31,7 @@ export const initializeS3 = () => {
     console.log(REGION);
     console.log(S3_SECRET_ACCESS_KEY);
     console.log(S3_ACCESS_KEY_ID);
+    console.log(S3_BUCKET);
 
   return s3;
 };
