@@ -27,6 +27,11 @@ const s3Config = {
 export const initializeS3 = () => {
   const s3 = new AWS.S3(s3Config);
 
+    console.log(s3Config);
+    console.log(REGION);
+    console.log(S3_SECRET_ACCESS_KEY);
+    console.log(S3_ACCESS_KEY_ID);
+
   return s3;
 };
 
