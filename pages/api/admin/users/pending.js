@@ -6,22 +6,23 @@ import People from '@klaudsol/commons/models/People';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 import { approveUsers, rejectUsers } from "@/lib/Constants";
 
-export default withSession(handleRequests({ post, del }));
+export default withSession(handleRequests({ put, del }));
 
-async function post(req, res) {
-    assertUserCan(approveUsers);
+const GUEST_ID = 4;
+
+async function put(req, res) {
+    await assertUserCan(approveUsers, req);
 
     const { id } = req.body;
 
     await People.approve({ id });
-    // get all default groups
-    // connect person to default groups
+    await PeopleGroups.connect({ id, groups: [ GUEST_ID ] })
 
     res.status(OK).json({ message: 'User approved.' });
 }
 
 async function del (req, res) {
-    assertUserCan(rejectUsers);
+    await assertUserCan(rejectUsers, req);
 
     const { id } = req.query;
 
