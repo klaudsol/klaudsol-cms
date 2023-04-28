@@ -24,7 +24,7 @@ import { Col } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
-import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
+import { getAllFiles, getNonFiles, extractFiles } from "@/lib/s3FormController";
 import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
@@ -123,13 +123,6 @@ export default function Type({ cache }) {
     return initialValues;
   };
 
-  const getFilesToDelete = (values) => {
-    const files = Object.keys(values).filter((value) => values[value] instanceof File);
-    const keys = files.map((file) => state.values[file].key);
-    
-    return keys;
-  };
-
   const formikParams = {
     innerRef: formRef,
     initialValues: getFormikInitialVals(),
@@ -138,13 +131,11 @@ export default function Type({ cache }) {
         try {
           dispatch({ type: SAVING });
 
-          const { files, data, fileNames } = await getBody(values);
-          const toDelete = getFilesToDelete(values);
+          const { data, fileNames, files } = await extractFiles(values);
 
           const entry = {
             ...data,
             fileNames,
-            toDelete,
             entity_type_slug,
             entity_id: id,
           };

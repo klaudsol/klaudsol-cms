@@ -30,17 +30,15 @@ import { OK, UNPROCESSABLE_ENTITY } from '@klaudsol/commons/lib/HttpStatuses';
 import Session from '@klaudsol/commons/models/Session';
 import People from '@klaudsol/commons/models/People';
 import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
+import { assertUserCan } from '@klaudsol/commons/lib/Permissions';
+import { editProfile } from '@/lib/Constants';
 
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) { 
- try{
+    await assertUserCan(editProfile, req);
 
-    await assert({
-     loggedIn: true,
-    }, req);
-
-    const { session_token } = req.session;
+    const session_token = req?.user?.sessionToken ?? req?.session?.session_token;
     const { currentPassword, newPassword, confirmNewPassword } = req.body; 
 
     //these should be captured by the front-end validator, but the backend should detect
@@ -65,13 +63,4 @@ async function put(req, res) {
     await req.session.save();
     
     res.status(OK).json({message: 'Successfully changed your password.'}); 
-  }
-  catch (error) {
-    if (error instanceof RecordNotFound) {
-      res.status(422).json({message: "Incorrect password."});
-      return;
-    } else {
-      await defaultErrorHandler(error, req, res);
-    }
-  }
 }

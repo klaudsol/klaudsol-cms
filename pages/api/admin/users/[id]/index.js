@@ -13,7 +13,7 @@ import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
 export default withSession(handleRequests({ get, put, del }));
 
 async function get(req, res) {
-    assertUserCan(readUsers);
+    await assertUserCan(readUsers, req);
 
     const { id } = req.query;
     const person = await People.get({ id });
@@ -30,7 +30,7 @@ async function get(req, res) {
 }
 
 async function put(req, res) {
-    assertUserCan(writeUsers);
+    await assertUserCan(writeUsers, req);
 
     const { id } = req.query; 
     const { firstName, lastName, forcePasswordChange, loginEnabled, approved, email, isSameEmail, toAdd, toDelete } = req.body;
@@ -49,7 +49,6 @@ async function put(req, res) {
 
     if (toAdd.length > 0) await PeopleGroups.connect({ id, groups: toAdd });
     if (toDelete.length > 0) await PeopleGroups.disconnect({ id, groups: toDelete });
-    // if approved false remove people groups
 
     res.status(OK).json({ message: 'Update successful!' });
 }
@@ -57,7 +56,7 @@ async function put(req, res) {
 // Almost exactly the same code as DELETE /api/admin/users/pending
 // The difference is the permission and the message
 async function del(req, res) {
-    assertUserCan(deleteUsers);
+    await assertUserCan(deleteUsers, req);
 
     const { id } = req.query;
 

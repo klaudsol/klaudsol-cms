@@ -19,7 +19,7 @@ import {
 } from "@/components/reducers/settingReducer";
 import { SAVING, LOADING, DELETING, CLEANUP, SET_VALUES, SET_CHANGED, SET_ERROR } from "@/lib/actions";
 import { defaultLogo } from "@/constants/index";
-import { convertToFormData, getAllFiles, getBody } from "@/lib/s3FormController";
+import { convertToFormData, getAllFiles, extractFiles } from "@/lib/s3FormController";
 import { validImageTypes } from "@/lib/Constants";
 import { readSettings, modifyLogo } from "@/lib/Constants";
 import { useClientErrorHandler } from "@/components/hooks"
@@ -113,7 +113,7 @@ export default function Settings({ cache }) {
           const isFile = Object.entries(values)[0][1] instanceof File;
           const isCreateMode = !isValueExists && isFile;
 
-          const { files, data, fileNames } = await getBody(values);
+          const { files, data, fileNames } = await extractFiles(values);
           const toDelete = !isCreateMode && getFilesToDelete(values);
 
           const entries = {

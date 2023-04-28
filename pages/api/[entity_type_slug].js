@@ -40,6 +40,8 @@ import { readContents, writeContents } from '@/lib/Constants';
 export default withSession(handleRequests({ get, post }));
 
 async function get(req, res) {
+    await assertUserCan(readContents, req);
+
     const {
         entity_type_slug,
         entry,
