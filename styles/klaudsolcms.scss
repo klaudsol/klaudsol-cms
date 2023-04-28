@@ -905,6 +905,10 @@ $onFocus: #323C4E;
 
         width: 100%;
         min-height: 100%;
+
+        &--attribute {
+            padding: 0 0 7px 0;
+        }
     }
 
     &__item {
@@ -941,12 +945,72 @@ $onFocus: #323C4E;
         text-overflow: ellipsis;
         white-space: nowrap;
 
-        &--container {
+        // I accidentally typed in --container instead of -container.
+        // "--" should be reserved for modifiers
+        // Some block of code might be relying on --container so I decided
+        // to keep it.
+        &--container, &-container {
             height: 40px; // grid-auto-rows - image-container height
             display: flex;
             justify-content: center;
             align-items: center;
         }
+    }
+
+    &__side-button {
+        all: unset;
+
+        &-container {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            z-index: 1000;
+
+            display: flex;
+            flex-direction: column;
+
+            font-size: 24px;
+            color: #455a64;
+        }
+
+        &--delete {
+            color: #800000;
+
+            &:hover {
+                color: #FF0000;
+                transition: 0.2s;
+            }
+        }
+    }
+}
+
+/**
+===============================================
+            IMAGE BOX STYLES
+===============================================
+
+**/
+
+.image-box {
+    color: lightgray;
+    border: 5px dashed lightgray;
+    border-radius: 15px;
+    margin: 15px 0;
+    padding: 20px;
+    text-align: center;
+    cursor: default;
+
+    &__icon {
+        font-size: 400px;
+    }
+
+    &__text {
+        font-size: 24px;
+    }
+
+    &--error {
+        color: red;
+        border: 5px dashed red;
     }
 }
 
