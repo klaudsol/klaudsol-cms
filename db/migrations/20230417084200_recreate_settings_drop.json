@@ -1,9 +1,7 @@
-
 {
   "up": [
     "DROP TABLE `settings`"
   ],
-  
   "down":[
     "CREATE TABLE IF NOT EXISTS `settings`  (",
     "  `id` int(11) NOT NULL AUTO_INCREMENT,",
@@ -12,5 +10,5 @@
     " PRIMARY KEY (`id`),",
     "  INDEX `idx_key` (`key`)",
     ") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;"
-  ] 
+  ]
 }

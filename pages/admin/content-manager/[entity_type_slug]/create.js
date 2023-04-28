@@ -25,7 +25,7 @@ import {
 } from "@/lib/actions";
 import { FaCheck } from "react-icons/fa";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
-import { getAllFiles, getNonFiles, getBody } from "@/lib/s3FormController";
+import { getAllFiles, getNonFiles, extractFiles } from "@/lib/s3FormController";
 import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import classname from "classnames";
@@ -114,7 +114,7 @@ export default function CreateNewEntry({ cache }) {
       (async () => {
         const { slug } = values;
         const formattedSlug = formatSlug(slug);
-        const { files, data, fileNames } = await getBody(values);
+        const { data, fileNames, files } = await extractFiles(values);
 
         const entry = {
           ...data,
@@ -134,7 +134,7 @@ export default function CreateNewEntry({ cache }) {
             body: JSON.stringify(entry),
           });
           const { message, presignedUrls } = await response.json();
-            
+
           if (files.length > 0) await uploadFilesToUrl(files, presignedUrls);
 
           dispatch({ type: SET_SHOW, payload: true });
