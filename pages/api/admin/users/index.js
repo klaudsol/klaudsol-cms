@@ -14,8 +14,8 @@ export default withSession(handleRequests({ get, post }));
 async function get(req, res) {
     const { approved, pending } = req.query;
 
-    if (approved) assertUserCan(readUsers);
-    if (pending) assertUserCan(readPendingUsers);
+    if ((!approved && !pending) || approved) await assertUserCan(readUsers, req);
+    if (pending) await assertUserCan(readPendingUsers, req);
 
     const people = await People.getAll({ approved, pending });
 
@@ -43,8 +43,8 @@ async function post(req, res) {
         forcePasswordChange = false 
     } = req.body;
 
-    assertUserCan(writeUsers);
-    if (groups.length > 0) assertUserCan(writeGroups);
+    await assertUserCan(writeUsers, req);
+    if (groups.length > 0) await assertUserCan(writeGroups, req);
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');

@@ -31,7 +31,7 @@ const UsersTable = ({ users, setUsers }) => {
             setLoading(true);
 
             const params = {
-                method: 'POST',
+                method: 'PUT',
                 body: JSON.stringify({ id }),
                 headers: {
                     'Content-Type': 'application/json',

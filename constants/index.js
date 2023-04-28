@@ -3,6 +3,7 @@ export const inputValues = [
   { value: "textarea", option: "Text Area" },
   { value: "link", option: "Link" },
   { value: "image", option: "Image" },
+  { value: "gallery", option: "Gallery" },
   { value: "float", option: "Number" },
 ];
 

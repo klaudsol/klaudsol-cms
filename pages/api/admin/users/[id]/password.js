@@ -9,7 +9,7 @@ import People from '@klaudsol/commons/models/People';
 export default withSession(handleRequests({ put }));
 
 async function put(req, res) {
-    assertUserCan(changeUserPassword);
+    await assertUserCan(changeUserPassword, req);
 
     const { id } = req.query;
     const { password, confirmPassword, forcePasswordChange } = req.body;

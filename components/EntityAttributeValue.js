@@ -1,3 +1,15 @@
+const formatImage = (key) => {
+    if (!key) return;
+
+    const bucketBaseUrl = process.env.KS_S3_BASE_URL;
+
+    const name = key.substring(key.indexOf('_') + 1);
+    const keyForLink = key.split(' ').join('+');
+    const link = `${bucketBaseUrl}/${keyForLink}`
+
+    return { name, key, link }
+}
+
   export const resolveValue = (item) => {
     switch(item.attributes_type) {
       case 'text':
@@ -7,15 +19,16 @@
         return item.value_long_string;
       case 'image':
         if(!item.value_string) return;
+        const imageValues = formatImage(item.value_string);
         
-        const bucketBaseUrl = process.env.KS_S3_BASE_URL;
+        return imageValues;
+      case 'gallery':
+        if(!item.value_long_string) return;
 
-        const key = item.value_string;
-        const name = key.substring(key.indexOf('_') + 1);
-        const keyForLink = key.split(' ').join('+');
-        const link = `${bucketBaseUrl}/${keyForLink}`
+        const galleryValuesRaw = JSON.parse(item.value_long_string);
+        const galleryValues = galleryValuesRaw.map((item) => formatImage(item));
 
-        return { name, key, link };
+        return galleryValues;
       case 'float':
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);
