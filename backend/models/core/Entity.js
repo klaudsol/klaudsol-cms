@@ -218,7 +218,8 @@ class Entity {
           {
             name: "value_long_string",
             value:
-              attributeType == "textarea"
+              attributeType == "textarea" ||
+              attributeType === "gallery"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -314,7 +315,9 @@ class Entity {
           {
             name: "value_long_string",
             value:
-              attributeType == "textarea" && entries[attributeName]
+              (attributeType == "textarea" ||
+                attributeType === "gallery") && 
+              entries[attributeName]
                 ? { stringValue: entries[attributeName] }
                 : { isNull: true },
           },

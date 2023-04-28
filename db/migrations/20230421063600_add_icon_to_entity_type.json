@@ -1,6 +1,4 @@
-
 {
   "up": "ALTER TABLE `entity_types` ADD COLUMN `icon` varchar(255) DEFAULT NULL;",
   "down": "ALTER TABLE `entity_types` DROP COLUMN icon"
-  
 }

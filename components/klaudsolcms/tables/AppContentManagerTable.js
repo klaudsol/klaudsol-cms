@@ -9,11 +9,11 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
 
   const MAX_STRING_LENGTH = 50;
   const capabilities = useCapabilities();
-  // If entry is an object, chances are its a file uploaded to S3.
-  // Files uploaded to S3 should have an originalname property
 
-  const checkEntryIfObject = (entry, accessor) => {
-    if (typeof entry[accessor] === "object") return entry[accessor]?.name;
+  const formatSpecialDataTypes = (entry, accessor) => {
+    if (Array.isArray(entry[accessor])) return `${entry[accessor].length} item/s`; // Checks if its an attribute w/ multiple values
+    else if (typeof entry[accessor] === "object" && entry[accessor]?.link) return entry[accessor]?.name; // Checks if its an image
+
     return entry[accessor];
   };
 
@@ -55,7 +55,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
                   key={index}
                   disabled={!capabilities.includes(readContents)}
                 >
-                  <td key={index}>{truncate(checkEntryIfObject(entry, col.accessor))}</td>
+                  <td key={index}>{truncate(formatSpecialDataTypes(entry, col.accessor))}</td>
                 </Link>
               ))}
             </tr>
