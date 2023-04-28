@@ -39,13 +39,25 @@ const AppSidebar = () => {
 
   };
 
-
   const pluginMenuLinks = pluginMenus.menus.map(plugin => {
     const PluginMenuIcon = Icons[plugin.icon] ?? "BiPlug";
     return capabilities.includes(plugin.capability) ? {
       title: plugin.title,
       path: plugin.link,
-      icon: <PluginMenuIcon className='sidebar_button_icon'/>
+      icon: <PluginMenuIcon className='sidebar_button_icon'/>,
+      ...(plugin?.multiple && { multiple: plugin.multiple }),
+      ...(plugin?.subItems && {
+        subItems: plugin.subItems.map((subItem) => {
+          const SubItemIcon = Icons[subItem.icon] ?? Icons.BiChevronRight;
+
+          return capabilities.includes(subItem.capability) ?
+              {
+                  subTitle: subItem.title,
+                  subIcon: <SubItemIcon className='sidebar_button_icon'/>,
+                  subPath: subItem.link
+              } : null
+        }).filter((subItem) => subItem)
+      })
     } : null
     ;
   }).filter(x => x);
@@ -60,7 +72,7 @@ const AppSidebar = () => {
     }}) : 
     []
   );
-  
+
   // These will be used multiple times
   const canReadUsers = capabilities.includes(readUsers);
   const canReadPendingUsers = capabilities.includes(readPendingUsers);
