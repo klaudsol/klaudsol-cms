@@ -9,7 +9,7 @@ import Groups from '@klaudsol/commons/models/Groups';
 export default withSession(handleRequests({ get }));
 
 async function get(req, res) {
-    assertUserCan(readGroups);
+    await assertUserCan(readGroups, req);
 
     const groups = await Groups.all();
 
