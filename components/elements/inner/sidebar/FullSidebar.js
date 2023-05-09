@@ -98,3 +98,4 @@ const FullSidebar = ({sidebarButtons, firstName, lastName, defaultEntityType, ro
 }
 
 export default React.memo(FullSidebar)
+
