@@ -115,12 +115,7 @@ async function get(req, res) {
 }
 
 async function post(req, res) {
-    await assert({
-        loggedIn: true,
-    }, req);
-
-    await assertUserCan(readContents, req) &&
-        await assertUserCan(writeContents, req);
+    await assertUserCan(writeContents, req);
 
     const { fileNames, ...entry } = req.body;
     await Entity.create(entry);
