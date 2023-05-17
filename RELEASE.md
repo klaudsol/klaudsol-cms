@@ -1,3 +1,7 @@
+# 3.4.0
+* Added user management systems
+* Fixed capabilities for Administrators and Editors
+
 # 3.3.0
 * Allow plugins to have migrations 
 
