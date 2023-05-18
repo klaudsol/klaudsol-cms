@@ -33,6 +33,10 @@ async function put(req, res) {
     const { id } = req.query;
     const { firstName, lastName, forcePasswordChange, loginEnabled, approved, email, isSameEmail, toAdd, toDelete } = req.body;
 
+    // IDEA: We can modify assertUserCan to cater to multiple capabilities so that
+    // it will only have to read the database once. However, it might be hard if we 
+    // need to use assertUserCan in certain conditions 
+    // ex. items 1 and 2 (start w/ 0) on the array in Promise.all below
     await Promise.all([
         await assertUserCan(writeUsers, req),
         ((toAdd.length > 0 || toDelete.length > 0) && assertUserCan(writeGroups, req)),
