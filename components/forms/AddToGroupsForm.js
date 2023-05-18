@@ -16,6 +16,19 @@ export default function AddToGroupsForm({ groups }) {
             <h4 className="mb-4">Groups</h4>
             <h5>System supplied</h5>
             <div className="groups__container">
+                <div className="groups__item" >
+                    <AdminRenderer
+                        title="Super Administrator"
+                        value={SUPER_ADMIN_ID}
+                        errors={errors}
+                        touched={touched}
+                        checked={values.groups.includes(SUPER_ADMIN_ID.toString())}
+                        type="checkbox"
+                        name="groups"
+                        disabled={!capabilities.includes(writeUsers)}
+                    />
+                    <p className="groups__description">Reserved group for KlaudSol installation and setup.</p>
+                </div>
                 {systemSupplied.map((group) => (
                     <div className="groups__item" key={group.id}>
                         <AdminRenderer
