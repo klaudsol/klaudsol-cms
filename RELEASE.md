@@ -1,6 +1,12 @@
 # 3.4.0
 * Added user management systems
+* Added sign up route
+* Added sidebar icons
+* Added Gallery attribute
 * Fixed capabilities for Administrators and Editors
+* Login now returns JWT if the host is not from the CMS
+* Plugins can now have sub items on the sidebar
+* Users can now update their profile
 
 # 3.3.0
 * Allow plugins to have migrations 
