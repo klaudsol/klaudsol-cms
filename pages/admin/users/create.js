@@ -17,7 +17,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { DEFAULT_SKELETON_ROW_COUNT, writeGroups, writeUsers } from "@/lib/Constants";
+import { DEFAULT_SKELETON_ROW_COUNT, SUPER_ADMIN_ID, writeGroups, writeUsers } from "@/lib/Constants";
 
 import {
     LOADING,
@@ -196,7 +196,8 @@ export default function Type({ cache, groups }) {
     );
 }
 export const getServerSideProps = getSessionCache(async (context) => {
-    const groups = await Groups.all();
+    const groupsRaw = await Groups.all();
+    const groups = await groupsRaw.filter((group) => group.id !== SUPER_ADMIN_ID);
 
     return { props: { groups }}
 });
