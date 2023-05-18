@@ -8,11 +8,7 @@ export default function AddToGroupsForm({ groups }) {
     const { values, errors, touched } = useFormikContext();
     const { capabilities } = useContext(CacheContext);
 
-    const systemSupplied = groups.filter((group) => {
-        if (group.id === SUPER_ADMIN_ID && !capabilities.includes(promoteToSuperAdmin)) return;
-
-        return group.isSystemSupplied;
-    });
+    const systemSupplied = groups.filter((group) => group.isSystemSupplied);
     const userCreated = groups.filter((group) => !group.isSystemSupplied);
 
     return (

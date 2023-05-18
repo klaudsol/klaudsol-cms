@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
+import Groups from '@klaudsol/commons/models/Groups';
 
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
@@ -34,7 +35,7 @@ import PasswordForm from "@/components/forms/PasswordForm";
 const USER_INFO = 'user_info';
 const ADD_GROUPS = 'add_groups';
 
-export default function Type({ cache }) {
+export default function Type({ cache, groups }) {
     const [state, setState] = useUserReducer();
     const [currentPage, setCurrentPage] = useState(USER_INFO);
 
@@ -52,30 +53,6 @@ export default function Type({ cache }) {
         e.preventDefault();
         formRef.current.handleSubmit();
     };
-
-    useEffect(() => {
-        (async () => {
-            try {
-                setState(LOADING, true);
-
-                const url = `/api/admin/groups`;
-                const params = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-
-                const resRaw = await slsFetch(url, params);
-                const { data } = await resRaw.json();
-
-                setState(SET_GROUPS, data);
-            } catch (err) {
-                errorHandler(err);
-            } finally {
-                setState(LOADING, false);
-            }
-        })()
-    }, []);
 
     const formikParams = {
         innerRef: formRef,
@@ -177,7 +154,7 @@ export default function Type({ cache }) {
                                                             <PasswordForm setState={setState} />
                                                         </>
                                                     }
-                                                    {currentPage === ADD_GROUPS && <AddToGroupsForm groups={state.groups} />}
+                                                    {currentPage === ADD_GROUPS && <AddToGroupsForm groups={groups} />}
                                                 </Form>
                                             </Formik>
                                         </div>
@@ -218,8 +195,9 @@ export default function Type({ cache }) {
         </CacheContext.Provider>
     );
 }
-export const getServerSideProps = getSessionCache((context) => {
-    console.log(context)
+export const getServerSideProps = getSessionCache(async (context) => {
+    const groups = await Groups.all();
 
-    return { props: { test: 'ASDSAD' }}
+    return { props: { groups }}
 });
+
