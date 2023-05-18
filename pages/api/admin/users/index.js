@@ -46,7 +46,7 @@ async function post(req, res) {
     await Promise.all([
         assertUserCan(writeUsers, req),
         (groups.length > 0 && assertUserCan(writeGroups, req)),
-        (groups.includes(SUPER_ADMIN_ID) && assertUserCan(promoteToSuperAdmin, req))
+        (groups.includes(SUPER_ADMIN_ID.toString()) && assertUserCan(promoteToSuperAdmin, req))
     ]);
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
