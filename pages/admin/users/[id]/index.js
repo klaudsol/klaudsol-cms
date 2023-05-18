@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
+import Groups from '@klaudsol/commons/models/Groups';
+import People from '@klaudsol/commons/models/People';
 
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
@@ -16,7 +18,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { changeUserPassword, DEFAULT_SKELETON_ROW_COUNT, deleteUsers, writeUsers } from "lib/Constants";
+import { changeUserPassword, DEFAULT_SKELETON_ROW_COUNT, deleteUsers, SUPER_ADMIN_ID, writeUsers } from "lib/Constants";
 
 import {
     LOADING,
@@ -31,7 +33,7 @@ import useUserReducer from "@/components/reducers/userReducer";
 import UserForm from "@/components/forms/UserForm";
 import AddToGroupsForm from "@/components/forms/AddToGroupsForm";
 
-export default function UserInfo({ cache }) {
+export default function UserInfo({ cache, groups, userGroups, user }) {
     const [state, setState] = useUserReducer();
 
     const router = useRouter();
@@ -190,7 +192,7 @@ export default function UserInfo({ cache }) {
                                         <Formik {...formikParams}>
                                             <Form>
                                                 <UserForm />
-                                                <AddToGroupsForm groups={state.groups} />
+                                                <AddToGroupsForm groups={groups} />
                                             </Form>
                                         </Formik>
 
@@ -234,4 +236,20 @@ export default function UserInfo({ cache }) {
         </CacheContext.Provider>
     );
 }
-export const getServerSideProps = getSessionCache();
+export const getServerSideProps = getSessionCache(async ({ query }) => {
+    const { id } = query;
+
+    const [groups, userGroups, user] = await Promise.all([
+        Groups.all(),
+        Groups.findByUser({ id }),
+        People.get({ id })
+    ])
+
+    return {
+        props: {
+            groups: await groups.filter((group) => group.id !== SUPER_ADMIN_ID),
+            user: user[0],
+            userGroups
+        }
+    }
+});

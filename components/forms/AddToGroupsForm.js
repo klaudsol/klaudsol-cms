@@ -22,7 +22,7 @@ export default function AddToGroupsForm({ groups }) {
                         value={SUPER_ADMIN_ID}
                         errors={errors}
                         touched={touched}
-                        checked={values.groups.includes(SUPER_ADMIN_ID.toString())}
+                        checked={values?.groups?.includes(SUPER_ADMIN_ID.toString())}
                         type="checkbox"
                         name="groups"
                         disabled={!capabilities.includes(writeUsers)}
