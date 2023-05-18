@@ -218,4 +218,8 @@ export default function Type({ cache }) {
         </CacheContext.Provider>
     );
 }
-export const getServerSideProps = getSessionCache();
+export const getServerSideProps = getSessionCache((context) => {
+    console.log(context)
+
+    return { props: { test: 'ASDSAD' }}
+});
