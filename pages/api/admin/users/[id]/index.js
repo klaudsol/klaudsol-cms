@@ -1,7 +1,7 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { createHash } from '@/lib/Hash';
-import { deleteUsers, readUsers, writeUsers } from "@/lib/Constants";
+import { deleteUsers, promoteToSuperAdmin, readUsers, SUPER_ADMIN_ID, writeGroups, writeUsers } from "@/lib/Constants";
 import { assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
@@ -30,10 +30,14 @@ async function get(req, res) {
 }
 
 async function put(req, res) {
-    await assertUserCan(writeUsers, req);
-
-    const { id } = req.query; 
+    const { id } = req.query;
     const { firstName, lastName, forcePasswordChange, loginEnabled, approved, email, isSameEmail, toAdd, toDelete } = req.body;
+
+    await Promise.all([
+        await assertUserCan(writeUsers, req),
+        ((toAdd.length > 0 || toDelete.length > 0) && assertUserCan(writeGroups, req)),
+        ((toAdd.includes(SUPER_ADMIN_ID.toString()) || toDelete.includes(SUPER_ADMIN_ID.toString())) && assertUserCan(promoteToSuperAdmin, req))
+    ])
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
