@@ -7,7 +7,7 @@ import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataErro
 import UserAlreadyExists from "@klaudsol/commons/errors/UserAlreadyExists";
 import People from '@klaudsol/commons/models/People';
 import PeopleGroups from '@klaudsol/commons/models/PeopleGroups';
-import { readPendingUsers, readUsers, writeGroups, writeUsers } from "@/lib/Constants";
+import { promoteToSuperAdmin, readPendingUsers, readUsers, SUPER_ADMIN_ID, writeGroups, writeUsers } from "@/lib/Constants";
 
 export default withSession(handleRequests({ get, post }));
 
@@ -31,20 +31,23 @@ async function get(req, res) {
 
 async function post(req, res) {
 
-    const { 
-        firstName, 
-        lastName, 
-        email, 
-        password, 
-        confirmPassword, 
-        groups = [], 
+    const {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        groups = [],
         approved = false,
-        loginEnabled = false, 
-        forcePasswordChange = false 
+        loginEnabled = false,
+        forcePasswordChange = false
     } = req.body;
 
-    await assertUserCan(writeUsers, req);
-    if (groups.length > 0) await assertUserCan(writeGroups, req);
+    await Promise.all([
+        assertUserCan(writeUsers, req),
+        (groups.length > 0 && assertUserCan(writeGroups, req)),
+        (groups.includes(SUPER_ADMIN_ID) && assertUserCan(promoteToSuperAdmin, req))
+    ]);
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
