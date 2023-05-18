@@ -1,7 +1,5 @@
 # 3.4.0
 * Added user management systems
-* Fixed capabilities for Administrators and Editors
-* Added user management systems
 * Added sign up route
 * Added sidebar icons
 * Added Gallery attribute
