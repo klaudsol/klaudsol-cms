@@ -80,7 +80,7 @@ export default function UserInfo({ cache, groups, user }) {
         onSubmit: (values) => {
             (async () => {
                 try {
-                    // setState(SAVING, true);
+                    setState(SAVING, true);
 
                     const isSameEmail = values.email === user.email;
 
@@ -98,12 +98,12 @@ export default function UserInfo({ cache, groups, user }) {
 
                     await slsFetch(url, params);
 
-                    // setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully updated a user." });
+                    setState(SET_MODAL_CONTENT, { title: "Success", text: "You have successfully updated a user." });
                 } catch (err) {
                     errorHandler(err);
                     setState(SET_MODAL_CONTENT, { title: "Error", text: err.message });
                 } finally {
-                    // setState(SAVING, false);
+                    setState(SAVING, false);
                 }
             })();
         },
