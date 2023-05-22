@@ -1,0 +1,10 @@
+{
+  "up": [
+    "INSERT INTO group_capabilities (group_id, capabilities_id, params1) VALUES ",
+    "(1, (SELECT id FROM capabilities WHERE name = 'assign_to_group' AND is_system_supplied = true), 1)"
+  ],
+  "down":[
+    "DELETE FROM group_capabilities WHERE group_id IN = 1 ",
+    "AND capabilities_id = (SELECT id FROM capabilities WHERE name = 'assign_to_group' AND is_system_supplied = true);"
+  ] 
+}

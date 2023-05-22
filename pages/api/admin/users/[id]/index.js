@@ -1,7 +1,7 @@
 import { handleRequests } from "@klaudsol/commons/lib/API";
 import { withSession } from "@klaudsol/commons/lib/Session";
 import { createHash } from '@/lib/Hash';
-import { deleteUsers, promoteToSuperAdmin, readUsers, SUPER_ADMIN_ID, writeGroups, writeUsers } from "@/lib/Constants";
+import { deleteUsers, assignToGroup, readUsers, SUPER_ADMIN_ID, writeGroups, writeUsers } from "@/lib/Constants";
 import { assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { OK, NOT_FOUND } from '@klaudsol/commons/lib/HttpStatuses';
 import InsufficientDataError from '@klaudsol/commons/errors/InsufficientDataError';
@@ -37,7 +37,7 @@ async function put(req, res) {
         // If the user wants to edit the groups of another user
         ((toAdd.length > 0 || toDelete.length > 0) && await assertUserCan(writeGroups, req)) &&
         // If the user wants to turn another user into a superadmin
-        ((toAdd.includes(SUPER_ADMIN_ID.toString()) || toDelete.includes(SUPER_ADMIN_ID.toString()))) && await assertUserCan(promoteToSuperAdmin, req)
+        (toAdd.includes(SUPER_ADMIN_ID.toString()) || toDelete.includes(SUPER_ADMIN_ID.toString())) && await assertUserCan(assignToGroup, req, SUPER_ADMIN_ID)
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');

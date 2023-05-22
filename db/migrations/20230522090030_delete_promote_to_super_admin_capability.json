@@ -1,0 +1,9 @@
+{
+    "up": [
+        "DELETE FROM capabilities WHERE name = 'promote_to_super_admin' AND is_system_supplied = true"
+    ],
+    "down": [
+        "INSERT INTO capabilities (name, description, is_system_supplied) VALUES",
+        "('promote_to_super_admin', \"Can create/promote a user to Super Admin\", true)"
+    ]
+}
