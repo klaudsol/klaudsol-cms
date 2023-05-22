@@ -34,7 +34,9 @@ async function put(req, res) {
     const { firstName, lastName, forcePasswordChange, loginEnabled, approved, email, isSameEmail, toAdd, toDelete } = req.body;
 
     await assertUserCan(writeUsers, req) &&
+        // If the user wants to edit the groups of another user
         ((toAdd.length > 0 || toDelete.length > 0) && await assertUserCan(writeGroups, req)) &&
+        // If the user wants to turn another user into a superadmin
         ((toAdd.includes(SUPER_ADMIN_ID.toString()) || toDelete.includes(SUPER_ADMIN_ID.toString()))) && await assertUserCan(promoteToSuperAdmin, req)
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');

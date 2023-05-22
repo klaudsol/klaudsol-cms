@@ -44,7 +44,9 @@ async function post(req, res) {
     } = req.body;
 
     assertUserCan(writeUsers, req) &&
+        // If the user wants to add groups when creating a user
         (groups.length > 0 && await assertUserCan(writeGroups, req)) &&
+        // If the user wants to create a super admin user
         (groups.includes(SUPER_ADMIN_ID.toString()) && await assertUserCan(assignToGroup, req, SUPER_ADMIN_ID))
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
