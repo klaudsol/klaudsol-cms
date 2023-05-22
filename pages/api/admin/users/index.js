@@ -43,7 +43,7 @@ async function post(req, res) {
         forcePasswordChange = false
     } = req.body;
 
-    assertUserCan(writeUsers, req) &&
+    await assertUserCan(writeUsers, req) &&
         // If the user wants to add groups when creating a user
         (groups.length > 0 && await assertUserCan(writeGroups, req)) &&
         // If the user wants to create a super admin user
