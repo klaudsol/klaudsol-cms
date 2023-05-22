@@ -43,11 +43,9 @@ async function post(req, res) {
         forcePasswordChange = false
     } = req.body;
 
-    await Promise.all([
-        assertUserCan(writeUsers, req),
-        (groups.length > 0 && assertUserCan(writeGroups, req)),
-        (groups.includes(SUPER_ADMIN_ID.toString()) && assertUserCan(assignToGroup, req, SUPER_ADMIN_ID))
-    ]);
+    assertUserCan(writeUsers, req) &&
+        (groups.length > 0 && await assertUserCan(writeGroups, req)) &&
+        (groups.includes(SUPER_ADMIN_ID.toString()) && await assertUserCan(assignToGroup, req, SUPER_ADMIN_ID))
 
     if (!firstName) throw new InsufficientDataError('Please enter your first name.');
     if (!lastName) throw new InsufficientDataError('Please enter your last name.');
