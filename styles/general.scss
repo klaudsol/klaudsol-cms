@@ -8,6 +8,22 @@
 **/
 
 .general {
+  // rows
+  &-row {
+    &-between {
+      @include flex(space-between, center, row);
+      width: 100%;
+    }
+
+    &-center {
+      @include flex(center, center, row);
+    }
+
+    &-end {
+      @include flex(flex-end, center, row);
+      width: 100%;
+    }
+  }
   // Input Types (Textboxes & Textareas)
   &-input {
     &-title {
@@ -99,6 +115,26 @@
       border-radius: 5px;
       border: 1px solid #467286;
       color: white;
+    }
+
+    &-download {
+      @include font-semi-bold(11px);
+      @include padding-tb-lr(5px, 15px);
+      @include flex(center, center, row);
+      gap: 5px;
+      width: max-content;
+      background-color: #455a64;
+      border-radius: 5px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #467286;
+      color: white;
+      border: transparent;
+
+      &:hover {
+        background-color: #b0bec5;
+        cursor: pointer;
+      }
     }
 
     &-cancel {

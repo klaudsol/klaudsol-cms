@@ -19,7 +19,8 @@ import { FaChevronLeft,
   FaSearch, 
   FaChevronRight,
   FaList,
-  FaTh
+  FaTh,
+  FaDownload
 } from "react-icons/fa";
 import { IoFilter } from "react-icons/io5";
 import { BsGearFill } from "react-icons/bs";
@@ -44,10 +45,11 @@ import {
   TOGGLE_VIEW
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
-import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
+import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents, downloadCSV } from "lib/Constants"
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks"
+import { handleDownloadCsv } from "@/lib/downloadCSV";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
@@ -56,6 +58,7 @@ export default function ContentManager({ cache }) {
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
   const { state: {currentContentType} } = useContext(RootContext);
+  const tableRef = useRef(null);
 
  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
@@ -135,31 +138,33 @@ export default function ContentManager({ cache }) {
                 </a>
                 <p> {state.values.length} entries found </p>
               </div>
-             {capabilities.includes(writeContents) && <AppCreatebutton
+              <div className="general-row-center" style={{ gap: '5px'}}>
+              {capabilities.includes(writeContents) && <AppCreatebutton
                 link={`/admin/content-manager/${entity_type_slug}/create`}
                 title="Create new entry"
               />}
-            </div>
-
-            <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3">
-              <div className="d-flex flex-row px-0">
-                {/*TODO:
-                <AppIconButton icon={<FaSearch/>} /> 
-              <AppButtonSm title='Filters' icon={<IoFilter />} isDisabled={false}/>
-              */}
+              {state.view === 'list' && capabilities.includes(downloadCSV) && 
+              <div className="general-button-download" onClick={() => handleDownloadCsv(entity_type_slug, tableRef)}> <FaDownload /> Download as CSV </div>} 
               </div>
-
-              <div className="d-flex flex-row px-0">
+            </div>
+            <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3">
+              {/*<div className="d-flex flex-row px-0">
+                TODO:
+                  <AppIconButton icon={<FaSearch/>} /> 
+                  <AppButtonSm title='Filters' icon={<IoFilter />} isDisabled={false}/>
+              </div>*/}
+              {/* This does not show
                 <AppDropdown
                   title={state.columns.length + " items selected"}
                   items={state.columns}
                   id="dropdown_general"
                   isCheckbox={true}
-                />
-                <AppIconButton icon={<FaList/>} selected={state.view ==='list'} onClick={() => handleView('list')}/>
-                <AppIconButton icon={<FaTh />} selected={state.view === 'icon'} onClick={() => handleView('icon')}/>
-                {/* <AppIconButton icon={<BsGearFill/>} />  */}
+              />*/}
+              <div className="general-row-end" style={{ gap: '5px '}}>
+                  <AppIconButton icon={<FaList/>} selected={state.view ==='list'} onClick={() => handleView('list')}/>
+                  <AppIconButton icon={<FaTh />} selected={state.view === 'icon'} onClick={() => handleView('icon')}/>
               </div>
+              {/* <AppIconButton icon={<BsGearFill/>} />  */}
             </div>
 
             {(state.isLoading && state.firstFetch) && <SkeletonTable />}
@@ -168,6 +173,7 @@ export default function ContentManager({ cache }) {
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}
+                tableRef={tableRef}
               />
             )}
             {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'icon' && (
