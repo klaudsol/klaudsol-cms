@@ -16,7 +16,7 @@ export default function AddToGroupsForm({ groups }) {
             <h4 className="mb-4">Groups</h4>
             <h5>System supplied</h5>
             <div className="groups__container">
-                <div className="groups__item" >
+                {capabilities.includes(promoteToSuperAdmin) && <div className="groups__item" >
                     <AdminRenderer
                         title="Super Administrator"
                         value={SUPER_ADMIN_ID}
@@ -28,7 +28,7 @@ export default function AddToGroupsForm({ groups }) {
                         disabled={!capabilities.includes(writeUsers)}
                     />
                     <p className="groups__description">Reserved group for KlaudSol installation and setup.</p>
-                </div>
+                </div>}
                 {systemSupplied.map((group) => (
                     <div className="groups__item" key={group.id}>
                         <AdminRenderer

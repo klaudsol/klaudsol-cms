@@ -30,7 +30,6 @@ async function get(req, res) {
 }
 
 async function post(req, res) {
-
     const {
         firstName,
         lastName,
