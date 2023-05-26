@@ -5,7 +5,7 @@ import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverToolti
 import { useCapabilities } from '@/components/hooks';
 import { readContents } from "@/lib/Constants";
 
-const AppContentManagerTable = ({ columns, entries, entity_type_slug, tableRef }) => {
+const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
 
   const MAX_STRING_LENGTH = 50;
   const capabilities = useCapabilities();
@@ -23,7 +23,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug, tableRef }
 
   return (
     <div id="table_general_main">
-      <table id="table_general" ref={tableRef}>
+      <table id="table_general">
         {/*table head*/}
         <thead>
           <tr>

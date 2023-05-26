@@ -59,7 +59,6 @@ export default function ContentManager({ cache }) {
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
   const { state: {currentContentType} } = useContext(RootContext);
-  const tableRef = useRef(null);
   const [downloadingCSV, setDownloadingCSV] = useState(false);
 
   const [state, dispatch] = useReducer(contentManagerReducer, initialState);
@@ -184,7 +183,6 @@ export default function ContentManager({ cache }) {
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}
-                tableRef={tableRef}
               />
             )}
             {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'icon' && (
