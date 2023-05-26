@@ -135,6 +135,16 @@
         background-color: #b0bec5;
         cursor: pointer;
       }
+
+      &:disabled {
+        background-color: lightgray !important;
+        cursor: not-allowed;
+
+        &:hover {
+          background-color: lightgray !important;
+          cursor: not-allowed;
+        }
+      }
     }
 
     &-cancel {

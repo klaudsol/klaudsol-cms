@@ -2,7 +2,7 @@ import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 
-import React, { useEffect, useReducer, useRef, useContext } from "react";
+import React, { useEffect, useReducer, useRef, useContext, useState } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { useRouter } from "next/router";
 import RootContext from '@/components/contexts/RootContext';
@@ -50,6 +50,7 @@ import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents, dow
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks"
 import { handleDownloadCsv } from "@/lib/downloadCSV";
+import { Spinner } from "react-bootstrap";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
@@ -59,8 +60,9 @@ export default function ContentManager({ cache }) {
   const controllerRef = useRef();
   const { state: {currentContentType} } = useContext(RootContext);
   const tableRef = useRef(null);
+  const [downloadingCSV, setDownloadingCSV] = useState(false);
 
- const [state, dispatch] = useReducer(contentManagerReducer, initialState);
+  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
   /*** Entity Types List ***/
   useEffect(() => {
@@ -143,8 +145,17 @@ export default function ContentManager({ cache }) {
                 link={`/admin/content-manager/${entity_type_slug}/create`}
                 title="Create new entry"
               />}
-              {state.view === 'list' && capabilities.includes(downloadCSV) && 
-              <div className="general-button-download" onClick={() => handleDownloadCsv(entity_type_slug, tableRef)}> <FaDownload /> Download as CSV </div>} 
+              {state.view === 'list' && 
+               capabilities.includes(downloadCSV) && 
+               <button 
+                 disabled={state.isLoading || downloadingCSV} 
+                 className="general-button-download" 
+                 onClick={() => handleDownloadCsv(entity_type_slug, setDownloadingCSV)}> 
+                 {downloadingCSV ? 
+                   <Spinner size='sm' /> : 
+                   <FaDownload />} 
+                  Download as CSV 
+               </button>} 
               </div>
             </div>
             <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3">

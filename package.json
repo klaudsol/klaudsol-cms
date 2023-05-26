@@ -44,7 +44,6 @@
     "formik": "^2.2.9",
     "html2canvas": "^1.4.1",
     "iron-session": "^6.1.2",
-    "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.0",
     "jspdf": "^2.5.1",
     "moment": "^2.29.3",
