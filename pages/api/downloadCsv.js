@@ -4,6 +4,7 @@ import { handleRequests } from "@klaudsol/commons/lib/API";
 import { assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { resolveValue } from "@/components/EntityAttributeValue";
 import { downloadCSV } from "@/lib/Constants";
+import { formatDataCSV } from "@/lib/downloadCSV";
 
 export default withSession(handleRequests({ get }));
 
@@ -40,19 +41,27 @@ async function get(req, res) {
   
   const data = Object.values(dataTemp.indexedData);
 
-  const csvHeaders = Object.keys(data[0]);
-  const csvRows = data.map((item) => {
-    const rowValues = Object.values(item).map((value) => {
-      if (typeof value === 'object' && value !== null && 'link' in value) { // if attribute is an image
-        return value.link;
-      } else if (typeof value === 'string' && value.includes('\n')) { // if data has new lines (e.g. textarea)
-        return `"${value.replace(/\n/g, ' ')}"`;
-      }
-      return value;
-    });
-    return rowValues;
-  });
-  const csvContent = `${csvHeaders.join(',')}\n${csvRows.map((row) => row.join(',')).join('\n')}`;
+  /**
+   * Sample format of data:
+   * [
+   *   { 
+   *     text: 'Hello', // if attribute is a normal text
+   *     textarea: '- Data 1 \n' + // if attribute is a text area 
+                   '- Data 2 \n' +
+                   '- Data 3 \n' +
+                   '- Data 4 \n',
+          image: { // if attribute is an image
+            name: 'qrcode.png',
+            key: '4f96267b_qrcode.png',
+            link: 'https://s3.amazonaws.com/eventurousintl-cms.stg.klaudsol.app/4f96267b_qrcode.png'
+          }
+        }
+   *  ]
+   * 
+   */
+
+  // Format content of CSV
+  const csvContent = formatDataCSV(data);
 
   const timestamp = new Date().getTime();;
   const filename = `${entity_type_slug}_${timestamp}.csv`;

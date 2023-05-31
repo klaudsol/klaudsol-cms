@@ -63,6 +63,8 @@ export default function ContentManager({ cache }) {
 
   const [state, dispatch] = useReducer(contentManagerReducer, initialState);
 
+  const downloadCSVapi = `/api/downloadCsv?entity_type_slug=${entity_type_slug}`;
+
   /*** Entity Types List ***/
   useEffect(() => {
     (async () => {
@@ -149,7 +151,7 @@ export default function ContentManager({ cache }) {
                <button 
                  disabled={state.isLoading || downloadingCSV} 
                  className="general-button-download" 
-                 onClick={() => handleDownloadCsv(entity_type_slug, setDownloadingCSV)}> 
+                 onClick={() => handleDownloadCsv(downloadCSVapi, setDownloadingCSV)}> 
                  {downloadingCSV ? 
                    <Spinner size='sm' /> : 
                    <FaDownload />} 
