@@ -19,7 +19,7 @@ const UploadRenderer = ({
       accept={accept}
       name={name}
       className={cx("input_text mb-2", className)}
-      validate={(v) => TypesValidator(v, type)}
+      //validate={(v) => TypesValidator(v, type)}
       style={
         !isErrorDisabled && errors[name] && touched[name]
           ? { borderColor: "red", outlineColor: "red" }
