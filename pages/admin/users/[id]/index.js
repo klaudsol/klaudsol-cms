@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
+import Groups from '@klaudsol/commons/models/Groups';
+import People from '@klaudsol/commons/models/People';
 
 import AppBackButton from "@/components/klaudsolcms/buttons/AppBackButton";
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
@@ -16,7 +18,7 @@ import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import { FaCheck, FaTrash, FaArrowRight } from "react-icons/fa";
 import { Formik, Form } from "formik";
 import ContentManagerLayout from "components/layouts/ContentManagerLayout";
-import { changeUserPassword, DEFAULT_SKELETON_ROW_COUNT, deleteUsers, writeUsers } from "lib/Constants";
+import { changeUserPassword, DEFAULT_SKELETON_ROW_COUNT, deleteUsers, SUPER_ADMIN_ID, writeUsers } from "lib/Constants";
 
 import {
     LOADING,
@@ -31,7 +33,7 @@ import useUserReducer from "@/components/reducers/userReducer";
 import UserForm from "@/components/forms/UserForm";
 import AddToGroupsForm from "@/components/forms/AddToGroupsForm";
 
-export default function UserInfo({ cache }) {
+export default function UserInfo({ cache, groups, user }) {
     const [state, setState] = useUserReducer();
 
     const router = useRouter();
@@ -43,44 +45,6 @@ export default function UserInfo({ cache }) {
 
     const { entity_type_slug, id } = router.query;
     const formRef = useRef();
-
-    useEffect(() => {
-        (async () => {
-            try {
-                setState(LOADING, true);
-
-                const userDataUrl = `/api/admin/users/${id}`;
-                const userParams = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-
-                const groupsUrl = `/api/admin/groups`;
-                const groupsParams = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-
-                const groupsPromise = slsFetch(groupsUrl, groupsParams);
-                const userPromise = slsFetch(userDataUrl, userParams);
-                const [groupsRaw, userRaw] = await Promise.all([groupsPromise, userPromise]);
-
-                const { data: user } = await userRaw.json();
-                const { person, groups: userGroups } = user;
-
-                const { data: groups } = await groupsRaw.json();
-
-                setState(SET_VALUES, { ...person[0], groups: userGroups });
-                setState(SET_GROUPS, groups);
-            } catch (ex) {
-                errorHandler(ex);
-            } finally {
-                setState(LOADING, false);
-            }
-        })();
-    }, []);
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -112,16 +76,16 @@ export default function UserInfo({ cache }) {
 
     const formikParams = {
         innerRef: formRef,
-        initialValues: state.user,
+        initialValues: user,
         onSubmit: (values) => {
             (async () => {
                 try {
                     setState(SAVING, true);
 
-                    const isSameEmail = values.email === state.user.email;
+                    const isSameEmail = values.email === user.email;
 
-                    const toAdd = values.groups.filter((group) => !state.user.groups.includes(group));
-                    const toDelete = state.user.groups.filter((group) => !values.groups.includes(group));
+                    const toAdd = values.groups.filter((group) => !user.groups.includes(group));
+                    const toDelete = user.groups.filter((group) => !values.groups.includes(group));
 
                     const url = `/api/admin/users/${id}`
                     const params = {
@@ -190,7 +154,7 @@ export default function UserInfo({ cache }) {
                                         <Formik {...formikParams}>
                                             <Form>
                                                 <UserForm />
-                                                <AddToGroupsForm groups={state.groups} />
+                                                <AddToGroupsForm groups={groups} />
                                             </Form>
                                         </Formik>
 
@@ -234,4 +198,19 @@ export default function UserInfo({ cache }) {
         </CacheContext.Provider>
     );
 }
-export const getServerSideProps = getSessionCache();
+export const getServerSideProps = getSessionCache(async ({ query }) => {
+    const { id } = query;
+
+    const [groups, userGroups, user] = await Promise.all([
+        Groups.all(),
+        Groups.findByUser({ id }),
+        People.get({ id })
+    ])
+
+    return {
+        props: {
+            groups: await groups.filter((group) => group.id !== SUPER_ADMIN_ID),
+            user: { ...user[0], groups: userGroups },
+        }
+    }
+});

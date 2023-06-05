@@ -1,0 +1,10 @@
+{
+    "up": [
+        "DELETE FROM group_capabilities WHERE group_id = 1 ",
+        "AND capabilities_id = (SELECT id FROM capabilities WHERE name = 'promote_to_super_admin' AND is_system_supplied = true);"
+    ],
+    "down": [
+        "INSERT INTO group_capabilities (group_id, capabilities_id) VALUES",
+        "(1, (SELECT id FROM capabilities WHERE name = 'promote_to_super_admin' AND is_system_supplied = true))"
+    ]
+}
