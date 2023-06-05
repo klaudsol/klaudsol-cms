@@ -46,7 +46,8 @@ KS_SECRET_COOKIE_PASSWORD=a random secret value that should be unique for each K
 #### Run the following commands:
 ```
 nvm use --lts
-./dev-start.sh
+./dev-install.sh          # Run this once to setup the database. 
+./dev-start.sh            # Let's go!
 ```
 
 #### Open browser to http://localhost:3001

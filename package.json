@@ -1,6 +1,6 @@
 {
   "name": "klaudsol-cms",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
@@ -25,8 +25,8 @@
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
-    "@klaudsol/commons": "https://github.com/klaudsol/klaudsol-commons.git#v1.7.1",
-    "@next/font": "13.1.1",
+    "@klaudsol/commons": "https://github.com/klaudsol/klaudsol-commons.git#v1.8.0",
+    "@next/font": "^13.4.4",
     "@nivo/bar": "^0.79.1",
     "@nivo/core": "^0.79.0",
     "@nivo/line": "^0.79.1",
@@ -49,7 +49,7 @@
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.34",
     "multer": "^1.4.5-lts.1",
-    "next": "13.1.1",
+    "next": "^13.4.4",
     "node-fetch": "^3.2.3",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",

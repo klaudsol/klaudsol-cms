@@ -1,3 +1,7 @@
+# 3.5.0
+* The installation process is now easier 
+* Added download to CSV feature
+
 # 3.4.0
 * Added user management systems
 * Added sign up route
