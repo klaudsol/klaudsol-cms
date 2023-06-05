@@ -6,9 +6,9 @@
 * Added user management systems
 * Added sign up route
 * Added sidebar icons
-* Added gallery attribute
-* Fixed capabilities for administrators and editors
-* Login now returns jwt if the host is not from the cms
+* Added Gallery attribute
+* Fixed capabilities for Administrators and Editors
+* Login now returns JWT if the host is not from the CMS
 * Plugins can now have sub items on the sidebar
 * Users can now update their profile
 
