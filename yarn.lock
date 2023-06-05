@@ -1041,9 +1041,9 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git#v1.7.1":
+"@klaudsol/commons@https://github.com/klaudsol/klaudsol-commons.git#v1.8.1":
   version "1.7.1"
-  resolved "https://github.com/klaudsol/klaudsol-commons.git#ceeefc4b909eae9a3072760b14640cc556df8a0b"
+  resolved "https://github.com/klaudsol/klaudsol-commons.git#af2f03308df5174c14670a2a773ca60fe19fb350"
   dependencies:
     "@aws-sdk/client-sesv2" "3.288.0"
     aws-sdk "^2.1333.0"
