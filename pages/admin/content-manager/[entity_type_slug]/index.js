@@ -2,7 +2,7 @@ import InnerLayout from "@/components/layouts/InnerLayout";
 import CacheContext from "@/components/contexts/CacheContext";
 import ContentManagerSubMenu from "@/components/elements/inner/ContentManagerSubMenu";
 
-import React, { useEffect, useReducer, useRef, useContext } from "react";
+import React, { useEffect, useReducer, useRef, useContext, useState } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { useRouter } from "next/router";
 import RootContext from '@/components/contexts/RootContext';
@@ -19,7 +19,8 @@ import { FaChevronLeft,
   FaSearch, 
   FaChevronRight,
   FaList,
-  FaTh
+  FaTh,
+  FaDownload
 } from "react-icons/fa";
 import { IoFilter } from "react-icons/io5";
 import { BsGearFill } from "react-icons/bs";
@@ -44,10 +45,12 @@ import {
   TOGGLE_VIEW
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
-import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents} from "lib/Constants"
+import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents, downloadCSV } from "lib/Constants"
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks"
+import { handleDownloadCsv } from "@/lib/downloadCSV";
+import { Spinner } from "react-bootstrap";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
@@ -56,8 +59,11 @@ export default function ContentManager({ cache }) {
   const { entity_type_slug } = router.query;
   const controllerRef = useRef();
   const { state: {currentContentType} } = useContext(RootContext);
+  const [downloadingCSV, setDownloadingCSV] = useState(false);
 
- const [state, dispatch] = useReducer(contentManagerReducer, initialState);
+  const [state, dispatch] = useReducer(contentManagerReducer, initialState);
+
+  const downloadCSVapi = `/api/downloadCsv?entity_type_slug=${entity_type_slug}`;
 
   /*** Entity Types List ***/
   useEffect(() => {
@@ -135,31 +141,42 @@ export default function ContentManager({ cache }) {
                 </a>
                 <p> {state.values.length} entries found </p>
               </div>
-             {capabilities.includes(writeContents) && <AppCreatebutton
+              <div className="general-row-center" style={{ gap: '5px'}}>
+              {capabilities.includes(writeContents) && <AppCreatebutton
                 link={`/admin/content-manager/${entity_type_slug}/create`}
                 title="Create new entry"
               />}
-            </div>
-
-            <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3">
-              <div className="d-flex flex-row px-0">
-                {/*TODO:
-                <AppIconButton icon={<FaSearch/>} /> 
-              <AppButtonSm title='Filters' icon={<IoFilter />} isDisabled={false}/>
-              */}
+              {state.view === 'list' && 
+               capabilities.includes(downloadCSV) && 
+               <button 
+                 disabled={state.isLoading || downloadingCSV} 
+                 className="general-button-download" 
+                 onClick={() => handleDownloadCsv(downloadCSVapi, setDownloadingCSV)}> 
+                 {downloadingCSV ? 
+                   <Spinner size='sm' /> : 
+                   <FaDownload />} 
+                  Download as CSV 
+               </button>} 
               </div>
-
-              <div className="d-flex flex-row px-0">
+            </div>
+            <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3">
+              {/*<div className="d-flex flex-row px-0">
+                TODO:
+                  <AppIconButton icon={<FaSearch/>} /> 
+                  <AppButtonSm title='Filters' icon={<IoFilter />} isDisabled={false}/>
+              </div>*/}
+              {/* This does not show
                 <AppDropdown
                   title={state.columns.length + " items selected"}
                   items={state.columns}
                   id="dropdown_general"
                   isCheckbox={true}
-                />
-                <AppIconButton icon={<FaList/>} selected={state.view ==='list'} onClick={() => handleView('list')}/>
-                <AppIconButton icon={<FaTh />} selected={state.view === 'icon'} onClick={() => handleView('icon')}/>
-                {/* <AppIconButton icon={<BsGearFill/>} />  */}
+              />*/}
+              <div className="general-row-end" style={{ gap: '5px '}}>
+                  <AppIconButton icon={<FaList/>} selected={state.view ==='list'} onClick={() => handleView('list')}/>
+                  <AppIconButton icon={<FaTh />} selected={state.view === 'icon'} onClick={() => handleView('icon')}/>
               </div>
+              {/* <AppIconButton icon={<BsGearFill/>} />  */}
             </div>
 
             {(state.isLoading && state.firstFetch) && <SkeletonTable />}
