@@ -14,7 +14,7 @@ const TextAreaRenderer = ({
     <Field
       type="textarea"
       name={name}
-      validate={(v) => TypesValidator(v, type)}
+      //validate={(v) => TypesValidator(v, type)}
     >
       {({ field }) => (
         <textarea
