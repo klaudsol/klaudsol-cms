@@ -32,5 +32,7 @@ const formatImage = (key) => {
       case 'float':
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);
+      case 'custom':
+        return item.value_string;
     }
   }
