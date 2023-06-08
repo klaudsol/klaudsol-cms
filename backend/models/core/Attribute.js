@@ -53,15 +53,16 @@ export default class Attribute {
         })); 
   }
   
-  static async create({entity_type_id, name, type, order}) {
+  static async create({entity_type_id, name, type, order, customName}) {
     const db = new DB();
 
-    const insertSQL = 'INSERT into attributes (`entity_type_id`, `name`, `type`, `order`) VALUES (:entity_type_id, :name, :type, :order)';
+    const insertSQL = 'INSERT into attributes (`entity_type_id`, `name`, `type`, `custom_name`, `order`) VALUES (:entity_type_id, :name, :type, :custom_name, :order)';
     
     await db.executeStatement(insertSQL, [
       {name: 'entity_type_id', value:{longValue: entity_type_id}},
       {name: 'name', value:{stringValue: name}},
       {name: 'type', value:{stringValue: type}},
+      {name: 'custom_name', value: customName ? { stringValue: customName } : { isNull: true }},
       {name: 'order', value:{longValue: order}},
     ]);
 
