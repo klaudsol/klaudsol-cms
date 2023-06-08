@@ -75,7 +75,7 @@ const AppContentBuilderTable = ({ typeSlug }) => {
         name: attribute?.name,
         type: attribute?.type,
         order: attribute?.order,
-        customName: attribute?.customName
+        customName: attribute?.custom_name
       },
       onSubmit: (values) => {
         
