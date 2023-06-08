@@ -29,6 +29,12 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.CUSTOM:
       const Component = plugin(params.customName);
 
+      if (Component.prototype?.render) {
+        const instance = new Component();
+
+        return instance.render();
+      }
+
       return <Component />
     default:
       return null;
