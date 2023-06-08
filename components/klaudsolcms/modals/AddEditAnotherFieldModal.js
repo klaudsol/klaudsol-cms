@@ -15,7 +15,8 @@ const AddEditAnotherFieldModal = ({
 }) => {
     const resetCustomNameField = (e, props) => {
         props.handleChange(e);
-        props.setFieldValue('customName', '');
+
+        if (mode === ADD_MODE) props.setFieldValue('customName', '');
     }
 
     return (

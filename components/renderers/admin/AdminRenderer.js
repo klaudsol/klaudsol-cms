@@ -29,7 +29,7 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.CUSTOM:
       const Component = plugin(params.customName);
 
-      // It can also cater to class components
+      // Can also cater to class components
       if (Component.prototype?.render) {
         const instance = new Component();
 
