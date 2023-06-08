@@ -27,7 +27,9 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.FLOAT:
       return <FloatRenderer type={type} {...params} />;
     case CMS_TYPES.CUSTOM:
-      console.log("YEAH")
+      const Component = plugin(params.customName);
+
+      return <Component />
     default:
       return null;
   }
