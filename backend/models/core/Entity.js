@@ -211,7 +211,8 @@ class Entity {
             value:
               attributeType == "text" ||
               attributeType == "image" ||
-              attributeType == "link"
+              attributeType == "link" ||
+              attributeType === "video"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -307,6 +308,7 @@ class Entity {
             value:
               (attributeType == "text" ||
                 attributeType == "image" ||
+                attributeType == "video" ||
                 attributeType == "link") &&
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }

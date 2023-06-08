@@ -198,4 +198,13 @@
     text-transform: capitalize;
   }
 }
+
+.attr {
+  &-video {
+    @include width-height(100%, 100%);
+    &-container {
+      @include width-height(100%, auto);
+    }
+  }
+}
   
