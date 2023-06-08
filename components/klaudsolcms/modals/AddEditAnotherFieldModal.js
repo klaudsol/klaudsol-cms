@@ -13,7 +13,6 @@ const AddEditAnotherFieldModal = ({
     mode,
     isLoading,
 }) => {
-    
     const resetCustomNameField = (e, props) => {
         props.handleChange(e);
         props.setFieldValue('customName', '');
