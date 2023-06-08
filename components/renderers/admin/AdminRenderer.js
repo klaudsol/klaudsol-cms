@@ -36,7 +36,7 @@ const AdminRenderer = ({ type, ...params }) => {
         return instance.render();
       }
 
-      return <Component />
+      return <Component type={type} {...params} />
     default:
       return null;
   }
