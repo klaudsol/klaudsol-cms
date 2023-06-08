@@ -9,7 +9,8 @@ export const CMS_TYPES = {
   // since they are not attribute types. I included it so that
   // the AdminRenderer component can function properly
   PASSWORD: "password",
-  CHECKBOX: "checkbox"
+  CHECKBOX: "checkbox",
+  CUSTOM: "custom"
 };
 
 // resources types
