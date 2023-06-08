@@ -237,6 +237,9 @@ export default function ContentTypeBuilder({ cache }) {
     innerRef: formikRef,
     initialValues: {
       type: "text",
+      name: "",
+      order: 0,
+      customName: ""
     },
     onSubmit: (values) => {
       (async () => {

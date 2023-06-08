@@ -5,6 +5,7 @@ export const inputValues = [
   { value: "image", option: "Image" },
   { value: "gallery", option: "Gallery" },
   { value: "float", option: "Number" },
+  { value: "custom", option: "Custom" },
 ];
 
 export const defaultLogo = {

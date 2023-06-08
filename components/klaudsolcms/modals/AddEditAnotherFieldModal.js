@@ -55,6 +55,10 @@ const AddEditAnotherFieldModal = ({
             </tr>
           </tbody>
         </table>
+        <div className="custom-attribute">
+            <p className="custom-attribute__title">Custom Name</p>
+            <Field name="customName" className="input_text" />
+        </div>
       </Form>
     </Formik>
   </AppModal>

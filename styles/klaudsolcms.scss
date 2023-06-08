@@ -1389,3 +1389,12 @@ $onFocus: #323C4E;
     }
 }
 
+.custom-attribute {
+    padding: 10px;
+
+    &__title {
+        all: unset;
+        font-size: 13px;
+        font-weight: 590;
+    }
+}
