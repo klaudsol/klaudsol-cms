@@ -15,6 +15,8 @@ const formatImage = (key) => {
       case 'text':
       case 'link':
         return item.value_string;
+      case 'boolean':
+        return item.value_boolean;
       case 'textarea':
         return item.value_long_string;
       case 'image':

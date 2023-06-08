@@ -49,8 +49,15 @@ export default function CreateNewEntry({ cache }) {
   const [state, dispatch] = useReducer(createEntriesReducer, initialState);
   const formRef = useRef();
 
-  const metaDataHandler = (data, val) =>
-    Object.entries(data).map(([attributeName]) => ({ [attributeName]: val }));
+  const metaDataHandler = (data, val) => {
+    return Object.entries(data).map(([attributeName, attributeValue]) => {
+      if (attributeValue.type === "boolean") {
+        return { [attributeName]: false };
+      } else {
+        return { [attributeName]: val };
+      }
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -63,6 +70,7 @@ export default function CreateNewEntry({ cache }) {
           values.metadata.attributes,
           true
         );
+
         const initialValues = metaDataHandler(values.metadata.attributes, "");
 
         dispatch({

@@ -7,6 +7,7 @@ import GalleryRenderer from "./GalleryRenderer.js";
 import PasswordRenderer from "./PasswordRenderer";
 import CheckboxRenderer from "./CheckboxRenderer";
 import { validImageTypes } from "@/lib/Constants";
+import BooleanRenderer from "./BooleanRenderer";
 
 const AdminRenderer = ({ type, ...params }) => {
   switch (type) {
@@ -25,6 +26,8 @@ const AdminRenderer = ({ type, ...params }) => {
       return <TextAreaRenderer type={type} {...params} />;
     case CMS_TYPES.FLOAT:
       return <FloatRenderer type={type} {...params} />;
+    case CMS_TYPES.BOOLEAN:
+      return <BooleanRenderer type={type} {...params} title="Yes" />;
     default:
       return null;
   }
