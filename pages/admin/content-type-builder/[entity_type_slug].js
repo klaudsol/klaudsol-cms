@@ -243,35 +243,36 @@ export default function ContentTypeBuilder({ cache }) {
     },
     onSubmit: (values) => {
       (async () => {
-        try {
-          dispatch({ type: LOADING, payload: true });
-          const response = await slsFetch(
-            `/api/entity_types/${entity_type_slug}/attributes`,
-            {
-              method: "POST",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify({
-                attribute: {
-                  ...{ typeSlug: entity_type_slug },
-                  ...values,
-                },
-              }),
-            }
-          );
-        } catch (ex) {
-          errorHandler(ex);
-        } finally {
-          //dispatch({type: CLEANUP})
-          await loadEntityType({
-            rootState,
-            rootDispatch,
-            typeSlug: entity_type_slug,
-          });
-          hideAddAttributeModal();
-          dispatch({ type: LOADING, payload: false });
-        }
+        console.log(values)
+        // try {
+        //   dispatch({ type: LOADING, payload: true });
+        //   const response = await slsFetch(
+        //     `/api/entity_types/${entity_type_slug}/attributes`,
+        //     {
+        //       method: "POST",
+        //       headers: {
+        //         "Content-type": "application/json",
+        //       },
+        //       body: JSON.stringify({
+        //         attribute: {
+        //           ...{ typeSlug: entity_type_slug },
+        //           ...values,
+        //         },
+        //       }),
+        //     }
+        //   );
+        // } catch (ex) {
+        //   errorHandler(ex);
+        // } finally {
+        //   //dispatch({type: CLEANUP})
+        //   await loadEntityType({
+        //     rootState,
+        //     rootDispatch,
+        //     typeSlug: entity_type_slug,
+        //   });
+        //   hideAddAttributeModal();
+        //   dispatch({ type: LOADING, payload: false });
+        // }
       })();
     },
   };
