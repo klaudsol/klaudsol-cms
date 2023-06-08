@@ -94,15 +94,16 @@ export default class Attribute {
     const entityType = await EntityType.findBySlug(type_slug, { db });
     const entityTypeId = entityType.entity_type_id;
 
-    const {name, type, order} = attribute;
+    const {name, type, order, customName} = attribute;
 
-    const updateSQL = 'UPDATE attributes SET `name` = :name, `type` = :type, `order` = :order WHERE `entity_type_id` = :entity_type_id AND `name` = :old_name';
+    const updateSQL = 'UPDATE attributes SET `name` = :name, `type` = :type, `order` = :order, `custom_name` = :custom_name WHERE `entity_type_id` = :entity_type_id AND `name` = :old_name';
     await db.executeStatement(updateSQL, [
       {name: 'entity_type_id', value:{longValue: entityTypeId}},
       {name: 'old_name', value:{stringValue: oldName}},
       {name: 'name', value:{stringValue: name}},
       {name: 'type', value:{stringValue: type}},
       {name: 'order', value:{longValue: order}},
+      {name: 'custom_name', value: customName ? { stringValue: customName } : { isNull: true }},
     ])
 
   }
