@@ -31,7 +31,9 @@ const AdminRenderer = ({ type, ...params }) => {
 
       // Can also cater to class components
       if (Component.prototype?.render) {
-        const instance = new Component();
+        // Class components would need this.props = props in
+        // their constructor
+        const instance = new Component({ type, ...params });
 
         return instance.render();
       }
