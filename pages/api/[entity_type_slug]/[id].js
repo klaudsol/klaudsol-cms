@@ -75,6 +75,7 @@ async function get(req, res) {
                         [item.attributes_name]: {
                             type: item.attributes_type,
                             order: item.attributes_order,
+                            ...(item?.attributes_custom_name && { custom_name: item.attributes_custom_name })
                         },
                     }),
                 },

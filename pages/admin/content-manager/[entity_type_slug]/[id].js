@@ -225,6 +225,7 @@ export default function Type({ cache }) {
                                     touched={props.touched}
                                     type={attribute.type}
                                     name={attributeName}
+                                    customName={attribute?.custom_name ?? ''}
                                     disabled={!capabilities.includes(writeContents)}
                                   />
                                 </div>
