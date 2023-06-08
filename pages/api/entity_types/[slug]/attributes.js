@@ -57,6 +57,7 @@ async function post(req, res) {
     name: attribute.name,
     type: attribute.type,
     order: attribute.order,
+    customName: attribute.customName
   });
   res.status(OK).json({ message: "Successfully created a new attribute." });
 }
