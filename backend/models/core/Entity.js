@@ -313,7 +313,7 @@ class Entity {
                 attributeType == "link" &&
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }
-                : { isNull: true },
+                : { isNull: true }),
           },
           {
             name: "value_long_string",
