@@ -38,6 +38,8 @@ const formatImage = (key) => {
         const Data = plugin(item.attributes_custom_name);
         const data = new Data();
 
-        return data.toApi(item.attributes_custom_name, item.value_long_string);
+            console.log(item)
+        // entity_type_id === entity_id
+        return data.toApi(item.attributes_custom_name, item.id, item.value_long_string);
     }
   }
