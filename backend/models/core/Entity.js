@@ -213,8 +213,7 @@ class Entity {
             value:
               attributeType == "text" ||
               attributeType == "image" ||
-              attributeType == "link" ||
-              attributeType == "custom"
+              attributeType == "link"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -222,7 +221,8 @@ class Entity {
             name: "value_long_string",
             value:
               attributeType == "textarea" ||
-              attributeType === "gallery"
+              attributeType === "gallery" ||
+              attributeType == "custom"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -310,8 +310,7 @@ class Entity {
             value:
               (attributeType == "text" ||
                 attributeType == "image" ||
-                attributeType == "link" ||
-                attributeType == "custom") &&
+                attributeType == "link" &&
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }
                 : { isNull: true },
@@ -320,7 +319,8 @@ class Entity {
             name: "value_long_string",
             value:
               (attributeType == "textarea" ||
-                attributeType === "gallery") && 
+                attributeType === "gallery" ||
+                attributeType === "custom") && 
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }
                 : { isNull: true },
