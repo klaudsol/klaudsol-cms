@@ -39,7 +39,6 @@ const formatImage = (key) => {
         const data = new Data();
 
             console.log(item)
-        // entity_type_id === entity_id
         return data.toApi(item.attributes_custom_name, item.id, item.value_long_string);
     }
   }

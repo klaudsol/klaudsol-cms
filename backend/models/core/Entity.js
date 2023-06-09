@@ -14,7 +14,7 @@ class Entity {
     // if the type of slug is a number, propertyType and conditionType will be longValue and enitities.id respectively,
     // and will be used for the query's condition WHERE and property name for "slug" in the map method
 
-    const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
+    const sql = `SELECT entities.id, entities.slug, entity_types.id, entity_types.name, entity_types.slug,
                   attributes.name, attributes.type, attributes.\`order\`, attributes.custom_name,
                   \`values\`.value_string, 
                   \`values\`.value_long_string, 
@@ -38,11 +38,11 @@ class Entity {
 
     return data.records.map(
       ([
+        { longValue: id },
+        { stringValue: slug },
         { longValue: entity_type_id },
-        { longValue: slug },
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
-        { stringValue: entities_slug },
         { stringValue: attributes_name },
         { stringValue: attributes_type },
         { longValue: attributes_order },
@@ -53,11 +53,11 @@ class Entity {
         { stringValue: value_datetime },
         { stringValue: value_double },
       ]) => ({
-        entity_type_id,
+        id,
         slug,
+        entity_type_id,
         entity_type_name,
         entity_type_slug,
-        entities_slug,
         attributes_name,
         attributes_type,
         attributes_order,

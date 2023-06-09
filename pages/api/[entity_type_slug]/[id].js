@@ -43,7 +43,6 @@ async function get(req, res) {
 
     const { entity_type_slug, id: slug } = req.query;
     const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
-    console.log(slug)
 
     const initialFormat = {
         data: {},
@@ -59,7 +58,7 @@ async function get(req, res) {
             data: {
                 ...collection.data,
                 ...(!collection.data.id && { id: item.id }),
-                ...(!collection.data.slug && { slug: item.entities_slug }),
+                ...(!collection.data.slug && { slug: item.slug }),
                 ...(!collection.data[item.attributes_name] && {
                     [item.attributes_name]: resolveValue(item),
                 }),
