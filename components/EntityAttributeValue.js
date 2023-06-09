@@ -33,12 +33,12 @@ const formatImage = (key) => {
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);
       case 'custom':
-        if (!item.value_long_string) return item.value_long_string;
-
-        // Values may be arrays/objects
-        const stringifiedValue =  JSON.stringify(item.value_long_string);
-        const customValue = JSON.parse(stringifiedValue);
-
-        return customValue;
+        // Some custom values may be a stringified array/object
+        // Not sure if using a try/catch block is good practice
+        try {
+            return JSON.parse(item.value_long_string);
+        } catch (err) {
+            return item.value_long_string;
+        }
     }
   }
