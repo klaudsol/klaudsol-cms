@@ -5,8 +5,8 @@ const mapping = {
     "plugin-thirst/exports/TestCustomComponent": TestCustomComponent,
 };
 
-//usage: 
-//const AnotherClass = plugin('fortune-cookie/exports/AnotherClass');
+// Usage: 
+// const AnotherClass = plugin('fortune-cookie/exports/AnotherClass');
 // const instance = new AnotherClass();
 export const plugin = (key) => {
 
