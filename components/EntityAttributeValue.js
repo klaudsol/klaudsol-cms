@@ -35,9 +35,9 @@ const formatImage = (key) => {
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);
       case 'custom':
-        const Resource = plugin(item.attributes_custom_name);
-        const resource = new Resource();
+        const Data = plugin(item.attributes_custom_name);
+        const data = new Data();
 
-        return resource.toApi(item.attirbutes_custom_name, item.value_long_string);
+        return data.toApi(item.attirbutes_custom_name, item.value_long_string);
     }
   }
