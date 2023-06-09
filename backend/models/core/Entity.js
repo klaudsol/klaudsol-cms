@@ -112,6 +112,7 @@ class Entity {
 
     const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
                 attributes.name, attributes.type, attributes.\`order\`, attributes.custom_name,
+                \`values\`.id, 
                 \`values\`.value_string, 
                 \`values\`.value_long_string, 
                 \`values\`.value_integer, 
@@ -143,6 +144,7 @@ class Entity {
         { stringValue: attributes_type },
         { longValue: attributes_order },
         { stringValue: attributes_custom_name },
+        { longValue: value_id },
         { stringValue: value_string },
         { stringValue: value_long_string },
         { longValue: value_integer },
@@ -158,6 +160,7 @@ class Entity {
         attributes_type,
         attributes_order,
         attributes_custom_name,
+        value_id,
         value_string,
         value_long_string,
         value_integer,
