@@ -38,6 +38,6 @@ const formatImage = (key) => {
         const Data = plugin(item.attributes_custom_name);
         const data = new Data();
 
-        return data.toApi(item.attributes_custom_name, item.value_id, item.value_long_string);
+        return data.toApi(item.attributes_custom_name, item.value_long_string);
     }
   }
