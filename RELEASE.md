@@ -1,3 +1,6 @@
+# 3.5.1
+* Removed fields validation for now, will roll-out a more robust field validation mechanism in the future.
+
 # 3.5.0
 * The installation process is now easier 
 * Added download to CSV feature

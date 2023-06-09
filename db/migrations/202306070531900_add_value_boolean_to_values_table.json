@@ -1,0 +1,4 @@
+{
+  "up": "ALTER TABLE `values` ADD COLUMN value_boolean BOOLEAN;",
+  "down": "ALTER TABLE `values` DROP COLUMN value_boolean"
+}
