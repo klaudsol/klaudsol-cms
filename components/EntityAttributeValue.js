@@ -35,6 +35,7 @@ const formatImage = (key) => {
       case 'custom':
         // Some custom values may be a stringified array/object
         // Not sure if using a try/catch block is good practice
+        // but this is the only way I can pull this off :(
         try {
             return JSON.parse(item.value_long_string);
         } catch (err) {
