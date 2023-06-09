@@ -310,10 +310,10 @@ class Entity {
             value:
               (attributeType == "text" ||
                 attributeType == "image" ||
-                attributeType == "link" &&
+                attributeType == "link") &&
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }
-                : { isNull: true }),
+                : { isNull: true },
           },
           {
             name: "value_long_string",
