@@ -28,17 +28,9 @@ const AdminRenderer = ({ type, ...params }) => {
       return <FloatRenderer type={type} {...params} />;
     case CMS_TYPES.CUSTOM:
       const Component = plugin(params.customName);
+      const component = new Component();
 
-      // Can also cater to class components
-      if (Component.prototype?.render) {
-        // Class components would need this.props = props in
-        // their constructor
-        const instance = new Component({ type, ...params });
-
-        return instance.render();
-      }
-
-      return <Component type={type} {...params} />
+      return component.renderAdmin(type, params);
     default:
       return null;
   }

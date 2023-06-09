@@ -1,3 +1,5 @@
+import { plugin } from "@/plugin-exports";
+
 const formatImage = (key) => {
     if (!key) return;
 
@@ -33,13 +35,9 @@ const formatImage = (key) => {
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);
       case 'custom':
-        // Some custom values may be a stringified array/object
-        // Not sure if using a try/catch block is good practice
-        // but this is the only way I can pull this off :(
-        try {
-            return JSON.parse(item.value_long_string);
-        } catch (err) {
-            return item.value_long_string;
-        }
+        const Resource = plugin(item.attributes_custom_name);
+        const resource = new Resource();
+
+        return resource.toApi(item.attirbutes_custom_name, item.value_long_string);
     }
   }
