@@ -20,7 +20,8 @@ class Entity {
                   \`values\`.value_long_string, 
                   \`values\`.value_integer, 
                   \`values\`.value_datetime, 
-                  \`values\`.value_double                       
+                  \`values\`.value_double,        
+                  \`values\`.value_boolean                       
                   FROM entities
                   LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
                   LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
@@ -51,6 +52,7 @@ class Entity {
         { longValue: value_integer },
         { stringValue: value_datetime },
         { stringValue: value_double },
+        { booleanValue: value_boolean },
       ]) => ({
         entity_type_id,
         slug,
@@ -65,6 +67,7 @@ class Entity {
         value_integer,
         value_datetime,
         value_double,
+        value_boolean
       })
     );
   }
@@ -114,7 +117,8 @@ class Entity {
                 \`values\`.value_long_string, 
                 \`values\`.value_integer, 
                 \`values\`.value_datetime, 
-                \`values\`.value_double                       
+                \`values\`.value_double,
+                \`values\`.value_boolean                  
                 FROM entities
                 LEFT JOIN entity_types ON entities.entity_type_id = entity_types.id
                 LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
@@ -145,6 +149,7 @@ class Entity {
         { longValue: value_integer },
         { stringValue: value_datetime },
         { stringValue: value_double },
+        { booleanValue: value_boolean },
       ]) => ({
         id,
         entity_type_id,
@@ -159,6 +164,7 @@ class Entity {
         value_integer,
         value_datetime,
         value_double,
+        value_boolean,
       })
     );
 
@@ -231,14 +237,21 @@ class Entity {
                 ? { doubleValue: entry[attributeName] }
                 : { isNull: true },
           },
+          {
+            name: "value_boolean",
+            value:
+              attributeType == "boolean"
+                ? { booleanValue: entry[attributeName] }
+                : { isNull: true },
+          },
         ],
       ];
     }, []);
 
     //Insert Values by batch
     const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
-        value_string, value_long_string, value_double  
-      ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double) 
+        value_string, value_long_string, value_double, value_boolean  
+      ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double, :value_boolean) 
       `;
 
     await db.batchExecuteStatement(insertValuesBatchSQL, valueBatchParams);
@@ -330,6 +343,13 @@ class Entity {
                 ? { doubleValue: entries[attributeName] }
                 : { isNull: true },
           },
+          {
+            name: "value_boolean",
+            value:
+              attributeType == "boolean"
+                ? { booleanValue: entries[attributeName] }
+                : { isNull: true },
+          },
         ],
       ];
     }, []);
@@ -365,8 +385,8 @@ class Entity {
 
     if (nonExistingVal.length) {
       const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
-      value_string, value_long_string, value_double  
-    ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double) 
+      value_string, value_long_string, value_double, value_boolean  
+    ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double, :value_boolean) 
     `;
 
       await db.batchExecuteStatement(insertValuesBatchSQL, nonExistingVal);
@@ -377,7 +397,8 @@ class Entity {
     const updateValuesBatchSQL = `UPDATE \`values\` SET 
     value_string = :value_string, 
     value_long_string = :value_long_string, 
-    value_double = :value_double 
+    value_double = :value_double, 
+    value_boolean = :value_boolean
     WHERE entity_id = :entity_id AND attribute_id = :attribute_id
     `;
 
