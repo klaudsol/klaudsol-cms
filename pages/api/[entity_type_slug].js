@@ -88,7 +88,6 @@ async function get(req, res) {
                 ...collection.attributes,
                 ...(!collection.attributes[item.attribute_name] &&
                     item.attribute_name && {
-                        // ADD CUSTOM ATTRIBUTE HERE
                     [item.attribute_name]: {
                         type: item.attribute_type,
                         order: item.attribute_order,
