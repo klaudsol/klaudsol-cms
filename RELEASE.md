@@ -1,6 +1,6 @@
 # 3.6.0
-* Added Boolean attribute
-* Added Video attribute
+* Added Boolean attribute type
+* Added Video attribute type
 
 # 3.5.1
 * Removed fields validation for now, will roll-out a more robust field validation mechanism in the future.
