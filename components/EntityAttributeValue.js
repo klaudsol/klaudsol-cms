@@ -17,6 +17,8 @@ const formatImage = (key) => {
       case 'text':
       case 'link':
         return item.value_string;
+      case 'boolean':
+        return item.value_boolean;
       case 'textarea':
         return item.value_long_string;
       case 'image':
@@ -24,6 +26,10 @@ const formatImage = (key) => {
         const imageValues = formatImage(item.value_string);
         
         return imageValues;
+      case 'video':
+        if(!item.value_string) return;
+        const videoValues = formatImage(item.value_string);
+        return videoValues;
       case 'gallery':
         if(!item.value_long_string) return;
 

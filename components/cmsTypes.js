@@ -5,6 +5,8 @@ export const CMS_TYPES = {
   LINK: "link",
   IMAGE: "image",
   GALLERY: "gallery",
+  VIDEO: "video",
+  BOOLEAN: "boolean",
   // Not sure if I should include the password and the checkbox here
   // since they are not attribute types. I included it so that
   // the AdminRenderer component can function properly
@@ -38,5 +40,6 @@ export const resourceValueTypes = [
   "value_string",
   "value_long_string",
   "value_double",
+  "value_boolean",
 ];
 

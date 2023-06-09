@@ -198,4 +198,28 @@
     text-transform: capitalize;
   }
 }
+
+.attr {
+  &-video {
+    @include width-height(100%, 100%);
+    &-container {
+      @include width-height(100%, auto);
+    }
+  }
+
+  &-boolean {
+    @include flex(flex-start, center, row);
+    gap: 8px;
+    margin-left: 5px;
+
+    &-text {
+      @include font-regular(14px);
+    }
+
+    &-checkbox {
+      transform: scale(1.3);
+      accent-color: #455a64;
+    }
+  }
+}
   
