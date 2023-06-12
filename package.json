@@ -7,7 +7,7 @@
     "build": "next build --debug",
     "start": "next start",
     "lint": "next lint",
-    "plugin": "export $(cat .env) && export SCRIPT_PATH=./node_modules/@klaudsol/commons/dist && $SCRIPT_PATH/scripts/plugin.sh",
+    "plugin": "export $(cat .env) && export SCRIPT_PATH=. && $SCRIPT_PATH/scripts/plugin.sh",
     "db": "export $(cat .env) && export SCRIPT_PATH=./node_modules/@klaudsol/commons/dist && $SCRIPT_PATH/scripts/db.sh"
   },
   "engines": {
