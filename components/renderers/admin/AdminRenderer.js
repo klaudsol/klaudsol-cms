@@ -6,7 +6,8 @@ import UploadRenderer from "./UploadRenderer.js";
 import GalleryRenderer from "./GalleryRenderer.js";
 import PasswordRenderer from "./PasswordRenderer";
 import CheckboxRenderer from "./CheckboxRenderer";
-import { validImageTypes } from "@/lib/Constants";
+import { validImageTypes, validVideoTypes } from "@/lib/Constants";
+import VideoRenderer from "./VideoRenderer";
 import BooleanRenderer from "./BooleanRenderer";
 
 const AdminRenderer = ({ type, ...params }) => {
@@ -26,6 +27,8 @@ const AdminRenderer = ({ type, ...params }) => {
       return <TextAreaRenderer type={type} {...params} />;
     case CMS_TYPES.FLOAT:
       return <FloatRenderer type={type} {...params} />;
+    case CMS_TYPES.VIDEO:
+      return <VideoRenderer accept={validVideoTypes} {...params} />;
     case CMS_TYPES.BOOLEAN:
       return <BooleanRenderer type={type} {...params} title="Yes" />;
     default:

@@ -24,6 +24,10 @@ const formatImage = (key) => {
         const imageValues = formatImage(item.value_string);
         
         return imageValues;
+      case 'video':
+        if(!item.value_string) return;
+        const videoValues = formatImage(item.value_string);
+        return videoValues;
       case 'gallery':
         if(!item.value_long_string) return;
 

@@ -200,6 +200,13 @@
 }
 
 .attr {
+  &-video {
+    @include width-height(100%, 100%);
+    &-container {
+      @include width-height(100%, auto);
+    }
+  }
+
   &-boolean {
     @include flex(flex-start, center, row);
     gap: 8px;

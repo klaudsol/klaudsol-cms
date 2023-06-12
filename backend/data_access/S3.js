@@ -63,10 +63,14 @@ export const generatePresignedUrls = async (fileNames) => {
 };
 
 export const uploadFileToUrl = async (file, url) => {
+  let contentType = "multipart/form-data";
+  if (file.type === 'video/mp4') {
+    contentType = file.type
+  }
   const uploadParams = {
     method: "PUT",
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": contentType,
     },
     body: file,
   };
