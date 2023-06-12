@@ -68,8 +68,6 @@ case $MODE in
     # Build plugin-menus.json based on the available plugins
     #do not commit changes to plugin-menus.json
     git update-index --assume-unchanged ./plugin-menus.json 
-    #echo "PLUGIN_ARRAY"
-    #echo $PLUGIN_ARRAY
     node $SCRIPT_PATH/scripts/plugins-reducer.js plugin-menus $PLUGIN_ARRAY > plugin-menus.json
     ;;
 
