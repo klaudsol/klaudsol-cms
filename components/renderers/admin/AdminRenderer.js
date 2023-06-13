@@ -9,6 +9,7 @@ import CheckboxRenderer from "./CheckboxRenderer";
 import { validImageTypes, validVideoTypes } from "@/lib/Constants";
 import VideoRenderer from "./VideoRenderer";
 import BooleanRenderer from "./BooleanRenderer";
+import { plugin } from "@/plugin-exports";
 
 const AdminRenderer = ({ type, ...params }) => {
   switch (type) {
@@ -31,6 +32,11 @@ const AdminRenderer = ({ type, ...params }) => {
       return <VideoRenderer accept={validVideoTypes} {...params} />;
     case CMS_TYPES.BOOLEAN:
       return <BooleanRenderer type={type} {...params} title="Yes" />;
+    case CMS_TYPES.CUSTOM:
+      const Component = plugin(params.customName);
+      const component = new Component();
+
+      return component.renderAdmin(type, params);
     default:
       return null;
   }

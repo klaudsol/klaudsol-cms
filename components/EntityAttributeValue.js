@@ -1,3 +1,5 @@
+import { plugin } from "@/plugin-exports";
+
 const formatImage = (key) => {
     if (!key) return;
 
@@ -38,5 +40,10 @@ const formatImage = (key) => {
       case 'float':
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);
+      case 'custom':
+        const CustomAttributeType = plugin(item.attributes_custom_name);
+        const customAttributeType = new CustomAttributeType();
+
+        return customAttributeType.toApi(item.attributes_custom_name, item.id, item.value_long_string);
     }
   }

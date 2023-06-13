@@ -52,6 +52,7 @@ async function get(req, res) {
             type: item.attribute_type,
             order: item.attribute_order,
             attribute_id: item.attribute_id,
+            ...(item?.attribute_custom_name && { custom_name: item.attribute_custom_name })
           },
         }),
     };
