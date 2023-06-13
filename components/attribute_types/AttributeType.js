@@ -7,16 +7,21 @@ export default class AttributeType {
       this.metadata = metadata;
     }
 
+    //By default, Grid View render and Icon View render is the same
+    renderReadOnly() {
+
+    }
+
     //Render this value in a Grid View
     //This returns a React component.
     renderGridView() {
-
+      this.renderReadOnly();
     }
 
     //Render this value in Icon View
     //This returns a React component.
     renderIconView() {
-
+      this.renderReadOnly();
     }
 
     //Render this value in the Admin
