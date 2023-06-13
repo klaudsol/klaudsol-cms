@@ -13,7 +13,7 @@ const TextareaAttributeReadOnlyComponent = ({text}) => {
 }
 
 export default class TextareaAttributeType extends AttributeType {
-    renderReadOnly() {
+    readOnlyComponent() {
         return TextareaAttributeReadOnlyComponent;
     }
 

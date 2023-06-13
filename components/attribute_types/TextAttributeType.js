@@ -7,7 +7,7 @@ const TextAttributeReadOnlyComponent = ({text}) => {
 }
 
 export default class TextAttributeType extends AttributeType {
-    renderReadOnly() {
+    readOnlyComponent() {
         return TextAttributeReadOnlyComponent;
     }
 

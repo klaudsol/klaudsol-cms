@@ -15,7 +15,7 @@ const ValueComponent = ({entry, attribute, metadata}) => {
 
   if(attributeTypeInstance) {
     //new AttributeType mechanism
-    const Component = attributeTypeInstance.renderReadOnly();
+    const Component = attributeTypeInstance.readOnlyComponent();
     return (<Component {...attributeTypeInstance.props()} />);
 
   } 

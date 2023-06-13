@@ -22,7 +22,7 @@ const LegacyAttributeReadOnlyComponent = ({text}) => {
   };
 
 export default class LegacyAttributeType extends AttributeType {
-    renderReadOnly() {
+    readOnlyComponent() {
         return LegacyAttributeReadOnlyComponent;
     }
 

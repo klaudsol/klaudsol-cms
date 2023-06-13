@@ -14,20 +14,20 @@ export default class AttributeType {
 
 
     //By default, Grid View render and Icon View render is the same
-    renderReadOnly() {
+    readOnlyComponent() {
 
     }
 
     //Render this value in a Grid View
     //This returns a React component.
     renderGridView() {
-      this.renderReadOnly();
+      this.readOnlyComponent();
     }
 
     //Render this value in Icon View
     //This returns a React component.
     renderIconView() {
-      this.renderReadOnly();
+      this.readOnlyComponent();
     }
 
     //Render this value in the Admin
