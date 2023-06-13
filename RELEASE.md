@@ -18,6 +18,7 @@
 * Login now returns JWT if the host is not from the CMS
 * Plugins can now have sub items on the sidebar
 * Users can now update their profile
+* Can now use exported classes of plugins using the `plugin()` function
 
 # 3.3.0
 * Allow plugins to have migrations 
