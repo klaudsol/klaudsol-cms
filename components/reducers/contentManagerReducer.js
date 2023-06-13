@@ -115,7 +115,7 @@ export const contentManagerReducer = (state, action) => {
     case SET_METADATA:
       return {
         ...state,
-        data: action.payload
+        metadata: action.payload
       }
   }
 };

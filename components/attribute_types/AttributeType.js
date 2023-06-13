@@ -1,4 +1,6 @@
 //This is the base class of all attribute types.
+
+
 //All attribute types must inherit from this class.
 export default class AttributeType {
 
@@ -6,6 +8,10 @@ export default class AttributeType {
       this.data = data;
       this.metadata = metadata;
     }
+
+    static TEXT_CMS_TYPE = 'text';
+    static TEXTAREA_CMS_TYPE = 'textarea';
+
 
     //By default, Grid View render and Icon View render is the same
     renderReadOnly() {
@@ -39,6 +45,10 @@ export default class AttributeType {
     //serialize / commit to database, via EAV or other means.
     //returns boolean, true if the data has been successfully commited.
     save() {
+
+    }
+
+    props() {
 
     }
 

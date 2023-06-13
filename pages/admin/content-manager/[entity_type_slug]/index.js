@@ -189,6 +189,8 @@ export default function ContentManager({ cache }) {
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}
+                data={state.data}
+                metadata={state.metadata}
               />
             )}
             {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'icon' && (
