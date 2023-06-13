@@ -11,7 +11,9 @@ import {
   ROWS_SET,
   PAGE_SETS_RENDERER,
   SET_FIRST_FETCH,
-  TOGGLE_VIEW
+  TOGGLE_VIEW,
+  SET_DATA,
+  SET_METADATA,
 } from "@/lib/actions";
 
 export const initialState = {
@@ -26,7 +28,9 @@ export const initialState = {
   rows:null,
   setsRenderer:0,
   firstFetch: true,
-  view: 'list'
+  view: 'list',
+  data: {},
+  metadata: {}
 };
 
 
@@ -103,5 +107,15 @@ export const contentManagerReducer = (state, action) => {
         ...state,
         view: action.payload       
       };
+    case SET_DATA: 
+      return {
+        ...state,
+        data: action.payload       
+      };
+    case SET_METADATA:
+      return {
+        ...state,
+        data: action.payload
+      }
   }
 };

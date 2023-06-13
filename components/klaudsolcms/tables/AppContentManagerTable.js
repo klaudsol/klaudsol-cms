@@ -11,8 +11,10 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
   const capabilities = useCapabilities();
 
   const formatSpecialDataTypes = (entry, accessor) => {
+    //TODO: Create a more object-oriented solution for this
     if (Array.isArray(entry[accessor])) return `${entry[accessor].length} item/s`; // Checks if its an attribute w/ multiple values
     else if (typeof entry[accessor] === "object" && entry[accessor]?.link) return entry[accessor]?.name; // Checks if its an image
+    else if (typeof entry[accessor] === "object") return ""; //Unsupported object. Will need to do this until the OOP solution becomes available.
     else if (typeof entry[accessor] === "boolean") return entry[accessor] ? "Yes" : "No"
 
     return entry[accessor];

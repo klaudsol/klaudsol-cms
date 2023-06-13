@@ -9,7 +9,7 @@ import CheckboxRenderer from "./CheckboxRenderer";
 import { validImageTypes, validVideoTypes } from "@/lib/Constants";
 import VideoRenderer from "./VideoRenderer";
 import BooleanRenderer from "./BooleanRenderer";
-import { plugin } from "@/plugin-exports";
+import { plugin } from "@/components/plugin/plugin";
 
 const AdminRenderer = ({ type, ...params }) => {
   switch (type) {

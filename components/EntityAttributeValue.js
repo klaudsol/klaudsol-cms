@@ -1,4 +1,4 @@
-import { plugin } from "@/plugin-exports";
+import { plugin } from "@/components/plugin/plugin";
 
 const formatImage = (key) => {
     if (!key) return;
