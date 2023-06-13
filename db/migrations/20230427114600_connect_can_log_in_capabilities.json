@@ -1,6 +1,6 @@
 {
   "up": [
-    "INSERT INTO group_capabilities (group_id, capabilities_id) VALUES",
+    "REPLACE INTO group_capabilities (group_id, capabilities_id) VALUES",
     "(1, (SELECT id FROM capabilities WHERE name = 'can_log_in' AND is_system_supplied = true)),",
     "(2, (SELECT id FROM capabilities WHERE name = 'can_log_in' AND is_system_supplied = true)),",
     "(3, (SELECT id FROM capabilities WHERE name = 'can_log_in' AND is_system_supplied = true)),",
