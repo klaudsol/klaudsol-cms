@@ -1,6 +1,7 @@
 import AttributeType from '@/components/attribute_types/AttributeType';
 import TextAttributeType from "@/components/attribute_types/TextAttributeType";
 import TextareaAttributeType from "@/components/attribute_types/TextareaAttributeType";
+import LegacyAttributeType from '@/components/attribute_types/LegacyAttributeType';
 
 export default class AttributeTypeFactory {
 
@@ -14,7 +15,7 @@ export default class AttributeTypeFactory {
         case AttributeType.TEXTAREA_CMS_TYPE:
           return new TextareaAttributeType({data, metadata});
         default:
-          return null;
+          return new LegacyAttributeType({data, metadata});;
 
       }
     }
