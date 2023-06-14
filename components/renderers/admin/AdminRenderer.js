@@ -33,10 +33,10 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.BOOLEAN:
       return <BooleanRenderer type={type} {...params} title="Yes" />;
     case CMS_TYPES.CUSTOM:
-      const Component = plugin(params.customName);
-      const component = new Component();
-
-      return component.renderAdmin(type, params);
+      const CustomAttributeType = plugin(params.customName);
+      const customAttributeType = new CustomAttributeType();
+      const CustomComponent =  customAttributeType.editableComponent();
+      return <CustomComponent {...params} {...customAttributeType.props()} />;
     default:
       return null;
   }

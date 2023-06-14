@@ -129,6 +129,7 @@ export default function Type({ cache }) {
     onSubmit: (values) => {
       (async () => {
         try {
+          console.error(values);
           dispatch({ type: SAVING });
 
           const { data, fileNames, files } = await extractFiles(values);

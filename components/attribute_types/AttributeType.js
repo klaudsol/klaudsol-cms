@@ -33,7 +33,7 @@ export default class AttributeType {
 
     //Render this value in the Admin
     //This returns a React component.
-    renderAdmin() {
+    editableComponent() {
 
     }
 
