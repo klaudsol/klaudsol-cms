@@ -3,6 +3,7 @@
 * Added Video attribute type
 * Added Custom Attribute types feature via plugins.
 * Can now use exported classes of plugins using the `plugin()` function
+* Added Singleton variant for Content Type.
 
 # 3.5.1
 * Removed fields validation for now, will roll-out a more robust field validation mechanism in the future.
