@@ -129,6 +129,7 @@ export default function Type({ cache }) {
     onSubmit: (values) => {
       (async () => {
         try {
+          console.error(values);
           dispatch({ type: SAVING });
 
           const { data, fileNames, files } = await extractFiles(values);
@@ -225,6 +226,7 @@ export default function Type({ cache }) {
                                     touched={props.touched}
                                     type={attribute.type}
                                     name={attributeName}
+                                    customName={attribute?.custom_name ?? ''}
                                     disabled={!capabilities.includes(writeContents)}
                                   />
                                 </div>

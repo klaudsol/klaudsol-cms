@@ -1,0 +1,9 @@
+{
+    "up": [
+      "ALTER TABLE `attributes` ADD COLUMN custom_name VARCHAR(255) DEFAULT NULL"
+    ],
+    "down":[
+      "ALTER TABLE `attributes` DROP COLUMN custom_name"
+    ] 
+  }
+  
