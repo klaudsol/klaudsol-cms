@@ -1,5 +1,6 @@
 import {
   LOADING,
+  SAVING,
   REFRESH,
   CLEANUP,
   SET_VALUES,
@@ -11,7 +12,9 @@ import {
   ROWS_SET,
   PAGE_SETS_RENDERER,
   SET_FIRST_FETCH,
-  TOGGLE_VIEW
+  TOGGLE_VIEW,
+  SET_SHOW, 
+  SET_MODAL_CONTENT
 } from "@/lib/actions";
 
 export const initialState = {
@@ -26,7 +29,10 @@ export const initialState = {
   rows:null,
   setsRenderer:0,
   firstFetch: true,
-  view: 'list'
+  view: 'list', 
+  isSaving: false,
+  show: false,
+  modalContent: null,
 };
 
 
@@ -36,6 +42,12 @@ export const contentManagerReducer = (state, action) => {
       return {
         ...state,
         isLoading: true,
+      };
+
+    case SAVING:
+      return {
+        ...state,
+        isSaving: true,
       };
 
     case REFRESH:
@@ -48,6 +60,7 @@ export const contentManagerReducer = (state, action) => {
       return {
         ...state,
         isLoading: false,
+        isSaving: false,
       };
 
     case SET_VALUES:
@@ -102,6 +115,18 @@ export const contentManagerReducer = (state, action) => {
       return {
         ...state,
         view: action.payload       
+      };
+
+      case SET_SHOW:
+        return {
+          ...state,
+          show: action.payload,
+        };
+
+    case SET_MODAL_CONTENT:
+      return {
+        ...state,
+        modalContent: action.payload,
       };
   }
 };

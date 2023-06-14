@@ -8,6 +8,22 @@
 **/
 
 .general {
+  // Text
+  &-text {
+    @include font-semi-bold(14px);
+  }
+
+  // Description
+  &-description {
+    @include font-light(11px);
+  }
+  
+  &-block-bar {
+    @include margin-tb-lr(10px);
+    width: 100%;
+    border-bottom: 1px solid lightgray;
+  }
+
   // rows
   &-row {
     &-between {
@@ -54,6 +70,7 @@
 
     &-text {
       @include general-text-input(12px);
+      width: 100%;
     }
 
     &-textarea {
@@ -197,6 +214,48 @@
     @include font-medium(30px);
     text-transform: capitalize;
   }
+
+  // Checkbox 
+  &-checkbox {
+    @include flex(flex-start, center, row);
+    gap: 5px;
+
+    &-box {
+      accent-color: #455a64;
+    }
+
+    &-text {
+      @include font-light(12px);
+    }
+  }
+
+  // Modal
+  &-modal {
+    &-header {
+      &-title {
+        @include font-semi-bold(16px);
+      }
+
+      &-close {
+        background-color: transparent;
+        border: none;
+        margin-top: -5px;
+      }
+    }
+
+    &-button {
+      @include font-semi-bold(12px);
+      @include padding-tb-lr(8px, 25px);
+      background-color: #455a64;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+
+      &:disabled {
+        background-color: lightgray !important;
+      }
+    }
+  }
 }
 
 .attr {
@@ -219,6 +278,19 @@
     &-checkbox {
       transform: scale(1.3);
       accent-color: #455a64;
+    }
+  }
+}
+
+.content-type {
+  &-create {
+    @include flex(flex-start, flex-start, column);
+    gap: 5px;
+    width: 100%;
+    &-container {
+      @include flex(flex-start, flex-start, row);
+      gap: 10px;
+      margin-top: 10px;
     }
   }
 }

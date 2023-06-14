@@ -1,0 +1,4 @@
+{
+  "up": "ALTER TABLE `entity_types` ADD COLUMN is_single_type BOOLEAN DEFAULT 0;",
+  "down": "ALTER TABLE `entity_types` DROP COLUMN is_single_type"
+}
