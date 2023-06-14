@@ -59,7 +59,7 @@ nvm use --lts
 
 Screnshots: https://cms.demo.klaudsol.app
 
-<img width="1678" alt="image" src="https://user-images.githubusercontent.com/1546228/192326061-794fcf32-c89a-4604-9bf2-a6b2ccf09ab2.png">
+<img width="1677" alt="image" src="https://github.com/klaudsol/klaudsol-cms/assets/1546228/2360a358-7e58-4717-8d71-47b93b7f22be">
 <img width="1678" alt="image" src="https://github.com/klaudsol/klaudsol-cms/assets/1546228/5fc4c908-4734-417d-a928-fd931d4eef31">
 <img width="1677" alt="image" src="https://github.com/klaudsol/klaudsol-cms/assets/1546228/de115d88-e86e-4776-82d0-abcc2786ea3c">
 <img width="1678" alt="image" src="https://github.com/klaudsol/klaudsol-cms/assets/1546228/9836b2b3-d006-4124-9fe8-5521eb6a2433">
