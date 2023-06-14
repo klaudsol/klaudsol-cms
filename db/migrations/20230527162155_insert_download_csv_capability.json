@@ -1,6 +1,6 @@
 {
     "up": [
-      "INSERT INTO capabilities (name, description, is_system_supplied) VALUES",
+      "REPLACE INTO capabilities (name, description, is_system_supplied) VALUES",
       "('download_csv', 'Can download table as CSV', true)"
     ],
     "down":[

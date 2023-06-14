@@ -14,8 +14,8 @@ class Entity {
     // if the type of slug is a number, propertyType and conditionType will be longValue and enitities.id respectively,
     // and will be used for the query's condition WHERE and property name for "slug" in the map method
 
-    const sql = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
-                  attributes.name, attributes.type, attributes.\`order\`,
+    const sql = `SELECT entities.id, entities.slug, entity_types.id, entity_types.name, entity_types.slug,
+                  attributes.name, attributes.type, attributes.\`order\`, attributes.custom_name,
                   \`values\`.value_string, 
                   \`values\`.value_long_string, 
                   \`values\`.value_integer, 
@@ -39,14 +39,15 @@ class Entity {
 
     return data.records.map(
       ([
+        { longValue: id },
+        { stringValue: slug },
         { longValue: entity_type_id },
-        { longValue: slug },
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
-        { stringValue: entities_slug },
         { stringValue: attributes_name },
         { stringValue: attributes_type },
         { longValue: attributes_order },
+        { stringValue: attributes_custom_name },
         { stringValue: value_string },
         { stringValue: value_long_string },
         { longValue: value_integer },
@@ -54,14 +55,15 @@ class Entity {
         { stringValue: value_double },
         { booleanValue: value_boolean },
       ]) => ({
-        entity_type_id,
+        id,
         slug,
+        entity_type_id,
         entity_type_name,
         entity_type_slug,
-        entities_slug,
         attributes_name,
         attributes_type,
         attributes_order,
+        attributes_custom_name,
         value_string,
         value_long_string,
         value_integer,
@@ -112,7 +114,7 @@ class Entity {
     let offset = page ? limit * page : 0;
 
     const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
-                attributes.name, attributes.type, attributes.\`order\`,
+                attributes.name, attributes.type, attributes.\`order\`, attributes.custom_name,
                 \`values\`.value_string, 
                 \`values\`.value_long_string, 
                 \`values\`.value_integer, 
@@ -144,6 +146,7 @@ class Entity {
         { stringValue: attributes_name },
         { stringValue: attributes_type },
         { longValue: attributes_order },
+        { stringValue: attributes_custom_name },
         { stringValue: value_string },
         { stringValue: value_long_string },
         { longValue: value_integer },
@@ -159,6 +162,7 @@ class Entity {
         attributes_name,
         attributes_type,
         attributes_order,
+        attributes_custom_name,
         value_string,
         value_long_string,
         value_integer,
@@ -226,7 +230,8 @@ class Entity {
             name: "value_long_string",
             value:
               attributeType == "textarea" ||
-              attributeType === "gallery"
+              attributeType === "gallery" ||
+              attributeType == "custom"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -331,7 +336,8 @@ class Entity {
             name: "value_long_string",
             value:
               (attributeType == "textarea" ||
-                attributeType === "gallery") && 
+                attributeType === "gallery" ||
+                attributeType === "custom") && 
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }
                 : { isNull: true },

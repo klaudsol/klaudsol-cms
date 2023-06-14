@@ -231,6 +231,7 @@ export default function CreateNewEntry({ cache }) {
                                     touched={props.touched}
                                     type={attribute.type}
                                     name={attributeName}
+                                    customName={attribute?.custom_name ?? ''}
                                   />
                                 </div>
                               );

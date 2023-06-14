@@ -4,24 +4,27 @@ import Link from "next/link";
 import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
 import { useCapabilities } from '@/components/hooks';
 import { readContents } from "@/lib/Constants";
+import { useEffect } from 'react';
+import AttributeTypeFactory from '@/components/attribute_types/AttributeTypeFactory';
 
-const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
+const ValueComponent = ({entry, attribute, metadata}) => {
 
-  const MAX_STRING_LENGTH = 50;
+
+  const attributeMetadata = metadata.attributes?.[attribute];
+  const attributeTypeInstance = AttributeTypeFactory.create({data: entry[attribute], metadata: attributeMetadata});
+
+  if(attributeTypeInstance) {
+    //new AttributeType mechanism
+    const Component = attributeTypeInstance.readOnlyComponent();
+    return (<Component {...attributeTypeInstance.props()} />);
+
+  } 
+}
+
+const AppContentManagerTable = ({ columns, entries, entity_type_slug, data, metadata }) => {
+
   const capabilities = useCapabilities();
-
-  const formatSpecialDataTypes = (entry, accessor) => {
-    if (Array.isArray(entry[accessor])) return `${entry[accessor].length} item/s`; // Checks if its an attribute w/ multiple values
-    else if (typeof entry[accessor] === "object" && entry[accessor]?.link) return entry[accessor]?.name; // Checks if its an image
-    else if (typeof entry[accessor] === "boolean") return entry[accessor] ? "Yes" : "No"
-
-    return entry[accessor];
-  };
-
-  const truncate = (string)  => {
-    return (string?.length && string.length > MAX_STRING_LENGTH) ? `${string.slice(0, MAX_STRING_LENGTH)}...` : string;   
-  }
-
+  
   return (
     <div id="table_general_main">
       <table id="table_general">
@@ -56,7 +59,7 @@ const AppContentManagerTable = ({ columns, entries, entity_type_slug }) => {
                   key={index}
                   disabled={!capabilities.includes(readContents)}
                 >
-                  <td key={index}>{truncate(formatSpecialDataTypes(entry, col.accessor))}</td>
+                  <td key={index}><ValueComponent entry={entry} attribute={col.accessor} metadata={metadata}/></td>
                 </Link>
               ))}
             </tr>

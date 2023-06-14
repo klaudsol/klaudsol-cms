@@ -42,7 +42,9 @@ import {
   SET_FIRST_FETCH,
   SET_PAGE,
   PAGE_SETS_RENDERER,
-  TOGGLE_VIEW
+  TOGGLE_VIEW,
+  SET_DATA,
+  SET_METADATA
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
 import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents, downloadCSV } from "lib/Constants"
@@ -85,6 +87,8 @@ export default function ContentManager({ cache }) {
         );
           
         const values = await valuesRaw.json();
+        dispatch({type: SET_DATA, payload: values.data});
+        dispatch({type: SET_METADATA, payload: values.metadata});
         const pageNumber = Math.ceil(values.metadata.total_rows / state.entry);
         dispatch({ type: SET_ROWS, payload: pageNumber });
         dispatch({ type: SET_ENTITY_TYPE_NAME, payload: values.metadata.type });
@@ -185,6 +189,8 @@ export default function ContentManager({ cache }) {
                 columns={state.columns}
                 entries={state.values}
                 entity_type_slug={entity_type_slug}
+                data={state.data}
+                metadata={state.metadata}
               />
             )}
             {(state.firstFetch ? !state.isLoading : !state.firstFetch) && state.view === 'icon' && (

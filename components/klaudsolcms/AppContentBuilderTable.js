@@ -74,13 +74,16 @@ const AppContentBuilderTable = ({ typeSlug }) => {
       initialValues: {
         name: attribute?.name,
         type: attribute?.type,
-        order: attribute?.order
+        order: attribute?.order,
+        customName: attribute?.custom_name
       },
-      onSubmit: (values) => {
+      onSubmit: (valuesRaw) => {
         
  
         (async () => {
           try {
+            const values = valuesRaw.type !== 'custom' ? { ...valuesRaw, customName: ''} : valuesRaw;
+
             setLoading(true)
             const response = await slsFetch(`/api/entity_types/${typeSlug}/attributes/${attribute?.name}`, {
               method: 'PUT',
