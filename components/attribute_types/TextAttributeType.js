@@ -10,10 +10,4 @@ export default class TextAttributeType extends AttributeType {
     readOnlyComponent() {
         return TextAttributeReadOnlyComponent;
     }
-
-    props() {
-        const text = this.data;
-        return {text}
-    }
-
 }

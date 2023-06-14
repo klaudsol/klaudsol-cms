@@ -16,9 +16,4 @@ export default class TextareaAttributeType extends AttributeType {
     readOnlyComponent() {
         return TextareaAttributeReadOnlyComponent;
     }
-
-    props() {
-        const text = this.data;
-        return {text}
-    }
 }

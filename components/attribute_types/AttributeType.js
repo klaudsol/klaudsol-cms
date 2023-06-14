@@ -4,13 +4,14 @@
 //All attribute types must inherit from this class.
 export default class AttributeType {
 
-    constructor({data, metadata}) {
-      this.data = data;
-      this.metadata = metadata;
+    constructor(params) {
+      this.data = params?.data;
+      this.metadata = params?.metadata;
     }
 
     static TEXT_CMS_TYPE = 'text';
     static TEXTAREA_CMS_TYPE = 'textarea';
+    static CUSTOM = 'custom';
 
 
     //By default, Grid View render and Icon View render is the same
@@ -48,8 +49,10 @@ export default class AttributeType {
 
     }
 
+    //This is the props of the relevant components of this attribute type
     props() {
-
+        const text = this.data;
+        return {text}
     }
 
 };

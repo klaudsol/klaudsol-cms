@@ -2,18 +2,21 @@ import AttributeType from '@/components/attribute_types/AttributeType';
 import TextAttributeType from "@/components/attribute_types/TextAttributeType";
 import TextareaAttributeType from "@/components/attribute_types/TextareaAttributeType";
 import LegacyAttributeType from '@/components/attribute_types/LegacyAttributeType';
+import { plugin } from '@/components/plugin/plugin';
 
 export default class AttributeTypeFactory {
 
     static create({data, metadata}) {
 
-      const { type } = metadata;
-      switch(type) {
+      switch(metadata?.type) {
 
         case AttributeType.TEXT_CMS_TYPE:
           return new TextAttributeType({data, metadata});
         case AttributeType.TEXTAREA_CMS_TYPE:
           return new TextareaAttributeType({data, metadata});
+        case AttributeType.CUSTOM:
+          const CustomAttributeType = plugin(metadata.custom_name);
+          return new CustomAttributeType({data, metadata});
         default:
           return new LegacyAttributeType({data, metadata});;
 

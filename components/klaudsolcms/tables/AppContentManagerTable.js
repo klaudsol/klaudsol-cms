@@ -10,8 +10,8 @@ import AttributeTypeFactory from '@/components/attribute_types/AttributeTypeFact
 const ValueComponent = ({entry, attribute, metadata}) => {
 
 
-  const type = metadata.attributes?.[attribute]?.type;
-  const attributeTypeInstance = AttributeTypeFactory.create({data: entry[attribute], metadata: {type}});
+  const attributeMetadata = metadata.attributes?.[attribute];
+  const attributeTypeInstance = AttributeTypeFactory.create({data: entry[attribute], metadata: attributeMetadata});
 
   if(attributeTypeInstance) {
     //new AttributeType mechanism

@@ -42,8 +42,11 @@ const formatImage = (key) => {
         return Number(item.value_double);
       case 'custom':
         const CustomAttributeType = plugin(item.attributes_custom_name);
-        const customAttributeType = new CustomAttributeType();
+        const customAttributeType = new CustomAttributeType({
+          data: item.value_long_string, metadata: {type: 'custom', custom_name: item.attributes_custom_name}
+        });
 
-        return customAttributeType.toApi(item.attributes_custom_name, item.id, item.value_long_string);
+        
+        return customAttributeType.toApi();
     }
   }
