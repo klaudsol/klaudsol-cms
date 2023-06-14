@@ -71,8 +71,8 @@ async function get(req, res) {
                     ...(!collection.indexedData[item.id]?.slug && {
                         slug: item.entities_slug,
                     }),
-                    ...(!collection.indexedData[item.id]?.[item.attributes_name] && {
-                        [item.attributes_name]: resolveValue(item),
+                    ...({
+                        [item.attributes_name]: resolveValue(item) ?? null,
                     }),
                 },
             },
@@ -92,6 +92,7 @@ async function get(req, res) {
                     [item.attribute_name]: {
                         type: item.attribute_type,
                         order: item.attribute_order,
+                        ...(item?.attribute_custom_name && { custom_name: item.attribute_custom_name })
                     },
                 }),
             },

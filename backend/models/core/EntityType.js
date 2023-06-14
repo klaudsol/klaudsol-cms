@@ -81,7 +81,8 @@ class EntityTypes {
           attributes.name,
           attributes.type,
           attributes.order,
-          attributes.id
+          attributes.id,
+          attributes.custom_name
         FROM entity_types LEFT JOIN attributes ON entity_types.id = attributes.entity_type_id 
         WHERE entity_types.slug = :slug
         ORDER BY attributes.\`order\` ASC
@@ -102,6 +103,7 @@ class EntityTypes {
         { stringValue: attribute_type },
         { longValue: attribute_order },
         { longValue: attribute_id },
+        { stringValue: attribute_custom_name },
       ]) => ({
         entity_type_id,
         entity_type_name,
@@ -112,6 +114,7 @@ class EntityTypes {
         attribute_type,
         attribute_order,
         attribute_id,
+        attribute_custom_name
       })
     );
   }

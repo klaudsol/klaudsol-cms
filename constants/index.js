@@ -7,6 +7,7 @@ export const inputValues = [
   { value: "float", option: "Number" },
   { value: "video", option: "Video" },
   { value: "boolean", option: "Boolean" },
+  { value: "custom", option: "Custom" }
 ];
 
 export const defaultLogo = {

@@ -58,9 +58,9 @@ async function get(req, res) {
             data: {
                 ...collection.data,
                 ...(!collection.data.id && { id: item.id }),
-                ...(!collection.data.slug && { slug: item.entities_slug }),
-                ...(!collection.data[item.attributes_name] && {
-                    [item.attributes_name]: resolveValue(item),
+                ...(!collection.data.slug && { slug: item.slug }),
+                ...({
+                    [item.attributes_name]: resolveValue(item) ?? null
                 }),
             },
             metadata: {
@@ -75,6 +75,7 @@ async function get(req, res) {
                         [item.attributes_name]: {
                             type: item.attributes_type,
                             order: item.attributes_order,
+                            ...(item?.attributes_custom_name && { custom_name: item.attributes_custom_name })
                         },
                     }),
                 },
