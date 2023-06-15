@@ -10,7 +10,7 @@
 .general {
   // Text
   &-text {
-    @include font-semi-bold(14px);
+    @include font-semi-bold(12px);
   }
 
   // Description
@@ -40,6 +40,12 @@
       width: 100%;
     }
   }
+  // Dropdowns
+  &-dropdown {
+    @include general-text-input(12px);
+    padding-left: 5px !important;
+  }
+
   // Input Types (Textboxes & Textareas)
   &-input {
     &-title {

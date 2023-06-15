@@ -77,7 +77,7 @@ class EntityTypes {
           entity_types.name,
           entity_types.slug,
           entity_types.icon,
-          entity_types.is_single_type,
+          entity_types.variant,
           attributes.name,
           attributes.type,
           attributes.order,
@@ -98,7 +98,7 @@ class EntityTypes {
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
         { stringValue: entity_type_icon },
-        { booleanValue: entity_type_is_single_type },
+        { stringValue: entity_type_variant },
         { stringValue: attribute_name },
         { stringValue: attribute_type },
         { longValue: attribute_order },
@@ -109,7 +109,7 @@ class EntityTypes {
         entity_type_name,
         entity_type_slug,
         entity_type_icon,
-        entity_type_is_single_type,
+        entity_type_variant,
         attribute_name,
         attribute_type,
         attribute_order,
@@ -123,15 +123,15 @@ class EntityTypes {
     return this.find({ slug });
   }
 
-  static async create({ name, slug, is_single_type }) {
+  static async create({ name, slug, variant }) {
     const db = new DB();
 
-    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name, is_single_type) VALUES (:slug, :name, :is_single_type)";
+    const insertEntitiesSQL = "INSERT INTO entity_types (slug, name, variant) VALUES (:slug, :name, :variant)";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "slug", value: { stringValue: slug } },
       { name: "name", value: { stringValue: name } },
-      { name: "is_single_type", value: { booleanValue: is_single_type } },
+      { name: "variant", value: { stringValue: variant } },
     ]);
 
     //TODO: return something valuable here

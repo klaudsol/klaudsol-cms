@@ -5,6 +5,7 @@ import { slsFetch } from '@klaudsol/commons/lib/Client';
 import RootContext from "@/components/contexts/RootContext";
 import DependentField from "@/components/fields/DependentField";
 import { useClientErrorHandler } from "@/components/hooks"
+import { defaultEntityTypeVariant, entityTypeVariants } from "@/constants";
 
 export default function CollectionTypeBody({ formRef, hide, setSaving }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
@@ -14,7 +15,7 @@ export default function CollectionTypeBody({ formRef, hide, setSaving }) {
     initialValues: {
       name: "",
       slug: "",
-      is_single_type: false,
+      variant: defaultEntityTypeVariant,
     },
     innerRef: formRef,
     onSubmit: (values) => {
@@ -60,17 +61,6 @@ export default function CollectionTypeBody({ formRef, hide, setSaving }) {
       <Formik {...formikParams}>
         <Form>
           <div>
-              <label className="general-checkbox">
-                <Field
-                  type="checkbox"
-                  name="is_single_type"
-                  className="general-checkbox-box"
-                />
-                <span className="general-checkbox-text">
-                  Single Type
-                </span>
-              </label>
-            <div className="general-block-bar" />
             <div className="content-type-create-container">
               <div className="content-type-create">
                 <div className="general-text"> Display Name </div>
@@ -89,6 +79,16 @@ export default function CollectionTypeBody({ formRef, hide, setSaving }) {
                   The UID is used to generate the API routes and databases
                   tables/collections
                 </div>
+              </div>
+              <div className="content-type-create">
+                <div className="general-text"> Variant </div>
+                <Field 
+                  name="variant" 
+                  component="select" 
+                  className="general-dropdown"
+                >
+                  {entityTypeVariants.map((e, key) => (<option key={key} value={e.value}>{e.option}</option>))}
+                </Field>
               </div>
             </div>
           </div>
