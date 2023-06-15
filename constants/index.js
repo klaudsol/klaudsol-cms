@@ -10,6 +10,20 @@ export const inputValues = [
   { value: "custom", option: "Custom" }
 ];
 
+export const COLLECTION_ENTITY_TYPE_VARIANT = 'collection';
+export const SINGLETON_ENTITY_TYPE_VARIANT = 'singleton';
+export const entityTypeVariants = [
+  { value: COLLECTION_ENTITY_TYPE_VARIANT, option: "Collection" },
+  { value: SINGLETON_ENTITY_TYPE_VARIANT, option: "Singleton" },
+];
+
+export const entityTypeVariantsEnum = {
+  collection: "collection",
+  singleton: "singleton"
+};
+
+export const defaultEntityTypeVariant = 'collection';
+
 export const defaultLogo = {
   link: "/logo-180x180.png",
   default: true,

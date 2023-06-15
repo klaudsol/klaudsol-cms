@@ -1,6 +1,9 @@
 # 3.6.0
 * Added Boolean attribute type
 * Added Video attribute type
+* Added Custom Attribute types feature via plugins.
+* Can now use exported classes of plugins using the `plugin()` function
+* Added Singleton variant for Content Type.
 
 # 3.5.1
 * Removed fields validation for now, will roll-out a more robust field validation mechanism in the future.
@@ -18,7 +21,7 @@
 * Login now returns JWT if the host is not from the CMS
 * Plugins can now have sub items on the sidebar
 * Users can now update their profile
-* Can now use exported classes of plugins using the `plugin()` function
+
 
 # 3.3.0
 * Allow plugins to have migrations 
