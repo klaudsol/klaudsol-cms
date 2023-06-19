@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useState } from "react";
+import React, { useReducer, useRef } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { useRouter } from "next/router";
 import { extractFiles } from "@/lib/s3FormController";
@@ -11,19 +11,14 @@ import {
   SET_MODAL_CONTENT,
 } from "@/lib/actions";
 import { writeContents } from "lib/Constants"
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import { sortByOrderAsc } from "@/components/Util";
 import { uploadFilesToUrl } from "@/backend/data_access/S3";
-import { RiQuestionLine } from "react-icons/ri";
-import { slugTooltipText } from "@/constants";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import GeneralHoverTooltip from "@/components/elements/tooltips/GeneralHoverTooltip";
-import classname from "classnames";
-import TypesValidator from "@/components/renderers/validation/RegexValidator";
 
 const SingleType = ({ 
   loading,
@@ -43,9 +38,7 @@ const SingleType = ({
     formRef.current.handleSubmit();
     formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
-    
-  const formatSlug = (slug) => (slug.toLowerCase().replace(/\s+/g, "-"));
-    
+        
   const formikParams = {
     innerRef: formRef,
     initialValues: entries,
