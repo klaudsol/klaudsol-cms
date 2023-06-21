@@ -42,7 +42,7 @@ import { RiQuestionLine } from "react-icons/ri";
 import EntityType from "@/backend/models/core/EntityType";
 import Entity from "@/backend/models/core/Entity";
 
-export default function CreateNewEntry({ cache, entityId }) {
+export default function CreateNewEntry({ cache, entity }) {
   const router = useRouter();
   const errorHandler = useClientErrorHandler();
   const capabilities = cache?.capabilities;
@@ -160,7 +160,7 @@ export default function CreateNewEntry({ cache, entityId }) {
 
   return (
     <CacheContext.Provider value={cache}>
-      <EntityContext.Provider value={entityId}>
+      <EntityContext.Provider value={entity}>
         <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
          <ContentManagerLayout currentTypeSlug={entity_type_slug}>
             {capabilities.includes(writeContents) ? <div className="py-4">
@@ -344,5 +344,5 @@ export const getServerSideProps = getSessionCache(async (context) => {
         entityId = draft.id;
     }
 
-    return { props: { entityId } }
+    return { props: { entity: { id: entityId } } }
 });
