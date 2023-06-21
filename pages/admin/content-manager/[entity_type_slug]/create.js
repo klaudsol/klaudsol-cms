@@ -137,8 +137,8 @@ export default function CreateNewEntry({ cache, entity }) {
         try {
           dispatch({ type: SAVING });
 
-          const response = await slsFetch(`/api/${entity_type_slug}`, {
-            method: "POST",
+          const response = await slsFetch(`/api/${entity_type_slug}/${entity.id}?status=published`, {
+            method: "PUT",
             headers: {
               'Content-Type': 'application/json'
             },

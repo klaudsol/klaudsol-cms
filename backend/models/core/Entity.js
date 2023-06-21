@@ -355,11 +355,23 @@ class Entity {
     return true;
   }
   //Work in progress
-  static async update({ entries, entity_type_slug, entity_id }) {
+  static async update({ slug, status, entries, entity_type_slug, entity_id }) {
     const db = new DB();
     // entity_type_slug will always be a string
     // entity_id can be a string or a number
     // check the entity_id weather it consists numbers only in which return true, otherwise it will return false
+
+    const updateEntitySql = `UPDATE entities SET 
+                                slug = :slug,
+                                status = :status
+                            WHERE 
+                                id = :id`;
+
+    await db.executeStatement(updateEntitySql, [
+      { name: "slug", value: { stringValue: slug ?? 'slug' } },
+      { name: "status", value: { stringValue: status ?? 'status' } },
+      { name: "id", value: { longValue: entity_id } },
+    ]);
 
     const { propertyType, conditionType } = isNumber(entity_id)
       ? { propertyType: "longValue", conditionType: "entities.id" }

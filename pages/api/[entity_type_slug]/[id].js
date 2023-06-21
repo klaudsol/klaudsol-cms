@@ -122,9 +122,14 @@ async function put(req, res) {
     (await assertUserCan(readContents, req)) &&
       (await assertUserCan(writeContents, req));
 
-    const { fileNames, ...body } = req.body;
-    const { entity_id, entity_type_slug, ...entries } = body
-    await Entity.update({ entries, entity_type_slug, entity_id });
+    const { 
+        entity_type_slug, 
+        status,
+        id: entity_id 
+    } = req.query;
+    const { fileNames, slug, ...entries } = req.body;
+
+    await Entity.update({ slug, status, entries, entity_type_slug, entity_id });
 
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
