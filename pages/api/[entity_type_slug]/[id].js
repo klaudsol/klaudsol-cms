@@ -122,12 +122,8 @@ async function put(req, res) {
     (await assertUserCan(readContents, req)) &&
       (await assertUserCan(writeContents, req));
 
-    const { 
-        entity_type_slug, 
-        status,
-        id: entity_id 
-    } = req.query;
-    const { fileNames, slug, ...entries } = req.body;
+    const { entity_type_slug, id: entity_id } = req.query;
+    const { fileNames, slug, status, ...entries } = req.body;
 
     await Entity.update({ slug, status, entries, entity_type_slug, entity_id });
 

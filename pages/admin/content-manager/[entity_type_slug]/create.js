@@ -132,12 +132,13 @@ export default function CreateNewEntry({ cache, entity }) {
           fileNames,
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
+          status: "published"
         };
 
         try {
           dispatch({ type: SAVING });
 
-          const response = await slsFetch(`/api/${entity_type_slug}/${entity.id}?status=published`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${entity.id}`, {
             method: "PUT",
             headers: {
               'Content-Type': 'application/json'
