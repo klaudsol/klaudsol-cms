@@ -117,6 +117,12 @@
       color: white;
     }
 
+    &-draft {
+        @extend .general-button-save;
+        background-color: transparent;
+        color: #455a64;
+    }
+
     &-download {
       @include font-semi-bold(11px);
       @include padding-tb-lr(5px, 15px);

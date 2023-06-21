@@ -18,13 +18,14 @@ import {
   LOADING,
   CLEANUP,
   SAVING,
+  DRAFTING,
   SET_ATTRIBUTES,
   SET_SHOW,
   SET_ENTITY_TYPE_ID,
   SET_VALIDATE_ALL,
   SET_ALL_INITIAL_VALUES,
 } from "@/lib/actions";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaPencilRuler } from "react-icons/fa";
 import { DEFAULT_SKELETON_ROW_COUNT, writeContents } from "lib/Constants";
 import { getAllFiles, getNonFiles, extractFiles } from "@/lib/s3FormController";
 import { uploadFilesToUrl } from "@/backend/data_access/S3";
@@ -108,11 +109,15 @@ export default function CreateNewEntry({ cache, entity }) {
   const onPublishSubmit = (evt) => {
     statusRef.current = "published";
 
+    dispatch({ type: SAVING });
+
     onSubmit(evt);
   }
 
   const onDraftSubmit = (evt) => {
     statusRef.current = "draft";
+
+    dispatch({ type: DRAFTING });
 
     onSubmit(evt)
   }
@@ -149,7 +154,6 @@ export default function CreateNewEntry({ cache, entity }) {
         };
 
         try {
-          dispatch({ type: SAVING });
 
           const response = await slsFetch(`/api/${entity_type_slug}/${entity.id}`, {
             method: "PUT",
@@ -268,8 +272,9 @@ export default function CreateNewEntry({ cache, entity }) {
                     />
                     <AppButtonLg
                       title="Draft"
+                      icon={state.isDrafting ? <AppButtonSpinner /> : <FaPencilRuler className="general-button-icon"/>}
                       onClick={!state.isSaving ? onDraftSubmit : null}
-                      className="general-button-cancel"
+                      className="general-button-draft"
                     />
                     <AppButtonLg
                       title={state.isSaving ? "Saving" : "Save"}
