@@ -275,7 +275,7 @@ class Entity {
 
     //Insert Entity
     const insertEntitiesSQL =
-      "INSERT into entities (entity_type_id) VALUES (:entity_type_id)";
+      "INSERT into entities (slug, entity_type_id) VALUES ('', :entity_type_id)";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "entity_type_id", value: { longValue: entity_type_id } },

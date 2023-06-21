@@ -38,6 +38,8 @@ import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import TypesValidator from "@/components/renderers/validation/RegexValidator";
 import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverTooltip";
 import { RiQuestionLine } from "react-icons/ri";
+import EntityType from "@/backend/models/core/EntityType";
+import Entity from "@/backend/models/core/Entity";
 
 export default function CreateNewEntry({ cache }) {
   const router = useRouter();
@@ -324,7 +326,12 @@ export default function CreateNewEntry({ cache }) {
 }
 
 
-export const getServerSideProps = getSessionCache((context) => {
+export const getServerSideProps = getSessionCache(async (context) => {
+    const { entity_type_slug } = context.query;
+    const entityType = await EntityType.find({ slug: entity_type_slug });
+    const { entity_type_id } = entityType[0];
+
+    // await Entity.createDraft({ entity_type_id });
 
     return { props: {} }
 });
