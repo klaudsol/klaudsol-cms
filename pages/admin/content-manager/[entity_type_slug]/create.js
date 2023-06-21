@@ -331,18 +331,19 @@ export default function CreateNewEntry({ cache, entity }) {
 
 export const getServerSideProps = getSessionCache(async (context) => {
     const { entity_type_slug } = context.query;
-    const entityType = await EntityType.find({ slug: entity_type_slug });
-    const { entity_type_id } = entityType[0];
 
-    const draft = await Entity.getDraft();
+    let draft = await Entity.getDraft();
 
-    let entityId;
     if (Object.keys(draft).length === 0) {
-        const { id } = await Entity.createDraft({ entity_type_id });
-        entityId = id;
-    } else {
-        entityId = draft.id;
+        const entityType = await EntityType.find({ slug: entity_type_slug });
+        const { entity_type_id } = entityType[0];
+
+        draft = await Entity.createDraft({ entity_type_id });
     }
 
-    return { props: { entity: { id: entityId } } }
+    return { 
+        props: { 
+            entity: draft 
+        }
+    }
 });

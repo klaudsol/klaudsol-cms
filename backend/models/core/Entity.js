@@ -334,7 +334,7 @@ class Entity {
         { longValue: id },
         { stringValue: slug },
         { longValue: entity_type_id },
-        { stringValue: status}
+        { stringValue: status }
     ] = records[0];
 
     return { id, slug, entity_type_id, status }
