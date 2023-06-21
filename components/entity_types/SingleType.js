@@ -11,21 +11,17 @@ import {
   SET_MODAL_CONTENT,
 } from "@/lib/actions";
 import { writeContents } from "lib/Constants"
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import { sortByOrderAsc } from "@/components/Util";
 import { uploadFilesToUrl } from "@/backend/data_access/S3";
-import { RiQuestionLine } from "react-icons/ri";
-import { slugTooltipText } from "@/constants";
 
 import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
-import GeneralHoverTooltip from "@/components/elements/tooltips/GeneralHoverTooltip";
-import classname from "classnames";
-import TypesValidator from "@/components/renderers/validation/RegexValidator";
 
 const SingleType = ({ 
+  loading,
   entries, 
   entity_type_slug, 
   attributes, 
@@ -42,9 +38,7 @@ const SingleType = ({
     formRef.current.handleSubmit();
     formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
-    
-  const formatSlug = (slug) => (slug.toLowerCase().replace(/\s+/g, "-"));
-    
+        
   const formikParams = {
     innerRef: formRef,
     initialValues: entries,
@@ -52,7 +46,6 @@ const SingleType = ({
       (async () => {
         try {
           dispatch({ type: SAVING });
-          const { slug } = values;
           const { data, fileNames, files } = await extractFiles(values);
           // Checks if the entry is to be updated or not
           // If there are no entries yet, it will call a different API (similar to create entry)
@@ -60,11 +53,10 @@ const SingleType = ({
           const isUpdate = Object.keys(entries).length > 0;
           let url = `/api/${entity_type_slug}`;
           let method = 'POST';
-          let formattedSlug = formatSlug(slug);
           let entry = {
             ...data,
             fileNames,
-            slug: formattedSlug,
+            slug: entity_type_slug,
             entity_type_id: entity_type_id,
           }
     
@@ -108,43 +100,10 @@ const SingleType = ({
   };
   return (
     <>
-    {state.isLoading && (
+    {!loading && (
       <Formik {...formikParams}>
         {(props) => (
         <Form>
-          {Object.keys(entries).length === 0 && 
-          <>
-            <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
-              <p className="general-input-title-slug"> Slug </p> 
-              <GeneralHoverTooltip 
-                icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
-                className="general-table-header-slug"
-                tooltipText={slugTooltipText}
-                position="left"
-              /> 
-            </div>
-            <Field
-              name="slug"
-              validate={(e) => TypesValidator(e, "text")}
-            >
-              {({ field, meta }) => (
-                <div>
-                  <input
-                    type="text"
-                    {...field}
-                    className={classname(
-                      "general-input-text", 
-                      {"general-input-error" : meta.touched && meta.error}
-                    )}
-                  />
-                  {meta.touched && 
-                   meta.error && (
-                    <div className="general-input-error-text">{meta.error}</div>
-                  )}
-                </div>
-              )}
-            </Field>
-          </>}
           {Object.entries(attributes)
            .sort(sortByOrderAsc)
            .map(([attributeName, attribute]) => {
@@ -164,7 +123,7 @@ const SingleType = ({
       )}
     </Formik>
     )}
-    {state.isLoading && 
+    {!loading && 
       <div className="d-flex flex-row justify-content-center">
       {capabilities.includes(writeContents) && 
       <>
@@ -180,7 +139,9 @@ const SingleType = ({
           className="general-button-save mb-3"
         />
       </>}
-      <AppInfoModal
+    </div>}
+
+    <AppInfoModal
             show={state.show}
             onClose={() => (
               dispatch({ type: SET_SHOW, payload: false }),
@@ -192,7 +153,6 @@ const SingleType = ({
             {" "}
             {state.modalContent}{" "}
           </AppInfoModal>
-    </div>}
   </>
   )
 }
