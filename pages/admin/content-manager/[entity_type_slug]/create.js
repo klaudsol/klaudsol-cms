@@ -41,7 +41,7 @@ import { RiQuestionLine } from "react-icons/ri";
 import EntityType from "@/backend/models/core/EntityType";
 import Entity from "@/backend/models/core/Entity";
 
-export default function CreateNewEntry({ cache }) {
+export default function CreateNewEntry({ cache, entityId }) {
   const router = useRouter();
   const errorHandler = useClientErrorHandler();
   const capabilities = cache?.capabilities;
@@ -331,15 +331,15 @@ export const getServerSideProps = getSessionCache(async (context) => {
     const entityType = await EntityType.find({ slug: entity_type_slug });
     const { entity_type_id } = entityType[0];
 
-    let entityId;
-
     const draft = await Entity.getDraft();
 
+    let entityId;
     if (Object.keys(draft).length === 0) {
-        await Entity.createDraft({ entity_type_id });
+        const { id } = await Entity.createDraft({ entity_type_id });
+        entityId = id;
     } else {
         entityId = draft.id;
     }
 
-    return { props: {} }
+    return { props: { entityId } }
 });

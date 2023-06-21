@@ -318,7 +318,7 @@ class Entity {
 
     //TODO: end transaction
 
-    return true;
+    return { id: lastInsertedEntityID };
   }
 
   static async getDraft() {
