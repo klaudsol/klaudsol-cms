@@ -51,6 +51,7 @@ export default function CreateNewEntry({ cache, entity }) {
 
   const [state, dispatch] = useReducer(createEntriesReducer, initialState);
   const formRef = useRef();
+  const statusRef = useRef("");
 
   const metaDataHandler = (data, val) => {
     return Object.entries(data).map(([attributeName, attributeValue]) => {
@@ -104,6 +105,18 @@ export default function CreateNewEntry({ cache, entity }) {
       formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
 
+  const onPublishSubmit = (evt) => {
+    statusRef.current = "published";
+
+    onSubmit(evt);
+  }
+
+  const onDraftSubmit = (evt) => {
+    statusRef.current = "draft";
+
+    onSubmit(evt)
+  }
+
   const formatSlug = (slug) => {
     return slug.toLowerCase().replace(/\s+/g, "-");
   };
@@ -132,7 +145,7 @@ export default function CreateNewEntry({ cache, entity }) {
           fileNames,
           slug: formattedSlug,
           entity_type_id: state.entity_type_id,
-          status: "published"
+          status: statusRef.current
         };
 
         try {
@@ -254,9 +267,14 @@ export default function CreateNewEntry({ cache, entity }) {
                       className="general-button-cancel"
                     />
                     <AppButtonLg
+                      title="Draft"
+                      onClick={!state.isSaving ? onDraftSubmit : null}
+                      className="general-button-cancel"
+                    />
+                    <AppButtonLg
                       title={state.isSaving ? "Saving" : "Save"}
                       icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
-                      onClick={!state.isSaving ? onSubmit : null}
+                      onClick={!state.isSaving ? onPublishSubmit : null}
                       className="general-button-save"
                     />
                   </div>}
