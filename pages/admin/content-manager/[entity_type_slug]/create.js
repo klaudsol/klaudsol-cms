@@ -1,4 +1,5 @@
 import CacheContext from "@/components/contexts/CacheContext";
+import EntityContext from "@/components/contexts/EntityContext";
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks";
@@ -159,168 +160,170 @@ export default function CreateNewEntry({ cache, entityId }) {
 
   return (
     <CacheContext.Provider value={cache}>
-      <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
-       <ContentManagerLayout currentTypeSlug={entity_type_slug}>
-          {capabilities.includes(writeContents) ? <div className="py-4">
-            <div className="d-flex justify-content-between align-items-center mt-2 mx-0 px-0">
-              <div>
-                <div className="general-header"> Create an Entry </div>
-                <p> API ID : {entity_type_slug} </p>
+      <EntityContext.Provider value={entityId}>
+        <div className="d-flex flex-row mt-2 pt-0 mx-0 px-0">
+         <ContentManagerLayout currentTypeSlug={entity_type_slug}>
+            {capabilities.includes(writeContents) ? <div className="py-4">
+              <div className="d-flex justify-content-between align-items-center mt-2 mx-0 px-0">
+                <div>
+                  <div className="general-header"> Create an Entry </div>
+                  <p> API ID : {entity_type_slug} </p>
+                </div>
               </div>
-            </div>
-            <div className="row mt-4 mx-0 px-0">
-              <div className="col-12 mx-0 px-0">
-                <div className=" py-0 px-0 mx-0">
-                  {state.isLoading &&
-                    Array.from(
-                      { length: DEFAULT_SKELETON_ROW_COUNT },
-                      (_, i) => (
-                        <div key={i}>
-                          <div className="skeleton-label" />
-                          <div className="skeleton-text" />
-                          <div />
-                        </div>
-                      )
-                    )}
-                  {!state.isLoading && (
-                    <Formik {...formikParams}>
-                      {(props) => (
-                        <Form>  
-                          <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
-                          <p className="general-input-title-slug"> Slug </p> 
-                          <GeneralHoverTooltip 
-                            icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
-                            className="general-table-header-slug"
-                            tooltipText={slugTooltipText}
-                            position="left"
-                          /> 
+              <div className="row mt-4 mx-0 px-0">
+                <div className="col-12 mx-0 px-0">
+                  <div className=" py-0 px-0 mx-0">
+                    {state.isLoading &&
+                      Array.from(
+                        { length: DEFAULT_SKELETON_ROW_COUNT },
+                        (_, i) => (
+                          <div key={i}>
+                            <div className="skeleton-label" />
+                            <div className="skeleton-text" />
+                            <div />
                           </div>
-                          <Field
-                            name="slug"
-                            validate={(e) => TypesValidator(e, "text")}
-                          >
-                            {({ field, meta }) => (
-                              <div>
-                                <input
-                                  type="text"
-                                  {...field}
-                                  className={classname("general-input-text", {"general-input-error" : meta.touched && meta.error})}
-                                  style={
-                                    meta.touched && meta.error
-                                      ? {
-                                          borderColor: "red",
-                                          outlineColor: "red",
-                                        }
-                                      : {}
-                                  }
-                                />
-                                {meta.touched && meta.error && (
-                                  <div className="general-input-error-text">
-                                    {meta.error}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </Field>
-                          {Object.entries(state.attributes)
-                            .sort(sortByOrderAsc)
-                            .map(([attributeName, attribute]) => {
-                              return (
-                                <div key={attributeName}>
-                                  <p className="general-input-title"> {attributeName.replaceAll('_', " ")}  </p>
-                                  <AdminRenderer
-                                    errors={props.errors}
-                                    touched={props.touched}
-                                    type={attribute.type}
-                                    name={attributeName}
-                                    customName={attribute?.custom_name ?? ''}
-                                  />
-                                </div>
-                              );
-                            })}
-                        </Form>
+                        )
                       )}
-                    </Formik>
-                  )}
+                    {!state.isLoading && (
+                      <Formik {...formikParams}>
+                        {(props) => (
+                          <Form>  
+                            <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
+                            <p className="general-input-title-slug"> Slug </p> 
+                            <GeneralHoverTooltip 
+                              icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
+                              className="general-table-header-slug"
+                              tooltipText={slugTooltipText}
+                              position="left"
+                            /> 
+                            </div>
+                            <Field
+                              name="slug"
+                              validate={(e) => TypesValidator(e, "text")}
+                            >
+                              {({ field, meta }) => (
+                                <div>
+                                  <input
+                                    type="text"
+                                    {...field}
+                                    className={classname("general-input-text", {"general-input-error" : meta.touched && meta.error})}
+                                    style={
+                                      meta.touched && meta.error
+                                        ? {
+                                            borderColor: "red",
+                                            outlineColor: "red",
+                                          }
+                                        : {}
+                                    }
+                                  />
+                                  {meta.touched && meta.error && (
+                                    <div className="general-input-error-text">
+                                      {meta.error}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </Field>
+                            {Object.entries(state.attributes)
+                              .sort(sortByOrderAsc)
+                              .map(([attributeName, attribute]) => {
+                                return (
+                                  <div key={attributeName}>
+                                    <p className="general-input-title"> {attributeName.replaceAll('_', " ")}  </p>
+                                    <AdminRenderer
+                                      errors={props.errors}
+                                      touched={props.touched}
+                                      type={attribute.type}
+                                      name={attributeName}
+                                      customName={attribute?.custom_name ?? ''}
+                                    />
+                                  </div>
+                                );
+                              })}
+                          </Form>
+                        )}
+                      </Formik>
+                    )}
+                  </div>
+                  {!state.isLoading &&
+                  <div className="d-flex flex-row justify-content-center my-4">
+                    <AppButtonLg
+                      title="Cancel"
+                      onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
+                      className="general-button-cancel"
+                    />
+                    <AppButtonLg
+                      title={state.isSaving ? "Saving" : "Save"}
+                      icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
+                      onClick={!state.isSaving ? onSubmit : null}
+                      className="general-button-save"
+                    />
+                  </div>}
                 </div>
-                {!state.isLoading &&
-                <div className="d-flex flex-row justify-content-center my-4">
-                  <AppButtonLg
-                    title="Cancel"
-                    onClick={!state.isSaving ? () => router.push(`/admin/content-manager/${entity_type_slug}`) : null}
-                    className="general-button-cancel"
-                  />
-                  <AppButtonLg
-                    title={state.isSaving ? "Saving" : "Save"}
-                    icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
-                    onClick={!state.isSaving ? onSubmit : null}
-                    className="general-button-save"
-                  />
-                </div>}
+                {/* <div className="col-3 mx-0">
+                  <div className="container_new_entry px-3 py-4">
+                    <p style={{ fontSize: "11px" }}> INFORMATION </p>
+                    <div className="block_bar"></div>
+
+                    <div className="d-flex align-items-center justify-content-between my-2">
+                      <p style={{ fontSize: "12px" }}>
+                        {" "}
+                        <b> Created </b>{" "}
+                      </p>
+                      <p style={{ fontSize: "12px" }}> now </p>
+                    </div>
+
+                    <div className="d-flex align-items-center justify-content-between">
+                      <p style={{ fontSize: "12px" }}>
+                        {" "}
+                        <b> By </b>{" "}
+                      </p>
+                      <p style={{ fontSize: "12px" }}> </p>
+                    </div>
+
+                    <div className="d-flex align-items-center justify-content-between">
+                      <p style={{ fontSize: "12px" }}>
+                        {" "}
+                        <b> Last update </b>{" "}
+                      </p>
+                      <p style={{ fontSize: "12px" }}> now </p>
+                    </div>
+
+                    <div className="d-flex align-items-center justify-content-between">
+                      <p style={{ fontSize: "12px" }}>
+                        {" "}
+                        <b> By </b>{" "}
+                      </p>
+                      <p style={{ fontSize: "12px" }}> </p>
+                    </div>
+                  </div>
+                  <button className="new_entry_block_button mt-2">
+                    {" "}
+                    <MdModeEditOutline className="icon_block_button" /> Edit the
+                    model{" "}
+                  </button>
+                  <button className="new_entry_block_button mt-2">
+                    {" "}
+                    <VscListSelection className="icon_block_button" /> Configure
+                    the view{" "}
+                  </button>
+                </div> */}
               </div>
-              {/* <div className="col-3 mx-0">
-                <div className="container_new_entry px-3 py-4">
-                  <p style={{ fontSize: "11px" }}> INFORMATION </p>
-                  <div className="block_bar"></div>
-
-                  <div className="d-flex align-items-center justify-content-between my-2">
-                    <p style={{ fontSize: "12px" }}>
-                      {" "}
-                      <b> Created </b>{" "}
-                    </p>
-                    <p style={{ fontSize: "12px" }}> now </p>
-                  </div>
-
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p style={{ fontSize: "12px" }}>
-                      {" "}
-                      <b> By </b>{" "}
-                    </p>
-                    <p style={{ fontSize: "12px" }}> </p>
-                  </div>
-
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p style={{ fontSize: "12px" }}>
-                      {" "}
-                      <b> Last update </b>{" "}
-                    </p>
-                    <p style={{ fontSize: "12px" }}> now </p>
-                  </div>
-
-                  <div className="d-flex align-items-center justify-content-between">
-                    <p style={{ fontSize: "12px" }}>
-                      {" "}
-                      <b> By </b>{" "}
-                    </p>
-                    <p style={{ fontSize: "12px" }}> </p>
-                  </div>
-                </div>
-                <button className="new_entry_block_button mt-2">
-                  {" "}
-                  <MdModeEditOutline className="icon_block_button" /> Edit the
-                  model{" "}
-                </button>
-                <button className="new_entry_block_button mt-2">
-                  {" "}
-                  <VscListSelection className="icon_block_button" /> Configure
-                  the view{" "}
-                </button>
-              </div> */}
-            </div>
-          </div> : <p className="errorMessage">forbidden.</p>}
-          <AppInfoModal
-            show={state.show}
-            onClose={() =>
-              redirectToManagerEntitySlug(router, entity_type_slug)
-            }
-            modalTitle="Success"
-            buttonTitle="Close"
-          >
-            {" "}
-            You have successfully created a new entry.{" "}
-          </AppInfoModal>
-        </ContentManagerLayout>
-      </div>
+            </div> : <p className="errorMessage">forbidden.</p>}
+            <AppInfoModal
+              show={state.show}
+              onClose={() =>
+                redirectToManagerEntitySlug(router, entity_type_slug)
+              }
+              modalTitle="Success"
+              buttonTitle="Close"
+            >
+              {" "}
+              You have successfully created a new entry.{" "}
+            </AppInfoModal>
+          </ContentManagerLayout>
+        </div>
+      </EntityContext.Provider>
     </CacheContext.Provider>
   );
 }
