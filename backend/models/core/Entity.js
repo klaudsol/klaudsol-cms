@@ -266,6 +266,61 @@ class Entity {
     return true;
   }
 
+  // Almost the same as Entites.create but no values
+  //Work in progress
+  static async createDraft({ entity_type_id }) {
+    const db = new DB();
+
+    //TODO: start transaction
+
+    //Insert Entity
+    const insertEntitiesSQL =
+      "INSERT into entities (entity_type_id) VALUES (:entity_type_id)";
+
+    await db.executeStatement(insertEntitiesSQL, [
+      { name: "entity_type_id", value: { longValue: entity_type_id } },
+    ]);
+
+    const {
+      records: [[{ longValue: lastInsertedEntityID }]],
+    } = await db.executeStatement("SELECT LAST_INSERT_ID()");
+    console.error(lastInsertedEntityID);
+
+    //Attribute Introspection
+    const entityIntrospectionSQL = `SELECT id, name, type FROM attributes 
+        WHERE entity_type_id = :entity_type_id ORDER by \`order\``;
+
+    const attributes = await db.executeStatement(entityIntrospectionSQL, [
+      { name: "entity_type_id", value: { longValue: entity_type_id } },
+    ]);
+
+    const valueBatchParams = attributes.records.reduce((collection, record) => {
+      const [
+        { longValue: attributeId },
+      ] = record;
+
+      return [
+        ...collection,
+        [
+          { name: "entity_id", value: { longValue: lastInsertedEntityID } },
+          { name: "attribute_id", value: { longValue: attributeId } },
+        ],
+      ];
+    }, []);
+
+    //Insert Values by batch
+    const insertValuesBatchSQL = `
+        INSERT INTO \`values\`(entity_id, attribute_id)
+        VALUES (:entity_id, :attribute_id)
+    `;
+
+    await db.batchExecuteStatement(insertValuesBatchSQL, valueBatchParams);
+
+    //TODO: end transaction
+
+    return true;
+  }
+
   static async delete({ id }) {
     const db = new DB();
     const deleteEntitiesSQL = "DELETE from entities where id = :id";
