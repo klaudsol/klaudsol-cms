@@ -331,7 +331,15 @@ export const getServerSideProps = getSessionCache(async (context) => {
     const entityType = await EntityType.find({ slug: entity_type_slug });
     const { entity_type_id } = entityType[0];
 
-    // await Entity.createDraft({ entity_type_id });
+    let entityId;
+
+    const draft = await Entity.getDraft();
+
+    if (Object.keys(draft).length === 0) {
+        await Entity.createDraft({ entity_type_id });
+    } else {
+        entityId = draft.id;
+    }
 
     return { props: {} }
 });

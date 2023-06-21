@@ -275,7 +275,7 @@ class Entity {
 
     //Insert Entity
     const insertEntitiesSQL =
-      "INSERT into entities (slug, entity_type_id) VALUES ('', :entity_type_id)";
+      "INSERT into entities (slug, entity_type_id, status) VALUES ('', :entity_type_id, 'draft')";
 
     await db.executeStatement(insertEntitiesSQL, [
       { name: "entity_type_id", value: { longValue: entity_type_id } },
@@ -319,6 +319,25 @@ class Entity {
     //TODO: end transaction
 
     return true;
+  }
+
+  static async getDraft() {
+    const db = new DB();
+
+    const getDraftSql = "SELECT * FROM entities WHERE status = 'draft' LIMIT 1";
+
+    const { records } = await db.executeStatement(getDraftSql);
+
+    if (records.length === 0) return {};
+
+    const [
+        { longValue: id },
+        { stringValue: slug },
+        { longValue: entity_type_id },
+        { stringValue: status}
+    ] = records[0];
+
+    return { id, slug, entity_type_id, status }
   }
 
   static async delete({ id }) {
