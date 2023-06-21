@@ -322,6 +322,9 @@ export default function CreateNewEntry({ cache }) {
     </CacheContext.Provider>
   );
 }
-//
-//  
-export const getServerSideProps = getSessionCache();
+
+
+export const getServerSideProps = getSessionCache((context) => {
+
+    return { props: {} }
+});

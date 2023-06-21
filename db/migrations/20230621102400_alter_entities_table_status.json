@@ -1,0 +1,8 @@
+{
+    "up": [
+        "ALTER TABLE `entities` ADD COLUMN status VARCHAR(255)"
+    ],
+    "down": [
+        "ALTER TABLE `entities` DROP COLUMN status"
+    ]
+}
