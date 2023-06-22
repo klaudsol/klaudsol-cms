@@ -231,6 +231,7 @@ class Entity {
             value:
               attributeType == "textarea" ||
               attributeType === "gallery" ||
+              attributeType === "rich-text" ||
               attributeType == "custom"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
@@ -337,6 +338,7 @@ class Entity {
             value:
               (attributeType == "textarea" ||
                 attributeType === "gallery" ||
+                attributeType === "rich-text" ||
                 attributeType === "custom") && 
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }
