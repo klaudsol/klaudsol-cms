@@ -353,7 +353,6 @@ export default function CreateNewEntry({ cache, entity }) {
   );
 }
 
-
 export const getServerSideProps = getSessionCache(async (context) => {
     const { entity_type_slug } = context.query;
 
