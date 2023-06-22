@@ -61,8 +61,8 @@ async function post(req, res) {
   (await assertUserCan(readContentTypes, req)) &&
     (await assertUserCan(writeContentTypes, req));
 
-  const { name, slug } = req.body;
-  await EntityType.create({ name, slug });
+  const { name, slug, variant } = req.body;
+  await EntityType.create({ name, slug, variant });
   const output = {
     data: { name, slug },
     metadata: {},

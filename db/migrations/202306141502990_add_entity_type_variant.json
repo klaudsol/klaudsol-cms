@@ -1,0 +1,4 @@
+{
+  "up": "ALTER TABLE `entity_types` ADD COLUMN variant varchar(256) DEFAULT 'collection' NOT NULL;",
+  "down": "ALTER TABLE `entity_types` DROP COLUMN variant"
+}

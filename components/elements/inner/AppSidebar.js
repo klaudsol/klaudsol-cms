@@ -31,6 +31,7 @@ const AppSidebar = () => {
   const cache = useContext(CacheContext);
   const { firstName = null, lastName = null, defaultEntityType = null } = cache ?? {};
   const [isCollectionTypeBodyVisible, setCollectionTypeBodyVisible] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const onModalSubmit = () => {
     if (formRef.current) {
@@ -167,10 +168,11 @@ const AppSidebar = () => {
         show={isCollectionTypeBodyVisible}
         onClose={() => setCollectionTypeBodyVisible(false)}
         onClick={onModalSubmit}
-        modalTitle="Create a collection type"
-        buttonTitle="Continue"
+        modalTitle="Create a Content Type"
+        buttonTitle="Save"
+        isLoading={saving}
       >
-        <CollectionTypeBody formRef={formRef} />
+        <CollectionTypeBody formRef={formRef} setSaving={setSaving} hide={() => setCollectionTypeBodyVisible(false)} />
       </AppModal>
     </>
   )
