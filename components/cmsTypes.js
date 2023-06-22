@@ -12,7 +12,8 @@ export const CMS_TYPES = {
   // the AdminRenderer component can function properly
   PASSWORD: "password",
   CHECKBOX: "checkbox",
-  CUSTOM: "custom"
+  CUSTOM: "custom",
+  RICH_TEXT: "rich-text"
 };
 
 // resources types

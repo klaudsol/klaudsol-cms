@@ -1,6 +1,7 @@
 export const inputValues = [
   { value: "text", option: "Text" },
   { value: "textarea", option: "Text Area" },
+  { value: "rich-text", option: "Rich Text" },
   { value: "link", option: "Link" },
   { value: "image", option: "Image" },
   { value: "gallery", option: "Gallery" },

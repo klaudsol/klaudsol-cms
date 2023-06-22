@@ -10,6 +10,8 @@ import { validImageTypes, validVideoTypes } from "@/lib/Constants";
 import VideoRenderer from "./VideoRenderer";
 import BooleanRenderer from "./BooleanRenderer";
 import { plugin } from "@/components/plugin/plugin";
+import RichTextAttributeType from "@/components/attribute_types/RichTextAttributeType";
+import AttributeTypeFactory from "@/components/attribute_types/AttributeTypeFactory";
 
 const AdminRenderer = ({ type, ...params }) => {
   switch (type) {
@@ -32,6 +34,10 @@ const AdminRenderer = ({ type, ...params }) => {
       return <VideoRenderer accept={validVideoTypes} {...params} />;
     case CMS_TYPES.BOOLEAN:
       return <BooleanRenderer type={type} {...params} title="Yes" />;
+    case CMS_TYPES.RICH_TEXT:
+      const attributeType = AttributeTypeFactory.create({metadata: {type, custom_name: params.customName}});
+      const Component =  attributeType.editableComponent();
+      return <Component {...params} {...attributeType.props()} />;
     case CMS_TYPES.CUSTOM:
       const CustomAttributeType = plugin(params.customName);
       const customAttributeType = new CustomAttributeType();
