@@ -371,8 +371,8 @@ class Entity {
                                 id = :id`;
 
     await db.executeStatement(updateEntitySql, [
-      { name: "slug", value: { stringValue: slug ?? 'slug' } },
-      { name: "status", value: { stringValue: status ?? 'status' } },
+      { name: "slug", value: { stringValue: slug } },
+      { name: "status", value: { stringValue: status } },
       { name: "id", value: { longValue: entity_id } },
     ]);
 

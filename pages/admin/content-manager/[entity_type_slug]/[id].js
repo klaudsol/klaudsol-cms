@@ -28,6 +28,7 @@ import { getAllFiles, getNonFiles, extractFiles } from "@/lib/s3FormController";
 import { uploadFilesToUrl } from "@/backend/data_access/S3";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
 import { redirectToManagerEntitySlug } from "@/components/klaudsolcms/routers/routersRedirect";
+import classname from "classnames";
 
 import {
   initialState,
@@ -50,6 +51,9 @@ import {
   SET_ENTITY_TYPE_ID,
   SET_ALL_VALIDATES
 } from "@/lib/actions";
+import GeneralHoverTooltip from "@/components/elements/tooltips/GeneralHoverTooltip";
+import { RiQuestionLine } from "react-icons/ri";
+import { slugTooltipText } from "@/constants";
 
 export default function Type({ cache }) {
   const router = useRouter();
@@ -137,7 +141,7 @@ export default function Type({ cache }) {
   }
 
   const getFormikInitialVals = () => {
-    const { slug, id, ...initialValues } = state.values;
+    const { id, ...initialValues } = state.values;
     return initialValues;
   };
 
@@ -234,6 +238,18 @@ export default function Type({ cache }) {
                     <Formik {...formikParams}>
                       {(props) => (
                         <Form>
+                          <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
+                          <p className="general-input-title-slug"> Slug </p> 
+                          <GeneralHoverTooltip 
+                            icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
+                            className="general-table-header-slug"
+                            tooltipText={slugTooltipText}
+                            position="left"
+                          /> 
+                          </div>
+                          <div>
+                            <Field name="slug" type="text" className="general-input-text" />
+                          </div>
                           {Object.entries(state.attributes)
                             .sort(sortByOrderAsc)
                             .map(([attributeName, attribute]) => {
