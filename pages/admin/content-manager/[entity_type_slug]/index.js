@@ -103,6 +103,7 @@ export default function ContentManager({ cache }) {
           };
         });
 
+        columns.unshift({ accessor: "status", displayName: "STATUS" });
         columns.unshift({ accessor: "slug", displayName: "SLUG" });
         columns.unshift({ accessor: "id", displayName: "ID" });
         dispatch({ type: SET_COLUMNS, payload: columns });

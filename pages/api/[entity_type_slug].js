@@ -71,6 +71,9 @@ async function get(req, res) {
                     ...(!collection.indexedData[item.id]?.slug && {
                         slug: item.entities_slug,
                     }),
+                    ...(!collection.indexedData[item.id]?.status && {
+                        status: item.entities_status,
+                    }),
                     ...({
                         [item.attributes_name]: resolveValue(item) ?? null,
                     }),

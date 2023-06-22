@@ -115,7 +115,7 @@ class Entity {
         : 10;
     let offset = page ? limit * page : 0;
 
-    const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
+    const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, entities.status,
                 attributes.name, attributes.type, attributes.\`order\`, attributes.custom_name,
                 \`values\`.value_string, 
                 \`values\`.value_long_string, 
@@ -146,6 +146,7 @@ class Entity {
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
         { stringValue: entities_slug },
+        { stringValue: entities_status },
         { stringValue: attributes_name },
         { stringValue: attributes_type },
         { longValue: attributes_order },
@@ -162,6 +163,7 @@ class Entity {
         entity_type_name,
         entity_type_slug,
         entities_slug,
+        entities_status,
         attributes_name,
         attributes_type,
         attributes_order,
