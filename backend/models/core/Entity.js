@@ -1,5 +1,6 @@
 import DB from '@klaudsol/commons/lib/DB';
 import { isNumber, generateSQL } from "@/components/Util";
+import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 
 class Entity {
   static async findBySlugOrId({ entity_type_slug, slug }) {
@@ -333,7 +334,7 @@ class Entity {
 
     const { records } = await db.executeStatement(getDraftSql);
 
-    if (records.length === 0) return {};
+    if (records.length === 0) throw new RecordNotFound();
 
     const [
         { longValue: id },

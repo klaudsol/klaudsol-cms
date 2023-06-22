@@ -42,6 +42,7 @@ import GeneralHoverTooltip from "components/elements/tooltips/GeneralHoverToolti
 import { RiQuestionLine } from "react-icons/ri";
 import EntityType from "@/backend/models/core/EntityType";
 import Entity from "@/backend/models/core/Entity";
+import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 
 export default function CreateNewEntry({ cache, entity }) {
   const router = useRouter();
@@ -356,9 +357,13 @@ export default function CreateNewEntry({ cache, entity }) {
 export const getServerSideProps = getSessionCache(async (context) => {
     const { entity_type_slug } = context.query;
 
-    let draft = await Entity.getDraft();
+    let draft;
 
-    if (Object.keys(draft).length === 0) {
+    try {
+        draft = await Entity.getDraft();
+    } catch (err) {
+        if (!(err instanceof RecordNotFound)) throw err;
+
         const entityType = await EntityType.find({ slug: entity_type_slug });
         const { entity_type_id } = entityType[0];
 
