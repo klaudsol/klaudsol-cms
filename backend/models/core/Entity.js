@@ -273,7 +273,6 @@ class Entity {
   }
 
   // Almost the same as Entites.create but no values
-  //Work in progress
   static async createDraft({ entity_type_id }) {
     const db = new DB();
 
