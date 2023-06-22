@@ -80,7 +80,7 @@ export default function ContentManager({ cache }) {
        // Assign a new AbortController for the latest fetch to our useRef variable
 
         const valuesRaw = await slsFetch(
-          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`,
+          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}&drafts=true`,
           { 
             signal: controllerRef.current?.signal,
           }

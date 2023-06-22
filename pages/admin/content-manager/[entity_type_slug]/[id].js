@@ -66,7 +66,7 @@ export default function Type({ cache }) {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}`);
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}?drafts=true`);
         const values = await valuesRaw.json();
 
         const entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
