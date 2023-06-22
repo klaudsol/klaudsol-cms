@@ -77,7 +77,7 @@ export default function EditCollectionTypeBody({ formRef, hide, setSaving }) {
                 <Field 
                   type="text"
                   name="variant" 
-                  className="general-dropdown"
+                  className="general-input-text"
                   disabled
                 >
                 </Field>
