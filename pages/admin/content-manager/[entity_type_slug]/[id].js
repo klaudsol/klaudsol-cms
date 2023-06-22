@@ -141,7 +141,7 @@ export default function Type({ cache }) {
   }
 
   const getFormikInitialVals = () => {
-    const { id, ...initialValues } = state.values;
+    const { id, status, ...initialValues } = state.values;
     return initialValues;
   };
 
@@ -152,7 +152,6 @@ export default function Type({ cache }) {
       (async () => {
         try {
           console.error(values);
-          dispatch({ type: SAVING });
 
           const { data, fileNames, files } = await extractFiles(values);
 
