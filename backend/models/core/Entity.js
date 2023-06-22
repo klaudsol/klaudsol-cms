@@ -226,7 +226,7 @@ class Entity {
           {
             name: "value_double",
             value:
-              attributeType == "float"
+              attributeType == "float" && entry[attributeName].trim() != ''
                 ? { doubleValue: entry[attributeName] }
                 : { isNull: true },
           },
