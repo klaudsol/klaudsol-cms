@@ -64,6 +64,7 @@ async function get(req, res) {
                 ...collection.data,
                 ...(!collection.data.id && { id: item.id }),
                 ...(!collection.data.slug && { slug: item.slug }),
+                ...(!collection.data.status && { status: item.status }),
                 ...({
                     [item.attributes_name]: resolveValue(item) ?? null
                 }),
