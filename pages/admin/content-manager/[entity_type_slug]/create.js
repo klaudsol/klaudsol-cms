@@ -106,20 +106,20 @@ export default function CreateNewEntry({ cache, entity }) {
       formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
 
-  const onPublishSubmit = (evt) => {
+  const onPublishSubmit = (e) => {
     statusRef.current = "published";
 
     dispatch({ type: SAVING });
 
-    onSubmit(evt);
+    onSubmit(e);
   }
 
-  const onDraftSubmit = (evt) => {
+  const onDraftSubmit = (e) => {
     statusRef.current = "draft";
 
     dispatch({ type: DRAFTING });
 
-    onSubmit(evt)
+    onSubmit(e);
   }
 
   const formatSlug = (slug) => {

@@ -17,7 +17,7 @@ import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 
 /** react-icons */
-import { FaCheck, FaTrash } from "react-icons/fa";
+import { FaCheck, FaPencilRuler, FaTrash } from "react-icons/fa";
 import { MdModeEditOutline } from "react-icons/md";
 import { VscListSelection } from "react-icons/vsc";
 import { Col } from "react-bootstrap";
@@ -38,6 +38,7 @@ import {
   LOADING,
   REFRESH,
   SAVING,
+  DRAFTING,
   DELETING,
   CLEANUP,
   SET_SHOW,
@@ -58,6 +59,7 @@ export default function Type({ cache }) {
   const { entity_type_slug, id } = router.query;
   const [state, dispatch] = useReducer(entityReducer, initialState);
   const formRef = useRef();
+  const statusRef = useRef();
 
   /*** Entity Types List ***/
   useEffect(() => {
@@ -118,6 +120,22 @@ export default function Type({ cache }) {
     [entity_type_slug, id]
   );
 
+  const onPublishSubmit = (e) => {
+    statusRef.current = "published";
+
+    dispatch({ type: SAVING });
+
+    onSubmit(e);
+  }
+
+  const onDraftSubmit = (e) => {
+    statusRef.current = "draft";
+
+    dispatch({ type: DRAFTING });
+
+    onSubmit(e)
+  }
+
   const getFormikInitialVals = () => {
     const { slug, id, ...initialValues } = state.values;
     return initialValues;
@@ -139,6 +157,7 @@ export default function Type({ cache }) {
             fileNames,
             entity_type_slug,
             entity_id: id,
+            status: statusRef.current
           };
 
           const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
@@ -288,9 +307,15 @@ export default function Type({ cache }) {
                 className="general-button-cancel"
               />
               <AppButtonLg
+                title="Draft"
+                icon={state.isDrafting ? <AppButtonSpinner /> : <FaPencilRuler className="general-button-icon"/>}
+                onClick={!state.isDrafting ? onDraftSubmit : null}
+                className="general-button-draft"
+              />
+              <AppButtonLg
                 title={state.isSaving ? "Saving" : "Save"}
                 icon={state.isSaving ? <AppButtonSpinner /> : <FaCheck className="general-button-icon"/>}
-                onClick={!state.isSaving ? onSubmit : null}
+                onClick={!state.isSaving ? onPublishSubmit : null}
                 className="general-button-save"
               /></>}
             </div>}
