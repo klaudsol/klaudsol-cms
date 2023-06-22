@@ -74,7 +74,7 @@ class Entity {
     );
   }
 
-  static async where({ entity_type_slug, entry, page }, queries) {
+  static async where({ entity_type_slug, entry, page, drafts }, queries) {
     const db = new DB();
     
     let generatedSQL;
@@ -126,7 +126,8 @@ class Entity {
                 LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
-                    entity_types.slug = :entity_type_slug  
+                    entity_types.slug = :entity_type_slug
+                    ${drafts !== "true" ? "AND entities.status = 'published'" : ""}
                     ${generatedSQL ? `AND entities.id IN (${generatedSQL})` : ''}
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}

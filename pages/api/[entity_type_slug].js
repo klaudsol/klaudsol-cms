@@ -47,12 +47,13 @@ async function get(req, res) {
         entry,
         page,
         sort: sortValue,
+        drafts,
         ...queries
     } = req.query;
 
     const rawData = await Entity.where(
-        { entity_type_slug, entry, page },
-        queries
+        { entity_type_slug, entry, page, drafts },
+        queries,
     );
     const rawEntityType = await EntityType.find({ slug: entity_type_slug });
 
