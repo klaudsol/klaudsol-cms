@@ -128,5 +128,5 @@ async function put(req, res) {
 
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 
-    res.status(OK).json({ message: "Successfully created a new entry", presignedUrls });
+    res.status(OK).json({ message: "Successfully updated the entry.", presignedUrls });
 }

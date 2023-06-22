@@ -1,14 +1,13 @@
-import { useState, useContext, useEffect } from "react";
-import { Formik, Form, Field, useFormikContext, useField } from "formik";
-import { TOGGLE_ICONS_LIST, SET_CURRENT_ICON } from "@/lib/actions";
+import { useContext } from "react";
+import { Formik, Form, Field } from "formik";
 import { loadEntityTypes } from "@/components/reducers/actions";
 import { slsFetch } from '@klaudsol/commons/lib/Client';
 import RootContext from "@/components/contexts/RootContext";
-import CacheContext from "@/components/contexts/CacheContext";
 import DependentField from "@/components/fields/DependentField";
 import { useClientErrorHandler } from "@/components/hooks"
+import { defaultEntityTypeVariant, entityTypeVariants } from "@/constants";
 
-export default function CollectionTypeBody({ formRef }) {
+export default function CollectionTypeBody({ formRef, hide, setSaving }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const errorHandler = useClientErrorHandler();
 
@@ -16,12 +15,14 @@ export default function CollectionTypeBody({ formRef }) {
     initialValues: {
       name: "",
       slug: "",
+      variant: defaultEntityTypeVariant,
     },
     innerRef: formRef,
     onSubmit: (values) => {
       (async () => {
         try {
           //refactor to reducers/actions
+          setSaving(true);
           await slsFetch(`/api/entity_types`, {
             method: "POST",
             body: JSON.stringify(values),
@@ -33,6 +34,8 @@ export default function CollectionTypeBody({ formRef }) {
           errorHandler(error);
         } finally {
           await loadEntityTypes({ rootState, rootDispatch });
+          setSaving(false);
+          hide();
         }
       })();
     },
@@ -58,31 +61,34 @@ export default function CollectionTypeBody({ formRef }) {
       <Formik {...formikParams}>
         <Form>
           <div>
-            <div className="d-flex justify-content-between align-items-center">
-              <h6 className="mx-3"> Configurations </h6>
-              <div>
-                <button className="btn_modal_settings"> Basic settings </button>
+            <div className="content-type-create-container">
+              <div className="content-type-create">
+                <div className="general-text"> Display Name </div>
+                <Field type="text" className="general-input-text" name="name" />
               </div>
-            </div>
-            <div className="block_bar" />
-            <div className="row">
-              <div className="col">
-                <p className="mt-2"> Display Name </p>
-                <Field type="text" className="input_text" name="name" />
-              </div>
-              <div className="col">
-                <p className="mt-2"> API ID &#40;Slug&#41; </p>
+              <div className="content-type-create">
+                <div className="general-text"> API ID &#40;Slug&#41; </div>
                 <DependentField
                   type="text"
-                  className="input_text"
+                  className="general-input-text"
                   name="slug"
                   fieldToMirror="name"
                   format={dependentFieldFormat}
                 />
-                <p className="mt-1" style={{ fontSize: "10px" }}>
+                <div className="general-description">
                   The UID is used to generate the API routes and databases
                   tables/collections
-                </p>
+                </div>
+              </div>
+              <div className="content-type-create">
+                <div className="general-text"> Variant </div>
+                <Field 
+                  name="variant" 
+                  component="select" 
+                  className="general-dropdown"
+                >
+                  {entityTypeVariants.map((e, key) => (<option key={key} value={e.value}>{e.option}</option>))}
+                </Field>
               </div>
             </div>
           </div>
