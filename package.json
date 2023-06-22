@@ -65,6 +65,7 @@
     "react-live-clock": "^5.8.1",
     "react-moment": "^1.1.2",
     "react-portal-overlay": "^1.1.0",
+    "react-quill": "^2.0.0",
     "react-redux": "^7.2.5",
     "react-select": "^5.3.2",
     "reactstrap": "^9.0.2",

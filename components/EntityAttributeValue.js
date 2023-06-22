@@ -21,6 +21,8 @@ const formatImage = (key) => {
         return item.value_boolean;
       case 'textarea':
         return item.value_long_string;
+      case 'rich-text':
+        return item.value_long_string;
       case 'image':
         if(!item.value_string) return;
         const imageValues = formatImage(item.value_string);
