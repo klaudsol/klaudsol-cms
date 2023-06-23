@@ -44,6 +44,7 @@ const RichTextEditableComponent = ({name, errors}) => {
     [{ header: [1, 2, 3, 4, 5, 6] }], // header options
     ['bold', 'italic', 'underline', 'strike'], // inline formatting options
     [{ list: 'ordered' }, { list: 'bullet' }], // list options
+    ['link'], // link option
   ];
 
   // Set the styles 
