@@ -1,3 +1,8 @@
+# 3.7.0
+* You can now save content as draft first, then publish later on.
+* Fixed bug involving deletion of entries.
+* Introduced singleton-related bug fixes.
+
 # 3.6.1
 * Add anchor links to Rich Text Attribute Type
 
