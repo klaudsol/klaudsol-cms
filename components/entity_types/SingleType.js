@@ -124,7 +124,7 @@ const SingleType = ({
     </Formik>
     )}
     {!loading && 
-      <div className="d-flex flex-row justify-content-center">
+      <div className="d-flex flex-row justify-content-center mt-3">
       {capabilities.includes(writeContents) && 
       <>
         <AppButtonLg

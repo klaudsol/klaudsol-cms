@@ -77,6 +77,10 @@
     &-text {
       @include general-text-input(12px);
       width: 100%;
+
+      &:disabled {
+        color: gray;
+      }
     }
 
     &-textarea {
