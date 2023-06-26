@@ -1,3 +1,7 @@
+# 3.6.1
+* Add anchor links to Rich Text Attribute Type
+
+
 # 3.6.0
 * Added Boolean attribute type
 * Added Video attribute type
