@@ -35,13 +35,14 @@ import { setCORSHeaders, handleRequests } from "@klaudsol/commons/lib/API";
 import { createHash } from "@/lib/Hash";
 import { assert, assertUserCan } from "@klaudsol/commons/lib/Permissions";
 import { readContents, writeContents } from "@/lib/Constants";
+import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 
 export default withSession(handleRequests({ get, del, put }));
 
 async function get(req, res) {
     await assertUserCan(readContents, req);
 
-    const { entity_type_slug, id: slug } = req.query;
+    const { entity_type_slug, id: slug, drafts } = req.query;
     const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
 
     const initialFormat = {
@@ -51,6 +52,10 @@ async function get(req, res) {
         },
     };
 
+    if (drafts !== "true" && rawData[0].status === 'draft') {
+       throw new RecordNotFound();
+    }
+
     //Priority is the first entry in the collection, to make the
     //system more stable. Suceeding entries that are inconsistent are discarded.
     const output = rawData.reduce((collection, item) => {
@@ -59,6 +64,7 @@ async function get(req, res) {
                 ...collection.data,
                 ...(!collection.data.id && { id: item.id }),
                 ...(!collection.data.slug && { slug: item.slug }),
+                ...(!collection.data.status && { status: item.status }),
                 ...({
                     [item.attributes_name]: resolveValue(item) ?? null
                 }),
@@ -122,9 +128,10 @@ async function put(req, res) {
     (await assertUserCan(readContents, req)) &&
       (await assertUserCan(writeContents, req));
 
-    const { fileNames, ...body } = req.body;
-    const { entity_id, entity_type_slug, ...entries } = body
-    await Entity.update({ entries, entity_type_slug, entity_id });
+    const { entity_type_slug, id: entity_id } = req.query;
+    const { fileNames, slug, status, ...entries } = req.body;
+
+    await Entity.update({ slug, status, entries, entity_type_slug, entity_id });
 
     const presignedUrls = fileNames.length > 0 && await generatePresignedUrls(fileNames);
 

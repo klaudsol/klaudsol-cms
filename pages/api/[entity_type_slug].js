@@ -47,12 +47,13 @@ async function get(req, res) {
         entry,
         page,
         sort: sortValue,
+        drafts,
         ...queries
     } = req.query;
 
     const rawData = await Entity.where(
-        { entity_type_slug, entry, page },
-        queries
+        { entity_type_slug, entry, page, drafts },
+        queries,
     );
     const rawEntityType = await EntityType.find({ slug: entity_type_slug });
     const isSingleType = (rawEntityType[0].entity_type_variant === 'singleton');
@@ -70,6 +71,9 @@ async function get(req, res) {
                     ...(!collection.indexedData[item.id]?.id && { id: item.id }),
                     ...(!collection.indexedData[item.id]?.slug && {
                         slug: item.entities_slug,
+                    }),
+                    ...(!collection.indexedData[item.id]?.status && {
+                        status: item.entities_status,
                     }),
                     ...({
                         [item.attributes_name]: resolveValue(item) ?? null,
