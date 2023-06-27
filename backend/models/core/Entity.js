@@ -130,7 +130,6 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug
-                    ${drafts !== "true" ? "AND entities.status = 'published'" : "" /* No params, should be safe */}
                     ${generatedSQL ? `AND entities.id IN (${generatedSQL})` : ''}
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
