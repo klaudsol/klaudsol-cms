@@ -1,0 +1,8 @@
+{
+    "up": [
+        "UPDATE entities SET status = 'published'"
+    ],
+    "down": [
+        "UPDATE entities SET status = NULL"
+    ]
+}
