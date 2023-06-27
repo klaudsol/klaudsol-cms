@@ -33,7 +33,7 @@ const formatImage = (key) => {
         const videoValues = formatImage(item.value_string);
         return videoValues;
       case 'gallery':
-        if(!item.value_long_string) return;
+        if(!item.value_long_string) return [];
 
         const galleryValuesRaw = JSON.parse(item.value_long_string);
         const galleryValues = galleryValuesRaw.map((item) => formatImage(item));
