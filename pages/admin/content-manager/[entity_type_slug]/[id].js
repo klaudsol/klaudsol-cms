@@ -262,6 +262,7 @@ export default function Type({ cache }) {
                                     name={attributeName}
                                     customName={attribute?.custom_name ?? ''}
                                     disabled={!capabilities.includes(writeContents)}
+                                    id={id}
                                   />
                                 </div>
                               );
