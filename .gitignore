@@ -57,3 +57,4 @@ db/migrations/plugins/*
 !db/migrations/plugins/.keep
 
 
+backend/models/core/Entity_old.js

@@ -53,7 +53,6 @@ class Entity {
         { stringValue: value_string },
         { stringValue: value_long_string },
         { longValue: value_integer },
-        { stringValue: value_datetime },
         { stringValue: value_double },
         { booleanValue: value_boolean },
       ]) => ({
@@ -70,7 +69,6 @@ class Entity {
         value_string,
         value_long_string,
         value_integer,
-        value_datetime,
         value_double,
         value_boolean
       })
@@ -130,6 +128,7 @@ class Entity {
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
                     entity_types.slug = :entity_type_slug
+                    ${drafts !== "true" ? "AND entities.status = 'published'" : "" /* No params, should be safe */}
                     ${generatedSQL ? `AND entities.id IN (${generatedSQL})` : ''}
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
@@ -154,7 +153,6 @@ class Entity {
         { stringValue: value_string },
         { stringValue: value_long_string },
         { longValue: value_integer },
-        { stringValue: value_datetime },
         { stringValue: value_double },
         { booleanValue: value_boolean },
       ]) => ({
@@ -171,7 +169,6 @@ class Entity {
         value_string,
         value_long_string,
         value_integer,
-        value_datetime,
         value_double,
         value_boolean,
       })
@@ -227,7 +224,8 @@ class Entity {
               attributeType == "text" ||
               attributeType == "image" ||
               attributeType == "link" ||
-              attributeType === "video"
+              attributeType === "video" ||
+              attributeType === "date-time"
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -254,14 +252,14 @@ class Entity {
               attributeType == "boolean"
                 ? { booleanValue: entry[attributeName] }
                 : { isNull: true },
-          },
+          },    
         ],
       ];
     }, []);
 
     //Insert Values by batch
     const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
-        value_string, value_long_string, value_double, value_boolean  
+        value_string, value_long_string, value_double, value_boolean
       ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double, :value_boolean) 
       `;
 
@@ -418,7 +416,8 @@ class Entity {
               (attributeType == "text" ||
                 attributeType == "image" ||
                 attributeType == "video" ||
-                attributeType == "link") &&
+                attributeType == "link" ||
+                attributeType == "date-time" ) &&
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }
                 : { isNull: true },
@@ -483,7 +482,7 @@ class Entity {
 
     if (nonExistingVal.length) {
       const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
-      value_string, value_long_string, value_double, value_boolean  
+      value_string, value_long_string, value_double, value_boolean
     ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double, :value_boolean) 
     `;
 
