@@ -85,7 +85,7 @@ async function get(req, res) {
 
     output.metadata.hash = createHash(output);
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
-    rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+    rawData.length > 0 ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
 async function del(req, res) {
