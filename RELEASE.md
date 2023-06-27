@@ -3,6 +3,9 @@
 * Fixed bug involving deletion of entries.
 * Introduced singleton-related bug fixes.
 
+# 3.6.2
+* Add default value for empty galleries
+
 # 3.6.1
 * Add anchor links to Rich Text Attribute Type
 
