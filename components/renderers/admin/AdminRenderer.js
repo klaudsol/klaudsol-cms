@@ -35,14 +35,10 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.BOOLEAN:
       return <BooleanRenderer type={type} {...params} title="Yes" />;
     case CMS_TYPES.RICH_TEXT:
+    case CMS_TYPES.CUSTOM:
       const attributeType = AttributeTypeFactory.create({metadata: {type, custom_name: params.customName}});
       const Component =  attributeType.editableComponent();
       return <Component {...params} {...attributeType.props()} />;
-    case CMS_TYPES.CUSTOM:
-      const CustomAttributeType = plugin(params.customName);
-      const customAttributeType = new CustomAttributeType();
-      const CustomComponent =  customAttributeType.editableComponent();
-      return <CustomComponent {...params} {...customAttributeType.props()} />;
     default:
       return null;
   }
