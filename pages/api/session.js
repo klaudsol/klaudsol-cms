@@ -27,7 +27,7 @@ async function post (req, res) {
       return
       }
 
-    const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange} } = await People.login(email, password);
+    const { session_token, user: {firstName, lastName, roles, capabilities, defaultEntityType, forcePasswordChange, userId} } = await People.login(email, password);
 
     // This helps us decide whether to give out a session token or a JWT token
     const { origin } = req.headers;
@@ -55,7 +55,7 @@ async function post (req, res) {
 
         response.forcePasswordChange = forcePasswordChange;
     } else {
-        const token = generateToken({ firstName, lastName, email, capabilities, sessionToken: session_token });
+        const token = generateToken({ firstName, lastName, email, capabilities, sessionToken: session_token, id: userId });
         response.token = token;
     }
 
