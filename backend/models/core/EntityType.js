@@ -10,7 +10,8 @@ class EntityTypes {
           entity_types.id, 
           entity_types.name, 
           entity_types.slug,
-          entity_types.icon
+          entity_types.icon,
+          entity_types.variant
         FROM entity_types
           `;
 
@@ -21,12 +22,14 @@ class EntityTypes {
         { longValue: entity_type_id },
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
-        { stringValue: entity_type_icon }
+        { stringValue: entity_type_icon },
+        { stringValue: entity_type_variant }
       ]) => ({
         entity_type_id,
         entity_type_name,
         entity_type_slug,
-        entity_type_icon
+        entity_type_icon,
+        entity_type_variant
       })
     );
   }

@@ -78,7 +78,7 @@ export default function ContentManager({ cache }) {
        // Assign a new AbortController for the latest fetch to our useRef variable
 
         const valuesRaw = await slsFetch(
-          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}`,
+          `/api/${entity_type_slug}?page=${state.page}&entry=${state.entry}&drafts=true`,
           { 
             signal: controllerRef.current?.signal,
           }
@@ -109,6 +109,7 @@ export default function ContentManager({ cache }) {
           };
         });
 
+        columns.unshift({ accessor: "status", displayName: "STATUS" });
         columns.unshift({ accessor: "slug", displayName: "SLUG" });
         columns.unshift({ accessor: "id", displayName: "ID" });
         dispatch({ type: SET_COLUMNS, payload: columns });
@@ -149,7 +150,7 @@ export default function ContentManager({ cache }) {
                 >
                   api/{entity_type_slug}
                 </a>
-                <p> {state.values.length} entries found </p>
+                {variant === entityTypeVariantsEnum.collection && <p> {state.values.length} entries found </p>}
               </div>
               <div className="general-row-center" style={{ gap: '5px'}}>
               {capabilities.includes(writeContents) && variant === entityTypeVariantsEnum.collection &&

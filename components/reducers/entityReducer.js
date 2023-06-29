@@ -2,6 +2,7 @@ import {
   LOADING,
   REFRESH,
   SAVING,
+  DRAFTING,
   DELETING,
   CLEANUP,
   SET_SHOW,
@@ -22,6 +23,7 @@ export const initialState = {
   isLoading: false,
   isRefresh: true,
   isSaving: false,
+  isDrafting: false,
   isDeleting: false,
   show: false,
   entityTypeId: null,
@@ -43,6 +45,12 @@ export const entityReducer = (state, action) => {
         isSaving: true,
       };
 
+    case DRAFTING:
+      return {
+        ...state,
+        isDrafting: true,
+      };
+
     case DELETING:
       return {
         ...state,
@@ -61,6 +69,7 @@ export const entityReducer = (state, action) => {
         ...state,
         isLoading: false,
         isSaving: false,
+        isDrafting: false,
         isDeleting: false,
       };
 

@@ -3,6 +3,7 @@ import {
   REFRESH,
   CLEANUP,
   SAVING,
+  DRAFTING,
   SET_ATTRIBUTES,
   SET_ENTRIES,
   SET_SHOW,
@@ -16,6 +17,7 @@ export const initialState = {
   isLoading: false,
   isRefresh: true,
   isSaving: false,
+  isDrafting: false,
   show: false,
   entity_type_id: null,
 };
@@ -34,6 +36,12 @@ export const createEntriesReducer = (state, action) => {
         isSaving: true,
       };
 
+    case DRAFTING:
+      return {
+        ...state,
+        isDrafting: true,
+      };
+
     case REFRESH:
       return {
         ...state,
@@ -45,6 +53,7 @@ export const createEntriesReducer = (state, action) => {
         ...state,
         isLoading: false,
         isSaving: false,
+        isDrafting: false,
       };
 
     case SET_ATTRIBUTES:

@@ -19,6 +19,7 @@ import AppButtonLg from "@/components/klaudsolcms/buttons/AppButtonLg";
 import AppButtonSpinner from "@/components/klaudsolcms/AppButtonSpinner";
 import AppInfoModal from "@/components/klaudsolcms/modals/AppInfoModal";
 import AdminRenderer from "@/components/renderers/admin/AdminRenderer";
+import { useClientErrorHandler } from "@/components/hooks";
 
 const SingleType = ({ 
   loading,
@@ -30,6 +31,7 @@ const SingleType = ({
 }) => {
   const formRef = useRef();
   const router = useRouter();
+  const errorHandler = useClientErrorHandler();
 
   const [state, dispatch] = useReducer(contentManagerReducer, initialState);
     
@@ -116,6 +118,7 @@ const SingleType = ({
                    type={attribute.type}
                    name={attributeName}
                    disabled={!capabilities.includes(writeContents)}
+                   customName={attribute.custom_name}
                   />
                 </div>);
           })}
@@ -124,7 +127,7 @@ const SingleType = ({
     </Formik>
     )}
     {!loading && 
-      <div className="d-flex flex-row justify-content-center">
+      <div className="d-flex flex-row justify-content-center mt-3">
       {capabilities.includes(writeContents) && 
       <>
         <AppButtonLg
