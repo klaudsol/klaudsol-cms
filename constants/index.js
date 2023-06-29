@@ -7,7 +7,7 @@ export const inputValues = [
   { value: "gallery", option: "Gallery" },
   { value: "float", option: "Number" },
   { value: "video", option: "Video" },
-  { value: "date-time", option: "Date-Time" },
+  { value: "datetime", option: "DateTime" },
   { value: "boolean", option: "Boolean" },
   { value: "custom", option: "Custom" }
 ];

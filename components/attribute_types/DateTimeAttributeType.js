@@ -6,19 +6,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment'; 
 
 const DateTimeAttributeReadOnlyComponent = ({ text }) => {
-    // Parse the text (selectedDate) using Date object
-    const parsedDate = new Date(text);
-    // extract the text from the html elements
-    const extractTextFromHTML = (html) => {
-        const parser = new DOMParser();
-        const parsedDoc = parser.parseFromString(html, 'text/html');
-        return parsedDoc.body.textContent;
-    };
-    // Format the parsed date using moment.js
-    const formattedDate = moment(parsedDate).format('MMM. D, YYYY - hh:mm A');
+  const parsedDate = new Date(text);
+  const formattedDate = moment(parsedDate).format('MMM. D, YYYY - hh:mm A');
 
-  return extractTextFromHTML(formattedDate);
+  return <>{formattedDate}</>;
 };
+
   
 const DateTimeAttributeEditableComponent = ({ name }) => {
   const { setFieldValue } = useFormikContext();

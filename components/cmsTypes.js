@@ -14,7 +14,7 @@ export const CMS_TYPES = {
   CHECKBOX: "checkbox",
   CUSTOM: "custom",
   RICH_TEXT: "rich-text",
-  DATETIME: "date-time" //added for datetime
+  DATETIME: "datetime" //added for datetime
   
 };
 
