@@ -41,7 +41,19 @@ export default class AttributeType {
     //Output as part of the final API response
     //This returns an object
     toApi() {
+      return this.data;
+    }
 
+    toDatabase(item) {
+      return item[this.databaseValueType()];
+    }
+
+    //You can select which column in the `values` table
+    //would it be saved.
+    //A custom plugin defaults to saving to `values`.value_long_string,
+    //As anticipation to JSON values.
+    databaseValueType() {
+      return "value_long_string";
     }
 
     //serialize / commit to database, via EAV or other means.
