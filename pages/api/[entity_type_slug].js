@@ -114,7 +114,7 @@ async function get(req, res) {
 
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
-    rawData.data.length > 0 ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+    rawData > 0 ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
 async function post(req, res) {
