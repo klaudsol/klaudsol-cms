@@ -58,7 +58,7 @@ async function get(req, res) {
     const rawEntityType = await EntityType.find({ slug: entity_type_slug });
     if (rawEntityType.length === 0) return res.status(NOT_FOUND).json({});
 
-    const isSingleType = (rawEntityType[0]?.entity_type_variant === 'singleton');
+    const isSingleType = (rawEntityType[0].entity_type_variant === 'singleton');
 
     const initialFormat = {
         indexedData: {},
