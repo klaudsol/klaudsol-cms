@@ -8,6 +8,39 @@
 **/
 
 .general {
+  // Icon Chooser
+  &-icon {
+    font-size: 14px;
+    margin-right: 5px;
+    &-button {
+      @include general-text-input(12px);
+      background-color: transparent;
+      width: 100%;
+      @include flex(flex-start, center, row);
+    }
+  }
+
+  &-icons {
+    @include padding-all(5px);
+    border: 1px solid $light-grey-1;
+    font-size: 35px;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: $light-grey-1;
+      cursor: pointer;
+    }
+
+    &-container {
+      @include padding-all(5px);
+      border: 1px solid $light-grey-1;
+      max-height: 200px;
+      max-width: 200px;
+      overflow: auto;
+      border-radius: 5px;
+      width: 100%;
+    }
+  }
   // Text
   &-text {
     @include font-semi-bold(12px);

@@ -99,12 +99,12 @@ async function put(req, res) {
     (await assertUserCan(writeContentTypes, req));
 
   const { slug: oldSlug } = req.query;
-  const { name, slug: newSlug } = req.body;
+  const { name, slug: newSlug, icon } = req.body;
 
-  await EntityType.update({ name, newSlug, oldSlug });
+  await EntityType.update({ name, newSlug, oldSlug, icon });
 
   const output = {
-    data: { name, newSlug },
+    data: { name, newSlug, icon },
     metadata: {},
   };
 
