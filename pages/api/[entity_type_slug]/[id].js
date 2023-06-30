@@ -44,6 +44,7 @@ async function get(req, res) {
 
     const { entity_type_slug, id: slug, drafts } = req.query;
     const rawData = await Entity.findBySlugOrId({ entity_type_slug, slug });
+    if (rawData.length === 0) return res.status(NOT_FOUND).json({});
 
     const initialFormat = {
         data: {},
@@ -91,7 +92,7 @@ async function get(req, res) {
 
     output.metadata.hash = createHash(output);
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
-    rawData.length > 0 ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+    rawData ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
 }
 
 async function del(req, res) {
