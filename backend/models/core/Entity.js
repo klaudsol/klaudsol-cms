@@ -1,5 +1,6 @@
 import DB from '@klaudsol/commons/lib/DB';
 import { isNumber, generateSQL } from "@/components/Util";
+import RecordNotFound from '@klaudsol/commons/errors/RecordNotFound';
 
 class Entity {
   static async findBySlugOrId({ entity_type_slug, slug }) {
@@ -14,7 +15,7 @@ class Entity {
     // if the type of slug is a number, propertyType and conditionType will be longValue and enitities.id respectively,
     // and will be used for the query's condition WHERE and property name for "slug" in the map method
 
-    const sql = `SELECT entities.id, entities.slug, entity_types.id, entity_types.name, entity_types.slug,
+    const sql = `SELECT entities.id, entities.slug, entities.status, entity_types.id, entity_types.name, entity_types.slug,
                   attributes.name, attributes.type, attributes.\`order\`, attributes.custom_name,
                   \`values\`.value_string, 
                   \`values\`.value_long_string, 
@@ -41,6 +42,7 @@ class Entity {
       ([
         { longValue: id },
         { stringValue: slug },
+        { stringValue: status },
         { longValue: entity_type_id },
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
@@ -57,6 +59,7 @@ class Entity {
       ]) => ({
         id,
         slug,
+        status,
         entity_type_id,
         entity_type_name,
         entity_type_slug,
@@ -74,7 +77,7 @@ class Entity {
     );
   }
 
-  static async where({ entity_type_slug, entry, page }, queries) {
+  static async where({ entity_type_slug, entry, page, drafts }, queries) {
     const db = new DB();
     
     let generatedSQL;
@@ -113,7 +116,7 @@ class Entity {
         : 10;
     let offset = page ? limit * page : 0;
 
-    const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, 
+    const sqlData = `SELECT entities.id, entity_types.id, entity_types.name, entity_types.slug, entities.slug, entities.status,
                 attributes.name, attributes.type, attributes.\`order\`, attributes.custom_name,
                 \`values\`.value_string, 
                 \`values\`.value_long_string, 
@@ -126,7 +129,8 @@ class Entity {
                 LEFT JOIN attributes ON attributes.entity_type_id = entity_types.id
                 LEFT JOIN \`values\` ON values.entity_id = entities.id AND values.attribute_id = attributes.id
                 WHERE 
-                    entity_types.slug = :entity_type_slug  
+                    entity_types.slug = :entity_type_slug
+                    ${drafts !== "true" ? "AND entities.status = 'published'" : "" /* No params, should be safe */}
                     ${generatedSQL ? `AND entities.id IN (${generatedSQL})` : ''}
                 ORDER BY entities.id, attributes.\`order\` ASC
                 ${entry && page ? `LIMIT ${limit} OFFSET ${offset}` : " "}
@@ -143,6 +147,7 @@ class Entity {
         { stringValue: entity_type_name },
         { stringValue: entity_type_slug },
         { stringValue: entities_slug },
+        { stringValue: entities_status },
         { stringValue: attributes_name },
         { stringValue: attributes_type },
         { longValue: attributes_order },
@@ -159,6 +164,7 @@ class Entity {
         entity_type_name,
         entity_type_slug,
         entities_slug,
+        entities_status,
         attributes_name,
         attributes_type,
         attributes_order,
@@ -239,7 +245,7 @@ class Entity {
           {
             name: "value_double",
             value:
-              attributeType == "float"
+              attributeType == "float" && entry[attributeName].trim() != ''
                 ? { doubleValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -267,6 +273,79 @@ class Entity {
     return true;
   }
 
+  // Almost the same as Entites.create but no values
+  static async createDraft({ entity_type_id }) {
+    const db = new DB();
+
+    //TODO: start transaction
+
+    //Insert Entity
+    const insertEntitiesSQL =
+      "INSERT into entities (slug, entity_type_id, status) VALUES ('', :entity_type_id, 'draft')";
+
+    await db.executeStatement(insertEntitiesSQL, [
+      { name: "entity_type_id", value: { longValue: entity_type_id } },
+    ]);
+
+    const {
+      records: [[{ longValue: lastInsertedEntityID }]],
+    } = await db.executeStatement("SELECT LAST_INSERT_ID()");
+    console.error(lastInsertedEntityID);
+
+    //Attribute Introspection
+    const entityIntrospectionSQL = `SELECT id, name, type FROM attributes 
+        WHERE entity_type_id = :entity_type_id ORDER by \`order\``;
+
+    const attributes = await db.executeStatement(entityIntrospectionSQL, [
+      { name: "entity_type_id", value: { longValue: entity_type_id } },
+    ]);
+
+    const valueBatchParams = attributes.records.reduce((collection, record) => {
+      const [
+        { longValue: attributeId },
+      ] = record;
+
+      return [
+        ...collection,
+        [
+          { name: "entity_id", value: { longValue: lastInsertedEntityID } },
+          { name: "attribute_id", value: { longValue: attributeId } },
+        ],
+      ];
+    }, []);
+
+    //Insert Values by batch
+    const insertValuesBatchSQL = `
+        INSERT INTO \`values\`(entity_id, attribute_id)
+        VALUES (:entity_id, :attribute_id)
+    `;
+
+    await db.batchExecuteStatement(insertValuesBatchSQL, valueBatchParams);
+
+    //TODO: end transaction
+
+    return { id: lastInsertedEntityID };
+  }
+
+  static async getDraft() {
+    const db = new DB();
+
+    const getDraftSql = "SELECT * FROM entities WHERE status = 'draft' LIMIT 1";
+
+    const { records } = await db.executeStatement(getDraftSql);
+
+    if (records.length === 0) throw new RecordNotFound();
+
+    const [
+        { longValue: id },
+        { stringValue: slug },
+        { longValue: entity_type_id },
+        { stringValue: status }
+    ] = records[0];
+
+    return { id, slug, entity_type_id, status }
+  }
+
   static async delete({ id }) {
     const db = new DB();
     const deleteEntitiesSQL = "DELETE from entities where id = :id";
@@ -282,11 +361,23 @@ class Entity {
     return true;
   }
   //Work in progress
-  static async update({ entries, entity_type_slug, entity_id }) {
+  static async update({ slug, status, entries, entity_type_slug, entity_id }) {
     const db = new DB();
     // entity_type_slug will always be a string
     // entity_id can be a string or a number
     // check the entity_id weather it consists numbers only in which return true, otherwise it will return false
+
+    const updateEntitySql = `UPDATE entities SET 
+                                slug = :slug,
+                                status = :status
+                            WHERE 
+                                id = :id`;
+
+    await db.executeStatement(updateEntitySql, [
+      { name: "slug", value: { stringValue: slug } },
+      { name: "status", value: { stringValue: status } },
+      { name: "id", value: { longValue: entity_id } },
+    ]);
 
     const { propertyType, conditionType } = isNumber(entity_id)
       ? { propertyType: "longValue", conditionType: "entities.id" }

@@ -5,7 +5,7 @@ import { useClientErrorHandler } from "@/components/hooks"
 
 import { FaTrash } from "react-icons/fa";
 
-import React, { useEffect, useReducer, useContext, useRef } from "react";
+import React, { useEffect, useReducer, useContext, useRef, useState } from "react";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { useRouter } from "next/router";
 
@@ -45,6 +45,9 @@ export default function ContentTypeBuilder({ cache }) {
   const capabilities = cache?.capabilities;
   const { entity_type_slug } = router.query;
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
+
+  // TODO: Refactor reducer
+  const [saving, setSaving] = useState(false);
 
   const formikRef = useRef();
 
@@ -230,7 +233,7 @@ export default function ContentTypeBuilder({ cache }) {
   };
 
   const onEditContentTypeModal = (evt) => {
-    onFormSubmit(evt, hideEditContentTypeModal);
+    onFormSubmit(evt);
   };
 
   const formikParams = {
@@ -345,10 +348,11 @@ export default function ContentTypeBuilder({ cache }) {
               show={state.showEditContentTypeModal}
               onClick={onEditContentTypeModal}
               onClose={hideEditContentTypeModal}
-              modalTitle="Edit collection type"
-              buttonTitle="Continue"
+              modalTitle="Edit Content Type"
+              buttonTitle="Update"
+              isLoading={saving}
             >
-              <EditCollectionTypeBody formRef={formikRef} />
+              <EditCollectionTypeBody formRef={formikRef} hide={hideEditContentTypeModal} setSaving={setSaving} />
             </AppModal>
 
             <AppModal

@@ -7,7 +7,7 @@ import { slsFetch } from "@klaudsol/commons/lib/Client";
 import { redirectToBuilderTypeSlug } from "@/components/klaudsolcms/routers/routersRedirect";
 import { useClientErrorHandler } from "@/components/hooks";
 
-export default function EditCollectionTypeBody({ formRef }) {
+export default function EditCollectionTypeBody({ formRef, hide, setSaving }) {
   const { state: rootState, dispatch: rootDispatch } = useContext(RootContext);
   const errorHandler = useClientErrorHandler();
   const router = useRouter();
@@ -19,17 +19,20 @@ export default function EditCollectionTypeBody({ formRef }) {
     (eType) => eType.entity_type_slug === slug
   );
   const name = currentEntityType?.entity_type_name;
+  const variant = currentEntityType?.entity_type_variant;
 
   const formikParams = {
     initialValues: {
       name,
       slug,
+      variant
     },
     innerRef: formRef,
     onSubmit: (values) => {
       (async () => {
         try {
           //refactor to reducers/actions
+          setSaving(true);
           await slsFetch(`/api/entity_types/${slug}`, {
             method: "PUT",
             headers: {
@@ -44,6 +47,8 @@ export default function EditCollectionTypeBody({ formRef }) {
         } finally {
           console.log({ rootState });
           await loadEntityTypes({ rootState, rootDispatch });
+          setSaving(false);
+          hide();
         }
       })();
     },
@@ -54,25 +59,28 @@ export default function EditCollectionTypeBody({ formRef }) {
       <Formik {...formikParams}>
         <Form>
           <div>
-            <div className="d-flex justify-content-between align-items-center">
-              <h6 className="mx-3"> Configurations </h6>
-              <div>
-                <button className="btn_modal_settings"> Basic settings </button>
+            <div className="content-type-create-container">
+              <div className="content-type-create">
+                <div className="general-text"> Display Name </div>
+                <Field type="text" className="general-input-text" name="name" />
+              </div>
+              <div className="content-type-create">
+              <div className="general-text"> API ID &#40;Slug&#41; </div>
+              <Field type="text" className="general-input-text" name="slug" />
+              <div className="general-description">
+                The UID is used to generate the API routes and databases
+                tables/collections
               </div>
             </div>
-            <div className="block_bar" />
-            <div className="row">
-              <div className="col">
-                <p className="mt-2"> Display Name </p>
-                <Field type="text" className="input_text" name="name" />
-              </div>
-              <div className="col">
-                <p className="mt-2"> API ID &#40;Slug&#41; </p>
-                <Field type="text" className="input_text" name="slug" />
-                <p className="mt-1" style={{ fontSize: "10px" }}>
-                  The UID is used to generate the API routes and databases
-                  tables/collections
-                </p>
+            <div className="content-type-create">
+                <div className="general-text"> Variant </div>
+                <Field 
+                  type="text"
+                  name="variant" 
+                  className="general-input-text"
+                  disabled
+                >
+                </Field>
               </div>
             </div>
           </div>
