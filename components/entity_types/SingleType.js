@@ -47,7 +47,7 @@ const SingleType = ({
             ? entries 
             : Object.keys(attributes).reduce((acc, curr) => {
                 // If an attribute has a weird default value
-                // add it here
+                // (ex. gallery = []), add it here
                 if (attributes[curr].type === 'gallery') {
                     return { ...acc, [curr]: [] }
                 }
