@@ -41,10 +41,17 @@ const SingleType = ({
     formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
 
-    console.log(entries)
   const formikParams = {
     innerRef: formRef,
-    initialValues: entries,
+    initialValues: Object.keys(entries).length > 0 
+            ? entries 
+            : Object.keys(attributes).reduce((acc, curr) => {
+                if (attributes[curr].type === 'gallery') {
+                    return { ...acc, [curr]: [] }
+                }
+
+                return { ...acc, [curr]: '' }
+            }, {}),
     onSubmit: (values) => {
       (async () => {
         try {
