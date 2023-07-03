@@ -40,6 +40,8 @@ const SingleType = ({
     formRef.current.handleSubmit();
     formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
+
+    console.log(entries)
         
   const formikParams = {
     innerRef: formRef,
