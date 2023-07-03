@@ -13,7 +13,8 @@ export const CMS_TYPES = {
   PASSWORD: "password",
   CHECKBOX: "checkbox",
   CUSTOM: "custom",
-  RICH_TEXT: "rich-text"
+  RICH_TEXT: "rich-text",
+  DATETIME: "datetime"
 };
 
 // resources types
@@ -43,4 +44,3 @@ export const resourceValueTypes = [
   "value_double",
   "value_boolean",
 ];
-

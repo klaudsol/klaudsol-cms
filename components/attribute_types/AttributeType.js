@@ -12,6 +12,7 @@ export default class AttributeType {
     static TEXT_CMS_TYPE = 'text';
     static TEXTAREA_CMS_TYPE = 'textarea';
     static RICH_TEXT_CMS_TYPE = 'rich-text';
+    static DATETIME_CMS_TYPE = 'datetime';
     static CUSTOM = 'custom';
 
 

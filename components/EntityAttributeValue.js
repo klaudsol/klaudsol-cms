@@ -42,6 +42,8 @@ const formatImage = (key) => {
       case 'float':
         //TODO: Find a more accurate representation of float
         return Number(item.value_double);
+      case 'datetime':
+        return item.value_datetime;
       case 'custom':
         const CustomAttributeType = plugin(item.attributes_custom_name);
         const customAttributeType = new CustomAttributeType({
