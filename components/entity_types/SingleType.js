@@ -42,7 +42,6 @@ const SingleType = ({
   };
 
     console.log(entries)
-        
   const formikParams = {
     innerRef: formRef,
     initialValues: entries,
@@ -74,6 +73,7 @@ const SingleType = ({
               fileNames,
               entity_type_slug,
               entity_id: values.id,
+              status: "published" // Temporary fix
             }
           }
             
