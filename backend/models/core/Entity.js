@@ -506,6 +506,108 @@ class Entity {
     //TODO: end transaction
     return true;
   }
+
+  // POST multiple entries to database
+  static async batchUpload(entry) {
+    const db = new DB();
+
+    const selectedProperties = ['slug', 'entity_type_id'];
+
+    const entitiesBatchParams = entry.map((obj) => {
+      return selectedProperties.map((name) => {
+        const value = obj[name];
+        const transformedValue =
+          typeof value === 'number' ? { longValue: value } : { stringValue: value };
+        return {
+          name,
+          value: transformedValue
+        };
+      });
+    });
+      
+    const insertEntitiesSQL = `INSERT into entities (slug, entity_type_id) 
+                               VALUES (:slug, :entity_type_id)`;
+
+    await db.batchExecuteStatement(insertEntitiesSQL, entitiesBatchParams);
+
+    const {
+      records: [[{ longValue: lastInsertedEntityID }]],
+    } = await db.executeStatement("SELECT LAST_INSERT_ID()");
+
+    //Attribute Introspection
+    const entityIntrospectionSQL = `SELECT id, name, type 
+                                    FROM attributes 
+                                    WHERE entity_type_id = :entity_type_id ORDER by \`order\``;
+  
+    const attributes = await db.executeStatement(entityIntrospectionSQL, [
+      { name: "entity_type_id", value: { longValue: entry[0].entity_type_id } },
+    ]);
+
+    let valueBatchParams = [];
+    
+    entry.map((x, i) => {
+      const params = attributes.records.reduce((collection, record) => {
+      const [
+        { longValue: attributeId },
+        { stringValue: attributeName },
+        { stringValue: attributeType },
+      ] = record;
+  
+      return [
+        ...collection,
+        [
+          { name: "entity_id", value: { longValue: (lastInsertedEntityID + i) } },
+          { name: "attribute_id", value: { longValue: attributeId } },
+          //Refactor to encapsulate type switch
+          {
+            name: "value_string",
+            value:
+              attributeType == "text" ||
+              attributeType == "image" ||
+              attributeType == "link" ||
+              attributeType === "video"
+                ? { stringValue: x[attributeName] }
+                : { isNull: true },
+          },
+          {
+            name: "value_long_string",
+            value:
+              attributeType == "textarea" ||
+              attributeType === "gallery" ||
+              attributeType === "rich-text" ||
+              attributeType == "custom"
+                ? { stringValue: x[attributeName] }
+                : { isNull: true },
+          },
+          {
+            name: "value_double",
+            value:
+              attributeType == "float" && x[attributeName].trim() != ''
+                ? { doubleValue: x[attributeName] }
+                : { isNull: true },
+          },
+          {
+            name: "value_boolean",
+            value:
+              attributeType == "boolean"
+                ? { booleanValue: x[attributeName] }
+                : { isNull: true },
+            },
+          ],
+        ];
+      }, []);
+
+    valueBatchParams = valueBatchParams.concat(params);
+   });
+
+   const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
+                                value_string, value_long_string, value_double, value_boolean) 
+                                VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double, :value_boolean)`;
+
+   await db.batchExecuteStatement(insertValuesBatchSQL, valueBatchParams);
+      
+   return true;
+  }
 }
 
 export default Entity;
