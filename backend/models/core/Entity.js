@@ -222,6 +222,7 @@ class Entity {
           { name: "entity_id", value: { longValue: lastInsertedEntityID } },
           { name: "attribute_id", value: { longValue: attributeId } },
           //Refactor to encapsulate type switch
+          //TODO: Refactor this logic inside AttributeTypeFactory
           {
             name: "value_string",
             value:

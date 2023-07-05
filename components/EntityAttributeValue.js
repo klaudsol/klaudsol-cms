@@ -1,4 +1,4 @@
-import { plugin } from "@/components/plugin/plugin";
+import AttributeTypeFactory from "@/components/attribute_types/AttributeTypeFactory";
 
 const formatImage = (key) => {
     if (!key) return;
@@ -45,17 +45,18 @@ const formatImage = (key) => {
       case 'datetime':
         return item.value_datetime;
       case 'custom':
-        const CustomAttributeType = plugin(item.attributes_custom_name);
-        const customAttributeType = new CustomAttributeType({
+      
+        //TODO: In the future, everything would pass this code
+        const attributeType = AttributeTypeFactory.create({
           data: item.value_long_string, 
           metadata: {
-            type: 'custom',
-            custom_name: item.attributes_custom_name,
-            id: item.id
+            type: item.attributes_type, 
+            custom_name: item.attributes_custom_name, 
+            id: item.id,
           }
         });
 
-        
-        return customAttributeType.toApi();
+        return attributeType.toDatabase(item);
+
     }
   }
