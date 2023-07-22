@@ -116,8 +116,13 @@ export const sortData = (data, sortValue) => {
 };
 
 const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualOperator = false ) => {
-  const valueTypes = ["value_string", "value_long_string", "value_double"];
+  const valueTypes = ["value_string", "value_long_string", "value_double", "value_boolean"];
   const isNotCovertible = isNumber(value);
+
+  const isBoolean = (value === 'true') || (value === 'false');
+  if(isBoolean){
+    return `value_boolean = ${value}`;
+  }
 
   const convertedValue = isNotCovertible ? value : `"${value}"`;
   const finalValue = isNotCovertible && !isEqualOperator ? convertedValue : `(${convertedValue})`;
@@ -140,6 +145,7 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualO
 };
 
 const transformConditions = (arr) => {
+  console.log(arr);
   const transformedConditions = arr.map((obj) => {
     switch (obj.operator) {
       case "$contains":
@@ -164,6 +170,7 @@ const transformConditions = (arr) => {
         )})`;
     }
   });
+  console.log(transformedConditions);
   return transformedConditions;
 };
 
