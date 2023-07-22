@@ -145,7 +145,6 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualO
 };
 
 const transformConditions = (arr) => {
-  console.log(arr);
   const transformedConditions = arr.map((obj) => {
     switch (obj.operator) {
       case "$contains":
@@ -170,7 +169,6 @@ const transformConditions = (arr) => {
         )})`;
     }
   });
-  console.log(transformedConditions);
   return transformedConditions;
 };
 
