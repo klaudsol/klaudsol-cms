@@ -19,7 +19,9 @@ const AppContentManagerIconView = ({ columns, entries, entity_type_slug }) => {
 
   const getTitle = (entry) => {
     const key = Object.keys(entry).find(
-      (item) => item !== "slug" && typeof entry[item] === "string"
+      (item) => (item !== "slug" && 
+                 item !== "status" &&
+                 typeof entry[item] === "string")
     );
 
     return entry[key] ?? entry.slug;
