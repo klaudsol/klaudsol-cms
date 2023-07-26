@@ -35,6 +35,7 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.BOOLEAN:
       return <BooleanRenderer type={type} {...params} title="Yes" />;
     case CMS_TYPES.RICH_TEXT:
+    case CMS_TYPES.FILE:
     case CMS_TYPES.CUSTOM:
       const attributeType = AttributeTypeFactory.create({metadata: {type, custom_name: params.customName, id: params.id}});
       const Component =  attributeType.editableComponent();

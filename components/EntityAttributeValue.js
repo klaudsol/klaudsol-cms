@@ -32,6 +32,11 @@ const formatImage = (key) => {
         if(!item.value_string) return;
         const videoValues = formatImage(item.value_string);
         return videoValues;
+
+     case 'file':
+          if(!item.value_string) return;
+          const fileValues = formatImage(item.value_string);
+          return fileValues;
       case 'gallery':
         if(!item.value_long_string) return [];
 
