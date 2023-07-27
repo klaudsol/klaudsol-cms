@@ -40,10 +40,20 @@ const SingleType = ({
     formRef.current.handleSubmit();
     formRef.current.setTouched({ ...state.set_validate_all, slug: true });
   };
-        
+
   const formikParams = {
     innerRef: formRef,
-    initialValues: entries,
+    initialValues: Object.keys(entries).length > 0 
+            ? entries 
+            : Object.keys(attributes).reduce((acc, curr) => {
+                // If an attribute has a weird default value
+                // (ex. gallery = []), add it here
+                if (attributes[curr].type === 'gallery') {
+                    return { ...acc, [curr]: [] }
+                }
+
+                return { ...acc, [curr]: '' }
+            }, {}),
     onSubmit: (values) => {
       (async () => {
         try {
@@ -72,6 +82,7 @@ const SingleType = ({
               fileNames,
               entity_type_slug,
               entity_id: values.id,
+              status: "published" // Temporary fix
             }
           }
             
