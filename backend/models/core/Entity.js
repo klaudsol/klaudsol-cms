@@ -222,13 +222,15 @@ class Entity {
           { name: "entity_id", value: { longValue: lastInsertedEntityID } },
           { name: "attribute_id", value: { longValue: attributeId } },
           //Refactor to encapsulate type switch
+          //TODO: Refactor this logic inside AttributeTypeFactory
           {
             name: "value_string",
             value:
               attributeType == "text" ||
               attributeType == "image" ||
               attributeType == "link" ||
-              attributeType === "video"
+              attributeType === "video" ||
+              attributeType == "file" 
                 ? { stringValue: entry[attributeName] }
                 : { isNull: true },
           },
@@ -419,6 +421,7 @@ class Entity {
               (attributeType == "text" ||
                 attributeType == "image" ||
                 attributeType == "video" ||
+                attributeType == "file" ||
                 attributeType == "link") &&
               entries[attributeName]
                 ? { stringValue: entries[attributeName] }

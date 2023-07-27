@@ -117,7 +117,8 @@ export const sortData = (data, sortValue) => {
 
 const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualOperator = false ) => {
   const valueTypes = ["value_string", "value_long_string", "value_double"];
-  const isNotCovertible = isNumber(value);
+  const isBoolean = (value === "true" || value === "false")
+  const isNotCovertible =  isBoolean ? true : isNumber(value);
 
   const convertedValue = isNotCovertible ? value : `"${value}"`;
   const finalValue = isNotCovertible && !isEqualOperator ? convertedValue : `(${convertedValue})`;
@@ -130,7 +131,7 @@ const valueTypesIterator = (operator, value, isSubstringSearch = false, isEqualO
       }${valueTypes.length != index + 1 ? " OR" : ""}`;
     });
   } else {
-    combinedValues = `value_double ${operator} ${
+    combinedValues = `${isBoolean ? 'value_boolean' : 'value_double'} ${operator} ${
       !isSubstringSearch ? `${finalValue}` : `"%${value}%"`
     }`;
     // only return long_double

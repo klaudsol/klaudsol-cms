@@ -13,7 +13,8 @@ export const CMS_TYPES = {
   PASSWORD: "password",
   CHECKBOX: "checkbox",
   CUSTOM: "custom",
-  RICH_TEXT: "rich-text"
+  RICH_TEXT: "rich-text",
+  FILE: "file"
 };
 
 // resources types
