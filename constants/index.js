@@ -9,6 +9,7 @@ export const inputValues = [
   { value: "video", option: "Video" },
   { value: "datetime", option: "DateTime" },
   { value: "boolean", option: "Boolean" },
+  { value: "file", option: "File" },
   { value: "custom", option: "Custom" }
 ];
 

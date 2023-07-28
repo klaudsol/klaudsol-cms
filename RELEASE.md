@@ -1,3 +1,10 @@
+# 3.8.0
+* Add filter for boolean attribute type
+* Add File Attribute Type
+* Fix Galleries
+* Return 404 when API entity is missing
+* Attribute Type Improvements
+
 # 3.7.0
 * You can now save content as draft first, then publish later on.
 * Fixed bug involving deletion of entries.

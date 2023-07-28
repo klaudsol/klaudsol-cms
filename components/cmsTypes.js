@@ -14,7 +14,8 @@ export const CMS_TYPES = {
   CHECKBOX: "checkbox",
   CUSTOM: "custom",
   RICH_TEXT: "rich-text",
-  DATETIME: "datetime"
+  DATETIME: "datetime",
+  FILE: "file"
 };
 
 // resources types

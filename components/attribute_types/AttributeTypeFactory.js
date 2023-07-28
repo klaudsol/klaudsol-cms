@@ -5,6 +5,7 @@ import LegacyAttributeType from '@/components/attribute_types/LegacyAttributeTyp
 import { plugin } from '@/components/plugin/plugin';
 import RichTextAttributeType from '@/components/attribute_types/RichTextAttributeType';
 import DateTimeAttributeType from '@/components/attribute_types/DateTimeAttributeType';
+import FileAtrributeType from './FileAttributeType';
 
 export default class AttributeTypeFactory {
   static create({data, metadata}) {
@@ -17,6 +18,8 @@ export default class AttributeTypeFactory {
         return new RichTextAttributeType({data, metadata});
       case AttributeType.DATETIME_CMS_TYPE:
         return new DateTimeAttributeType({data, metadata});
+      case AttributeType.FILE_CMS_TYPE:
+        return new FileAtrributeType({data, metadata});
       case AttributeType.CUSTOM:
         const CustomAttributeType = plugin(metadata.custom_name);
         return new CustomAttributeType({data, metadata});
