@@ -41,10 +41,12 @@ const RichTextEditableComponent = ({name, errors}) => {
 
   // Set the toolbar options
   const toolbarOptions = [
-    [{ header: [1, 2, 3, 4, 5, 6] }], // header options
+    [{ header: [1, 2, 3, 4, 5, 6, false] }], // header options
     ['bold', 'italic', 'underline', 'strike'], // inline formatting options
     [{ list: 'ordered' }, { list: 'bullet' }], // list options
     ['link'], // link option
+    [{ 'color': [] }, { 'background': [] }],
+    ['undo', 'redo'],
   ];
 
   // Set the styles 
