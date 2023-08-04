@@ -1,3 +1,9 @@
+# 3.8.1
+* Added the following to `Rich text` attribute type:
+  * Normal heading
+  * Color
+  * Highlight
+
 # 3.8.0
 * Add filter for boolean attribute type
 * Add File Attribute Type
