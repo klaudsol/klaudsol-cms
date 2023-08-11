@@ -4,6 +4,7 @@ import TextareaAttributeType from "@/components/attribute_types/TextareaAttribut
 import LegacyAttributeType from '@/components/attribute_types/LegacyAttributeType';
 import { plugin } from '@/components/plugin/plugin';
 import RichTextAttributeType from '@/components/attribute_types/RichTextAttributeType';
+import DateTimeAttributeType from '@/components/attribute_types/DateTimeAttributeType';
 import FileAtrributeType from './FileAttributeType';
 
 export default class AttributeTypeFactory {
@@ -15,6 +16,8 @@ export default class AttributeTypeFactory {
         return new TextareaAttributeType({data, metadata});
       case AttributeType.RICH_TEXT_CMS_TYPE:
         return new RichTextAttributeType({data, metadata});
+      case AttributeType.DATETIME_CMS_TYPE:
+        return new DateTimeAttributeType({data, metadata});
       case AttributeType.FILE_CMS_TYPE:
         return new FileAtrributeType({data, metadata});
       case AttributeType.CUSTOM:
