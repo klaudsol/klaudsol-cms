@@ -25,7 +25,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
-    "@klaudsol/commons": "https://github.com/klaudsol/klaudsol-commons.git#v1.8.1",
+    "@klaudsol/commons": "https://github.com/klaudsol/klaudsol-commons.git#v1.9.1",
     "@next/font": "13.1.1",
     "@nivo/bar": "^0.79.1",
     "@nivo/core": "^0.79.0",

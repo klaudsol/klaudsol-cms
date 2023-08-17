@@ -23,6 +23,8 @@ SOFTWARE.
 
 **/
 
+/** FOR REFERENCE, this is the old entity_type_slug file */
+
 import Entity from "@/backend/models/core/Entity";
 import EntityType from "@/backend/models/core/EntityType";
 import { withSession } from "@klaudsol/commons/lib/Session";
