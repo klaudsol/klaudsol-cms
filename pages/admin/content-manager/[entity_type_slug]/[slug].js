@@ -6,7 +6,7 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks";
 
 import { useRouter } from "next/router";
-import { useEffect, useReducer, useCallback, useRef, useState } from "react";
+import { useEffect, useReducer, useCallback, useRef } from "react";
 import { sortByOrderAsc } from "@/components/Util";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
@@ -65,8 +65,6 @@ export default function Type({ cache }) {
   const formRef = useRef();
   const statusRef = useRef();
 
-  const [id, setId] = useState('');
-
   /*** Entity Types List ***/
   useEffect(() => {
     (async () => {
@@ -79,8 +77,6 @@ export default function Type({ cache }) {
         const attributes = values.metadata.attributes;
         const entity_type_id = values.metadata.entity_type_id;
         const validateValues = Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: true}), {})
-
-        setId(values.data.id);
     
         dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({ type: SET_ATTRIBUTES, payload: attributes });
@@ -144,14 +140,9 @@ export default function Type({ cache }) {
     onSubmit(e)
   }
 
-  const getFormikInitialVals = () => {
-    const { slug, status, ...initialValues } = state.values;
-    return { slug: slug, ...initialValues};
-  };
-
   const formikParams = {
     innerRef: formRef,
-    initialValues: getFormikInitialVals(),
+    initialValues: state.values,
     onSubmit: (values) => {
       (async () => {
         try {
@@ -241,7 +232,7 @@ export default function Type({ cache }) {
                       {(props) => (
                         <Form>
                           <div className="d-flex flex-row mx-0 my-0 px-0 py-0"> 
-                          <p className="general-input-title-slug"> Slug </p> 
+                          <p className="general-input-title-slug">Slug</p> 
                           <GeneralHoverTooltip 
                             icon={<RiQuestionLine className="general-input-title-slug-icon"/>}
                             className="general-table-header-slug"
@@ -265,7 +256,7 @@ export default function Type({ cache }) {
                                     name={attributeName}
                                     customName={attribute?.custom_name ?? ''}
                                     disabled={!capabilities.includes(writeContents)}
-                                    id={id}
+                                    id={state.values.id}
                                   />
                                 </div>
                               );
