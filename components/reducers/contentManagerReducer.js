@@ -17,6 +17,7 @@ import {
   SET_MODAL_CONTENT,
   SET_DATA,
   SET_METADATA,
+  SET_IMPORT_CSV_MODAL
 } from "@/lib/actions";
 
 export const initialState = {
@@ -36,9 +37,12 @@ export const initialState = {
   modalContent: null,
   view: 'list',
   data: {},
-  metadata: {}
+  metadata: {},
+  importCSVModal: {
+    show: false,
+    loading: false,
+  }
 };
-
 
 export const contentManagerReducer = (state, action) => {
   switch (action.type) {
@@ -141,5 +145,10 @@ export const contentManagerReducer = (state, action) => {
         ...state,
         metadata: action.payload
       }
+    case SET_IMPORT_CSV_MODAL: 
+      return {
+        ...state,
+        importCSVModal: action.payload       
+      };
   }
 };

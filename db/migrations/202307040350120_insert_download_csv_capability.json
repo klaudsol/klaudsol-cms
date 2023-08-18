@@ -1,0 +1,10 @@
+{
+  "up": [
+    "REPLACE INTO capabilities (name, description, is_system_supplied) VALUES",
+    "('import_csv', 'Can import CSV file', true)"
+  ],
+  "down":[
+    "DELETE FROM capabilities WHERE name = 'import_csv'"
+  ] 
+}
+  

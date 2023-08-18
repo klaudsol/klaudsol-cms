@@ -17,7 +17,8 @@ import ContentManagerLayout from "components/layouts/ContentManagerLayout";
 import { 
   FaList,
   FaTh,
-  FaDownload
+  FaDownload,
+  FaUpload
 } from "react-icons/fa";
 
 import {
@@ -36,10 +37,11 @@ import {
   PAGE_SETS_RENDERER,
   TOGGLE_VIEW,
   SET_DATA,
-  SET_METADATA
+  SET_METADATA,
+  SET_IMPORT_CSV_MODAL
 } from "@/lib/actions";
 import AppContentPagination from "components/klaudsolcms/pagination/AppContentPagination";
-import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents, downloadCSV } from "lib/Constants"
+import { defaultPageRender, maximumNumberOfPage, EntryValues, writeContents, downloadCSV, importCSV } from "lib/Constants"
 
 import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks"
@@ -47,6 +49,8 @@ import { handleDownloadCsv } from "@/lib/downloadCSV";
 import { Spinner } from "react-bootstrap";
 import { defaultEntityTypeVariant, entityTypeVariantsEnum } from "@/constants";
 import SingleType from "@/components/entity_types/SingleType";
+import LoadingModal from "@/components/modals/LoadingModal";
+import ErrorModal from "@/components/modals/ErrorModal";
 
 export default function ContentManager({ cache }) {
   const router = useRouter();
@@ -64,6 +68,7 @@ export default function ContentManager({ cache }) {
   const [variant, setVariant] = useState(defaultEntityTypeVariant);
   const [attributes, setAttributes] = useState({});
   const [entityTypeId, setEntityTypeId] = useState(0);
+  const [errorModal, setErrorModal] = useState(false);
 
   /*** Entity Types List ***/
   useEffect(() => {
@@ -124,7 +129,6 @@ export default function ContentManager({ cache }) {
     })();
   }, [entity_type_slug, state.page, state.entry, state.setsRenderer]);
 
-
   useEffect(() => {
     dispatch({type: SET_PAGE,payload: defaultPageRender});
     dispatch({type: PAGE_SETS_RENDERER,payload: defaultPageRender});
@@ -132,6 +136,121 @@ export default function ContentManager({ cache }) {
 
   const handleView = (view) => {
     dispatch({ type: TOGGLE_VIEW, payload: view })
+  }
+
+  const generateUniqueSlug = () => {
+    // Get current timestamp
+    const timestamp = Date.now();
+
+    // Introduce a small delay to ensure unique timestamp
+    while (Date.now() === timestamp) {}
+
+    const randomString = Math.random().toString(36).substr(2, 9);
+    const slug = `${timestamp}-${randomString}`;
+  
+    return slug;
+  }
+
+  // At the moment, the function can only retrieve CSV files
+  // TODO: also consider .xlsx and .xls files
+  const handleFileUpload = (event) => {
+    event.preventDefault();
+    const file = event.target.files[0];
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const contents = e.target.result;
+      // Check if CSV file has the same fields with the content type
+      const validCSV = validateCSV(contents);
+      
+      // If CSV is the same
+      // Process the CSV/Excel contents here
+      if (validCSV) {
+        let res = convertCSVToArray(contents);
+        res = res.map(x => {
+          return {
+            ...x, 
+            slug: generateUniqueSlug(),
+            entity_type_id: state.metadata.entity_type_id,
+            status: "draft"
+          }
+        })
+        onCSVUpload(res);
+      } else {
+        setErrorModal(true);
+      }
+
+      // Reset the value of the file input element
+      event.target.value = null;
+    };
+
+    if (file) {
+      reader.readAsText(file);
+    }
+  };
+
+  // Function that checks if CSV file has the same fields with the content type
+  const validateCSV = (csv) => {
+    const lines = csv.split('\n');
+    const headers = lines[0].split(',');
+
+    const updatedArray = headers.map((element) => element.trim());
+    const filteredArray = state.columns.filter(obj => obj.accessor !== 'id' && obj.accessor !== 'status' && obj.accessor !== 'slug');
+    const filteredAccessorArray = filteredArray.map(obj => obj.accessor);
+
+    const isSameArray = updatedArray.every(element => filteredAccessorArray.includes(element));
+
+    console.log(filteredAccessorArray);
+    console.log(filteredArray);
+    console.log(isSameArray);
+
+    return isSameArray;
+  }
+
+  // Converts the CSV file to an array
+  const convertCSVToArray = (csv) => {
+    const lines = csv.split('\n');
+    const headers = lines[0].split(',');
+
+    const result = lines.slice(1).map((line) => {
+      const row = line.split(',');
+  
+      const obj = headers.reduce((acc, header, index) => {
+        const value = row[index].trim(); // Remove leading/trailing whitespace
+        const modifiedHeader = index === headers.length - 1 ? header.trim().replace(' ', '') : header;
+        acc[modifiedHeader] = value;
+        return acc;
+      }, {});
+
+      return obj;
+    });
+  
+    return result;
+  };
+
+  // handles upload function
+  const onCSVUpload = async (values) => {
+    try {
+      dispatch({ type: SET_IMPORT_CSV_MODAL, payload: { show: true, loading: true } });
+      const responseRaw = await slsFetch(`/api/uploadCsv`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values),
+      });
+      const response = await responseRaw.json();
+    } catch (ex) {
+      errorHandler(ex);
+    } finally {
+      dispatch({ type: SET_IMPORT_CSV_MODAL, payload: { show: true, loading: false, message: '' } });
+    }
+  };
+
+  // Function to be called when loading modal is closed
+  const handleCloseLoadingModal = () => {
+    dispatch({ type: SET_IMPORT_CSV_MODAL, payload: { loading: false, show: false }});
+    router.reload();
   }
 
   return (
@@ -170,6 +289,17 @@ export default function ContentManager({ cache }) {
                    <FaDownload />} 
                   Download as CSV 
                </button>} 
+               {capabilities.includes(importCSV) && 
+               variant === entityTypeVariantsEnum.collection &&
+               <>
+                <input 
+                 id="import-csv"
+                 type="file"
+                 accept=".csv"
+                 onChange={handleFileUpload} 
+                 />
+                 <label htmlFor="import-csv" className="general-button-download" disabled={state.isLoading}><FaUpload /> Import CSV</label>
+               </>}
               </div>
             </div>
             <div className="d-flex justify-content-between align-items-center px-0 mx-0 pb-3">
@@ -257,6 +387,19 @@ export default function ContentManager({ cache }) {
             <button className="btn_arrows"> <FaChevronRight className="mb-2 ml-1" style={{fontSize: "10px"}}/> </button>
           </div>
         </div>*/}
+
+        <LoadingModal 
+          show={state.importCSVModal.show} 
+          loading={state.importCSVModal.loading} 
+          message="You have successfully imported the CSV file" 
+          hide={() => handleCloseLoadingModal()}
+        />
+
+        <ErrorModal 
+          show={errorModal}
+          hide={() => setErrorModal(false)}
+          message="The CSV file does not match. Please try again."
+        />
                   
         </ContentManagerLayout>
       </div>
