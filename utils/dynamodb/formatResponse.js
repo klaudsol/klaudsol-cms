@@ -63,7 +63,6 @@ export const formatContentData = (data, attributeMap) => {
     result[itemKey] = {
       id: itemKey,
       slug: item.slug.S,
-      type: item.type.S,
       status: item.status.S,
     };
 
