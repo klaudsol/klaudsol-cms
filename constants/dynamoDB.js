@@ -5,8 +5,9 @@ export const DYNAMO_DB_TYPES = {
     attribute: 'attribute',
 }
 export const DYNAMO_DB_INDEXES = {
-    type_slug_index: 'type-slug-index',
+    entity_slug_index: 'entity-slug-index',
     entity_type_index: 'entity-type-index',
+    type_index: 'type-index',
 }
 export const DYNAMO_DB_ATTRIBUTE_TYPES = {
     text: 'text',

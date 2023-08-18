@@ -19,9 +19,9 @@ export default withSession(handleRequests({ get }));
 async function get(req, res) {
     await assertUserCan(readContents, req);
 
-    const { entity_type_slug } = req.query;
+    const { entity_type_slug, slug } = req.query;
 
-    const rawData = await Entity.whereAll({ entity_type_slug });
+    const rawData = await Entity.find({ entity_type_slug, slug });
     const rawMetadata = await Entity.whereMetadata({ entity_type_slug });
     if (rawMetadata.Items.length === 0) throw new RecordNotFound();
     if (rawData.Items.length === 0) throw new RecordNotFound();
@@ -34,13 +34,12 @@ async function get(req, res) {
 
     const metadata = {
         attributes: formatAttributesData(rawMetadata),
+        type: entity_type_slug,
         entity_type_id: entity_type_id,
-        total_rows: rawData.Count,
-        variant: getEntityVariant(rawMetadata),
     };
 
     const output = {
-        data: data,
+        data: Object.values(data)[0],
         metadata: metadata,
     };
 
