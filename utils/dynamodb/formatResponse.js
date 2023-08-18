@@ -1,4 +1,7 @@
 // Formats image to its correct form 
+
+import { DYNAMO_DB_ATTRIBUTE_TYPES, DYNAMO_DB_ID_SEPARATOR, DYNAMO_DB_TYPES } from "@/constants";
+
 // returns an object { key, name, link }
 export const formatImage = (image) => {
   const imageUrl = process.env.KS_S3_BASE_URL;
@@ -15,21 +18,23 @@ export const formatImage = (image) => {
   }
 }
 
-export const getAttributeValue = (attribute) => {
-  if (attribute.type === 'text' || 
-      attribute.type === 'textarea' ||
-      attribute.type === 'link') {
+// Formats the attribute value based on the attribute type
+export const formatAttributeValue = (attribute) => {
+  if (attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.text || 
+      attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.textarea ||
+      attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.link) {
     return attribute.value;
-  } else if (attribute.type === 'image') {
+  } else if (attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.image) {
     return formatImage(attribute.value);
   } else {
     return parseInt(attribute.value);
   }
 }
 
+// Formats the attributes needed to correctly mapping the contents
 export const getAttributeMap = (data) => {
-  return data
-  .filter(item => item.type.S === 'attribute')
+  return data.Items
+  .filter(item => item.type.S === DYNAMO_DB_TYPES.attribute)
   .reduce((result, item) => {
     const attributeId = item.SK.S;
     const attributeName = item.attributes.M.name.S;
@@ -46,14 +51,14 @@ export const getAttributeMap = (data) => {
   }, {});
 }
 
-export const getContent = (data) => {
+// Formats the 
+export const formatContentData = (data, attributeMap) => {
   const items = data.Items;
-  const attributeMap = getAttributeMap(items);
 
   const content = items
-  .filter(item => item.type.S === 'content')
+  .filter(item => item.type.S === DYNAMO_DB_TYPES.content)
   .reduce((result, item) => {
-    const itemKeyParts = item.SK.S.split("#");
+    const itemKeyParts = item.SK.S.split(DYNAMO_DB_ID_SEPARATOR);
     const itemKey = itemKeyParts[1]; // get only the ulid
     result[itemKey] = {
       id: itemKey,
@@ -68,7 +73,7 @@ export const getContent = (data) => {
         const attributeName = attributeMap[attrKey]?.name;
 
         if (attributeName) {
-          const attributeValue = item.attributes.M[attrKey].S; // Directly access the attribute value
+          const attributeValue = item.attributes.M[attrKey].S;
           formattedAttrs[attributeName] = {
             value: attributeValue,
             type: attributeMap[attrKey].type,
@@ -83,7 +88,7 @@ export const getContent = (data) => {
         .keys(formattedAttributes)
         .sort((a, b) => formattedAttributes[a].order - formattedAttributes[b].order)
         .reduce((sorted, attributeName) => {
-          sorted[attributeName] = getAttributeValue(formattedAttributes[attributeName]); 
+          sorted[attributeName] = formatAttributeValue(formattedAttributes[attributeName]); 
           return sorted;
         }, {});
 
@@ -99,10 +104,11 @@ export const getContent = (data) => {
   return content;
 }
 
-export const getAttributes = (data) => {
+// Formats the attributes 
+export const formatAttributesData = (data) => {
   const items = data.Items;
   const attributes = items
-    .filter(item => item.type.S === 'attribute')
+    .filter(item => item.type.S === DYNAMO_DB_TYPES.attribute)
     .reduce((result, item) => {
       const attributeName = item.attributes.M.name.S;
       const attributeType = item.attributes.M.type.S;
@@ -116,6 +122,7 @@ export const getAttributes = (data) => {
       return result;
     }, {});
   
+  // Sorts by order
   const sortedAttributes = Object
     .keys(attributes)
     .sort((a, b) => attributes[a].order - attributes[b].order)
@@ -127,12 +134,9 @@ export const getAttributes = (data) => {
   return sortedAttributes;
 }
 
-export const getContentLength = (data) => {
-  return data.Items.filter(item => item.type.S === 'content').map(x => x).length;
-}
-
+// Gets the variant of the content type (collection or singleton)
 export const getEntityVariant = (data) => {
-  return data.Items.filter(item => item.type.S === 'content_type').map(x => x.variant.S)[0];
+  return data.Items.filter(item => item.type.S === DYNAMO_DB_TYPES.content_type).map(x => x.variant.S)[0];
 }
 
 
