@@ -154,13 +154,14 @@ class EntityTypes {
     return true;
   }
 
-  static async update({ name, newSlug, oldSlug }) {
+  static async update({ name, newSlug, oldSlug, icon }) {
     const db = new DB();
-    const updateEntityTypesSQL = "UPDATE entity_types SET slug = :newSlug, name = :name WHERE slug = :oldSlug";
+    const updateEntityTypesSQL = "UPDATE entity_types SET slug = :newSlug, name = :name, icon = :icon WHERE slug = :oldSlug";
     const executeStatementParam = [
       { name: "name", value: { stringValue: name } },
       { name: "newSlug", value: { stringValue: newSlug } },
       { name: "oldSlug", value: { stringValue: oldSlug } },
+      { name: "icon", value: { stringValue: icon } },
     ];
 
     await db.executeStatement(updateEntityTypesSQL, executeStatementParam);
