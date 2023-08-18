@@ -6,7 +6,7 @@ import { getSessionCache } from "@klaudsol/commons/lib/Session";
 import { useClientErrorHandler } from "@/components/hooks";
 
 import { useRouter } from "next/router";
-import { useEffect, useReducer, useCallback, useRef } from "react";
+import { useEffect, useReducer, useCallback, useRef, useState } from "react";
 import { sortByOrderAsc } from "@/components/Util";
 import { slsFetch } from "@klaudsol/commons/lib/Client";
 
@@ -60,23 +60,27 @@ export default function Type({ cache }) {
   const errorHandler = useClientErrorHandler();
   const capabilities = cache?.capabilities;
 
-  const { entity_type_slug, id } = router.query;
+  const { entity_type_slug, slug } = router.query;
   const [state, dispatch] = useReducer(entityReducer, initialState);
   const formRef = useRef();
   const statusRef = useRef();
+
+  const [id, setId] = useState('');
 
   /*** Entity Types List ***/
   useEffect(() => {
     (async () => {
       try {
         dispatch({ type: LOADING });
-        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${id}?drafts=true`);
+        const valuesRaw = await slsFetch(`/api/${entity_type_slug}/${slug}?drafts=true`);
         const values = await valuesRaw.json();
 
         const entries = {...Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: ''}), {}), ...values.data};
         const attributes = values.metadata.attributes;
         const entity_type_id = values.metadata.entity_type_id;
         const validateValues = Object.keys(values.metadata.attributes).reduce((a, v) => ({ ...a, [v]: true}), {})
+
+        setId(values.data.id);
     
         dispatch({type: SET_ALL_VALIDATES, payload: validateValues});
         dispatch({ type: SET_ATTRIBUTES, payload: attributes });
@@ -88,7 +92,7 @@ export default function Type({ cache }) {
         dispatch({ type: CLEANUP });
       }
     })();
-  }, [entity_type_slug, id]);
+  }, [entity_type_slug, slug]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -102,7 +106,7 @@ export default function Type({ cache }) {
       (async () => {
         try {
           dispatch({ type: DELETING });
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${slug}`, {
             method: "DELETE",
             headers: {
               "Content-type": "application/json",
@@ -121,7 +125,7 @@ export default function Type({ cache }) {
         }
       })();
     },
-    [entity_type_slug, id]
+    [entity_type_slug, slug]
   );
 
   const onPublishSubmit = (e) => {
@@ -141,8 +145,8 @@ export default function Type({ cache }) {
   }
 
   const getFormikInitialVals = () => {
-    const { id, status, ...initialValues } = state.values;
-    return initialValues;
+    const { slug, status, ...initialValues } = state.values;
+    return { slug: slug, ...initialValues};
   };
 
   const formikParams = {
@@ -163,7 +167,7 @@ export default function Type({ cache }) {
             status: statusRef.current
           };
 
-          const response = await slsFetch(`/api/${entity_type_slug}/${id}`, {
+          const response = await slsFetch(`/api/${entity_type_slug}/${slug}`, {
             method: "PUT",
             headers: {
               "Content-type": "application/json",
@@ -201,13 +205,12 @@ export default function Type({ cache }) {
               <div>
                 <div className="general-header"> {entity_type_slug} </div>
                 <a
-                  href={`/api/${entity_type_slug}/${id}`}
+                  href={`/api/${entity_type_slug}/${slug}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  api/{entity_type_slug}/{id}
+                  api/{entity_type_slug}/{slug}
                 </a>
-                <p> API ID : {id} </p>
               </div>
               {(!state.isLoading && capabilities.includes(writeContents)) && 
                 <AppButtonLg
