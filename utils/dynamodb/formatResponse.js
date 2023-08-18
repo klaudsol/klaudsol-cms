@@ -1,7 +1,74 @@
-import { DYNAMO_DB_ATTRIBUTE_TYPES, DYNAMO_DB_ID_SEPARATOR, DYNAMO_DB_TYPES } from "@/constants";
+import { 
+  DYNAMO_DB_ATTRIBUTE_TYPES, 
+  DYNAMO_DB_TYPES 
+} from "@/constants";
 
+/** 
+ * RESPONSE FORMATTER 
+ * */
+
+// # 1: DATA FORMATTER
+// Formats rawEntityTypeSlug response
+// This function will only return the values that are included in the attributes of the content_type
+// This function automatically formats the value based on its type
+export const formatEntityTypeSlugResponse = (data, attributeMetadata) => {
+  return data.Items?.reduce((result, item) => {
+    const itemKey = item.id.S;
+
+    const defaultItems = {
+      id: itemKey,
+      slug: item.slug.S,
+      status: item.status.S,
+    };
+
+    if (item.values) {
+      const values = Object.keys(item.values.M).reduce((updatedAttrs, attributeName) => {
+        if (attributeMetadata[attributeName]) {
+          const attribute = item.values.M[attributeName];
+          const attributeType = attributeMetadata[attributeName].type;
+
+          // formats the value based on type
+          updatedAttrs[attributeName] = formatValueByType(attributeType, attribute[Object.keys(attribute)[0]]);
+        }
+
+        return updatedAttrs;
+      }, {});
+
+      result[itemKey] = {
+        ...defaultItems,
+        ...values,
+      };
+
+    } else {
+      result[itemKey] = defaultItems;
+    }
+
+    return result;
+  }, {});
+};
+
+// # 2: ATTRIBUTES FORMATTER
+// Formats the attributes from the content_type
+// Usese the formatAttributeMap function to map the attributes correctly
+export const formatAttributesData = (data) => {
+  const attributes = data
+    .reduce((result, item) => {
+      const attributesMap = item.attributes.M;
+      result = formatAttributeMap(attributesMap);
+      return result;
+    }, {});
+  
+  return attributes;
+}
+
+/** 
+ * ATTRIBUTE TYPE FORMATTER 
+ * */
+
+// # 1: IMAGE ATTRIBUTE TYPE FORMATTER
 // Formats image to its correct form 
 // returns an object { key, name, link }
+// This is based on how images are originally formatted in KlaudSol CMS
 export const formatImage = (image) => {
   const imageUrl = process.env.KS_S3_BASE_URL;
   let originalName = '';
@@ -17,124 +84,73 @@ export const formatImage = (image) => {
   }
 }
 
-// Formats the attribute value based on the attribute type
-export const formatAttributeValue = (attribute) => {
-  if (attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.text || 
-      attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.textarea ||
-      attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.link) {
-    return attribute.value;
-  } else if (attribute.type === DYNAMO_DB_ATTRIBUTE_TYPES.image) {
-    return formatImage(attribute.value);
-  } else {
-    return parseInt(attribute.value);
+// # 2: MAP ATTRIBUTE TYPE FORMATTER
+// Formats map attribute types
+export const formatMapAttribute = (mapData) => {
+  return Object.keys(mapData).reduce((formattedMap, key) => {
+    const mapAttributeValue = mapData[key];
+    const mapAttributeType = Object.keys(mapAttributeValue)[0];
+    formattedMap[key] = mapAttributeValue[mapAttributeType];
+    return formattedMap;
+  }, {});
+};
+
+/** 
+ * VALUE FORMATTERS 
+ * */
+
+// # 1: VALUE FORMATTER BY TYPE
+// Formats value based on type
+// Checks the type and returns the expected output
+const formatValueByType = (attributeType, attributeValue) => {
+  switch (attributeType) {
+    case DYNAMO_DB_ATTRIBUTE_TYPES.image:
+      return formatImage(attributeValue);
+    case DYNAMO_DB_ATTRIBUTE_TYPES.integer:
+      return parseInt(attributeValue);
+    case DYNAMO_DB_ATTRIBUTE_TYPES.double:
+      return parseFloat(attributeValue);
+    case DYNAMO_DB_ATTRIBUTE_TYPES.map:
+      if (typeof attributeValue === 'object') {
+        return formatMapAttribute(attributeValue);
+      }
+      break;
+    default:
+      if (typeof attributeValue === 'object') {
+        return attributeValue[Object.keys(attributeValue)[0]];
+      } else {
+        return attributeValue;
+      }
   }
-}
+};
 
-// Formats the attributes needed to correctly mapping the contents
-export const getAttributeMap = (data) => {
-  return data.Items
-  .filter(item => item.type.S === DYNAMO_DB_TYPES.attribute)
-  .reduce((result, item) => {
-    const attributeId = item.SK.S;
-    const attributeName = item.attributes.M.name.S;
-    const attributeType = item.attributes.M.type.S;
-    const attributeOrder = item.attributes.M.order.N;
-
-    result[attributeId] = {
-      name: attributeName,
-      type: attributeType,
-      order: parseInt(attributeOrder),
-    };
-
-    return result;
-  }, {});
-}
-
-// Formats the content from the DynamoDB response
-// Items here are those with `type = content` attribute
-export const formatContentData = (data, attributeMap) => {
-  const items = data.Items;
-
-  const content = items
-  .reduce((result, item) => {
-    const itemKeyParts = item.SK.S.split(DYNAMO_DB_ID_SEPARATOR);
-    const itemKey = itemKeyParts[1]; // get only the ulid
-    result[itemKey] = {
-      id: itemKey,
-      slug: item.slug.S,
-      status: item.status.S,
-    };
-
-    // checks if the content item has attributes
-    if (item.attributes) {
-      const formattedAttributes = Object.keys(item.attributes.M).reduce((formattedAttrs, attrKey) => {
-        const attributeName = attributeMap[attrKey]?.name;
-
-        if (attributeName) {
-          const attributeValue = item.attributes.M[attrKey].S;
-          formattedAttrs[attributeName] = {
-            value: attributeValue,
-            type: attributeMap[attrKey].type,
-            order: attributeMap[attrKey].order
-          };
-        }
-        
-        return formattedAttrs;
-      }, {});
-
-      const sortedAttributes = Object
-        .keys(formattedAttributes)
-        .sort((a, b) => formattedAttributes[a].order - formattedAttributes[b].order)
-        .reduce((sorted, attributeName) => {
-          sorted[attributeName] = formatAttributeValue(formattedAttributes[attributeName]); 
-          return sorted;
-        }, {});
-
-      result[itemKey] = {
-        ...result[itemKey],
-        ...sortedAttributes,
-      };
+// # 2: MAP FORMATTER
+// Formats mapped objects 
+// attributes with M (map) properly returns a mapped object
+// attributes with N (number) properly returns a number
+// default is string
+export const formatAttributeMap = (attributeMap) => {
+  return Object.keys(attributeMap).reduce((remapped, key) => {
+    if (attributeMap[key].M) {
+      remapped[key] = formatAttributeMap(attributeMap[key].M);
+    } else if (attributeMap[key].N) {
+      remapped[key] = parseInt(attributeMap[key][Object.keys(attributeMap[key])[0]]);
+    } else {
+      remapped[key] = attributeMap[key][Object.keys(attributeMap[key])[0]];
     }
-
-    return result;
+    return remapped;
   }, {});
-
-  return content;
 }
 
-// Formats the attributes 
-export const formatAttributesData = (data) => {
-  const items = data.Items;
-  const attributes = items
-    .filter(item => item.type.S === DYNAMO_DB_TYPES.attribute)
-    .reduce((result, item) => {
-      const attributeName = item.attributes.M.name.S;
-      const attributeType = item.attributes.M.type.S;
-      const attributeOrder = item.attributes.M.order.N;
-      
-      result[attributeName] = {
-        type: attributeType,
-        order: parseInt(attributeOrder),
-      };
-      
-      return result;
-    }, {});
-  
-  // Sorts by order 
-  const sortedAttributes = Object
-    .keys(attributes)
-    .sort((a, b) => attributes[a].order - attributes[b].order)
-    .reduce((sortedResult, attributeName) => {
-      sortedResult[attributeName] = attributes[attributeName];
-      return sortedResult;
-    }, {});
-  
-  return sortedAttributes;
-}
-
+// # 3: ENTITY VARIANT FORMATTER
 // Gets the variant of the content type (collection or singleton)
 export const getEntityVariant = (data) => {
-  return data.Items.filter(item => item.type.S === DYNAMO_DB_TYPES.content_type).map(x => x.variant.S)[0];
+  return data.Items
+    .filter(item => item.type.S === DYNAMO_DB_TYPES.content_type)
+    .map(x => x.variant.S)[0];
 }
+
+
+
 
 

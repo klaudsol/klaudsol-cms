@@ -9,18 +9,18 @@ export default class Entity {
   // TODO: Add pagination
   // TODO: Add filtering
   // TODO: Add search
-  static async whereAll({ entity_type_slug }) {
+  static async whereEntityTypeSlug({ entity_type_slug }) {
     const db = new DynamoDB();
     const params = {
       TableName: DYNAMO_DB_TABLE,
       IndexName: DYNAMO_DB_INDEXES.entity_type_index,
-      KeyConditionExpression: "#entity = :entity AND #type = :type",
+      KeyConditionExpression: "#entity_type = :entity_type AND #type = :type",
       ExpressionAttributeNames: {
-        "#entity": "entity",
+        "#entity_type": "entity_type",
         "#type": "type",
       },
       ExpressionAttributeValues: {
-        ":entity": { S: entity_type_slug },
+        ":entity_type": { S: entity_type_slug },
         ":type": { S: DYNAMO_DB_TYPES.content },
       },
       ScanIndexForward: true
@@ -31,18 +31,18 @@ export default class Entity {
 
   // Finds an item based on its entity_type_slug and slug
   // Sample: api/tech/aws
-  static async find({ entity_type_slug, slug }) {
+  static async findByEntityTypeSlugAndSlug({ entity_type_slug, slug }) {
     const db = new DynamoDB();
     const params = {
       TableName: DYNAMO_DB_TABLE,
       IndexName: DYNAMO_DB_INDEXES.entity_slug_index,
-      KeyConditionExpression: "#entity = :entity AND #slug = :slug",
+      KeyConditionExpression: "#entity_type = :entity_type AND #slug = :slug",
       ExpressionAttributeNames: {
-        "#entity": "entity",
+        "#entity_type": "entity_type",
         "#slug": "slug",
       },
       ExpressionAttributeValues: {
-        ":entity": { S: entity_type_slug },
+        ":entity_type": { S: entity_type_slug },
         ":slug": { S: slug },
       },
       ScanIndexForward: true
@@ -53,20 +53,19 @@ export default class Entity {
 
   // Gets all the metadata included in the specific content_type
   // These are the attributes and variants
-  static async whereMetadata({ entity_type_slug }) {
+  static async whereEntityType({ entity_type_slug }) {
     const db = new DynamoDB();
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      IndexName: DYNAMO_DB_INDEXES.entity_type_index,
-      KeyConditionExpression: "#entity = :entity",
-      FilterExpression: "#metadata = :metadataValue",
+      IndexName: DYNAMO_DB_INDEXES.slug_type_index,
+      KeyConditionExpression: "#slug = :slug AND #type = :type",
       ExpressionAttributeNames: {
-        "#entity": "entity",
-        "#metadata": "metadata",
+        "#slug": "slug",
+        "#type": "type",
       },
       ExpressionAttributeValues: {
-        ":entity": { S: entity_type_slug },
-        ":metadataValue": { BOOL: true },
+        ":slug": { S: entity_type_slug },
+        ":type": { S: DYNAMO_DB_TYPES.content_type },
       },
       ScanIndexForward: true
     };

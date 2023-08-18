@@ -8,11 +8,9 @@ import { readContents } from '@/lib/Constants';
 import Entity from "@/backend/models/dynamodb/Entity";
 import { 
     formatAttributesData, 
-    formatContentData, 
-    getAttributeMap, 
-    getEntityVariant 
+    formatEntityTypeSlugResponse, 
+    getEntityVariant, 
 } from "@/utils/dynamodb/formatResponse";
-import { DYNAMO_DB_ID_SEPARATOR } from "@/constants";
 
 export default withSession(handleRequests({ get }));
 
@@ -21,22 +19,20 @@ async function get(req, res) {
 
     const { entity_type_slug } = req.query;
 
-    const rawData = await Entity.whereAll({ entity_type_slug });
-    const rawMetadata = await Entity.whereMetadata({ entity_type_slug });
-    if (rawMetadata.Items.length === 0) throw new RecordNotFound();
+    const rawData = await Entity.whereEntityTypeSlug({ entity_type_slug });
+    const rawEntityType = await Entity.whereEntityType({ entity_type_slug });
+    if (rawEntityType.Items.length === 0) throw new RecordNotFound();
     if (rawData.Items.length === 0) throw new RecordNotFound();
 
-    const entityIdRaw = rawData.Items[0].PK.S;
-    const entity_type_id = entityIdRaw.split(DYNAMO_DB_ID_SEPARATOR)[1];
-
-    const attributeMap = getAttributeMap(rawMetadata);
-    const data = formatContentData(rawData, attributeMap);
+    const entity_type_id = rawEntityType.Items[0].id.S;
+    const attributeMetadata = formatAttributesData(rawEntityType.Items);
+    const data = formatEntityTypeSlugResponse(rawData, attributeMetadata);
 
     const metadata = {
-        attributes: formatAttributesData(rawMetadata),
+        attributes: attributeMetadata,
         entity_type_id: entity_type_id,
         total_rows: rawData.Count,
-        variant: getEntityVariant(rawMetadata),
+        variant: getEntityVariant(rawEntityType),
     };
 
     const output = {
