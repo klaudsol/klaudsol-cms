@@ -22,6 +22,7 @@ export default class Entity {
         ":entity": { S: entity_type_slug },
         ":type": { S: DYNAMO_DB_TYPES.content },
       },
+      ScanIndexForward: true
     };
     const result = await db.query(params);
     return result;
@@ -44,6 +45,7 @@ export default class Entity {
         ":entity": { S: entity_type_slug },
         ":metadataValue": { BOOL: true },
       },
+      ScanIndexForward: true
     };
     const result = await db.query(params);
     return result;

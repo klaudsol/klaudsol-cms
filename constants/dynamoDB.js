@@ -16,5 +16,4 @@ export const DYNAMO_DB_ATTRIBUTE_TYPES = {
     float: 'float',
     number: 'number'
 }
-
 export const DYNAMO_DB_ID_SEPARATOR = '#';

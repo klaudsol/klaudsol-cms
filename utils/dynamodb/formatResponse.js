@@ -1,7 +1,6 @@
-// Formats image to its correct form 
-
 import { DYNAMO_DB_ATTRIBUTE_TYPES, DYNAMO_DB_ID_SEPARATOR, DYNAMO_DB_TYPES } from "@/constants";
 
+// Formats image to its correct form 
 // returns an object { key, name, link }
 export const formatImage = (image) => {
   const imageUrl = process.env.KS_S3_BASE_URL;
@@ -51,12 +50,12 @@ export const getAttributeMap = (data) => {
   }, {});
 }
 
-// Formats the 
+// Formats the content from the DynamoDB response
+// Items here are those with `type = content` attribute
 export const formatContentData = (data, attributeMap) => {
   const items = data.Items;
 
   const content = items
-  .filter(item => item.type.S === DYNAMO_DB_TYPES.content)
   .reduce((result, item) => {
     const itemKeyParts = item.SK.S.split(DYNAMO_DB_ID_SEPARATOR);
     const itemKey = itemKeyParts[1]; // get only the ulid
@@ -121,7 +120,7 @@ export const formatAttributesData = (data) => {
       return result;
     }, {});
   
-  // Sorts by order
+  // Sorts by order 
   const sortedAttributes = Object
     .keys(attributes)
     .sort((a, b) => attributes[a].order - attributes[b].order)
