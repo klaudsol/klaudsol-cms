@@ -19,6 +19,7 @@ export const formatEntityTypeSlugResponse = (data, attributeMetadata) => {
       id: itemKey,
       slug: item.slug.S,
       status: item.status.S,
+      order: parseInt(item.order.N),
     };
 
     if (item.values) {

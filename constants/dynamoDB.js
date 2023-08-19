@@ -7,6 +7,7 @@ export const DYNAMO_DB_TYPES = {
 export const DYNAMO_DB_INDEXES = {
     entity_slug_index: 'entity_type-slug-index',
     entity_type_index: 'entity_type-type-index',
+    entity_type_order: 'entity_type-order-index',
     slug_type_index: 'slug-type-index',
     type_index: 'type-index',
 }
@@ -18,4 +19,8 @@ export const DYNAMO_DB_ATTRIBUTE_TYPES = {
     double: 'double',
     integer: 'integer',
     map: 'map',
+}
+export const DYNAMO_DB_ORDER = {
+    desc: 'desc',
+    asc: 'asc',
 }

@@ -1,6 +1,11 @@
 
 import DynamoDB from "@klaudsol/commons/lib/DynamoDB"
-import { DYNAMO_DB_TYPES, DYNAMO_DB_INDEXES, DYNAMO_DB_TABLE } from "@/constants";
+import { 
+  DYNAMO_DB_TYPES, 
+  DYNAMO_DB_INDEXES, 
+  DYNAMO_DB_TABLE, 
+  DYNAMO_DB_ORDER 
+} from "@/constants";
 
 export default class Entity {
   // Gets all items where entity = entity_type_slug (eg. tech)
@@ -9,21 +14,28 @@ export default class Entity {
   // TODO: Add pagination
   // TODO: Add filtering
   // TODO: Add search
-  static async whereEntityTypeSlug({ entity_type_slug }) {
+  static async whereEntityTypeSlug({ entity_type_slug, order }) {
     const db = new DynamoDB();
+
+    let scanIndexForward = true;
+    if (order === DYNAMO_DB_ORDER.desc) {
+      scanIndexForward = false;
+    } 
+
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      IndexName: DYNAMO_DB_INDEXES.entity_type_index,
-      KeyConditionExpression: "#entity_type = :entity_type AND #type = :type",
+      IndexName: DYNAMO_DB_INDEXES.entity_type_order,
+      KeyConditionExpression: "#entity_type = :entity_type",
+      FilterExpression: "#type = :type",
       ExpressionAttributeNames: {
         "#entity_type": "entity_type",
-        "#type": "type",
+        "#type" : "type",
       },
       ExpressionAttributeValues: {
         ":entity_type": { S: entity_type_slug },
         ":type": { S: DYNAMO_DB_TYPES.content },
       },
-      ScanIndexForward: true
+      ScanIndexForward: scanIndexForward
     };
     const result = await db.query(params);
     return result;

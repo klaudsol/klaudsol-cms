@@ -17,9 +17,9 @@ export default withSession(handleRequests({ get }));
 async function get(req, res) {
     await assertUserCan(readContents, req);
 
-    const { entity_type_slug } = req.query;
+    const { entity_type_slug, order } = req.query;
 
-    const rawData = await Entity.whereEntityTypeSlug({ entity_type_slug });
+    const rawData = await Entity.whereEntityTypeSlug({ entity_type_slug, order });
     const rawEntityType = await Entity.whereEntityType({ entity_type_slug });
     if (rawEntityType.Items.length === 0) throw new RecordNotFound();
     if (rawData.Items.length === 0) throw new RecordNotFound();
