@@ -116,11 +116,7 @@ const formatValueByType = (attributeType, attributeValue) => {
       }
       break;
     default:
-      if (typeof attributeValue === 'object') {
-        return attributeValue[Object.keys(attributeValue)[0]];
-      } else {
-        return attributeValue;
-      }
+      return attributeValue;
   }
 };
 
@@ -149,8 +145,3 @@ export const getEntityVariant = (data) => {
     .filter(item => item.type.S === DYNAMO_DB_TYPES.content_type)
     .map(x => x.variant.S)[0];
 }
-
-
-
-
-
