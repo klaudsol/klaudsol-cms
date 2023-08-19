@@ -1,5 +1,6 @@
 import { 
   DYNAMO_DB_ATTRIBUTE_TYPES, 
+  DYNAMO_DB_ORDER, 
   DYNAMO_DB_TYPES 
 } from "@/constants";
 
@@ -54,8 +55,10 @@ export const formatEntityTypeSlugResponse = (data, attributeMetadata) => {
 export const formatAttributesData = (data) => {
   const attributes = data
     .reduce((result, item) => {
-      const attributesMap = item.attributes.M;
-      result = formatAttributeMap(attributesMap);
+      if (item.attributes) {
+        const attributesMap = item.attributes.M;
+        result = formatAttributeMap(attributesMap);
+      }
       return result;
     }, {});
   
@@ -145,4 +148,15 @@ export const getEntityVariant = (data) => {
   return data.Items
     .filter(item => item.type.S === DYNAMO_DB_TYPES.content_type)
     .map(x => x.variant.S)[0];
+}
+
+// # 4: ITEMS ORDER 
+// Gets the order of the items
+// Default order is descending
+export const getOrder = (order) => {
+  let scanIndexForward = false;
+  if (order === DYNAMO_DB_ORDER.asc) {
+    scanIndexForward = true;
+  } 
+  return scanIndexForward;
 }
