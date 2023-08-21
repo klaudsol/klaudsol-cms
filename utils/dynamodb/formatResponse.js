@@ -80,9 +80,6 @@ export const formatImage = (image) => {
    * It will be appended by a random value separated by a comma. As a result, 
    * the file name uploaded to the s3 and saved to the database follows this format. (e.g. 0xlofisl_geli.png);
    */
-/* 
-this is how we generate the uniqueKey (file name of image / video). The key is the actual file name of the uploaded image (e.g. geli.png). It will be appended by a random value separated by a comma. As a result, the file name uploaded to the s3 and saved to the database follows this format. (e.g. 0xlofisl_geli.png);
-*/
 
   if (image.includes("_")) {
     originalName = image.split("_")[1];
