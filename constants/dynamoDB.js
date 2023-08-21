@@ -5,6 +5,8 @@ export const DYNAMO_DB_TYPES = {
     attribute: 'attribute',
 }
 export const DYNAMO_DB_INDEXES = {
+    PK_type_index: 'PK-type-index',
+    PK_slug_index: 'PK-slug-index',
     slug_type_index: 'slug-type-index',
     type_index: 'type-index',
 }

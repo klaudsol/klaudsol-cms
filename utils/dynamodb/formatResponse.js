@@ -20,7 +20,6 @@ export const formatEntityTypeSlugResponse = (data, attributeMetadata) => {
       id: itemKey,
       slug: item.slug.S,
       status: item.status.S,
-      order: parseInt(item.order.N),
     };
 
     if (item.values) {
@@ -76,6 +75,11 @@ export const formatAttributesData = (data) => {
 export const formatImage = (image) => {
   const imageUrl = process.env.KS_S3_BASE_URL;
   let originalName = '';
+  /* this is how we generate the uniqueKey (file name of image / video). 
+   * The key is the actual file name of the uploaded image (e.g. geli.png). 
+   * It will be appended by a random value separated by a comma. As a result, 
+   * the file name uploaded to the s3 and saved to the database follows this format. (e.g. 0xlofisl_geli.png);
+   */
   if (image.includes("_")) {
     originalName = image.split("_")[1];
   } else {

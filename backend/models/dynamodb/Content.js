@@ -31,8 +31,8 @@ export default class Content {
             
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      KeyConditionExpression: "#PK = :PK",
-      FilterExpression: "#type = :type",
+      IndexName: DYNAMO_DB_INDEXES.PK_type_index,
+      KeyConditionExpression: "#PK = :PK AND #type = :type",
       ExpressionAttributeNames: {
         "#PK": "PK",
         "#type" : "type",
@@ -73,8 +73,8 @@ export default class Content {
       
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      KeyConditionExpression: "#PK = :PK",
-      FilterExpression: "#slug = :slug",
+      IndexName: DYNAMO_DB_INDEXES.PK_slug_index,
+      KeyConditionExpression: "#PK = :PK AND #slug = :slug",
       ExpressionAttributeNames: {
         "#PK": "PK",
         "#slug": "slug",
