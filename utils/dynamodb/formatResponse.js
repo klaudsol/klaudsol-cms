@@ -165,3 +165,7 @@ export const getOrder = (order) => {
   } 
   return scanIndexForward;
 }
+
+export const getOrganizationPK = (organization_slug) => {
+  return `organization#${organization_slug}`
+}

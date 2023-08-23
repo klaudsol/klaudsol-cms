@@ -9,7 +9,6 @@ import Content from "@/backend/models/dynamodb/Content";
 import { 
     formatAttributesData, 
     formatEntityTypeSlugResponse, 
-    getEntityVariant, 
 } from "@/utils/dynamodb/formatResponse";
 
 export default withSession(handleRequests({ get }));
@@ -17,13 +16,12 @@ export default withSession(handleRequests({ get }));
 async function get(req, res) {
     //await assertUserCan(readContents, req);
 
-    const { content_type_slug, order } = req.query;
+    const { organization_slug, content_type_slug, slug } = req.query;
 
-    console.error(process.env.KS_DYNAMO_DB_AWS_ACCESS_KEY_ID);
-    const output = await Content.whereContentTypeSlug({ content_type_slug, order });
+    const output = await Content.findByContentTypeSlugAndSlug({ organization_slug, content_type_slug, slug });
     output.metadata.hash = createHash(output);
 
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
-    output ? res.status(OK).json(output ?? []) : res.status(NOT_FOUND).json({});
+    output ? res.status(OK).json(output ?? {}) : res.status(NOT_FOUND).json({});
 }
