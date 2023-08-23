@@ -6,40 +6,42 @@ import {
   DYNAMO_DB_TABLE, 
 } from "@/constants";
 import RecordNotFound from "@klaudsol/commons/errors/RecordNotFound";
-import { formatAttributesData, formatEntityTypeSlugResponse, getEntityVariant, getOrder } from "@/utils/dynamodb/formatResponse";
+import { formatAttributesData, formatEntityTypeSlugResponse, getEntityVariant, getOrder, getOrganizationPK } from "@/utils/dynamodb/formatResponse";
 
 export default class Content {
   // Initialize DB
   static db = new DynamoDB();
 
-  // Gets all items under the content_type_slug
-  // Sample: api/tech
+  // Gets all items under the content_type_slug and the organization_slug
+  // Sample: api/myrza/blogs
   // Gets the content_type first based on its slug
   // Returns the PK and other needed attributes
   // Uses the PK to get all the items
   // TODO: Add pagination
   // TODO: Add filtering
   // TODO: Add search
-  static async whereContentTypeSlug({ content_type_slug, order = null }) {
+  static async whereContentTypeSlug({ organization_slug, content_type_slug, order = null }) {
     // Gets all the content_type info based on the content_type_slug
     const { 
       contentTypePK, 
+      contentTypeSK,
       contentTypeId, 
       contentTypeAttributes, 
       contentTypeVariant 
-    } = await this.whereContentType({ content_type_slug });
+    } = await this.whereContentType({ organization_slug, content_type_slug });
+
+    const SKPrefix = `${contentTypeSK.replaceAll('content_type', 'content')}`;
             
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      IndexName: DYNAMO_DB_INDEXES.PK_type_index,
-      KeyConditionExpression: "#PK = :PK AND #type = :type",
+      KeyConditionExpression: "#PK = :PK AND begins_with(#SK, :SKPrefix)",
       ExpressionAttributeNames: {
         "#PK": "PK",
-        "#type" : "type",
+        "#SK" : "SK",
       },
       ExpressionAttributeValues: {
         ":PK": { S: contentTypePK },
-        ":type": { S: DYNAMO_DB_TYPES.content },
+        ":SKPrefix": { S: SKPrefix },
       },
       ScanIndexForward: getOrder(order)
     };
@@ -64,24 +66,26 @@ export default class Content {
 
   // Finds an item based on its content_type_slug and slug
   // Sample: api/tech/aws
-  static async findByContentTypeSlugAndSlug({ content_type_slug, slug }) {
+  static async findByContentTypeSlugAndSlug({ organization_slug, content_type_slug, slug }) {
     const { 
       contentTypePK, 
+      contentTypeSK,
       contentTypeId, 
       contentTypeAttributes, 
-    } = await this.whereContentType({ content_type_slug });
+    } = await this.whereContentType({ organization_slug, content_type_slug });
+
+    const contentSK = `${contentTypeSK.replaceAll('content_type', 'content')}/${slug}`;
       
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      IndexName: DYNAMO_DB_INDEXES.PK_slug_index,
-      KeyConditionExpression: "#PK = :PK AND #slug = :slug",
+      KeyConditionExpression: "#PK = :PK AND #SK = :SK",
       ExpressionAttributeNames: {
         "#PK": "PK",
-        "#slug": "slug",
+        "#SK": "SK",
       },
       ExpressionAttributeValues: {
         ":PK": { S: contentTypePK },
-        ":slug": { S: slug },
+        ":SK": { S: contentSK },
       },
       ScanIndexForward: true
     };
@@ -106,33 +110,36 @@ export default class Content {
   // Gets all the metadata included in the specific content_type
   // These are the attributes and variants
   // Note: Attributes are not yet sorted by order in the response
-  static async whereContentType({ content_type_slug }) {
+  static async whereContentType({ organization_slug, content_type_slug }) {
+    const organizationPK = getOrganizationPK(organization_slug);
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      IndexName: DYNAMO_DB_INDEXES.slug_type_index,
-      KeyConditionExpression: "#slug = :slug AND #type = :type",
+      IndexName: DYNAMO_DB_INDEXES.PK_slug_index,
+      KeyConditionExpression: "#PK = :PK AND #slug = :slug",
       ExpressionAttributeNames: {
+        "#PK": "PK",
         "#slug": "slug",
-        "#type": "type",
       },
       ExpressionAttributeValues: {
+        ":PK": { S: organizationPK },
         ":slug": { S: content_type_slug },
-        ":type": { S: DYNAMO_DB_TYPES.content_type },
       },
       ScanIndexForward: true
     };
     const rawContentType = await this.db.query(params);
     if (rawContentType.Items.length === 0) throw new RecordNotFound();
     const contentTypePK = rawContentType.Items[0].PK.S;
+    const contentTypeSK = rawContentType.Items[0].SK.S;
     const contentTypeId = rawContentType.Items[0].id.S;
-    const contentTypeVariant = getEntityVariant(rawContentType);
+    const contentTypeVariant = rawContentType.Items[0].variant.S;
 
     const contentTypeAttributes = formatAttributesData(rawContentType.Items);
     const contentType = {
       contentTypePK, 
+      contentTypeSK,
       contentTypeId, 
       contentTypeAttributes,
-      contentTypeVariant
+      contentTypeVariant,
     }
     return contentType;
   }
