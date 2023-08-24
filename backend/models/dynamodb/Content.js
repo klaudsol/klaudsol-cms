@@ -1,12 +1,21 @@
 
-import DynamoDB from "@klaudsol/commons/lib/DynamoDB"
+import DynamoDB from "@klaudsol/commons/lib/DynamoDB";
 import { 
   DYNAMO_DB_TYPES, 
   DYNAMO_DB_INDEXES, 
   DYNAMO_DB_TABLE, 
 } from "@/constants";
 import RecordNotFound from "@klaudsol/commons/errors/RecordNotFound";
-import { formatAttributesData, formatEntityTypeSlugResponse, getEntityVariant, getOrder, getOrganizationPK } from "@/utils/dynamodb/formatResponse";
+import { 
+  formatAttributesData, 
+  formatEntityTypeSlugResponse, 
+  getEntityVariant, 
+  getOrder, 
+  getOrganizationPK,
+  getContentPK
+} from "@/utils/dynamodb/formatResponse";
+
+import ContentType from '@/backend/models/dynamodb/ContentType';
 
 export default class Content {
   // Initialize DB
@@ -23,15 +32,11 @@ export default class Content {
   static async whereContentTypeSlug({ organization_slug, content_type_slug, order = null }) {
     // Gets all the content_type info based on the content_type_slug
     const { 
-      contentTypePK, 
-      contentTypeSK,
       contentTypeId, 
       contentTypeAttributes, 
       contentTypeVariant 
-    } = await this.whereContentType({ organization_slug, content_type_slug });
+    } = await ContentType.find({ organization_slug, content_type_slug });
 
-    const SKPrefix = `${contentTypeSK.replaceAll('content_type', 'content')}`;
-            
     const params = {
       TableName: DYNAMO_DB_TABLE,
       KeyConditionExpression: "#PK = :PK AND begins_with(#SK, :SKPrefix)",
@@ -40,8 +45,8 @@ export default class Content {
         "#SK" : "SK",
       },
       ExpressionAttributeValues: {
-        ":PK": { S: contentTypePK },
-        ":SKPrefix": { S: SKPrefix },
+        ":PK": { S: getOrganizationPK(organization_slug) },
+        ":SKPrefix": { S: getContentPK(content_type_slug, '') },
       },
       ScanIndexForward: getOrder(order)
     };
@@ -68,13 +73,10 @@ export default class Content {
   // Sample: api/tech/aws
   static async findByContentTypeSlugAndSlug({ organization_slug, content_type_slug, slug }) {
     const { 
-      contentTypePK, 
-      contentTypeSK,
       contentTypeId, 
       contentTypeAttributes, 
-    } = await this.whereContentType({ organization_slug, content_type_slug });
+    } = await ContentType.find({ organization_slug, content_type_slug });
 
-    const contentSK = `${contentTypeSK.replaceAll('content_type', 'content')}/${slug}`;
       
     const params = {
       TableName: DYNAMO_DB_TABLE,
@@ -84,8 +86,8 @@ export default class Content {
         "#SK": "SK",
       },
       ExpressionAttributeValues: {
-        ":PK": { S: contentTypePK },
-        ":SK": { S: contentSK },
+        ":PK": { S: getOrganizationPK(organization_slug) },
+        ":SK": { S: getContentPK(content_type_slug, slug) },
       },
       ScanIndexForward: true
     };
@@ -107,40 +109,4 @@ export default class Content {
     return output;
   }
 
-  // Gets all the metadata included in the specific content_type
-  // These are the attributes and variants
-  // Note: Attributes are not yet sorted by order in the response
-  static async whereContentType({ organization_slug, content_type_slug }) {
-    const organizationPK = getOrganizationPK(organization_slug);
-    const params = {
-      TableName: DYNAMO_DB_TABLE,
-      IndexName: DYNAMO_DB_INDEXES.PK_slug_index,
-      KeyConditionExpression: "#PK = :PK AND #slug = :slug",
-      ExpressionAttributeNames: {
-        "#PK": "PK",
-        "#slug": "slug",
-      },
-      ExpressionAttributeValues: {
-        ":PK": { S: organizationPK },
-        ":slug": { S: content_type_slug },
-      },
-      ScanIndexForward: true
-    };
-    const rawContentType = await this.db.query(params);
-    if (rawContentType.Items.length === 0) throw new RecordNotFound();
-    const contentTypePK = rawContentType.Items[0].PK.S;
-    const contentTypeSK = rawContentType.Items[0].SK.S;
-    const contentTypeId = rawContentType.Items[0].id.S;
-    const contentTypeVariant = rawContentType.Items[0].variant.S;
-
-    const contentTypeAttributes = formatAttributesData(rawContentType.Items);
-    const contentType = {
-      contentTypePK, 
-      contentTypeSK,
-      contentTypeId, 
-      contentTypeAttributes,
-      contentTypeVariant,
-    }
-    return contentType;
-  }
 }
