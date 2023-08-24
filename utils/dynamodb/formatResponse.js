@@ -167,5 +167,13 @@ export const getOrder = (order) => {
 }
 
 export const getOrganizationPK = (organization_slug) => {
-  return `organization#${organization_slug}`
+  return `organization#${organization_slug}`;
+}
+
+export const getContentTypePK = (contentTypeSlug) => {
+  return `content_type#${contentTypeSlug}`;
+}
+
+export const getContentPK = (contentTypeSlug, contentSlug) => {
+  return `content#${contentTypeSlug}/${contentSlug}`;
 }

@@ -15,7 +15,7 @@ import {
 export default withSession(handleRequests({ get }));
 
 async function get(req, res) {
-    await assertUserCan(readContents, req);
+    //await assertUserCan(readContents, req);
 
     const { organization_slug, content_type_slug, order } = req.query;
 
