@@ -11,17 +11,13 @@ import {
 } from "@/utils/dynamodb/formatResponse";
 
 export default class ContentType {
-  
+
   // Initialize DB
   static db = new DynamoDB();
 
-  // Gets all the metadata included in the specific content_type
-  // These are the attributes and variants
-  // Note: Attributes are not yet sorted by order in the response
   static async find({ organization_slug, content_type_slug }) {
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      //IndexName: DYNAMO_DB_INDEXES.PK_slug_index,
       KeyConditionExpression: "#PK = :PK AND #SK = :SK",
       ExpressionAttributeNames: {
         "#PK": "PK",

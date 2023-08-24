@@ -1,15 +1,11 @@
 
 import DynamoDB from "@klaudsol/commons/lib/DynamoDB";
 import { 
-  DYNAMO_DB_TYPES, 
-  DYNAMO_DB_INDEXES, 
   DYNAMO_DB_TABLE, 
 } from "@/constants";
 import RecordNotFound from "@klaudsol/commons/errors/RecordNotFound";
 import { 
-  formatAttributesData, 
   formatEntityTypeSlugResponse, 
-  getEntityVariant, 
   getOrder, 
   getOrganizationPK,
   getContentPK
