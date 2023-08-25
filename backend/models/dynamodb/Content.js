@@ -2,6 +2,7 @@
 import DynamoDB from "@klaudsol/commons/lib/DynamoDB";
 import { 
   DYNAMO_DB_TABLE, 
+  DYNAMO_DB_INDEXES
 } from "@/constants";
 import RecordNotFound from "@klaudsol/commons/errors/RecordNotFound";
 import { 
@@ -35,14 +36,13 @@ export default class Content {
 
     const params = {
       TableName: DYNAMO_DB_TABLE,
-      KeyConditionExpression: "#PK = :PK AND begins_with(#SK, :SKPrefix)",
+      IndexName: DYNAMO_DB_INDEXES.organization_content_type_id_index,
+      KeyConditionExpression: "#PK = :PK",
       ExpressionAttributeNames: {
-        "#PK": "PK",
-        "#SK" : "SK",
+        "#PK": "organization_content_type",
       },
       ExpressionAttributeValues: {
-        ":PK": { S: getOrganizationPK(organization_slug) },
-        ":SKPrefix": { S: getContentPK(content_type_slug, '') },
+        ":PK": { S: `${organization_slug}/${content_type_slug}` },
       },
       ScanIndexForward: getOrder(order)
     };

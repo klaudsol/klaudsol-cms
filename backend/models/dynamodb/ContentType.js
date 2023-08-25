@@ -1,7 +1,5 @@
 import DynamoDB from "@klaudsol/commons/lib/DynamoDB";
 import { 
-  DYNAMO_DB_TYPES, 
-  DYNAMO_DB_INDEXES, 
   DYNAMO_DB_TABLE, 
 } from "@/constants";
 import { 
@@ -12,7 +10,6 @@ import {
 
 export default class ContentType {
 
-  // Initialize DB
   static db = new DynamoDB();
 
   static async find({ organization_slug, content_type_slug }) {
