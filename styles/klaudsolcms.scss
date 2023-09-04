@@ -1133,11 +1133,15 @@ $onFocus: #323C4E;
 .new_entry_block_button_delete, .button_delete {
     background-color: maroon;
     color: white;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px !important;
+    
     &.logo {
         width: 93px;
         border-radius: 3px;
-        height: 38.5px;
+        height: 42px;
         margin-left: 10px;
         display: flex;
 
@@ -1145,6 +1149,23 @@ $onFocus: #323C4E;
             opacity: 50%;
         }
         
+    }
+}
+
+.btn-upload {
+    border: none;
+    margin-left: 10px;
+
+    &-text {
+        margin: 0;
+        padding: 0;
+        &-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: row;
+        margin-left: -5px;
+        }
     }
 }
 
