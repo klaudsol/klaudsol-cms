@@ -47,8 +47,8 @@ const FileField = (props) => {
   };
 
   const onRemoveImage = () => {
-    setFieldValue(field.name, null);
-    setStaticLink(null);
+    setFieldValue(field.name, "");
+    setStaticLink("");
   }
 
   return (
