@@ -15,7 +15,7 @@ KlaudSol CMS is a Headless and Serverless CMS (Content Management System). Welco
 * Licensed under a permissive licence ([MIT License](https://opensource.org/licenses/MIT)).
 
 ## Live Demo
-For a live demo, go to https://cms.demo.klaudsol.app
+For a live demo, go to [https://cms-demo.klaudsol.app](https://cms-demo.klaudsol.app)
 
 ```
 Username: admin@klaudsol.com
@@ -57,7 +57,7 @@ nvm use --lts
 
 ## Screenshots
 
-Screnshots: https://cms.demo.klaudsol.app
+Screnshots: [https://cms-demo.klaudsol.app](https://cms-demo.klaudsol.app)
 
 <img width="1677" alt="image" src="https://github.com/klaudsol/klaudsol-cms/assets/1546228/2360a358-7e58-4717-8d71-47b93b7f22be">
 <img width="1678" alt="image" src="https://github.com/klaudsol/klaudsol-cms/assets/1546228/5fc4c908-4734-417d-a928-fd931d4eef31">
