@@ -12,12 +12,12 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#000000" />
           <meta
             name="description"
-            content="SME - Accounting, inventory, procurement, and payroll system specifically tailored for Philippine small and medium-scale businesses. Helping Pinoy small and medium-sized businesses achieve more."
+            content="KlaudSol CMS is a Headless and Serverless CMS (Content Management System). A great alternative to WordPress and Strapi."
           />
-          <meta property="og:title" content="SME" />
-          <meta property="og:description" content="SME - Accounting, inventory, procurement, and payroll system specifically tailored for Philippine small and medium-scale businesses." /> 
-          <meta property="og:image" content="https://business.klaudsol.com/assets/img/bg/business-klaudsol-banner-1-6002bd50237c924e19744f5a92bea199.png" />
-          <meta property="og:url" content="https://sme.klaudsol.app" /> 
+          <meta property="og:title" content="KlaudSol CMS" />
+          <meta property="og:description" content="KlaudSol CMS is a Headless and Serverless CMS (Content Management System). A great alternative to WordPress and Strapi." /> 
+          <meta property="og:image" content="https://klaudsol.com/assets/img/logo-180x180.png" />
+          <meta property="og:url" content="https://github.com/klaudsol/klaudsol-cms" /> 
           <meta property="og:type" content="website" />
           
           <link rel="apple-touch-icon" href="/logo192.png" />
