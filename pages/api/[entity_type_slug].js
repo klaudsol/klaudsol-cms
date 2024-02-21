@@ -129,22 +129,22 @@ async function get(req, res) {
     })
 
 
-    const promises = Object.entries(output.data).map(async ([key, value]) => {
+    const promises = Object.entries(dataTemp.indexedData).map(async ([key, value]) => {
       console.log(value.slug);
       const slug = value.slug;
       const newData = Object.entries(value).reduce((collector, [fieldKey, fieldValue]) => {
 
         if(fieldKey == 'id') {
           
-          if(value.order) {
-            return collector;
-          } else {
+          //if(value.order) {
+          //  return collector;
+          //} else {
             //use ID as order
             return {
               ...collector,
               ['order']: fieldValue
             }          
-          }
+          //}
           
 
         } else if(fieldKey == 'slug') {
