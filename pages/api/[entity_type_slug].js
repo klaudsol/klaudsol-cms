@@ -136,7 +136,16 @@ async function get(req, res) {
 
         if(fieldKey == 'id') {
           
-          return collector;
+          if(value.order) {
+            return collector;
+          } else {
+            //use ID as order
+            return {
+              ...collector,
+              ['order']: fieldValue
+            }          
+          }
+          
 
         } else if(fieldKey == 'slug') {
 
