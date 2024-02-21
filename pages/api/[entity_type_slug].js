@@ -36,6 +36,7 @@ import { transformQuery, sortData } from "@/components/Util";
 import { assert, assertUserCan } from '@klaudsol/commons/lib/Permissions';
 import { filterData } from '@/components/Util';
 import { readContents, writeContents } from '@/lib/Constants';
+import { Redis } from "@upstash/redis";
 
 export default withSession(handleRequests({ get, post }));
 
@@ -117,6 +118,102 @@ async function get(req, res) {
     };
 
     output.metadata.hash = createHash(output);
+
+    //Let's rock!
+
+    const organization = 'mci';
+
+    const redis = new Redis({
+      url: process.env.KS_REDIS_URL,
+      token: process.env.KS_REDIS_TOKEN,
+    })
+
+
+    const promises = Object.entries(output.data).map(async ([key, value]) => {
+      console.log(value.slug);
+      const slug = value.slug;
+      const newData = Object.entries(value).reduce((collector, [fieldKey, fieldValue]) => {
+
+        if(fieldKey == 'id') {
+          
+          return collector;
+
+        } else if(fieldKey == 'slug') {
+
+          return {
+            ...collector,
+            ['id']: fieldValue
+          }
+
+        } else {
+
+          return {
+            ...collector,
+            [fieldKey]: fieldValue
+          }
+
+        }
+
+
+      }, {}); 
+
+      const hsetParams = Object.entries(newData).reduce((collector, [fieldKey, fieldValue]) => {
+        if(typeof fieldValue === 'string' || fieldValue instanceof String) {
+
+          //console.log(`${fieldKey} => "${fieldValue.replace(/"/g, '\\"')}"`);
+          return {
+            ...collector, 
+            [fieldKey]: fieldValue
+          };
+
+        } else if (typeof fieldValue === 'number') {
+
+          //console.log(`${fieldKey} => ${fieldValue}`);
+          return {...collector, 
+            [fieldKey]: `${fieldValue}`
+          };
+
+        } else {
+
+          //console.log(`${fieldKey} => "${JSON.stringify(fieldValue).replace(/"/g, '\\"')}"`);
+          //redis.hset does the object to JSON conversion. Amazing.
+          return {
+            ...collector, 
+            [fieldKey]: fieldValue
+          };
+        }
+        
+      }, {});
+
+      console.log("-----");
+
+
+      const lpos = await redis.lpos(`${organization}/${entity_type_slug}`, slug);
+      if(lpos == null) {
+        await redis.lpush(`${organization}/${entity_type_slug}`, slug);
+        console.log(`${slug} successfully addded to ${organization}/${entity_type_slug}.`);
+      } else {
+        console.log(`${organization}/${entity_type_slug} already contains ${slug}.`);
+      }
+
+      const hset = `hset ${organization}/${entity_type_slug}/${value.slug} ${Object.entries(hsetParams).map(([key, value]) => `${key} ${value}`).join(" ")}`;
+      
+      //Use only when deletingg dirty data due to coding errors.
+      //Otherewise, hset can handle it.
+      //await redis.del(`${organization}/${entity_type_slug}/${value.slug}`);
+
+      //redis.hset does the object to JSON conversion. Amazing.
+      await redis.hset(`${organization}/${entity_type_slug}/${value.slug}`, hsetParams);
+
+      //console.log(hset);
+      console.log("-----");
+
+    });
+
+    await Promise.all(promises);
+
+
+    
 
     setCORSHeaders({ response: res, url: process.env.FRONTEND_URL });
 
