@@ -122,13 +122,19 @@ async function get(req, res) {
     //Let's rock!
 
     const organization = 'mci';
+    const CLEAN_DATA = false;
 
     const redis = new Redis({
       url: process.env.KS_REDIS_URL,
       token: process.env.KS_REDIS_TOKEN,
     })
 
+    //Clean data
+    if(CLEAN_DATA) {
+      await redis.del(`${organization}/${entity_type_slug}`);
+    }
 
+    //Populate collections and entries
     const promises = Object.entries(dataTemp.indexedData).map(async ([key, value]) => {
       console.log(value.slug);
       const slug = value.slug;
@@ -196,7 +202,6 @@ async function get(req, res) {
 
       console.log("-----");
 
-
       const lpos = await redis.lpos(`${organization}/${entity_type_slug}`, slug);
       if(lpos == null) {
         await redis.lpush(`${organization}/${entity_type_slug}`, slug);
@@ -221,6 +226,32 @@ async function get(req, res) {
 
     await Promise.all(promises);
 
+
+    //populate attributes
+    console.log(metadata.attributes);
+    const promises2 = Object.entries(metadata.attributes).map(async([key, value]) => {
+
+      const lpos = await redis.lpos(`attributes:${organization}:${entity_type_slug}`, key);
+      if(lpos == null) {
+        await redis.lpush(`attributes:${organization}:${entity_type_slug}`, key);
+        console.log(`${key} successfully addded to ${organization}/${entity_type_slug}.`);
+      } else {
+        console.log(`attributes:${organization}:${entity_type_slug} already contains ${key}.`);
+      }
+
+
+      await redis.hset(`attributes:${organization}:${entity_type_slug}:${key}`, {
+        name: key.split("_").map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(" "),
+        ...value
+      }); 
+   
+        
+      
+
+    });
+    await Promise.all(promises2);
+
+ 
 
     
 
