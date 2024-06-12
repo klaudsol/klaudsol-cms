@@ -345,6 +345,100 @@
         background-color: lightgray !important;
       }
     }
+
+    &-error {
+      @include flex(center, center, column);
+      @include font-light(16px);
+      @include padding-tb-lr(0px, 0px);
+      padding-bottom: 20px;
+      gap: 10px;
+
+      &-body {
+        padding: 0 !important;
+
+        &-default {
+          padding: 15px;
+        }
+      }
+
+      &-header {
+        @include flex(flex-end, center, row);
+        width: 100%;
+
+        &-icon {
+          cursor: pointer;
+          color: white;
+          font-size: 12px;
+        }
+      }
+
+      &-title {
+        @include font-semi-bold(24px);
+      }
+
+      &-icon {
+        font-size: 100px;
+        color: white;
+        margin-top: 20px;
+
+        &-container {
+          @include flex(center, center, column);
+          @include padding-tb-lr(5px, 10px);
+          padding-bottom: 30px;
+          background-color: #e85e6c;
+          width: 100%;
+          border-top-left-radius: 7px;
+          border-top-right-radius: 7px;
+        }
+      }
+    }
+
+    &-loading {
+      @include flex(center, center, column);
+      @include font-light(16px);
+      @include padding-tb-lr(0px, 0px);
+      padding-bottom: 20px;
+      gap: 10px;
+
+      &-body {
+        padding: 0 !important;
+
+        &-default {
+          padding: 15px;
+        }
+      }
+
+      &-header {
+        @include flex(flex-end, center, row);
+        width: 100%;
+
+        &-icon {
+          cursor: pointer;
+          color: white;
+          font-size: 12px;
+        }
+      }
+
+      &-title {
+        @include font-semi-bold(24px);
+      }
+
+      &-icon {
+        font-size: 100px;
+        color: white;
+        margin-top: 20px;
+
+        &-container {
+          @include flex(center, center, column);
+          @include padding-tb-lr(5px, 10px);
+          padding-bottom: 30px;
+          background-color: #467286;
+          width: 100%;
+          border-top-left-radius: 7px;
+          border-top-right-radius: 7px;
+        }
+      }
+    }
   }
 }
 
