@@ -258,14 +258,21 @@ class Entity {
                 ? { booleanValue: entry[attributeName] }
                 : { isNull: true },
           },
+          {
+            name: "value_datetime",
+            value:
+              attributeType == "datetime"
+                ? { stringValue: entry[attributeName] }
+                : { isNull: true },
+          },          
         ],
       ];
     }, []);
 
     //Insert Values by batch
     const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
-        value_string, value_long_string, value_double, value_boolean  
-      ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double, :value_boolean) 
+        value_string, value_long_string, value_datetime, value_double, value_boolean
+      ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_datetime, :value_double, :value_boolean) 
       `;
 
     await db.batchExecuteStatement(insertValuesBatchSQL, valueBatchParams);
@@ -452,6 +459,13 @@ class Entity {
                 ? { booleanValue: entries[attributeName] }
                 : { isNull: true },
           },
+          {
+            name: "value_datetime",
+            value:
+              attributeType == "datetime"
+                ? { stringValue: entries[attributeName] }
+                : { isNull: true },
+          },
         ],
       ];
     }, []);
@@ -487,8 +501,8 @@ class Entity {
 
     if (nonExistingVal.length) {
       const insertValuesBatchSQL = `INSERT INTO \`values\`(entity_id, attribute_id,
-      value_string, value_long_string, value_double, value_boolean  
-    ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_double, :value_boolean) 
+      value_string, value_long_string, value_datetime, value_double, value_boolean
+    ) VALUES (:entity_id, :attribute_id, :value_string, :value_long_string, :value_datetime, :value_double, :value_boolean) 
     `;
 
       await db.batchExecuteStatement(insertValuesBatchSQL, nonExistingVal);
@@ -499,6 +513,7 @@ class Entity {
     const updateValuesBatchSQL = `UPDATE \`values\` SET 
     value_string = :value_string, 
     value_long_string = :value_long_string, 
+    value_datetime = :value_datetime,
     value_double = :value_double, 
     value_boolean = :value_boolean
     WHERE entity_id = :entity_id AND attribute_id = :attribute_id

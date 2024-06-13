@@ -11,6 +11,7 @@ import VideoRenderer from "./VideoRenderer";
 import BooleanRenderer from "./BooleanRenderer";
 import { plugin } from "@/components/plugin/plugin";
 import RichTextAttributeType from "@/components/attribute_types/RichTextAttributeType";
+import DateTimeAttributeType from "@/components/attribute_types/DateTimeAttributeType"; 
 import AttributeTypeFactory from "@/components/attribute_types/AttributeTypeFactory";
 
 const AdminRenderer = ({ type, ...params }) => {
@@ -35,6 +36,7 @@ const AdminRenderer = ({ type, ...params }) => {
     case CMS_TYPES.BOOLEAN:
       return <BooleanRenderer type={type} {...params} title="Yes" />;
     case CMS_TYPES.RICH_TEXT:
+    case CMS_TYPES.DATETIME:
     case CMS_TYPES.FILE:
     case CMS_TYPES.CUSTOM:
       const attributeType = AttributeTypeFactory.create({metadata: {type, custom_name: params.customName, id: params.id}});

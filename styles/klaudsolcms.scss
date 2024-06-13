@@ -1398,3 +1398,21 @@ $onFocus: #323C4E;
         font-weight: 590;
     }
 }
+
+/** 
+======================================================
+            MODIFY DATE PICKER DESIGN
+======================================================
+**/
+.react-datepicker__input-container input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc !important;
+}
+// change the selected date color
+.react-datepicker__day--selected, .react-datepicker__time-list-item--selected {
+    background-color: #467286 !important;
+}
+.react-datepicker__time-container {
+    overflow: hidden;
+}
