@@ -7,6 +7,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {protocol: 'https', hostname: 's3.amazonaws.com'},                      //file upload to AWS S3
+      {protocol: 'https', hostname: '*.cloudfront.net'}                      
       //...domains.map(domain => ({protocol: 'https', hostname: domain}))       //user-defined image sources
     ]
   },
