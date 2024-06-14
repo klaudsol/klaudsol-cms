@@ -46,6 +46,11 @@ const FileField = (props) => {
     document.body.onfocus = checkIfUnfocused;
   };
 
+  const onRemoveImage = () => {
+    setFieldValue(field.name, "");
+    setStaticLink("");
+  }
+
   return (
     <div>
       <div className="field_base">
@@ -69,25 +74,26 @@ const FileField = (props) => {
         )}
         {!props.hideUpload && <AppButtonLg
           title={props.buttonPlaceholder ?? "Browse..."}
-          className="btn_general_lg--invert_colors field_btn"
+          className="btn_general_lg--invert_colors field_btn btn-upload"
           onClick={openUploadMenu}
           isDisabled={isFetching || props.disableAllButtons}
         />}
-        {props.showDeleteButton && (
+        {props.showDeleteButton && (staticLink || value) && (
           <button
             className={`new_entry_block_button_delete logo ${isFetching && `delete`}`}
-            onClick={()=>{props.onDelete(setStaticLink)}}
+            onClick={() => onRemoveImage()}
             type="button"
             disabled={isFetching || props.disableAllButtons}
           >
-            <div>
+            <div className="btn-upload-text-container">
               {props.isDeleting ? (
                 <AppButtonSpinner height={10} />
               ) : (
                 <FaTrash className="icon_block_button" />
               )}
+              <p className="btn-upload-text">Remove</p>
             </div>
-            <p>Remove</p>
+     
           </button>
         )}
       </div>

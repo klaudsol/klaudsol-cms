@@ -27,6 +27,7 @@ const UploadRenderer = ({
       }
       {...params}
       hideUpload={disabled}
+      showDeleteButton
     />
     {!isErrorDisabled && (
       <ErrorRenderer name={name} errors={errors} touched={touched} />
